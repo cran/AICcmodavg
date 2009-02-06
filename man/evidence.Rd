@@ -9,41 +9,44 @@ Compute Evidence Ratio Between Two Models
 This function compares two models of a candidate model set based on
 their evidence ratio (i.e., ratio of Akaike weights).  The default
 computes the evidence ratio of the Akaike weights between the top-ranked
-model and a lower-ranked model.  You must supply a model selection table
-of class 'aictab' as the first argument.
+model and the second-ranked model.  You must supply a model selection
+table of class 'aictab' as the first argument.
 }
 \usage{
-evidence(aic.table, model.high = "top", model.low)
+evidence(aic.table, model.high = "top", model.low = "second.ranked")
 }
 \arguments{
   \item{aic.table}{
-a model selection table of class 'aictab' such as that produced by 'aictab'.
+a model selection table of class 'aictab' such as that produced by
+'aictab'.  The table may be sorted or not, as the function sorts
+the table internally.
 }
   \item{model.high}{
 the top-ranked model (default), or alternatively, the name of another
 model as it appears in the model selection table.
 }
   \item{model.low}{
-the name of a lower-ranked model such as it appears in the model
-selection table.
+the second-ranked model (default), or alternatively, the name of a
+lower-ranked model such as it appears in the model selection table.
 }
 }
 \details{
 The default compares the Akaike weights of the top-ranked model to
-another model of the candidate model set.  The evidence ratio can be
-interpreted as the number of times a given model is more parsimonious
-than a lower-ranked model.  If one desires an evidence ratio that does not
-involve a comparison with the top-ranking model, the name of the
-required model must be specified in the model.high argument. 
+the second-ranked model in the candidate model set.  The evidence ratio
+can be interpreted as the number of times a given model is more
+parsimonious than a lower-ranked model.  If one desires an evidence
+ratio that does not involve a comparison with the top-ranking model, the 
+name of the required model must be specified in the 'model.high'
+argument.
 }
 \value{
 'evidence' produces an object of class 'evidence' with the following
 components:
 \item{Model.high}{  
-the top-ranked model among the two compared.
+  the model specified in 'model.high'.
 }
 \item{Model.low}{
-  the lower-ranked model among the two compared.
+  the model specified in 'model.low'.
   }
 \item{Ev.ratio}{
   the evidence ratio between the two models compared.    
@@ -78,7 +81,8 @@ Modnames <- c("raw density", "density corrected for resin content")
 aicctable.out <- aictab(cand.set = Cand.set, modnames = Modnames)
 
 ##compute evidence ratio
-evidence(aic.table = aicctable.out, model.low = "raw density")           
+evidence(aic.table = aicctable.out, model.low = "raw density")
+evidence(aic.table = aicctable.out) #gives the same answer
 ##round to 4 digits after decimal point
 print(evidence(aic.table = aicctable.out, model.low = "raw density"),
 digits = 4)
@@ -97,21 +101,23 @@ Cand.models[[3]] <- lme(distance ~ 1, data = Orthodont, random = ~ 1,
 method = "ML")
 
 ##create a vector of model names
-Modnames <- NULL
-for (i in 1:length(Cand.models)) {
-Modnames[i] <- paste("mod", i, sep = "")
-}
+Modnames <- paste("mod", 1:length(Cand.models), sep = "")
+
 
 ##compute AICc table
 aic.table.1 <- aictab(cand.set = Cand.models, modnames = Modnames,
 second.ord = TRUE)
 
 ##compute evidence ratio between best model and second-ranked model
-evidence(aic.table = aic.table.1, model.high = "top", model.low =
-"mod1")  
+evidence(aic.table = aic.table.1)
 
-##compute evidence ratio between second-best model and third-ranked model 
-evidence(aic.table = aic.table.1, model.high = "mod1", model.low =
-"mod3")
+##compute the same value but from an unsorted model selection table
+evidence(aic.table = aictab(cand.set = Cand.models,
+modnames = Modnames, second.ord = TRUE, sort = FALSE))
+
+##compute evidence ratio between second-best model and third-ranked
+##model  
+evidence(aic.table = aic.table.1, model.high = "mod1",
+model.low = "mod3") 
 }
 \keyword{models}

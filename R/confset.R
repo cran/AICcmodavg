@@ -2,6 +2,11 @@ confset <-
   function(cand.set, modnames, c.hat=1, second.ord=TRUE, nobs=NULL, method="raw", level=0.95, delta=6) {
     aic.table <- aictab(cand.set=cand.set, modnames=modnames, sort=TRUE, c.hat=c.hat,
                         second.ord=second.ord, nobs=nobs)
+
+    ##add check to see whether response variable is the same for all models
+    check.resp <- lapply(X = cand.set, FUN = function(b) formula(b)[2])
+    if(length(unique(check.resp)) > 1) stop("You must use the same response variable for all models\n")
+    
     nmods <- nrow(aic.table)
     
 #method based on simply summing the Akaike weights until a given value is reached

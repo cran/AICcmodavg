@@ -17,6 +17,10 @@ importance <-
       mod_formula<-lapply(cand.set, FUN=function(i) labels(summary(i)$coefficients$fixed))
     }
 
+    if(identical(check.class, "gls")) {
+      mod_formula<-lapply(cand.set, FUN=function(i) labels(summary(i)$coefficients))
+    }
+
     if(identical(check.class, c("multinom", "nnet"))) {
       mod_formula<-lapply(cand.set, FUN=function(i) colnames(summary(i)$coefficients))
     }

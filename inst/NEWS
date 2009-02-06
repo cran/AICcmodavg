@@ -1,0 +1,121 @@
+####################################################################
+##
+##THIS FILE DOCUMENTS CHANGES TO FUNCTIONS IN PACKAGE AICcmodavg
+##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
+##
+####################################################################
+
+
+
+#######################################################
+#revisions 1.06 (6 February 2010)
+## -added a 'polr' class check to 'AICc' function;
+## -added function 'predictSE.lme' to make predictions based on fixed effects for objects
+##  of class 'lme' (mean population predictions) and compute associated SE's;
+## -added function 'modvagpred.lme' to compute model-averaged predictions and unconditional 
+##  standard errors for 'lme' models;
+## -added statement in Rd files for 'aictab', 'confset', 'evidence', 'importance', 'modavgpred', 
+##  'modavg',  and generics 'nobs = NULL' defaults to total number of observations in 
+##  computations of information criteria;
+## -added NEWS file to document changes across versions of AICcmodavg package;
+## -added check that same response variable is used throughout model set for 'aictab' and generics
+##  with lapply(X = cand.set, FUN = function(b) formula(b)[2]);
+## -added functionality of 'AICc', 'aictab', 'confset', 'evidence', 'importance', 'modavg' with
+##  objects of 'gls' class;
+## -added additional flexibility to 'evidence' function when model selection table provided is not
+##  sorted ('evidence' now sorts table internally) and set default comparison to top-ranked model 
+##  vs second-ranked model;
+## -added check/error message when no dispersion parameter (i.e., 'gamdisp') is specified for 'modavg'
+##  and 'modavgpred' and generics with gamma regression models;
+## -added additional check/error message when c.hat < 1 in 'AICc.glm';
+
+
+
+#######################################################
+##revisions 1.05 (3 December 2009):
+## -modified number of digits to print with 'importance' to be consistent with revision 1.04;
+## -added parenthesis where one was missing in aictab.Rd under value at line for (Q)AIC(c);
+## -corrected example in evidence.Rd for faulty name of model.low - should have been 
+##  'model.low = raw density';
+## -deleted CumWt when 'sort = FALSE' in 'aictab' - by modifying argument in 'print.aictab';
+## -for 'AICc.glm', 'AICc.mult', c.hat > 1 && c.hat <= 4 now gives warning;
+## -added a column for logLik, quasi-logLik, or restricted logLik in 'aictab';
+## -added options in 'print.aictab' to select items to display;
+## -added a check for 'exclude =' in 'modavg' and generics to warn if exclude is not a list:
+##  
+##  if(!is.null(exclude)) {
+##    if(!is.list(exclude)) stop(cat("\n\'exclude\' should be a list\n"))
+##  }
+##
+## -documented 'aictab' with new LL, Quasi.LL, Res.LL elements
+## -used 'vcov' and argument 'dispersion =' to scale SE's in a single step instead of adding 
+##  more code to scale it on separate lines - works with Poisson, Binomial, Gamma;
+## -in 'modavg.polr' and 'modavg.mult', added a logical test to distinguish between 'coef' 
+##  or zeta which are the intercepts; 
+## -modified 'print.aictab' so that c_hat is printed only when c_hat appears in AICc table 
+##  (i.e, when any(names(x)=="c_hat"));
+## -modified 'print.modavg' so that c_hat is printed only when c_hat appears in AICc table 
+##  (i.e, when any(names(oldtab)=="c_hat")) AND deleted Cum.Wt from x$Mod.avg.table;
+##  -added a check for the order for aictab and modavg and generics so that LL and other 
+##  measures are displayed properly in table and sorted at the very end (placed line of sort 
+##  and cumsum at very end of code) with Results[rev(order(Results[,5])), ];
+## -added Cum.Wt in last column of Results;
+## -changed order of elements with colnames so that prints nicely - this affects 'importance', 
+##  'confset', and 'evidence' - number of columns used might differ depending on what is 
+##  requested;
+## -in 'modavg' and generics, changed 'regexpr' to determine whether parameter appears alone 
+##  in the model and added 'fixed = TRUE', to find matches "as is" to avoid problems with 
+##  'mult' (e.g., "well|mild");
+
+
+
+#######################################################
+##revision 1.04 (11 November 2009):
+## -added the new equation for unconditional SE based on equation 6.12 of Burnham and 
+##  Anderson (2002) in 'modavg' and 'modavgpred' and new argument 'uncond.se' with default 
+##  value "revised" -  'uncond.se = old' uses equation 4.19;
+## -added a check to determine whether all link functions are identical for 'modavg' 
+##  as averaging over beta estimates under different link functions is not appropriate 
+##  and returns error);
+## -added a check to determine whether all link functions are identical for 'modavgpred' 
+##  when linear predictor is used;
+## -changed default to display only 2 digits after decimal point for all output 'print' 
+##  generic functions;
+
+
+
+#######################################################
+##revision 1.03 (21 October 2009):
+## -replaced 'regexpr' in 'modavg.glm', 'modavg.lme', 'modavg.mult' with 'match';
+## -add functionality for 'polr';
+## -cleaned up code with indentations;
+## -added 'exclude' argument to manually exclude models with interaction terms/quadratic 
+##  terms in 'modavg';
+## -added 'warn' argument (to suppress warning that variables with similar names appear 
+##  in a given model) to 'modavg' function.  This is a fundamental difference with the 
+##  previous versions of the function as now the user must specify the variables (as a list) 
+##  to exclude models for the computation of model-averaged estimates (case when 
+##  interaction/polynomial terms are present).  This modication also solved the 
+##  problem of variables with similar names;
+
+
+
+#######################################################
+##revision 1.02 (29 September 2009):
+## -corrected small bug for computation of AICc (in 'AICc.glm') for binomial models with 
+##  events/trials syntax to use the correct sample size;
+## -added function to compute (Q)AIC(c) for multinomial models and updated 'aictab' 
+##  function accordingly;
+## -added citation file;
+## -changed 'Depends' to 'Suggests' for packages MASS, nnet, nlme;
+## -modified 'importance' to include 'multinom' objects;
+## -removed dependencies with nlme to avoid potential problems with lme4;
+
+
+
+#######################################################
+##revision 1.01:
+## -cleaned up documentation file, added a few more sentences and added space within formulas 
+##  for the example to display properly in pdf;
+
+

@@ -1,4 +1,4 @@
-aictab.lme <-
+aictab.gls <-
   function(cand.set,modnames, sort=TRUE, second.ord=TRUE, nobs=NULL){  #specify whether table should be sorted or not by delta AICc
 
     ##add check to see whether response variable is the same for all models
@@ -21,8 +21,8 @@ aictab.lme <-
     }
     
     Results<-data.frame(Modnames=modnames)                    #assign model names to first column
-    Results$K<-unlist(lapply(cand.set, AICc.lme, return.K=TRUE, second.ord=second.ord, nobs=nobs))     #extract number of parameters
-    Results$AICc<-unlist(lapply(cand.set, AICc.lme, return.K=FALSE, second.ord=second.ord, nobs=nobs))  #extract AICc                                      #
+    Results$K<-unlist(lapply(cand.set, AICc.gls, return.K=TRUE, second.ord=second.ord, nobs=nobs))     #extract number of parameters
+    Results$AICc<-unlist(lapply(cand.set, AICc.gls, return.K=FALSE, second.ord=second.ord, nobs=nobs))  #extract AICc                                      #
     Results$Delta_AICc<-Results$AICc-min(Results$AICc)            #compute delta AICc
     Results$ModelLik<-exp(-0.5*Results$Delta_AICc)                #compute model likelihood required to compute Akaike weights
     Results$AICcWt<-Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights

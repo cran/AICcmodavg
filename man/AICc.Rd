@@ -2,6 +2,7 @@
 \Rdversion{1.1}
 \alias{AICc}
 \alias{AICc.glm}
+\alias{AICc.gls}
 \alias{AICc.lme}
 \alias{AICc.mult}
 \alias{AICc.polr}
@@ -19,6 +20,8 @@ AICc(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, nobs = NULL)
 AICc.glm(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, nobs = 
 NULL)
 
+AICc.gls(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
+
 AICc.lme(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 
 AICc.mult(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, nobs =
@@ -26,11 +29,10 @@ NULL)
 
 AICc.polr(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 
-
 }
 \arguments{
   \item{mod}{
-an object of class 'lm', 'glm', 'lme', 'multinom', or 'polr' containing
+an object of class 'lm', 'glm', 'gls', 'lme', 'multinom', or 'polr' containing
 the output of a model. 
 }
   \item{return.K}{
@@ -54,25 +56,26 @@ information criterion (i.e., AICc).
 }
 \item{nobs}{
 this argument allows to specify a numeric value other than total sample
-size to compute the AICc.  This is relevant only for linear mixed models
-where sample size is not straightforward. In such cases, one might want
-to use the total number of observations or the number of independent
-clusters as the value of 'nobs'. 
+size to compute the AICc (i.e., 'nobs' defaults to total number of
+observations).  This is relevant only for linear mixed models where
+sample size is not straightforward. In such cases, one might use total
+number of observations or number of independent clusters as the value of
+'nobs'.
 }
 }
 \details{
-'AICc' is a function that calls either 'AICc.glm', 'AICc.lme',
-'AICc.mult', or 'AICc.polr', depending on the class of the object.  The 
-current function is implemented for 'lm','glm', 'lme', 'multinom', and
-'polr' classes and computes one of the following four information
-criteria:  Akaike's information criterion (AIC, Akaike 1973), the
-second-order or small sample AIC (AICc, Sugiura 1978, Hurvich and Tsai
-1991), the quasi-likelihood AIC (QAIC, Burnham and Anderson 2002), and
-the quasi-likelihood AICc (QAICc, Burnham and Anderson 2002).  Note that
-AIC and AICc values are meaningful to select among mixed models fit by
-maximum likelihood; AIC and AICc based on REML are valid to select
-among different models that only differ in their random effects
-(Pinheiro and Bates 2000).  
+'AICc' is a function that calls either 'AICc.glm', 'AICc.gls',
+'AICc.lme', 'AICc.mult', or 'AICc.polr', depending on the class of the
+object.  The current function is implemented for 'lm','glm', 'gls',
+'lme', 'multinom', and 'polr' classes and computes one of the following
+four information criteria:  Akaike's information criterion (AIC, Akaike
+1973), the second-order or small sample AIC (AICc, Sugiura 1978, Hurvich
+and Tsai 1991), the quasi-likelihood AIC (QAIC, Burnham and Anderson
+2002), and the quasi-likelihood AICc (QAICc, Burnham and Anderson 2002).
+Note that AIC and AICc values are meaningful to select among 'gls' or
+'lme' models fit by maximum likelihood; AIC and AICc based on REML are
+valid to select among different models that only differ in their random
+effects (Pinheiro and Bates 2000).
 
 }
 \value{
@@ -81,6 +84,9 @@ object:
 
 'AICc.glm' returns the AIC, AICc, QAIC, or QAICc depending on the values
 of the arguments.
+
+'AICc.gls' returns the AIC or AICc depending on the values of the
+arguments. 
 
 'AICc.lme' returns the AIC or AICc depending on the values of the
 arguments. 

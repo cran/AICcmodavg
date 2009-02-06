@@ -1,4 +1,4 @@
-modavg.lme <-
+modavg.gls <-
 function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = NULL, exclude = NULL,
          warn = TRUE, uncond.se = "revised"){
 
@@ -8,10 +8,10 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
 #check if all are identical
   check.class <- unique(mod.class)
   
-  if(!identical(check.class, "lme"))  {stop("This function is only appropriate with the \'lme\' class\n")}
+  if(!identical(check.class, "gls"))  {stop("This function is only appropriate with the \'gls\' class\n")}
 
 #extract model formula for each model in cand.set
-  mod_formula<-lapply(cand.set, FUN=function(i) labels(summary(i)$coefficients$fixed))
+  mod_formula<-lapply(cand.set, FUN=function(i) labels(summary(i)$coefficients))
 
   nmods <- length(cand.set)
   
@@ -127,9 +127,9 @@ for (i in 1:nmods) {
   new.cand.set<-cand.set[which(include==1)] #select models including a given parameter
   new.mod.name<-modnames[which(include==1)]    #update model names
 
-  new_table<-aictab.lme(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE,
+  new_table<-aictab.gls(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE,
                         second.ord=second.ord, nobs=nobs)  #recompute AIC table and associated measures
-  new_table$Beta_est<-unlist(lapply(new.cand.set, FUN=function(i) fixef(i)[paste(parm)])) #extract beta estimate for parm
+  new_table$Beta_est<-unlist(lapply(new.cand.set, FUN=function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
   new_table$SE<-unlist(lapply(new.cand.set, FUN=function(i) sqrt(diag(vcov(i)))[paste(parm)]))
   
 #compute model-averaged estimates, unconditional SE, and 95% CL

@@ -43,10 +43,12 @@ Akaike information criterion (i.e., AICc).
 }
   \item{nobs}{
 this argument allows to specify a numeric value other than total sample
-size to compute the AICc.  This is relevant only for linear mixed models
-where sample size is not straightforward.  In such cases, one might use
-total number of observations or number of independent clusters as the
-value of 'nobs'. }
+size to compute the AICc (i.e., 'nobs' defaults to total number of
+observations).  This is relevant only for linear mixed models where
+sample size is not straightforward. In such cases, one might use total
+number of observations or number of independent clusters as the value of
+'nobs'.
+}
 }
 \value{
 'importance' returns an object of class 'importance' consisting of the

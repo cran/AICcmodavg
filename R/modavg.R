@@ -3,13 +3,13 @@ modavg <-
            nobs = NULL, exclude = NULL, warn = TRUE, uncond.se = "revised"){
 
     mod.avg <- NULL
-    known <- rep(0, 5) #create an identifier of class type other than lm, glm, or lme
-##extract classes
+    known <- rep(0, 6) #create an identifier of class type other than lm, glm, lme, mult, polr, or gls
+    ##extract classes
     mod.class <- unlist(lapply(X=cand.set, FUN=class))
-##check if all are identical
+    ##check if all are identical
     check.class <- unique(mod.class)
 
-##determine if lm or glm  
+    ##determine if lm or glm  
     if(identical(check.class, "lm") || identical(check.class, c("glm", "lm"))) {
       mod.avg <- modavg.glm(cand.set=cand.set, parm=parm, modnames=modnames, c.hat=c.hat, gamdisp=gamdisp,
                             conf.level=conf.level, second.ord=second.ord, nobs=nobs, exclude=exclude,
@@ -18,7 +18,7 @@ modavg <-
     }   
 
 
-##determine if multinom
+    ##determine if multinom
     if(identical(check.class, c("multinom", "nnet"))) {
       mod.avg <- modavg.mult(cand.set=cand.set, parm=parm, modnames=modnames, c.hat=c.hat,
                              conf.level=conf.level, second.ord=second.ord, nobs=nobs, exclude=exclude,
@@ -27,7 +27,7 @@ modavg <-
     } 
 
     
-#determine if polr
+    ##determine if polr
     if(identical(check.class, "polr")) {
       mod.avg <- modavg.polr(cand.set=cand.set,parm=parm, modnames=modnames, conf.level=conf.level,
                              second.ord=second.ord, nobs=nobs, exclude=exclude,
@@ -37,7 +37,7 @@ modavg <-
       
 
     
-##determine if lme
+    ##determine if lme
     if(identical(check.class, "lme"))  {
       mod.avg <- modavg.lme(cand.set=cand.set, parm=parm, modnames=modnames,
                             conf.level=conf.level, second.ord=second.ord, exclude=exclude,
@@ -45,25 +45,35 @@ modavg <-
       known[4] <- 1
     }      
 
-
-##warn if models are from a mixture of model classes
-    if(identical(sort(check.class), c("lm", "lme"))) {
-      stop(cat("Function not appropriate for mixture of object classes:", "\n",
-               "avoid mixing objects of classes lm and lme", "\n"))
+    ##determine if gls
+    if(identical(check.class, "gls"))  {
+      results <- modavg.gls(cand.set=cand.set, parm=parm, modnames=modnames,
+                            conf.level=conf.level, second.ord=second.ord, exclude=exclude,
+                            warn=warn, uncond.se=uncond.se)
       known[5] <- 1
     }
 
-
-##warn if class is neither lm, glm, multinom, polr, or lme
-    if(sum(known) < 1) {stop("Function not defined for this object class")}
-
-
-##warn if exclude is neither a list nor NULL
-    if(!is.null(exclude)) {
-      if(!is.list(exclude)) {stop("Items in \"exclude\" must be specified as a list")}
+    
+    ##warn if models are from a mixture of model classes
+    if(identical(sort(check.class), c("lm", "lme"))) {
+      stop(cat("Function not appropriate for mixture of object classes:", "\n",
+               "avoid mixing objects of classes lm and lme", "\n"))
+      known[6] <- 1
     }
 
-##if(class(mod)[1]=="nlm") {mod.avg <- modavg.nlm(cand.set, parm, modnames, c.hat)}      #determine if object from nlm optimizer
+
+    ##warn if class is neither lm, glm, multinom, polr, or lme
+    if(sum(known) < 1) {stop("Function not yet defined for this object class\n")}
+
+
+    ##warn if exclude is neither a list nor NULL
+    if(!is.null(exclude)) {
+      if(!is.list(exclude)) {stop("Items in \"exclude\" must be specified as a list\n")}
+    }
+
+    
+    ##determine if object from nlm optimizer
+    ##if(class(mod)[1]=="nlm") {mod.avg <- modavg.nlm(cand.set, parm, modnames, c.hat)}      
     return(mod.avg)
 
 
