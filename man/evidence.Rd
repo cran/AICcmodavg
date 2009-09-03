@@ -60,7 +60,8 @@ Marc J. Mazerolle
 
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{c_hat}},
-\code{\link{modavg}}, \code{\link{importance}}, \code{\link{confset}}, \code{\link{modavgpred}}
+\code{\link{modavg}}, \code{\link{importance}}, \code{\link{confset}},
+\code{\link{modavgpred}} 
 }
 \examples{
 #run example from Burnham and Anderson (2002, p. 183) with two
@@ -77,7 +78,8 @@ Modnames <- c("raw density", "density corrected for resin content")
 aicctable.out <- aictab(cand.set = Cand.set, modnames = Modnames)
 
 #compute evidence ratio
-evidence(aic.table = aicctable.out, model.low = "density corrected for resin content")          
+evidence(aic.table = aicctable.out, model.low = "density corrected for
+resin content")           
 
 
 
@@ -86,15 +88,18 @@ evidence(aic.table = aicctable.out, model.low = "density corrected for resin con
 require(nlme)
 
 #set up candidate model list
-Cand.models<-list()
-Cand.models[[1]]<- lme(distance ~ age, data = Orthodont, method="ML") # random is ~ age
-Cand.models[[2]]<- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1, method="ML")
-Cand.models[[3]]<-lme(distance ~ 1, data = Orthodont, random = ~ 1, method="ML")
+Cand.models <- list()
+Cand.models[[1]] <- lme(distance ~ age, data = Orthodont, method = "ML")
+# random is ~ age | Subject
+Cand.models[[2]] <- lme(distance ~ age + Sex, data = Orthodont, random =
+~ 1, method = "ML")
+Cand.models[[3]] <- lme(distance ~ 1, data = Orthodont, random = ~ 1,
+method = "ML")
 
 #create a vector of model names
-Modnames<-NULL
+Modnames <- NULL
 for (i in 1:length(Cand.models)) {
-Modnames[i]<-paste("mod", i, sep="")
+Modnames[i] <- paste("mod", i, sep = "")
 }
 
 #compute AICc table
@@ -102,12 +107,11 @@ aic.table.1 <- aictab(cand.set = Cand.models, modnames = Modnames,
 second.ord = TRUE)
 
 #compute evidence ratio between best model and second-ranked model
-evidence(aic.table = aic.table.1, model.high = "top", model.low = "mod1") 
+evidence(aic.table = aic.table.1, model.high = "top", model.low =
+"mod1")  
 
-#compute evidence ratio between second-best model and third-ranked model
+#compute evidence ratio between second-best model and third-ranked model 
 evidence(aic.table = aic.table.1, model.high = "mod1", model.low =
 "mod3")
 }
 \keyword{models}
-
-

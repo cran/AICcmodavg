@@ -13,15 +13,18 @@ following information criteria:  AIC, AICc, QAIC, QAICc.  The table
 ranks the models based on the selected information criteria and also
 provides delta AIC and Akaike weights. 'aictab' selects the
 appropriate function to create the model selection table based on the
-object class.  The current version works with objects of 'lm', 'glm', and
-'lme' classes but does not yet allow mixing of different classes.
+object class.  The current version works with objects of 'lm', 'glm',
+and 'lme' classes but does not yet allow mixing of different classes.
 }
 \usage{
-aictab(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE, nobs = NULL)
+aictab(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE,
+nobs = NULL) 
 
-aictab.glm(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE, nobs = NULL)
+aictab.glm(cand.set, modnames, sort = TRUE, c.hat = 1,
+second.ord = TRUE, nobs = NULL) 
 
-aictab.lme(cand.set, modnames, sort = TRUE, second.ord = TRUE, nobs = NULL)
+aictab.lme(cand.set, modnames, sort = TRUE, second.ord = TRUE,
+nobs = NULL) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -38,22 +41,23 @@ logical.  If true, the model selection table is ranked according to the
 (Q)AIC(c) values.
 }
   \item{c.hat}{
-value of overdispersion parameter (i.e., variance inflation factor) such as that obtained from
-'c_hat'. Note that values of c.hat different from 1 are only appropriate
-for binomial GLM's with trials > 1 (i.e., success/trial or cbind(success,
-failure) syntax) or with Poisson GLM's.  If c.hat > 1, 'aictab' will
-return the quasi-likelihood analogue of the information criteria
-requested.
+value of overdispersion parameter (i.e., variance inflation factor) such
+as that obtained from 'c_hat'. Note that values of c.hat different from
+1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
+success/trial or cbind(success, failure) syntax) or with Poisson GLM's.
+If c.hat > 1, 'aictab' will return the quasi-likelihood analogue of the
+information criteria requested.
 }
   \item{second.ord}{
 logical.  If TRUE, the function returns the second-order
 Akaike information criterion (i.e., AICc).
 }
   \item{nobs}{
-this argument allows to specify a numeric value other than total sample size to compute
-the AICc.  This is relevant only for linear mixed models where sample size
-is not straightforward.  In such cases, one might use total number of
-observations or number of independent clusters as the value of 'nobs'.
+this argument allows to specify a numeric value other than total sample
+size to compute the AICc.  This is relevant only for linear mixed models
+where sample size is not straightforward.  In such cases, one might use
+total number of observations or number of independent clusters as the
+value of 'nobs'. 
 }
 }
 \details{
@@ -134,9 +138,9 @@ class 'aictab' with the following components:
 \item{Delta_(Q)AIC(c) }{the appropriate delta AIC component depending on
   the information criteria selected.}
 \item{ModelLik }{the relative likelihood of the model given the
-  data (exp(-0.5*delta[i])).  This is not to be confused with the likelihood of the parameters
-  given the data.  The relative likelihood can then be normalized across
-  all models to get the model probabilities.} 
+  data (exp(-0.5*delta[i])).  This is not to be confused with the
+  likelihood of the parameters given the data.  The relative likelihood
+  can then be normalized across all models to get the model probabilities.} 
 \item{(Q)AIC(c)wt}{the Akaike weights, also known as model
   probabilities.  These measures indicate the level of support in favor
   of any given model being the most parsimonious among the candidate
@@ -147,16 +151,16 @@ class 'aictab' with the following components:
 
 }
 \references{
-Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences: a
-primer on evidence}. Springer: New York.
+Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:
+  a primer on evidence}. Springer: New York.
 
 Burnham, K. P., Anderson, D. R. (2002) \emph{Model Selection and
 Multimodel Inference: a practical information-theoretic
 approach}. Second edition. Springer: New York.
 
 Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
-understanding AIC and BIC in model selection. \emph{Sociological Methods and Research} \bold{33},
-261--304.
+understanding AIC and BIC in model selection. \emph{Sociological Methods
+  and Research} \bold{33}, 261--304.
 
 Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
 Akaike's Information Criterion (AIC) to assess the strength of
@@ -166,8 +170,9 @@ biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180.
 Marc J. Mazerolle
 }
 \seealso{
-\code{\link{AICc}}, \code{\link{confset}}, \code{\link{c_hat}}, \code{\link{evidence}},
-\code{\link{modavg}}, \code{\link{importance}}, \code{\link{modavgpred}}
+\code{\link{AICc}}, \code{\link{confset}}, \code{\link{c_hat}},
+\code{\link{evidence}}, \code{\link{modavg}}, \code{\link{importance}},
+\code{\link{modavgpred}} 
 }
 \examples{
 #Mazerolle (2006) frog water loss example
@@ -175,36 +180,45 @@ data(dry.frog)
 
 #setup a subset of models of Table 1
 Cand.models<-list()
-Cand.models[[1]]<-lm(log_Mass_lost~Shade+Substrate+cent_Initial_mass+Initial_mass2, data=dry.frog)
-Cand.models[[2]]<-lm(log_Mass_lost~Shade+Substrate+cent_Initial_mass+Initial_mass2 + Shade:Substrate, data=dry.frog)
-Cand.models[[3]]<-lm(log_Mass_lost~cent_Initial_mass+Initial_mass2, data=dry.frog)
-Cand.models[[4]]<-lm(log_Mass_lost~Shade+cent_Initial_mass+Initial_mass2, data=dry.frog)
-Cand.models[[5]]<-lm(log_Mass_lost~Substrate+cent_Initial_mass+Initial_mass2, data=dry.frog)
+Cand.models[[1]] <- lm(log_Mass_lost ~ Shade + Substrate +
+cent_Initial_mass + Initial_mass2, data = dry.frog)
+Cand.models[[2]] <- lm(log_Mass_lost ~ Shade + Substrate +
+cent_Initial_mass + Initial_mass2 + Shade:Substrate, data = dry.frog)
+Cand.models[[3]] <- lm(log_Mass_lost ~ cent_Initial_mass +
+Initial_mass2, data = dry.frog)
+Cand.models[[4]] <- lm(log_Mass_lost ~ Shade + cent_Initial_mass +
+Initial_mass2, data = dry.frog)
+Cand.models[[5]] <- lm(log_Mass_lost ~ Substrate + cent_Initial_mass +
+Initial_mass2, data = dry.frog)
 
 #create a vector of names to trace back models in set
 Modnames<-paste("mod", 1:length(Cand.models), sep="")
 
 #generate AICc table
-aictab(cand.set=Cand.models, modnames=Modnames, sort=TRUE)
+aictab(cand.set = Cand.models, modnames = Modnames, sort=TRUE)
 
 
 #Burnham and Anderson (2002) flour beetle data
 data(beetle)
 #models as suggested by Burnham and Anderson p. 198          
 Cand.set <- list( )
-Cand.set[[1]] <- glm(Mortality_rate ~ Dose, family = binomial(link="logit"), weights = Number_tested, data = beetle)
-Cand.set[[2]] <- glm(Mortality_rate ~ Dose, family = binomial(link="probit"), weights = Number_tested, data = beetle)
-Cand.set[[3]] <- glm(Mortality_rate ~ Dose, family = binomial(link="cloglog"), weights = Number_tested, data = beetle)
+Cand.set[[1]] <- glm(Mortality_rate ~ Dose, family =
+binomial(link = "logit"), weights = Number_tested, data = beetle)
+Cand.set[[2]] <- glm(Mortality_rate ~ Dose, family =
+binomial(link = "probit"), weights = Number_tested, data = beetle)
+Cand.set[[3]] <- glm(Mortality_rate ~ Dose, family =
+binomial(link ="cloglog"), weights = Number_tested, data = beetle)
 
 
 #check c-hat
 c_hat(Cand.set[[1]])
 c_hat(Cand.set[[2]])
 c_hat(Cand.set[[3]])
-#lowest value of c-hat < 1 for these non-nested models, thus use c.hat= 1
+#lowest value of c-hat < 1 for these non-nested models, thus use
+#c.hat = 1 
        
 Modnames <- paste("Mod", 1:length(Cand.set), sep="")
-aictab(cand.set = Cand.set, modnames = Modnames, second.ord=FALSE)
+aictab(cand.set = Cand.set, modnames = Modnames, second.ord = FALSE)
 #note that delta AIC and Akaike weights are identical to Table 4.7
 }
 
