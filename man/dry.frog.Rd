@@ -16,7 +16,8 @@ This is a data set modified from Mazerolle and Desrochers (2005) on the mass los
     \item{\code{Species}}{a factor with levels \code{Racla}}
     \item{\code{Shade}}{a numeric vector}
     \item{\code{SVL}}{a numeric vector}
-    \item{\code{Substrate}}{a factor with levels \code{PEAT} \code{SOIL} \code{SPHAGNUM}}
+    \item{\code{Substrate}}{a factor with levels \code{PEAT},
+      \code{SOIL}, and \code{SPHAGNUM}}
     \item{\code{Initial_mass}}{a numeric vector}
     \item{\code{Mass_lost}}{a numeric vector}
     \item{\code{Airtemp}}{a numeric vector}

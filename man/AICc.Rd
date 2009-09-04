@@ -131,7 +131,7 @@ glob.mod <- lm(y ~ x1 + x2 + x3 + x4, data = cement)
 AICc(glob.mod, return.K = FALSE)
 
 #compute AIC with full likelihood 
-AICc(glob.mod, return.K = FALSE, second.ord=FALSE)
+AICc(glob.mod, return.K = FALSE, second.ord = FALSE)
 #note that Burnham and Anderson (2002) did not use full likelihood
 #in Table 3.2 and that the MLE estimate of the variance was
 #rounded to 2 digits after decimal point  
@@ -141,8 +141,9 @@ AICc(glob.mod, return.K = FALSE, second.ord=FALSE)
 #compute AICc for mixed model on Orthodont data set in Pinheiro and
 #Bates (2000)
 require(nlme)
-m1 <- lme(distance ~ age, random = ~1 | Subject, data = Orthodont, method= "ML")
-AICc(m1, return.K=FALSE)
+m1 <- lme(distance ~ age, random = ~1 | Subject, data = Orthodont,
+method= "ML")
+AICc(m1, return.K = FALSE)
 
 }
 \keyword{models}

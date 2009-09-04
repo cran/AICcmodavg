@@ -21,8 +21,8 @@ model.  The present version works with lm, glm, and lme object classes.
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2009-07-24\cr
+Version: \tab 1.01\cr
+Date: \tab 2009-09-03\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
