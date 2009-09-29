@@ -2,26 +2,31 @@
 \Rdversion{1.1}
 \alias{aictab}
 \alias{aictab.glm}
+\alias{aictab.mult}
 \alias{aictab.lme}
 \alias{print.aictab}
 \title{
-Function Creating Model Selection Tables
+Create Model Selection Tables
 }
 \description{
 This function creates a model selection table based on one of the
 following information criteria:  AIC, AICc, QAIC, QAICc.  The table
 ranks the models based on the selected information criteria and also
-provides delta AIC and Akaike weights. 'aictab' selects the
-appropriate function to create the model selection table based on the
+provides delta AIC and Akaike weights.  'aictab' selects the
+appropriate function to create the model selection table based on the 
 object class.  The current version works with objects of 'lm', 'glm',
-and 'lme' classes but does not yet allow mixing of different classes.
+'multinom', and 'lme' classes but does not yet allow mixing of different
+classes. 
 }
 \usage{
 aictab(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE,
 nobs = NULL) 
 
 aictab.glm(cand.set, modnames, sort = TRUE, c.hat = 1,
-second.ord = TRUE, nobs = NULL) 
+second.ord = TRUE, nobs = NULL)
+
+aictab.mult(cand.set, modnames, sort = TRUE, c.hat = 1,
+second.ord = TRUE, nobs = NULL)
 
 aictab.lme(cand.set, modnames, sort = TRUE, second.ord = TRUE,
 nobs = NULL) 
@@ -63,9 +68,9 @@ value of 'nobs'.
 \details{
 'aictab' is a function that calls either 'aictab.glm' or
 'aictab.lme', depending on the class of the object.  The current
-function is implemented for 'lm','glm', and 'lme' classes and constructs
-a model selection table based on one of the four information criteria:
-AIC, AICc, QAIC, and QAICc. 
+function is implemented for 'lm','glm', 'multinom', and 'lme' classes
+and constructs a model selection table based on one of the four
+information criteria:  AIC, AICc, QAIC, and QAICc. 
 
 Ten guidelines for model selection:
 

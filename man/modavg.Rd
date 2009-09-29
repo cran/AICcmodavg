@@ -2,11 +2,12 @@
 \Rdversion{1.1}
 \alias{modavg}
 \alias{modavg.glm}
+\alias{modavg.mult}
 \alias{modavg.lme}
 \alias{print.modavg}
 
 \title{
-Model-average Parameter Estimate (Multimodel Inference)
+Compute Model-averaged Parameter Estimate (Multimodel Inference)
 }
 \description{
 This function model-averages the estimate of a parameter of interest
@@ -21,6 +22,9 @@ TRUE, nobs = NULL)
 
 modavg.glm(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
 conf.level = 0.95, second.ord = TRUE, nobs = NULL) 
+
+modavg.mult(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95,
+second.ord = TRUE, nobs = NULL) 
 
 modavg.lme(cand.set, parm, modnames, conf.level = 0.95, second.ord =
 TRUE, nobs = NULL) 
@@ -75,7 +79,7 @@ interest.
 
 In cases where one desires a model-averaged estimate for a main
 effect term that is also involved in an interaction in certain models,
-modavg (correctly) excludes models with interactions involving the main
+modavg( ) correctly excludes models with interactions involving the main
 effect term when it finds that the variable also appears in an
 interaction.  Care must be taken when some models include interaction or
 polynomial terms, because main effect terms do not have the same
@@ -88,12 +92,12 @@ formula.
 
 'modavg' is a function that calls either 'modavg.glm' or 'modavg.lme',
 depending on the class of the object.  The current function is
-implemented for a list containing objects of 'lm','glm', and 'lme'
-classes. 
+implemented for a list containing objects of 'lm','glm', 'multinom', and
+'lme' classes. 
 }
 \value{
-'modavg', 'modavg.glm', and 'modavg.lme' create an object of
-class 'modavg' with the following components:
+'modavg', 'modavg.glm', 'modavg.mult', and 'modavg.lme' create an object
+of class 'modavg' with the following components:
 
 \item{Parameter}{the parameter for which a model-averaged estimate was
   obtained} 

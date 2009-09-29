@@ -1,0 +1,14 @@
+citHeader("To cite package 'AICcmodavg' in publications use:")
+desc <- packageDescription("AICcmodavg")
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
+vers <- paste("R package version", desc$Version)
+citEntry(entry="Manual",
+	title = "AICcmodavg: Model selection and multimodel inference based on (Q)AIC(c).",
+        author = personList(as.person("Marc J. Mazerolle")),
+	       year = year,
+               note = vers,
+               textVersion =
+               paste("Marc J. Mazerolle,(", 
+	       year, 
+	       "). AICcmodavg: Model selection and multimodel inference based on (Q)AIC(c). ",
+                      vers, ".", sep=""))
