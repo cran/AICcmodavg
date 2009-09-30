@@ -3,7 +3,7 @@
 \alias{modavgpred}
 \alias{print.modavgpred}
 \title{
-Computing Model-averaged Predictions
+Compute Model-averaged Predictions
 }
 \description{
 This function computes the model-averaged predictions and unconditional

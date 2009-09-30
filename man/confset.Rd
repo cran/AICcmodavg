@@ -26,12 +26,12 @@ a character vector of model names to facilitate the identification of
 each model in the model selection table.
 }
   \item{c.hat}{
-value of overdispersion parameter (i.e., variance inflation factor) such as that obtained from
-'c_hat'.  Note that values of c.hat different from 1 are only appropriate
-for binomial GLM's with trials > 1 (i.e., success/trial or cbind(success,
-failure) syntax) or with Poisson GLM's. If c.hat > 1, 'aictab' will
-return the quasi-likelihood analogue of the information criteria
-requested.
+value of overdispersion parameter (i.e., variance inflation factor) such
+as that obtained from 'c_hat'.  Note that values of c.hat different from
+1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
+success/trial or cbind(success, failure) syntax) or with Poisson
+GLM's. If c.hat > 1, 'aictab' will return the quasi-likelihood analogue
+of the information criteria requested.
 }
   \item{second.ord}{
 logical.  If TRUE, the function returns the second-order
