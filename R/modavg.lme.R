@@ -1,5 +1,5 @@
 modavg.lme <-
-function(cand.set, parm, modnames, conf.level=0.95, second.ord=TRUE, nobs=NULL){
+function(cand.set, parm, modnames, conf.level=0.95, second.ord=TRUE, nobs=NULL, exclude=NULL, warn=TRUE){
 
 #check if class is appropriate
 #extract classes
@@ -7,7 +7,7 @@ function(cand.set, parm, modnames, conf.level=0.95, second.ord=TRUE, nobs=NULL){
 #check if all are identical
   check.class <- unique(mod.class)
   
-  if(!identical(check.class, "lme"))  {stop("This function is only appropriate with lme class")}
+  if(!identical(check.class, "lme"))  {stop("This function is only appropriate with the \'lme\' class\n")}
 
 
 
@@ -26,7 +26,7 @@ for (i in 1:length(cand.set)) {
   #iterate over each element of formula[[i]] in list
   for (j in 1:length(form)) {
     idents[j] <- identical(parm, form[j])
-    idents.check[j] <- ifelse(attr(regexpr(parm, form[j]), "match.length")=="-1", 0, 1)  
+    idents.check[j] <- ifelse(is.na(match(parm, form[j])), 0, 1)  
   }
   include[i] <- ifelse(any(idents==1), 1, 0)
   include.check[i] <- ifelse(sum(idents.check)>1, "duplicates", "OK")

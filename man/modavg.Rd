@@ -2,8 +2,9 @@
 \Rdversion{1.1}
 \alias{modavg}
 \alias{modavg.glm}
-\alias{modavg.mult}
 \alias{modavg.lme}
+\alias{modavg.mult}
+\alias{modavg.polr}
 \alias{print.modavg}
 
 \title{
@@ -17,17 +18,22 @@ al. (1997) and Burnham and Anderson (2002).
 }
 \usage{
 modavg(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
-conf.level = 0.95, second.ord =
-TRUE, nobs = NULL)
+conf.level = 0.95, second.ord = TRUE, nobs = NULL, exclude = NULL,
+warn = TRUE)
 
 modavg.glm(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
-conf.level = 0.95, second.ord = TRUE, nobs = NULL) 
+conf.level = 0.95, second.ord = TRUE, nobs = NULL, exclude = NULL,
+warn = TRUE) 
+
+modavg.lme(cand.set, parm, modnames, conf.level = 0.95,
+second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE) 
 
 modavg.mult(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95,
-second.ord = TRUE, nobs = NULL) 
+second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE)
 
-modavg.lme(cand.set, parm, modnames, conf.level = 0.95, second.ord =
-TRUE, nobs = NULL) 
+modavg.polr(cand.set, parm, modnames, conf.level = 0.95,
+second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE) 
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,8 +41,10 @@ TRUE, nobs = NULL)
 a list storing each of the models in the candidate model set.
 }
   \item{parm}{
-the parameter of interest for which a model-averaged estimate is
-required. 
+the parameter of interest, enclosed between quotes, for which a
+model-averaged estimate is required.  For categorical variables,
+the level for which an estimate is needed must be included (see
+'Details' below). 
 }
   \item{modnames}{
 a character vector of model names to facilitate the identification of
@@ -61,7 +69,7 @@ the confidence level requested for the computation of unconditional
 confidence intervals.
 }
   \item{second.ord}{
-logical. If TRUE, the function returns the second-order
+logical.  If TRUE, the function returns the second-order
 Akaike information criterion (i.e., AICc).
 }
   \item{nobs}{
@@ -71,40 +79,71 @@ where sample size is not straightforward.  In such cases, one might use
 total number of observations or number of independent clusters as the
 value of 'nobs'. 
 }
+  \item{exclude}{
+this argument excludes models based on the terms specified from the 
+computation of a model-averaged estimate on 'parm'.  The 'exclude'
+argument is set to NULL by default and does not exclude any models other
+than those without the 'parm'.  When 'parm' is a main effect but is also
+involved in interactions/polynomial terms in some models, one should
+specify the interaction/polynomial terms as a list to exclude models
+with these terms from the computation of model-averaged estimate of the
+main effect (e.g., exclude = list("sex:mass", "mass2")).  See 'Details'
+and 'Examples' below.
+}
+  \item{warn}{
+logical.  If TRUE, modavg( ) performs a check and isssues a warning when
+the value in 'parm' occurs more than once in any given model.  This is a
+check for potential interaction/polynomial terms in the model when such
+terms are constructed with the usual operators (e.g., I( ) for
+polynomial terms, ':' for interaction terms). 
+}
+
 }
 \details{
-The parameter must be specified as it appears in the model output. For
+The parameter must be specified as it appears in the model output.  For
 factors, one must specify the name of the variable and the level of
-interest.
+interest.  To avoid problems, one should specify interaction terms
+consistently for all models: e.g., either a:b or b:a for all models, but
+not a mixture of both.    
 
-In cases where one desires a model-averaged estimate for a main
-effect term that is also involved in an interaction in certain models,
-modavg( ) correctly excludes models with interactions involving the main
-effect term when it finds that the variable also appears in an
-interaction.  Care must be taken when some models include interaction or
-polynomial terms, because main effect terms do not have the same
-interpretation when an interaction term appears in the same model.  To
-avoid problems, one should use the usual operators to build interaction
-terms or polynomial terms.  If polynomial or interaction terms are built
-manually, you should include the entire name of the variables involved
-because modavg( ) uses regexpr( ) to search for duplicates in model
-formula. 
+Care must be taken when some models include interaction or polynomial
+terms, because main effect terms do not have the same interpretation
+when an interaction/polynomial term appears in the same model.  In such
+cases, one should exclude models containing interaction terms where the
+main effect is involved with the 'exclude' argument of modavg( ).  Note
+that modavg( ) checks for potential cases of multiple instances of a
+variable appearing more than once in a given model (presumably in an
+interaction) and issues a warning.  To correctly compute the
+model-averaged estimate of a main effect involved in
+interaction/polynomial terms, specify the terms(s) that should not
+appear in the same model with the 'exclude' argument.  This will
+effectively exclude models from the computation of the model-averaged
+estimate.  
 
-'modavg' is a function that calls either 'modavg.glm' or 'modavg.lme',
-depending on the class of the object.  The current function is
-implemented for a list containing objects of 'lm','glm', 'multinom', and
-'lme' classes. 
+When 'warn' = TRUE, modavg( ) looks for matches among the labels of the
+estimates with identical( ).  It then, compares the results to partial
+matches with regexpr( ), and issues a warning whenever they are
+different.  As a result, modavg( ) may issue a warning when some
+variables or levels of categorical variables have nested names (e.g.,
+treat, treat10; L, TL).  When this warning is only due to the presence
+of similarly named variables in the models (and NOT due to interaction
+terms), you can suppress this warning by setting 'warn' = FALSE.    
+
+'modavg' is a function that calls 'modavg.glm', 'modavg.lme',
+'modavg.mult', or 'modavg.polr' depending on the class of the object.
+The current function is implemented for a list containing objects of
+'lm','glm', 'lme', 'multinom', and 'polr' classes. 
 }
 \value{
-'modavg', 'modavg.glm', 'modavg.mult', and 'modavg.lme' create an object
-of class 'modavg' with the following components:
+'modavg', 'modavg.glm', 'modavg.lme', 'modavg.mult', 'modavg.polr' and
+create an object of class 'modavg' with the following components:
 
 \item{Parameter}{the parameter for which a model-averaged estimate was
   obtained} 
 \item{Mod.avg.table}{the reduced model selection table based on models
   including the parameter of interest}
 \item{Mod.avg.beta}{the model-averaged estimate based on all models
-  including the parameter of interest (see details above regarding the
+  including the parameter of interest (see 'Details' above regarding the
   exclusion of models where parameter of interest is involved in an
   interaction)}
 \item{Uncond.SE}{the unconditional standard error for the model-averaged
@@ -117,18 +156,18 @@ of class 'modavg' with the following components:
 }
 \references{
 Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:
-  a primer on evidence}. Springer: New York.
+a primer on evidence}. Springer: New York.
 
 Buckland, S. T., Burnham, K. P., Augustin, N. H. (1997) Model selection:
 an integral part of inference. \emph{Biometrics} \bold{53}, 603--618.  
 
 Burnham, K. P., Anderson, D. R. (2002) \emph{Model Selection and
-  Multimodel Inference: a practical information-theoretic
-  approach}. Second edition. Springer: New York.
+Multimodel Inference: a practical information-theoretic
+approach}. Second edition. Springer: New York.
 
 Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
-  understanding AIC and BIC in model selection. \emph{Sociological
-  Methods and Research} \bold{33}, 261--304.
+understanding AIC and BIC in model selection. \emph{Sociological
+Methods and Research} \bold{33}, 261--304.
 
 Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
 Akaike's Information Criterion (AIC) to assess the strength of
@@ -194,5 +233,70 @@ modavg(parm = "TypeBOG", cand.set = Cand.mod, modnames = Modnames,
 c.hat = 1.11) 
 
 
+#example with similarly-named variables and interaction terms
+set.seed(seed = 4)
+resp <- rnorm(n = 40, mean = 3, sd = 1)
+size <- rep(c("small", "medsmall", "high", "medhigh"), times = 10)
+set.seed(seed = 4)
+mass <- rnorm(n = 40, mean = 2, sd = 0.1)
+mass2 <- mass^2
+age <- rpois(n = 40, lambda = 3.2)
+agecorr <- rpois(n = 40, lambda = 2) 
+sizecat <- rep(c("a", "ab"), times = 20)
+data1 <- data.frame(resp = resp, size = size, sizecat = sizecat,
+mass = mass, mass2 = mass2, age = age, agecorr = agecorr)
+
+#set up models in list
+Cand <- list()
+Cand[[1]] <- lm(resp ~ size + agecorr, data = data1)
+Cand[[2]] <- lm(resp ~ size + mass + agecorr, data = data1)
+Cand[[3]] <- lm(resp ~ age + mass, data = data1)
+Cand[[4]] <- lm(resp ~ age + mass + mass2, data = data1)
+Cand[[5]] <- lm(resp ~ mass + mass2 + size, data = data1)
+Cand[[6]] <- lm(resp ~ mass + mass2 + sizecat, data = data1)
+Cand[[7]] <- lm(resp ~ mass + mass2 + sizecat, data = data1)
+Cand[[8]] <- lm(resp ~ sizecat, data = data1)
+Cand[[9]] <- lm(resp ~ sizecat + mass + sizecat:mass, data = data1)
+Cand[[10]] <- lm(resp ~ agecorr + sizecat + mass + sizecat:mass,
+data = data1) 
+
+Modnames<-NULL
+for (i in 1:length(Cand)) {
+Modnames[i]<-paste("mod", i, sep="")
+}
+
+aictab(cand.set = Cand, modnames = Modnames, sort = TRUE) #correct
+
+#as expected, issues warning as mass occurs sometimes with "mass2" or
+#"sizecatab:mass" in some of the models
+\dontrun{modavg(cand.set = Cand, parm = "mass", modnames = Modnames)}
+
+#no warning issued, because "age" and "agecorr" never appear in same model
+modavg(cand.set = Cand, parm = "age", modnames = Modnames)
+
+#as expected, issues warning because warn=FALSE, but it is a very bad
+#idea in this example since "mass" occurs with "mass2" and "sizecat:mass"
+#in some of the models - results are INCORRECT
+\dontrun{modavg(cand.set = Cand, parm = "mass", modnames = Modnames,
+warn = FALSE)}
+
+#correctly excludes models with quadratic term and interaction term
+#results are CORRECT
+modavg(cand.set = Cand, parm = "mass", modnames = Modnames,
+exclude = list("mass2", "sizecat:mass")) 
+
+
+#correctly computes model-averaged estimate because no other parameter
+#occurs simultaneously in any of the models
+modavg(cand.set = Cand, parm = "sizesmall", modnames = Modnames) #correct
+
+#as expected, issues a warning because "sizecatab" occurs sometimes in
+#an interaction in some models
+\dontrun{modavg(cand.set = Cand, parm = "sizecatab",
+modnames = Modnames) }
+
+#exclude models with "sizecat:mass" interaction - results are CORRECT
+modavg(cand.set = Cand, parm = "sizecatab", modnames = Modnames,
+exclude = list("sizecat:mass")) 
 }
 \keyword{models}

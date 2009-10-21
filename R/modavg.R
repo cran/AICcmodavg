@@ -1,8 +1,9 @@
 modavg <-
-  function(cand.set, parm, modnames, c.hat=1, gamdisp=NULL, conf.level=0.95, second.ord=TRUE, nobs=NULL){
+  function(cand.set, parm, modnames, c.hat=1, gamdisp=NULL, conf.level=0.95, second.ord=TRUE, nobs=NULL,
+           exclude=NULL, warn=TRUE){
 
     mod.avg <- NULL
-    known <- rep(0, 4) #create an identifier of class type other than lm, glm, or lme
+    known <- rep(0, 5) #create an identifier of class type other than lm, glm, or lme
 #extract classes
     mod.class <- unlist(lapply(X=cand.set, FUN=class))
 #check if all are identical
@@ -11,7 +12,7 @@ modavg <-
 #determine if lm or glm  
     if(identical(check.class, "lm") || identical(check.class, c("glm", "lm"))) {
       mod.avg <- modavg.glm(cand.set=cand.set, parm=parm, modnames=modnames, c.hat=c.hat, gamdisp=gamdisp,
-                            conf.level=conf.level, second.ord=second.ord, nobs=nobs)
+                            conf.level=conf.level, second.ord=second.ord, nobs=nobs, exclude=exclude, warn=warn)
       known[1] <- 1
     }   
 
@@ -19,16 +20,25 @@ modavg <-
 #determine if multinom
     if(identical(check.class, c("multinom", "nnet"))) {
       mod.avg <- modavg.mult(cand.set=cand.set, parm=parm, modnames=modnames, c.hat=c.hat,
-                             second.ord=second.ord, nobs=nobs)
+                             conf.level=conf.level, second.ord=second.ord, nobs=nobs, exclude=exclude, warn=warn) 
       known[2] <- 1
     } 
 
+    
+#determine if polr
+    if(identical(check.class, "polr")) {
+      mod.avg <- modavg.polr(cand.set=cand.set,parm=parm, modnames=modnames, conf.level=conf.level,
+                             second.ord=second.ord, nobs=nobs, exclude=exclude, warn=warn)
+      known[3] <- 1
+    }   
+      
 
+    
 #determine if lme
     if(identical(check.class, "lme"))  {
       mod.avg <- modavg.lme(cand.set=cand.set, parm=parm, modnames=modnames,
-                            conf.level=conf.level, second.ord=second.ord, nobs=nobs)
-      known[3] <- 1
+                            conf.level=conf.level, second.ord=second.ord, exclude=exclude, warn=warn)
+      known[4] <- 1
     }      
 
 
@@ -36,11 +46,11 @@ modavg <-
     if(identical(sort(check.class), c("lm", "lme"))) {
       stop(cat("Function not appropriate for mixture of object classes:", "\n",
                "avoid mixing objects of classes lm and lme", "\n"))
-      known[4] <- 1
+      known[5] <- 1
     }
 
 
-#warn if class is neither lm, glm, or lme
+#warn if class is neither lm, glm, multinom, polr, or lme
     if(sum(known) < 1) {stop("Function not defined for this object class")}
 
 

@@ -114,7 +114,7 @@ Mod.pred.list <- list("type" = type, "mod.avg.pred" = Mod.avg.out[,1], "uncond.s
 class(Mod.pred.list) <- c("modavgpred", "list")
 return(Mod.pred.list)
 
-} else {stop("This function is only appropriate with either lm or glm classes")}
+} else {stop("This function is only appropriate with either \'lm\' or \'glm\' classes\n")}
 }
 
 print.modavgpred <- function(x, digits = 4, ...) {

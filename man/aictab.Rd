@@ -2,8 +2,9 @@
 \Rdversion{1.1}
 \alias{aictab}
 \alias{aictab.glm}
-\alias{aictab.mult}
 \alias{aictab.lme}
+\alias{aictab.mult}
+\alias{aictab.polr}
 \alias{print.aictab}
 \title{
 Create Model Selection Tables
@@ -15,8 +16,8 @@ ranks the models based on the selected information criteria and also
 provides delta AIC and Akaike weights.  'aictab' selects the
 appropriate function to create the model selection table based on the 
 object class.  The current version works with objects of 'lm', 'glm',
-'multinom', and 'lme' classes but does not yet allow mixing of different
-classes. 
+'lme', 'multinom', and 'polr' classes but does not yet allow mixing of
+different classes. 
 }
 \usage{
 aictab(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE,
@@ -25,10 +26,13 @@ nobs = NULL)
 aictab.glm(cand.set, modnames, sort = TRUE, c.hat = 1,
 second.ord = TRUE, nobs = NULL)
 
+aictab.lme(cand.set, modnames, sort = TRUE, second.ord = TRUE,
+nobs = NULL) 
+
 aictab.mult(cand.set, modnames, sort = TRUE, c.hat = 1,
 second.ord = TRUE, nobs = NULL)
 
-aictab.lme(cand.set, modnames, sort = TRUE, second.ord = TRUE,
+aictab.polr(cand.set, modnames, sort = TRUE, second.ord = TRUE,
 nobs = NULL) 
 
 }
@@ -47,7 +51,7 @@ logical.  If true, the model selection table is ranked according to the
 }
   \item{c.hat}{
 value of overdispersion parameter (i.e., variance inflation factor) such
-as that obtained from 'c_hat'. Note that values of c.hat different from
+as that obtained from 'c_hat'.  Note that values of c.hat different from
 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
 success/trial or cbind(success, failure) syntax) or with Poisson GLM's.
 If c.hat > 1, 'aictab' will return the quasi-likelihood analogue of the
@@ -66,11 +70,11 @@ value of 'nobs'.
 }
 }
 \details{
-'aictab' is a function that calls either 'aictab.glm' or
-'aictab.lme', depending on the class of the object.  The current
-function is implemented for 'lm','glm', 'multinom', and 'lme' classes
-and constructs a model selection table based on one of the four
-information criteria:  AIC, AICc, QAIC, and QAICc. 
+'aictab' is a function that calls either 'aictab.glm', 'aictab.lme',
+'aictab.mult', or 'aictab.polr' depending on the class of the object.
+The current function is implemented for 'lm', 'glm', 'lme', 'multinom',
+and 'lme' classes and constructs a model selection table based on one of
+the four information criteria:  AIC, AICc, QAIC, and QAICc. 
 
 Ten guidelines for model selection:
 
@@ -132,8 +136,8 @@ conclusions on a single 'best' model. It is an elegant way of making
 inference based on the information contained in the entire model set.
 }
 \value{
-'aictab', 'aictab.glm', and 'aictab.lme' create an object of
-class 'aictab' with the following components:
+'aictab', 'aictab.glm', 'aictab.lme', 'aictab.mult', and 'aictab.polr'
+create an object of class 'aictab' with the following components:
 
 \item{Modname}{names of each model of the candidate model set.}
 
@@ -157,7 +161,7 @@ class 'aictab' with the following components:
 }
 \references{
 Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:
-  a primer on evidence}. Springer: New York.
+a primer on evidence}. Springer: New York.
 
 Burnham, K. P., Anderson, D. R. (2002) \emph{Model Selection and
 Multimodel Inference: a practical information-theoretic
@@ -165,7 +169,7 @@ approach}. Second edition. Springer: New York.
 
 Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
 understanding AIC and BIC in model selection. \emph{Sociological Methods
-  and Research} \bold{33}, 261--304.
+and Research} \bold{33}, 261--304.
 
 Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
 Akaike's Information Criterion (AIC) to assess the strength of
