@@ -1,8 +1,8 @@
 Package: AICcmodavg
 Type: Package
 Title: Model selection and multimodel inference based on (Q)AIC(c)
-Version: 1.02
-Date: 2009-09-29
+Version: 1.03
+Date: 2009-10-21
 Author: Marc J. Mazerolle <marc.mazerolle@uqat.ca>.  Special thanks to
         T. Ergon for the original idea of storing candidate models in a
         list.
@@ -17,10 +17,12 @@ Description: This package includes functions to create model selection
         parameter of interest or predicted values.  Other handy
         functions enable the computation of relative variable
         importance, evidence ratios, and confidence sets for the best
-        model. The present version works with lm, glm, multinom, and
-        lme object classes.
+        model.  The present version works with linear models ('lm'
+        class), generalized linear models ('glm' class), linear mixed
+        models ('lme' class), multinomial and ordinal logistic
+        regressions ('multinom' and 'polr' classes).
 License: GPL (>= 2 )
 LazyLoad: yes
-Packaged: 2009-09-30 01:56:05 UTC; mazerolm
+Packaged: 2009-10-21 20:34:39 UTC; mazerolm
 Repository: CRAN
-Date/Publication: 2009-09-30 18:55:38
+Date/Publication: 2009-10-22 06:17:21

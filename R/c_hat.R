@@ -2,30 +2,30 @@
 c_hat <- function(mod){
 
 #determine family of model
-fam <- family(mod)$family
+  fam <- family(mod)$family
 
 #indicate whether family is of correct type
-known <- rep(0,2)
+  known <- rep(0,2)
    
-if(fam == "poisson" ) {
-chisq <- sum(residuals(mod, type="pearson")^2)
-c_hat.est <- chisq/mod$df.residual
-known[1] <- 1
-}
-
-if(fam == "binomial") {
-  if( any(mod$prior.weights!=1) ) {
+  if(fam == "poisson" ) {
     chisq <- sum(residuals(mod, type="pearson")^2)
     c_hat.est <- chisq/mod$df.residual
-    known[2] <- 1
-  } else {stop("With a binomial GLM, the number of successes must be summarized for valid computation of c-hat")}
+    known[1] <- 1
+  }
 
-}
+  if(fam == "binomial") {
+    if( any(mod$prior.weights!=1) ) {
+      chisq <- sum(residuals(mod, type="pearson")^2)
+      c_hat.est <- chisq/mod$df.residual
+      known[2] <- 1
+    } else {stop("With a binomial GLM, the number of successes must be summarized for valid computation of c-hat")}
+
+  }
 
 #return an error if other than binomial or Poisson glm used
-if( sum(known) == 0 ) stop("Model needs to be of class glm with either Poisson or binomial distribution")
+  if( sum(known) == 0 ) stop("Model needs to be of class glm with either Poisson or binomial distribution")
 
-return(c_hat.est)
+  return(c_hat.est)
 }
 
 

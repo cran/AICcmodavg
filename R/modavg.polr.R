@@ -1,19 +1,18 @@
-modavg.mult <-
-function(cand.set, parm, modnames, c.hat=1, conf.level=0.95, second.ord=TRUE, nobs=NULL,
-         exclude=NULL, warn=TRUE){
+modavg.polr <-
+function(cand.set, parm, modnames, conf.level=0.95, second.ord=TRUE, nobs=NULL, exclude=NULL, warn=TRUE){
 #check if class is appropriate
 #extract classes
   mod.class <- unlist(lapply(X=cand.set, FUN=class))
 #check if all are identical
   check.class <- unique(mod.class)
   
-  if(!identical(check.class, c("multinom", "nnet"))) {stop("This function is only appropriate with the \'multinom\' class\n")}
+  if(!identical(check.class, "polr")) {stop("This function is only appropriate with the \'polr\' class\n")}
     
 #extract model formula for each model in cand.set    
-  mod_formula<-lapply(cand.set, FUN=function(i) colnames(summary(i)$coefficients)) 
+  mod_formula<-lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients)) 
 
   nmods <- length(cand.set)
-  
+
 #setup matrix to indicate presence of parm in the model
   include <- matrix(NA, nrow=nmods, ncol=1)
     #add a check for multiple instances of same variable in given model (i.e., interactions)
@@ -34,8 +33,8 @@ function(cand.set, parm, modnames, c.hat=1, conf.level=0.95, second.ord=TRUE, no
     include.check[i] <- ifelse(sum(idents.check)>1, "duplicates", "OK")
   }
 
-#####################################################
-#exclude == NULL; warn=TRUE:  warn that duplicates occur and stop
+    #####################################################
+    #exclude == NULL; warn=TRUE:  warn that duplicates occur and stop
   if(is.null(exclude) && identical(warn, TRUE)) {
     if(any(include.check == "duplicates")) {
       stop("Some models possibly include more than one instance of the parameter of interest.\n",
@@ -45,10 +44,8 @@ function(cand.set, parm, modnames, c.hat=1, conf.level=0.95, second.ord=TRUE, no
     }
 
   }
-  
 
-
-#exclude == NULL; warn=FALSE:  compute model-averaged beta estimate from models including variable of interest,
+    #exclude == NULL; warn=FALSE:  compute model-averaged beta estimate from models including variable of interest,
     #assuming that the variable is not involved in interaction or higher order polynomial (x^2, x^3, etc...),
     #warn that models were not excluded
   if(is.null(exclude) && identical(warn, FALSE)) {
@@ -60,15 +57,18 @@ function(cand.set, parm, modnames, c.hat=1, conf.level=0.95, second.ord=TRUE, no
     
   }
 
+    
+  
     #if exclude is list  
   if(is.list(exclude)) {
 
     #determine number of elements in exclude
     nexcl <- length(exclude)
 
-      #check each formula for presence of exclude variable extracted with formula( )  - in multinom( ) must be extracted from call   
+      #check each formula for presence of exclude variable extracted with formula( ) - in polr( ) must be extracted from call  
     not.include <- lapply(cand.set, FUN=function(i) formula(i$call))
 
+    
       #set up a new list with model formula
     forms <- list()
     for (i in 1:nmods) {
@@ -85,7 +85,7 @@ function(cand.set, parm, modnames, c.hat=1, conf.level=0.95, second.ord=TRUE, no
 
       #search within formula for variables to exclude
     mod.exclude <- matrix(NA, nrow=nmods, ncol=nexcl)
-    
+
       #iterate over each element in exclude list
     for (var in 1:nexcl) {
 
@@ -112,9 +112,9 @@ function(cand.set, parm, modnames, c.hat=1, conf.level=0.95, second.ord=TRUE, no
       
     
   }
-  
 
-  
+
+    
 #add a check to determine if include always == 0
   if (sum(include)==0) {stop("Parameter not found in any of the candidate models") }
 
@@ -122,65 +122,29 @@ function(cand.set, parm, modnames, c.hat=1, conf.level=0.95, second.ord=TRUE, no
   new.mod.name<-modnames[which(include==1)]    #update model names
 ##
 
-
-#determine number of levels - 1
-  mod.levels<-lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients)) #extract level of response variable 
-  check.levels <- unlist(unique(mod.levels))
-
-
-#recompute AIC table and associated measures
-  new_table<-aictab.mult(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE, c.hat=c.hat,
-                         second.ord=second.ord, nobs=nobs) 
-
-#create object to store model-averaged estimate and SE's of k - 1 level of response
-  out.est <- matrix(data=NA, nrow=length(check.levels), ncol=4)
-  colnames(out.est) <- c("Mod.avg.est", "Uncond.SE", "Lower.CL", "Upper.CL")
-  rownames(out.est) <- check.levels
-
-#iterate over levels of response variable
-  for (g in 1:length(check.levels)) {
-  #extract beta estimate for parm
-    new_table$Beta_est<-unlist(lapply(new.cand.set, FUN=function(i) coef(i)[check.levels[g], paste(parm)]))
-  #extract SE of estimate for parm
-    new_table$SE<-unlist(lapply(new.cand.set, FUN=function(i) summary(i)$standard.errors[check.levels[g], paste(parm)]))
-
-#if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
-    if(c.hat > 1) {new_table$SE<-new_table$SE*sqrt(c.hat)} 
-
-#compute model-averaged estimates, unconditional SE, and 95% CL
-    if(c.hat == 1 && second.ord == TRUE) {
-      Modavg_beta<-sum(new_table$AICcWt*new_table$Beta_est)
-      Uncond_SE<-sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
-    }
-
-#if c-hat is estimated compute values accordingly and adjust table names
-    if(c.hat > 1 && second.ord == TRUE) {
-      Modavg_beta<-sum(new_table$QAICcWt*new_table$Beta_est)
-      Uncond_SE<-sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
-    }
-
-    if(c.hat == 1 && second.ord == FALSE) {
-      Modavg_beta<-sum(new_table$AICWt*new_table$Beta_est)
-      Uncond_SE<-sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
-    }
-
-#if c-hat is estimated compute values accordingly and adjust table names  
-    if(c.hat > 1 && second.ord == FALSE) {
-      Modavg_beta<-sum(new_table$QAICWt*new_table$Beta_est)
-      Uncond_SE<-sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
-    }     
-
-    out.est[g, 1] <- Modavg_beta
-    out.est[g, 2] <- Uncond_SE
+  new_table<-aictab.polr(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE,
+                         second.ord=second.ord, nobs=nobs)  #recompute AIC table and associated measures
+  new_table$Beta_est<-unlist(lapply(new.cand.set, FUN=function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
+  new_table$SE<-unlist(lapply(new.cand.set, FUN=function(i) summary(i)$coefficients[paste(parm),2]))
+    
+    #compute model-averaged estimates, unconditional SE, and 95% CL based on AICc
+  if(second.ord == TRUE) {
+    Modavg_beta<-sum(new_table$AICcWt*new_table$Beta_est)
+    Uncond_SE<-sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
   }
-     
-  zcrit <- qnorm(p=(1-conf.level)/2, lower.tail=FALSE)
-  out.est[,3] <- out.est[,1] - zcrit*out.est[,2]
-  out.est[,4] <- out.est[,1] + zcrit*out.est[,2]
-  out.modavg <- list("Parameter"=paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = out.est[,1],
-                     "Uncond.SE" = out.est[,2], "Conf.level" = conf.level, "Lower.CL"= out.est[,3],
-                     "Upper.CL" = out.est[,4])
 
+    #compute model-averaged estimates, unconditional SE, and 95% CL based on AIC
+  if(second.ord == FALSE) {
+    Modavg_beta<-sum(new_table$AICWt*new_table$Beta_est)
+    Uncond_SE<-sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+  }
+    
+  zcrit <- qnorm(p=(1-conf.level)/2, lower.tail=FALSE)
+  Lower_CL<-Modavg_beta-zcrit*Uncond_SE
+  Upper_CL<-Modavg_beta+zcrit*Uncond_SE
+  out.modavg <- list("Parameter"=paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta,
+                     "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level, "Lower.CL"= Lower_CL,
+                     "Upper.CL" = Upper_CL)
   class(out.modavg) <- c("modavg", "list")
   return(out.modavg)
 

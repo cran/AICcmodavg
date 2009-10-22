@@ -2,8 +2,9 @@
 \Rdversion{1.1}
 \alias{AICc}
 \alias{AICc.glm}
-\alias{AICc.mult}
 \alias{AICc.lme}
+\alias{AICc.mult}
+\alias{AICc.polr}
 \title{
 Computing AIC, AICc, QAIC, and QAICc
 }
@@ -18,16 +19,19 @@ AICc(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, nobs = NULL)
 AICc.glm(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, nobs = 
 NULL)
 
+AICc.lme(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
+
 AICc.mult(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, nobs =
 NULL) 
 
-AICc.lme(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
+AICc.polr(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
+
 
 }
 \arguments{
   \item{mod}{
-an object of class 'lm', 'glm', 'multinom', or 'lme' containing the output of a
-model. 
+an object of class 'lm', 'glm', 'lme', 'multinom', or 'polr' containing
+the output of a model. 
 }
   \item{return.K}{
 logical. If FALSE, the function returns the information criteria
@@ -40,44 +44,54 @@ value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from 'c_hat'.  Note that values of c.hat different from
 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
 success/trial or cbind(success, failure) syntax) or with Poisson
-GLM's.  If c.hat > 1, 'AICc' will return the quasi-likelihood analogue of
-the information criterion requested.
+GLM's.  If c.hat > 1, 'AICc' will return the quasi-likelihood analogue
+of the information criterion requested.
 }
 
 \item{second.ord}{ 
-logical. If TRUE, the function returns the second-order Akaike 
+logical.  If TRUE, the function returns the second-order Akaike 
 information criterion (i.e., AICc). 
 }
 \item{nobs}{
 this argument allows to specify a numeric value other than total sample
-size to compute the AICc. This is relevant only for linear mixed models
-where sample size is not straightforward. In such cases, one might use
-the total number of observations or the number of independent clusters
-as the value of 'nobs'. 
+size to compute the AICc.  This is relevant only for linear mixed models
+where sample size is not straightforward. In such cases, one might want
+to use the total number of observations or the number of independent
+clusters as the value of 'nobs'. 
 }
 }
 \details{
-'AICc' is a function that calls either 'AICc.glm', 'AICc.mult', or
-'AICc.lme', depending on the class of the object.  The current function
-is implemented for 'lm','glm', 'multinom', and lme classes and computes
-one of the four information criteria:  Akaike's information criterion
-(AIC, Akaike 1973), the second-order or small sample AIC (AICc, Sugiura
-1978, Hurvich and Tsai 1991), the quasi-likelihood AIC (QAIC, Burnham
-and Anderson 2002), and the quasi-likelihood AICc (QAICc, Burnham and
-Anderson 2002).  Note that AIC and AICc values are meaningful to select 
-among mixed models fit by maximum likelihood; AIC and AICc based on REML
-are only valid to select among different models that only differ in
-their random effects (Pinheiro and Bates 2000). 
+'AICc' is a function that calls either 'AICc.glm', 'AICc.lme',
+'AICc.mult', or 'AICc.polr', depending on the class of the object.  The 
+current function is implemented for 'lm','glm', 'lme', 'multinom', and
+'polr' classes and computes one of the following four information
+criteria:  Akaike's information criterion (AIC, Akaike 1973), the
+second-order or small sample AIC (AICc, Sugiura 1978, Hurvich and Tsai
+1991), the quasi-likelihood AIC (QAIC, Burnham and Anderson 2002), and
+the quasi-likelihood AICc (QAICc, Burnham and Anderson 2002).  Note that
+AIC and AICc values are meaningful to select among mixed models fit by
+maximum likelihood; AIC and AICc based on REML are valid to select
+among different models that only differ in their random effects
+(Pinheiro and Bates 2000).  
 
 }
 \value{
-'AICc' selects one of the functions below based on the class of the
+'AICc' selects one of the functions below based on the class of the 
 object:
 
-'AICc.glm' returns the AIC, AICc, QAIC, QAICc depending on the values of
+'AICc.glm' returns the AIC, AICc, QAIC, or QAICc depending on the values
+of the arguments.
+
+'AICc.lme' returns the AIC or AICc depending on the values of the
+arguments. 
+
+'AICc.mult' returns the AIC, AICc, QAIC, or QAICc depending on the
+values of the arguments.
+
+'AICc.polr' returns the AIC or AICc depending on the values of
 the arguments.
 
-'AICc.lme' returns the AIC or AICc.
+
 }
 
 \note{
@@ -107,14 +121,14 @@ understanding AIC and BIC in model selection. \emph{Sociological Methods and Res
 
 Hurvich, C. M., Tsai, C.-L. (1991) Bias of the corrected AIC
 criterion for underfitted regression and time series
-models. \emph{Biometrika} \bold{78}, 499--509.
+models. \emph{Biometrika} \bold{78}, 499--509. 
 
 Pinheiro, J. C., Bates, D. M. (2000) \emph{Mixed-effect models in S and
-  S-PLUS}. Springer Verlag: New York. 
+S-PLUS}. Springer Verlag: New York.  
 
-Sugiura, N. (1978) Further analysis of the data by Akaike's information
-criterion and the finite corrections. \emph{Communications in Statistics:
-Theory and Methods} \bold{A7}, 13--26.
+Sugiura, N. (1978) Further analysis of the data by Akaike's information 
+criterion and the finite corrections. \emph{Communications in
+Statistics:  Theory and Methods} \bold{A7}, 13--26. 
 }
 \author{
 Marc J. Mazerolle
