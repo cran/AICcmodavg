@@ -13,7 +13,7 @@ evidence <-
     return(ev.ratio.list)
   }
 
-print.evidence <- function(x, digits=4, ...) {
+print.evidence <- function(x, digits = 2, ...) {
   cat("\nEvidence ratio between models '", x$Model.high,"' and '", x$Model.low, "':\n")
   cat(round(x$Ev.ratio, digits=digits), "\n\n")
 }

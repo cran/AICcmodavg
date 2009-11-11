@@ -1,5 +1,6 @@
 modavg.lme <-
-function(cand.set, parm, modnames, conf.level=0.95, second.ord=TRUE, nobs=NULL, exclude=NULL, warn=TRUE){
+function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = NULL, exclude = NULL,
+         warn = TRUE, uncond.se = "revised"){
 
 #check if class is appropriate
 #extract classes
@@ -48,11 +49,37 @@ new.mod.name<-modnames[which(include==1)]    #update model names
 new_table<-aictab.lme(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE, second.ord=second.ord, nobs=nobs)  #recompute AIC table and associated measures
 new_table$Beta_est<-unlist(lapply(new.cand.set, FUN=function(i) fixef(i)[paste(parm)])) #extract beta estimate for parm
 new_table$SE<-unlist(lapply(new.cand.set, FUN=function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+  
 #compute model-averaged estimates, unconditional SE, and 95% CL
-if(second.ord==TRUE) {Modavg_beta<-sum(new_table$AICcWt*new_table$Beta_est)
-Uncond_SE<-sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
-                    } else {Modavg_beta<-sum(new_table$AICWt*new_table$Beta_est)
-Uncond_SE<-sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))}
+  if(second.ord==TRUE) {
+  Modavg_beta<-sum(new_table$AICcWt*new_table$Beta_est)
+
+  #unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+  if(identical(uncond.se, "old")) {
+    Uncond_SE<-sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+  }
+
+  #revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+  if(identical(uncond.se, "revised")) {
+   Uncond_SE<-sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+  } 
+
+
+                    } else {
+                      Modavg_beta<-sum(new_table$AICWt*new_table$Beta_est)
+
+                      #unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+                      if(identical(uncond.se, "old")) {
+                        Uncond_SE<-sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+                      }
+
+                      #revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+                      if(identical(uncond.se, "revised")) {
+                        Uncond_SE<-sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+                      }
+
+                      
+                    }
   
 zcrit <- qnorm(p=(1-conf.level)/2, lower.tail=FALSE)
 Lower_CL<-Modavg_beta-zcrit*Uncond_SE

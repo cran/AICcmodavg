@@ -13,7 +13,7 @@ stored in a list.
 }
 \usage{
 modavgpred(cand.set, modnames, newdata, type = "response", c.hat = 1,
-gamdisp = NULL, second.ord = TRUE, nobs = NULL)
+gamdisp = NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -55,6 +55,17 @@ size to compute the AICc.  This is relevant only for linear mixed models
 where sample size is not straightforward.  In such cases, one might use
 total number of observations or number of independent clusters as the
 value of 'nobs'. 
+}
+  \item{uncond.se}{either, "old", or "revised", specifying the equation
+used to compute the unconditional standard error of a model-averaged
+estimate.  With uncond.se = "old", computations are based on equation
+4.9 of Burnham and Anderson (2002), which was the former way to compute
+unconditional standard errors.  With uncond.se = "revised", equation
+6.12 of Burnham and Anderson (2002) is used.  Anderson (2008, p. 111)
+recommends use of the revised version for the computation of
+unconditional standard errors and it is now the default.  Note that
+versions of package AICcmodavg < 1.04 used the old method to compute
+unconditional standard errors. 
 }
 }
 \details{
@@ -135,9 +146,14 @@ new.dat <- data.frame(Shade = c(1, 1, 1), cent_Initial_mass = c(0, 0,
 0), Initial_mass2 = c(0, 0, 0), Substrate = c("SOIL", "SPHAGNUM",
 "PEAT")) 
 
+#compare unconditional SE's using both methods
 modavgpred(cand.set = Cand.models, modnames = Modnames, newdata =
-new.dat, type = "response") 
-
+new.dat, type = "response", uncond.se = "old")
+modavgpred(cand.set = Cand.models, modnames = Modnames, newdata =
+new.dat, type = "response", uncond.se = "revised")
+#round to 4 digits after decimal point
+print(modavgpred(cand.set = Cand.models, modnames = Modnames, newdata =
+new.dat, type = "response", uncond.se = "revised"), digits = 4)
 
 #Gamma glm
 #clotting data example from gamma.shape( ) in MASS package of

@@ -19,20 +19,23 @@ al. (1997) and Burnham and Anderson (2002).
 \usage{
 modavg(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
 conf.level = 0.95, second.ord = TRUE, nobs = NULL, exclude = NULL,
-warn = TRUE)
+warn = TRUE, uncond.se = "revised")
 
 modavg.glm(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
 conf.level = 0.95, second.ord = TRUE, nobs = NULL, exclude = NULL,
-warn = TRUE) 
+warn = TRUE, uncond.se = "revised")
 
 modavg.lme(cand.set, parm, modnames, conf.level = 0.95,
-second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE) 
+second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
+uncond.se = "revised")
 
 modavg.mult(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95,
-second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE)
+second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
+uncond.se = "revised")
 
 modavg.polr(cand.set, parm, modnames, conf.level = 0.95,
-second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE) 
+second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
+uncond.se = "revised")
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -98,7 +101,19 @@ terms are constructed with the usual operators (e.g., I( ) for
 polynomial terms, ':' for interaction terms). 
 }
 
+ \item{uncond.se}{either, "old", or "revised", specifying the equation
+used to compute the unconditional standard error of a model-averaged
+estimate.  With uncond.se = "old", computations are based on equation
+4.9 of Burnham and Anderson (2002), which was the former way to compute
+unconditional standard errors.  With uncond.se = "revised", equation
+6.12 of Burnham and Anderson (2002) is used.  Anderson (2008, p. 111)
+recommends use of the revised version for the computation of
+unconditional standard errors and it is now the default.  Note that
+versions of package AICcmodavg < 1.04 used the old method to compute
+unconditional standard errors. 
 }
+}
+
 \details{
 The parameter must be specified as it appears in the model output.  For
 factors, one must specify the name of the variable and the level of
@@ -222,6 +237,9 @@ invertpred", "type", "logperim + invertpred", "logperim", "invertpred",
 
 #compute model-averaged estimate of TypeBOG
 modavg(parm = "TypeBOG", cand.set = Cand.mod, modnames = Modnames)
+#round to 4 digits after decimal point
+print(modavg(parm = "TypeBOG", cand.set = Cand.mod, modnames =
+Modnames), digits = 4)
 
 
 #compute residual deviance as in Mazerolle (2006)          
