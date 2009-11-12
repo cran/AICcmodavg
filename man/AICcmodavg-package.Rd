@@ -24,32 +24,32 @@ class), multinomial and ordinal logistic regressions ('multinom' and
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.03\cr
-Date: \tab 2009-10-21\cr
+Version: \tab 1.04\cr
+Date: \tab 2009-11-11\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
 This package contains several useful functions for model selection and
 multimodel inference:
 \itemize{
-\item{\code{\link{AICc}}}{Computes AIC, AICc, and their quasi-likelihood
+\item{\code{\link{AICc}}}  {Computes AIC, AICc, and their quasi-likelihood
   counterparts (QAIC, QAICc).}
-\item{\code{\link{aictab}}}{Constructs model selection tables with
+\item{\code{\link{aictab}}}  {Constructs model selection tables with
   number of parameters, AIC, delta AIC, Akaike weights or variants based
   on other AICc, QAIC, and QAICc for a set of candidate models.}
-\item{\code{\link{confset}}}{Determines the confidence set for the best
+\item{\code{\link{confset}}}  {Determines the confidence set for the best
   model based on one of three criteria.}
-\item{\code{\link{evidence}}}{Computes the evidence ratio between the
+\item{\code{\link{evidence}}}  {Computes the evidence ratio between the
   highest-ranked model based on the information criteria selected and a
   lower-ranked model.}
-\item{\code{\link{importance}}}{Computes importance values (w+) for
+\item{\code{\link{importance}}}  {Computes importance values (w+) for
   the support of a given parameter among set of candidate models.}
-\item{\code{\link{modavg}}}{Computes model-averaged estimate,
+\item{\code{\link{modavg}}}  {Computes model-averaged estimate,
   unconditional standard error, and unconditional confidence interval of a
   parameter of interest among a set of candidate models.}
-\item{\code{\link{modavgpred}}}{Computes model-average predictions and
+\item{\code{\link{modavgpred}}}  {Computes model-average predictions and
   unconditional SE's among entire set of candidate models.}
-\item{\code{\link{c_hat}}}{Computes an estimate of variance
+\item{\code{\link{c_hat}}}  {Computes an estimate of variance
   inflation factor for binomial or Poisson GLM's based on Pearson's chi-square.}
 }
 }

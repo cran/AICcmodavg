@@ -80,8 +80,9 @@ aicctable.out <- aictab(cand.set = Cand.set, modnames = Modnames)
 #compute evidence ratio
 evidence(aic.table = aicctable.out, model.low = "density corrected for
 resin content")           
-
-
+#round to 4 digits after decimal point
+print(evidence(aic.table = aicctable.out, model.low = "density corrected for
+resin content"), digits = 4)
 
 
 #run models for the Orthodont data set in nlme

@@ -50,7 +50,7 @@ aictab <-
   }
 
 print.aictab <-
-  function(x, digits=4, ...) {
+  function(x, digits = 2, ...) {
     cat("\nModel selection based on", colnames(x)[3], ":\n")
     if (ncol(x) > 7) {cat("(c-hat estimate = ", x$c_hat[1], ")\n")}
     cat("\n")

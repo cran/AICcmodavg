@@ -44,7 +44,7 @@ confset <-
 
 
 print.confset <-
-  function(x, digits=4, ...) {
+  function(x, digits = 2, ...) {
     if(x$method=="raw") {
       cat("\nConfidence set for the best model\n\n")
       cat("Method:\t", "raw sum of model probabilities\n\n")

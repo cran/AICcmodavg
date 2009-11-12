@@ -200,13 +200,17 @@ Modnames[i] <- paste("mod", i, sep = "")
 
 #compute confidence set based on 'raw' method
 confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
-method="raw")
+method = "raw")
+#round to 4 digits after decimal point
+print(confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
+method = "raw"), digits = 4)
+
 confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
 level = 0.9, method = "raw")
 
 #compute confidence set based on 'ordinal' method
 confset(cand.set = Cand.models, modnames = Modnames, c.hat = 1,
-second.ord = TRUE, method="ordinal")
+second.ord = TRUE, method = "ordinal")
 
 #compute confidence set based on 'ratio' method
 confset(cand.set = Cand.models, modnames = Modnames, c.hat = 1,

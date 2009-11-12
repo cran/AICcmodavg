@@ -150,10 +150,11 @@ create an object of class 'aictab' with the following components:
   data (exp(-0.5*delta[i])).  This is not to be confused with the
   likelihood of the parameters given the data.  The relative likelihood
   can then be normalized across all models to get the model probabilities.} 
-\item{(Q)AIC(c)wt}{the Akaike weights, also known as model
-  probabilities.  These measures indicate the level of support in favor
-  of any given model being the most parsimonious among the candidate
-  model set.}
+\item{(Q)AIC(c)wt}{the Akaike weights, also termed "model
+  probabilities" sensu Burnham and Anderson (2002) and Anderson (2008).  These
+  measures indicate the level of support (i.e., weight of evidence) in
+  favor of any given model being the most parsimonious among the
+  candidate model set.}
 \item{Cum.Wt }{the cumulative Akaike weights.}
 \item{c.hat}{if c.hat was specified as an argument, it is included in
   the table.}
@@ -205,7 +206,9 @@ Modnames<-paste("mod", 1:length(Cand.models), sep="")
 
 #generate AICc table
 aictab(cand.set = Cand.models, modnames = Modnames, sort=TRUE)
-
+#round to 4 digits after decimal point
+print(aictab(cand.set = Cand.models, modnames = Modnames, sort=TRUE),
+digits = 4)
 
 #Burnham and Anderson (2002) flour beetle data
 data(beetle)
@@ -227,8 +230,11 @@ c_hat(Cand.set[[3]])
 #c.hat = 1 
        
 Modnames <- paste("Mod", 1:length(Cand.set), sep="")
-aictab(cand.set = Cand.set, modnames = Modnames, second.ord = FALSE)
+res.table <- aictab(cand.set = Cand.set, modnames = Modnames, second.ord = FALSE)
 #note that delta AIC and Akaike weights are identical to Table 4.7
+print(res.table, digits = 2) #print table with 2 digits
+print(res.table, digits = 4) #print table with 4 digits
+
 }
 
 \keyword{models}

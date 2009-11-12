@@ -1,6 +1,6 @@
 modavg.mult <-
-function(cand.set, parm, modnames, c.hat=1, conf.level=0.95, second.ord=TRUE, nobs=NULL,
-         exclude=NULL, warn=TRUE){
+function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TRUE, nobs = NULL,
+         exclude = NULL, warn = TRUE, uncond.se = "revised"){
 #check if class is appropriate
 #extract classes
   mod.class <- unlist(lapply(X=cand.set, FUN=class))
@@ -124,7 +124,7 @@ function(cand.set, parm, modnames, c.hat=1, conf.level=0.95, second.ord=TRUE, no
 
 
 #determine number of levels - 1
-  mod.levels<-lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients)) #extract level of response variable 
+  mod.levels <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients)) #extract level of response variable 
   check.levels <- unlist(unique(mod.levels))
 
 
@@ -140,35 +140,79 @@ function(cand.set, parm, modnames, c.hat=1, conf.level=0.95, second.ord=TRUE, no
 #iterate over levels of response variable
   for (g in 1:length(check.levels)) {
   #extract beta estimate for parm
-    new_table$Beta_est<-unlist(lapply(new.cand.set, FUN=function(i) coef(i)[check.levels[g], paste(parm)]))
+    new_table$Beta_est <- unlist(lapply(new.cand.set, FUN=function(i) coef(i)[check.levels[g], paste(parm)]))
   #extract SE of estimate for parm
-    new_table$SE<-unlist(lapply(new.cand.set, FUN=function(i) summary(i)$standard.errors[check.levels[g], paste(parm)]))
+    new_table$SE <- unlist(lapply(new.cand.set, FUN=function(i) summary(i)$standard.errors[check.levels[g], paste(parm)]))
 
 #if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
     if(c.hat > 1) {new_table$SE<-new_table$SE*sqrt(c.hat)} 
 
 #compute model-averaged estimates, unconditional SE, and 95% CL
+    #AICc
     if(c.hat == 1 && second.ord == TRUE) {
-      Modavg_beta<-sum(new_table$AICcWt*new_table$Beta_est)
-      Uncond_SE<-sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      Modavg_beta <- sum(new_table$AICcWt*new_table$Beta_est)
+
+      #unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+
+      #revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }
     }
 
-#if c-hat is estimated compute values accordingly and adjust table names
+
+    #QAICc
+    #if c-hat is estimated compute values accordingly and adjust table names
     if(c.hat > 1 && second.ord == TRUE) {
-      Modavg_beta<-sum(new_table$QAICcWt*new_table$Beta_est)
-      Uncond_SE<-sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      Modavg_beta <- sum(new_table$QAICcWt*new_table$Beta_est)
+
+      #unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE <- sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+
+      #revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table$QAICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      } 
     }
 
+    
+    #AIC
     if(c.hat == 1 && second.ord == FALSE) {
-      Modavg_beta<-sum(new_table$AICWt*new_table$Beta_est)
-      Uncond_SE<-sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
-    }
+      Modavg_beta <- sum(new_table$AICWt*new_table$Beta_est)
 
-#if c-hat is estimated compute values accordingly and adjust table names  
+      #unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+
+      #revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }
+    }
+    
+
+    #QAIC
+    #if c-hat is estimated compute values accordingly and adjust table names  
     if(c.hat > 1 && second.ord == FALSE) {
-      Modavg_beta<-sum(new_table$QAICWt*new_table$Beta_est)
-      Uncond_SE<-sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
-    }     
+      Modavg_beta <- sum(new_table$QAICWt*new_table$Beta_est)
+
+      #unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE <- sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+
+      #revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table$QAICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      } 
+    }
+    
 
     out.est[g, 1] <- Modavg_beta
     out.est[g, 2] <- Uncond_SE

@@ -1,6 +1,6 @@
 modavg <-
-  function(cand.set, parm, modnames, c.hat=1, gamdisp=NULL, conf.level=0.95, second.ord=TRUE, nobs=NULL,
-           exclude=NULL, warn=TRUE){
+  function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95, second.ord = TRUE,
+           nobs = NULL, exclude = NULL, warn = TRUE, uncond.se = "revised"){
 
     mod.avg <- NULL
     known <- rep(0, 5) #create an identifier of class type other than lm, glm, or lme
@@ -12,7 +12,8 @@ modavg <-
 #determine if lm or glm  
     if(identical(check.class, "lm") || identical(check.class, c("glm", "lm"))) {
       mod.avg <- modavg.glm(cand.set=cand.set, parm=parm, modnames=modnames, c.hat=c.hat, gamdisp=gamdisp,
-                            conf.level=conf.level, second.ord=second.ord, nobs=nobs, exclude=exclude, warn=warn)
+                            conf.level=conf.level, second.ord=second.ord, nobs=nobs, exclude=exclude,
+                            warn=warn, uncond.se=uncond.se)
       known[1] <- 1
     }   
 
@@ -20,7 +21,8 @@ modavg <-
 #determine if multinom
     if(identical(check.class, c("multinom", "nnet"))) {
       mod.avg <- modavg.mult(cand.set=cand.set, parm=parm, modnames=modnames, c.hat=c.hat,
-                             conf.level=conf.level, second.ord=second.ord, nobs=nobs, exclude=exclude, warn=warn) 
+                             conf.level=conf.level, second.ord=second.ord, nobs=nobs, exclude=exclude,
+                             warn=warn, uncond.se=uncond.se)
       known[2] <- 1
     } 
 
@@ -28,7 +30,8 @@ modavg <-
 #determine if polr
     if(identical(check.class, "polr")) {
       mod.avg <- modavg.polr(cand.set=cand.set,parm=parm, modnames=modnames, conf.level=conf.level,
-                             second.ord=second.ord, nobs=nobs, exclude=exclude, warn=warn)
+                             second.ord=second.ord, nobs=nobs, exclude=exclude,
+                             warn=warn, uncond.se=uncond.se)
       known[3] <- 1
     }   
       
@@ -37,7 +40,8 @@ modavg <-
 #determine if lme
     if(identical(check.class, "lme"))  {
       mod.avg <- modavg.lme(cand.set=cand.set, parm=parm, modnames=modnames,
-                            conf.level=conf.level, second.ord=second.ord, exclude=exclude, warn=warn)
+                            conf.level=conf.level, second.ord=second.ord, exclude=exclude,
+                            warn=warn, uncond.se=uncond.se)
       known[4] <- 1
     }      
 
@@ -62,7 +66,7 @@ modavg <-
 
 
 print.modavg <-
-  function(x, digits=4, ...) {
+  function(x, digits = 2, ...) {
     ic <- colnames(x$Mod.avg.table)[3]
     cat("\nMultimodel inference on \"", x$Parameter, "\" based on", ic, "\n")
     cat("\n", ic, "table used to obtain model-averaged estimate:\n")

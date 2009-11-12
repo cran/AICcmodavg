@@ -95,6 +95,10 @@ Modnames[i] <- paste("mod", i, sep = "")
 
 importance(cand.set = Cand.models, parm = "age", modnames = Modnames,
 second.ord = TRUE, nobs = NULL)
+#round to 4 digits after decimal point
+print(importance(cand.set = Cand.models, parm = "age", modnames = Modnames,
+second.ord = TRUE, nobs = NULL), digits = 4)
+
 
 }
 \keyword{models}

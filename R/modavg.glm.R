@@ -1,11 +1,19 @@
 modavg.glm <-
-function(cand.set, parm, modnames, c.hat=1, gamdisp=NULL, conf.level=0.95, second.ord=TRUE, nobs=NULL,
-         exclude=NULL, warn=TRUE){
+function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95, second.ord = TRUE, nobs = NULL,
+         exclude = NULL, warn = TRUE, uncond.se = "revised"){
 #check if class is appropriate
 #extract classes
   mod.class <- unlist(lapply(X=cand.set, FUN=class))
 #check if all are identical
   check.class <- unique(mod.class)
+
+  #check that link function is the same for all models
+  if(identical(check.class[1], "glm")) {
+  check.link <- unlist(lapply(X = cand.set, FUN=function(i) i$family$link))
+  unique.link <- unique(x=check.link)
+  if(length(unique.link) > 1) stop(cat("\nIt is not appropriate to compute a model averaged beta estimate\n",
+"from models using different link functions\n"))
+}
   
   if(identical(check.class, "lm") || identical(check.class, c("glm", "lm")))  {
 
@@ -124,26 +132,88 @@ function(cand.set, parm, modnames, c.hat=1, gamdisp=NULL, conf.level=0.95, secon
     new_table<-aictab.glm(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE, c.hat=c.hat, second.ord=second.ord, nobs=nobs)  #recompute AIC table and associated measures
     new_table$Beta_est<-unlist(lapply(new.cand.set, FUN=function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
     new_table$SE<-unlist(lapply(new.cand.set, FUN=function(i) summary(i)$coefficients[paste(parm),2]))
-    if(c.hat > 1) {new_table$SE<-new_table$SE*sqrt(c.hat)} #if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
+
+   
+    #if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
+    if(c.hat > 1) {
+      new_table$SE<-new_table$SE*sqrt(c.hat)
+    } 
+
     gam1<-unlist(lapply(new.cand.set, FUN=function(i) family(i)$family[1]=="Gamma")) #check for gamma regression models
-    if(any(gam1)==TRUE)  {new_table$SE<-unlist(lapply(new.cand.set, FUN=function(i) summary(i, dispersion=gamdisp)$coefficients[paste(parm),2]))} #correct SE's for estimates of gamma regressions
+    #correct SE's for estimates of gamma regressions
+    if(any(gam1)==TRUE)  {
+      new_table$SE<-unlist(lapply(new.cand.set,
+                                  FUN=function(i) summary(i, dispersion=gamdisp)$coefficients[paste(parm),2]))
+    } 
+
+
+
+    #AICc
     #compute model-averaged estimates, unconditional SE, and 95% CL
     if(c.hat == 1 && second.ord == TRUE) {
       Modavg_beta<-sum(new_table$AICcWt*new_table$Beta_est)
-      Uncond_SE<-sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+
+      #unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE<-sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+      
+      #revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE<-sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }
     }
+
+    
+    
+    #QAICc
     if(c.hat > 1 && second.ord == TRUE) {
       Modavg_beta<-sum(new_table$QAICcWt*new_table$Beta_est)
-      Uncond_SE<-sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
-    }     #if c-hat is estimated adjust table names
+      
+      #unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {      
+        Uncond_SE<-sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+      
+      #revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE<-sqrt(sum(new_table$QAICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }
+    }     
+
+
+
+    #AIC
     if(c.hat == 1 && second.ord == FALSE) {
       Modavg_beta<-sum(new_table$AICWt*new_table$Beta_est)
-      Uncond_SE<-sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      
+      #unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE<-sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+      
+      #revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE<-sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }
     }
+
+
+
+    #QAIC
     if(c.hat > 1 && second.ord == FALSE) {
       Modavg_beta<-sum(new_table$QAICWt*new_table$Beta_est)
-      Uncond_SE<-sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
-    }     #if c-hat is estimated adjust table names
+
+      #unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE<-sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+
+      #revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE<-sqrt(sum(new_table$QAICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }  
+    }     
 
     zcrit <- qnorm(p=(1-conf.level)/2, lower.tail=FALSE)
     Lower_CL<-Modavg_beta-zcrit*Uncond_SE
