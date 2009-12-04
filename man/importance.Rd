@@ -73,13 +73,13 @@ Marc J. Mazerolle
 \code{\link{modavgpred}} 
 }
 \examples{
-#example on Orthodont data set in nlme
+##example on Orthodont data set in nlme
 require(nlme)
 
-#set up candidate model list
+##set up candidate model list
 Cand.models <- list()
 Cand.models[[1]] <- lme(distance ~ age, data = Orthodont, method = "ML")
-#random is ~ age | Subject
+##random is ~ age | Subject
 Cand.models[[2]] <- lme(distance ~ age + Sex, data = Orthodont, random =
 ~ 1, method = "ML")
 Cand.models[[3]] <- lme(distance ~ 1, data = Orthodont, random = ~ 1,
@@ -87,7 +87,7 @@ method = "ML")
 Cand.models[[4]] <- lme(distance ~ Sex, data = Orthodont, random = ~ 1,
 method = "ML") 
 
-#create a vector of model names
+##create a vector of model names
 Modnames <- NULL
 for (i in 1:length(Cand.models)) {
 Modnames[i] <- paste("mod", i, sep = "")
@@ -95,7 +95,7 @@ Modnames[i] <- paste("mod", i, sep = "")
 
 importance(cand.set = Cand.models, parm = "age", modnames = Modnames,
 second.ord = TRUE, nobs = NULL)
-#round to 4 digits after decimal point
+##round to 4 digits after decimal point
 print(importance(cand.set = Cand.models, parm = "age", modnames = Modnames,
 second.ord = TRUE, nobs = NULL), digits = 4)
 

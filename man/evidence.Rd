@@ -64,54 +64,53 @@ Marc J. Mazerolle
 \code{\link{modavgpred}} 
 }
 \examples{
-#run example from Burnham and Anderson (2002, p. 183) with two
-#non-nested models
+##run example from Burnham and Anderson (2002, p. 183) with two
+##non-nested models
 data(pine)
 Cand.set <- list( )
 Cand.set[[1]] <- lm(y ~ x, data = pine)
 Cand.set[[2]] <- lm(y ~ z, data = pine)
 
-#assign model names
+##assign model names
 Modnames <- c("raw density", "density corrected for resin content")
 
-#compute model selection table
+##compute model selection table
 aicctable.out <- aictab(cand.set = Cand.set, modnames = Modnames)
 
-#compute evidence ratio
-evidence(aic.table = aicctable.out, model.low = "density corrected for
-resin content")           
-#round to 4 digits after decimal point
-print(evidence(aic.table = aicctable.out, model.low = "density corrected for
-resin content"), digits = 4)
+##compute evidence ratio
+evidence(aic.table = aicctable.out, model.low = "raw density")           
+##round to 4 digits after decimal point
+print(evidence(aic.table = aicctable.out, model.low = "raw density"),
+digits = 4)
 
 
-#run models for the Orthodont data set in nlme
+##run models for the Orthodont data set in nlme
 require(nlme)
 
-#set up candidate model list
+##set up candidate model list
 Cand.models <- list()
 Cand.models[[1]] <- lme(distance ~ age, data = Orthodont, method = "ML")
-# random is ~ age | Subject
+##random is ~ age | Subject
 Cand.models[[2]] <- lme(distance ~ age + Sex, data = Orthodont, random =
 ~ 1, method = "ML")
 Cand.models[[3]] <- lme(distance ~ 1, data = Orthodont, random = ~ 1,
 method = "ML")
 
-#create a vector of model names
+##create a vector of model names
 Modnames <- NULL
 for (i in 1:length(Cand.models)) {
 Modnames[i] <- paste("mod", i, sep = "")
 }
 
-#compute AICc table
+##compute AICc table
 aic.table.1 <- aictab(cand.set = Cand.models, modnames = Modnames,
 second.ord = TRUE)
 
-#compute evidence ratio between best model and second-ranked model
+##compute evidence ratio between best model and second-ranked model
 evidence(aic.table = aic.table.1, model.high = "top", model.low =
 "mod1")  
 
-#compute evidence ratio between second-best model and third-ranked model 
+##compute evidence ratio between second-best model and third-ranked model 
 evidence(aic.table = aic.table.1, model.high = "mod1", model.low =
 "mod3")
 }

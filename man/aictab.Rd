@@ -139,11 +139,10 @@ inference based on the information contained in the entire model set.
 'aictab', 'aictab.glm', 'aictab.lme', 'aictab.mult', and 'aictab.polr'
 create an object of class 'aictab' with the following components:
 
-\item{Modname}{names of each model of the candidate model set.}
-
-\item{K }{number of estimated parameters for each model.}
+\item{Modname}{the names of each model of the candidate model set.}
+\item{K }{the number of estimated parameters for each model.}
 \item{(Q)AIC(c) }{the information criteria requested for each model
-  (AICc, AICc, QAIC, QAICc.}
+  (AICc, AICc, QAIC, QAICc).}
 \item{Delta_(Q)AIC(c) }{the appropriate delta AIC component depending on
   the information criteria selected.}
 \item{ModelLik }{the relative likelihood of the model given the
@@ -155,10 +154,17 @@ create an object of class 'aictab' with the following components:
   measures indicate the level of support (i.e., weight of evidence) in
   favor of any given model being the most parsimonious among the
   candidate model set.}
-\item{Cum.Wt }{the cumulative Akaike weights.}
+\item{Cum.Wt }{the cumulative Akaike weights.  These are only meaningful
+if results in table are sorted in decreasing order of Akaike weights
+(i.e., sort = TRUE).}
 \item{c.hat}{if c.hat was specified as an argument, it is included in
   the table.}
-
+\item{LL}{if c.hat = 1 and parameters estimated by maximum likelihood,
+  the log-likelihood of each model.}
+\item{Quasi.LL}{if c.hat > 1, the quasi log-likelihood of each model.}
+\item{Res.LL}{if parameters are estimated by restricted
+  maximum-likelihood (REML), the restricted log-likelihood of each
+  model.}
 }
 \references{
 Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:
@@ -185,10 +191,10 @@ Marc J. Mazerolle
 \code{\link{modavgpred}} 
 }
 \examples{
-#Mazerolle (2006) frog water loss example
+##Mazerolle (2006) frog water loss example
 data(dry.frog)
 
-#setup a subset of models of Table 1
+##setup a subset of models of Table 1
 Cand.models<-list()
 Cand.models[[1]] <- lm(log_Mass_lost ~ Shade + Substrate +
 cent_Initial_mass + Initial_mass2, data = dry.frog)
@@ -201,18 +207,18 @@ Initial_mass2, data = dry.frog)
 Cand.models[[5]] <- lm(log_Mass_lost ~ Substrate + cent_Initial_mass +
 Initial_mass2, data = dry.frog)
 
-#create a vector of names to trace back models in set
+##create a vector of names to trace back models in set
 Modnames<-paste("mod", 1:length(Cand.models), sep="")
 
-#generate AICc table
-aictab(cand.set = Cand.models, modnames = Modnames, sort=TRUE)
-#round to 4 digits after decimal point
-print(aictab(cand.set = Cand.models, modnames = Modnames, sort=TRUE),
-digits = 4)
+##generate AICc table
+aictab(cand.set = Cand.models, modnames = Modnames, sort = TRUE)
+##round to 4 digits after decimal point and give log-likelihood
+print(aictab(cand.set = Cand.models, modnames = Modnames, sort = TRUE),
+digits = 4, LL = TRUE)
 
-#Burnham and Anderson (2002) flour beetle data
+##Burnham and Anderson (2002) flour beetle data
 data(beetle)
-#models as suggested by Burnham and Anderson p. 198          
+##models as suggested by Burnham and Anderson p. 198          
 Cand.set <- list( )
 Cand.set[[1]] <- glm(Mortality_rate ~ Dose, family =
 binomial(link = "logit"), weights = Number_tested, data = beetle)
@@ -222,18 +228,20 @@ Cand.set[[3]] <- glm(Mortality_rate ~ Dose, family =
 binomial(link ="cloglog"), weights = Number_tested, data = beetle)
 
 
-#check c-hat
+##check c-hat
 c_hat(Cand.set[[1]])
 c_hat(Cand.set[[2]])
 c_hat(Cand.set[[3]])
-#lowest value of c-hat < 1 for these non-nested models, thus use
-#c.hat = 1 
+##lowest value of c-hat < 1 for these non-nested models, thus use
+##c.hat = 1 
        
 Modnames <- paste("Mod", 1:length(Cand.set), sep="")
 res.table <- aictab(cand.set = Cand.set, modnames = Modnames, second.ord = FALSE)
-#note that delta AIC and Akaike weights are identical to Table 4.7
-print(res.table, digits = 2) #print table with 2 digits
-print(res.table, digits = 4) #print table with 4 digits
+##note that delta AIC and Akaike weights are identical to Table 4.7
+print(res.table, digits = 2, LL = TRUE) #print table with 2 digits and
+##print log-likelihood in table
+print(res.table, digits = 4, LL = FALSE) #print table with 4 digits and
+##do not print log-likelihood
 
 }
 

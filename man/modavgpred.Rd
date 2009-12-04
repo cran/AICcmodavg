@@ -115,7 +115,7 @@ Marc J. Mazerolle
 }
 
 \examples{
-#example from subset of models in Table 1 in Mazerolle (2006)
+##example from subset of models in Table 1 in Mazerolle (2006)
 data(dry.frog)
 
 Cand.models <- list( )
@@ -132,33 +132,33 @@ Initial_mass2, data = dry.frog)
 Cand.models[[5]] <- lm(log_Mass_lost ~ Substrate + cent_Initial_mass +
 Initial_mass2, data = dry.frog)
 
-#setup model names
+##setup model names
 Modnames <- NULL
 for (i in 1:length(Cand.models)) {
 Modnames[i] <- paste("mod", i, sep = "")
 }
 
-#compute model-averaged value and unconditional SE of predicted log of
-#mass lost for frogs of average mass in shade for each substrate type
+##compute model-averaged value and unconditional SE of predicted log of
+##mass lost for frogs of average mass in shade for each substrate type
 
-#first create data set to use for predictions
+##first create data set to use for predictions
 new.dat <- data.frame(Shade = c(1, 1, 1), cent_Initial_mass = c(0, 0,
 0), Initial_mass2 = c(0, 0, 0), Substrate = c("SOIL", "SPHAGNUM",
 "PEAT")) 
 
-#compare unconditional SE's using both methods
+##compare unconditional SE's using both methods
 modavgpred(cand.set = Cand.models, modnames = Modnames, newdata =
 new.dat, type = "response", uncond.se = "old")
 modavgpred(cand.set = Cand.models, modnames = Modnames, newdata =
 new.dat, type = "response", uncond.se = "revised")
-#round to 4 digits after decimal point
+##round to 4 digits after decimal point
 print(modavgpred(cand.set = Cand.models, modnames = Modnames, newdata =
 new.dat, type = "response", uncond.se = "revised"), digits = 4)
 
-#Gamma glm
-#clotting data example from gamma.shape( ) in MASS package of
-#Venables and Ripley (2002, Modern applied statistics with
-#S. Springer-Verlag: New York.)
+##Gamma glm
+##clotting data example from gamma.shape( ) in MASS package of
+##Venables and Ripley (2002, Modern applied statistics with
+##S. Springer-Verlag: New York.)
 clotting <- data.frame(u = c(5, 10, 15, 20, 30, 40, 60, 80, 100),
          lot1 = c(118, 58, 42, 35, 27, 25, 21, 19, 18),
          lot2 = c(69, 35, 26, 21, 18, 16, 13, 12, 12))
@@ -167,34 +167,34 @@ clot1 <- glm(lot1 ~ log(u), data = clotting, family = Gamma)
 library(MASS)
 gamma.dispersion(clot1) #dispersion parameter
 gamma.shape(clot1) #reciprocal of dispersion parameter ==
-#shape parameter 
+##shape parameter 
 summary(clot1, dispersion = gamma.dispersion(clot1))  #better
 
-#create list with models
+##create list with models
 Cand <- list()
 Cand[[1]] <- glm(lot1 ~ log(u), data = clotting, family = Gamma)
 Cand[[2]] <- glm(lot1 ~ 1, data = clotting, family = Gamma)
 
-#create vector of model names
+##create vector of model names
 Modnames <- NULL
 for (i in 1:length(Cand)) {
 Modnames[i] <- paste("mod", i, sep = "")
 }
 
-#compute model-averaged predictions on scale of response variable for
-#all observations
+##compute model-averaged predictions on scale of response variable for
+##all observations
 modavgpred(cand.set = Cand, modnames = Modnames, newdata = clotting,
 gamdisp = gamma.dispersion(clot1), type = "response") 
 
-#compute model-averaged predictions on scale of linear predictor
+##compute model-averaged predictions on scale of linear predictor
 modavgpred(cand.set = Cand, modnames = Modnames, newdata = clotting,
 gamdisp = gamma.dispersion(clot1), type = "link")
 
-#compute model-averaged predictions on scale of linear predictor
+##compute model-averaged predictions on scale of linear predictor
 \dontrun{
 modavgpred(cand.set = Cand, modnames = Modnames, newdata = clotting,
 gamdisp = gamma.dispersion(clot1), type = "terms") #returns an error
-#because it is not defined for modavgpred
+##because type = "terms" is not defined for 'modavgpred'
 }
 }
 \keyword{models}

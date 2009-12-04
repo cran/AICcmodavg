@@ -9,27 +9,42 @@ aictab.glm <-
     Results$Delta_AICc<-Results$AICc-min(Results$AICc)            #compute delta AICc
     Results$ModelLik<-exp(-0.5*Results$Delta_AICc)                #compute model likelihood required to compute Akaike weights
     Results$AICcWt<-Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights
-    if(sort)  Results<-Results[rev(order(Results$AICcWt)),] 	  #if sort=TRUE, models are ranked based on delta AICc
-    Results$Cum.Wt<-cumsum(Results$AICcWt)                        #display cumulative sum Akaike weights
-
-    #rename correctly to QAICc and add column for c-hat
+    
+         
+    ##check if AICc and c.hat = 1
+    if(second.ord==TRUE && c.hat == 1) {
+      Results$LL <- unlist(lapply(X=cand.set, FUN=function(i) logLik(i)[1]))
+    }
+    
+    ##rename correctly to QAICc and add column for c-hat
     if(second.ord==TRUE && c.hat > 1) {
-      colnames(Results)<-c("Modnames", "K", "QAICc", "Delta QAICc", "ModelLik", "QAICcWt", "Cum.Wt")
-      Results$c_hat<-c.hat
+      colnames(Results) <- c("Modnames", "K", "QAICc", "Delta QAICc", "ModelLik", "QAICcWt")
+      LL <- unlist(lapply(X=cand.set, FUN=function(i) logLik(i)[1]))
+      Results$Quasi.LL <- LL/c.hat
+      Results$c_hat <- c.hat
     }      
 
-    #rename correctly to AIC
+    ##rename correctly to AIC
     if(second.ord==FALSE && c.hat==1) {
-      colnames(Results)<-c("Modnames", "K", "AIC", "Delta AIC", "ModelLik", "AICWt", "Cum.Wt")
+      colnames(Results)<-c("Modnames", "K", "AIC", "Delta AIC", "ModelLik", "AICWt")
+      Results$LL <- unlist(lapply(X=cand.set, FUN=function(i) logLik(i)[1]))      
     }  
 
-    #rename correctly to QAIC and add column for c-hat
+    ##rename correctly to QAIC and add column for c-hat
     if(second.ord==FALSE && c.hat > 1) {
-      colnames(Results)<-c("Modnames", "K", "QAIC", "Delta QAIC", "ModelLik", "QAICWt", "Cum.Wt")
+      colnames(Results)<-c("Modnames", "K", "QAIC", "Delta QAIC", "ModelLik", "QAICWt")
+      LL <- unlist(lapply(X=cand.set, FUN=function(i) logLik(i)[1]))
+      Results$Quasi.LL <- LL/c.hat
       Results$c_hat<-c.hat
     }      
+
+    
+    if(sort)  {
+      Results<-Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results$Cum.Wt<-cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
+    } else {Results$Cum.Wt <- NULL}
+
     
     class(Results) <- c("aictab", "data.frame")
     return(Results)
   }
-

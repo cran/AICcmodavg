@@ -10,7 +10,7 @@ AICc.mult <-
       if(c.hat == 1) {
         if(second.ord==TRUE) {AICc <- -2*LL+2*K*(n/(n-K-1))} else{AICc <- -2*LL+2*K}
       }
-      if(c.hat > 1 && c.hat < 4) {K<-K+1; if(second.ord==TRUE) {
+      if(c.hat > 1 && c.hat <= 4) {K<-K+1; if(second.ord==TRUE) {
         AICc <- (-2*LL/c.hat)+2*K*(n/(n-K-1)) #adjust parameter count to include estimation of dispersion parameter
       } else{AICc <- (-2*LL/c.hat)+2*K}
                               }

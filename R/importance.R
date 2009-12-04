@@ -58,8 +58,8 @@ importance <-
 #function for nicer printing of importance values
 print.importance <- function(x, digits = 2, ...) {
   cat("\nImportance values of '", x$parm, "' :\n\n")
-  cat("w+ (models including parameter): ", round(x$w.plus, digits=4), "\n")
-  cat("w- (models excluding parameter): ", round(x$w.minus, digits=4), "\n")
+  cat("w+ (models including parameter): ", round(x$w.plus, digits=digits), "\n")
+  cat("w- (models excluding parameter): ", round(x$w.minus, digits=digits), "\n")
   cat("\n")
 }
 
