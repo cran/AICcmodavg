@@ -199,14 +199,14 @@ Marc J. Mazerolle
 \code{\link{modavgpred}}
 }
 \examples{
-#anuran larvae example from Mazerolle (2006)
+##anuran larvae example from Mazerolle (2006)
 data(min.trap)
-#assign "UPLAND" as the reference level as in Mazerolle (2006)          
+##assign "UPLAND" as the reference level as in Mazerolle (2006)          
 min.trap$Type <- relevel(min.trap$Type, ref = "UPLAND") 
 
-#set up candidate models          
+##set up candidate models          
 Cand.mod <- list()
-#global model          
+##global model          
 Cand.mod[[1]] <- glm(Num_anura ~ Type + log.Perimeter + Num_ranatra,
 family = poisson, offset = log(Effort), data = min.trap) 
 Cand.mod[[2]] <- glm(Num_anura ~ Type + log.Perimeter, family = poisson,
@@ -224,34 +224,34 @@ offset = log(Effort), data = min.trap)
 Cand.mod[[8]] <- glm(Num_anura ~ 1, family = poisson,
 offset = log(Effort), data = min.trap) 
           
-#check c-hat for global model
+##check c-hat for global model
 c_hat(Cand.mod[[1]]) #uses Pearson's chi-square/df
-#note the very low overdispersion: in this case, the analysis could be
-#conducted without correcting for c-hat as its value is reasonably close
-#to 1  
+##note the very low overdispersion: in this case, the analysis could be
+##conducted without correcting for c-hat as its value is reasonably close
+##to 1  
 
-#assign names to each model
+##assign names to each model
 Modnames <- c("type + logperim + invertpred", "type + logperim", "type +
 invertpred", "type", "logperim + invertpred", "logperim", "invertpred",
 "intercept only") 
 
-#compute model-averaged estimate of TypeBOG
+##compute model-averaged estimate of TypeBOG
 modavg(parm = "TypeBOG", cand.set = Cand.mod, modnames = Modnames)
-#round to 4 digits after decimal point
+##round to 4 digits after decimal point
 print(modavg(parm = "TypeBOG", cand.set = Cand.mod, modnames =
 Modnames), digits = 4)
 
 
-#compute residual deviance as in Mazerolle (2006)          
+##compute residual deviance as in Mazerolle (2006)          
 Cand.mod[[1]]$deviance/Cand.mod[[1]]$df.residual
 
-#compute model-averaged estimate of TypeBOG as in Table 4 of
-#Mazerolle (2006) 
+##compute model-averaged estimate of TypeBOG as in Table 4 of
+##Mazerolle (2006) 
 modavg(parm = "TypeBOG", cand.set = Cand.mod, modnames = Modnames,
 c.hat = 1.11) 
 
 
-#example with similarly-named variables and interaction terms
+##example with similarly-named variables and interaction terms
 set.seed(seed = 4)
 resp <- rnorm(n = 40, mean = 3, sd = 1)
 size <- rep(c("small", "medsmall", "high", "medhigh"), times = 10)
@@ -264,7 +264,7 @@ sizecat <- rep(c("a", "ab"), times = 20)
 data1 <- data.frame(resp = resp, size = size, sizecat = sizecat,
 mass = mass, mass2 = mass2, age = age, agecorr = agecorr)
 
-#set up models in list
+##set up models in list
 Cand <- list()
 Cand[[1]] <- lm(resp ~ size + agecorr, data = data1)
 Cand[[2]] <- lm(resp ~ size + mass + agecorr, data = data1)
@@ -285,35 +285,35 @@ Modnames[i]<-paste("mod", i, sep="")
 
 aictab(cand.set = Cand, modnames = Modnames, sort = TRUE) #correct
 
-#as expected, issues warning as mass occurs sometimes with "mass2" or
-#"sizecatab:mass" in some of the models
+##as expected, issues warning as mass occurs sometimes with "mass2" or
+##"sizecatab:mass" in some of the models
 \dontrun{modavg(cand.set = Cand, parm = "mass", modnames = Modnames)}
 
-#no warning issued, because "age" and "agecorr" never appear in same model
+##no warning issued, because "age" and "agecorr" never appear in same model
 modavg(cand.set = Cand, parm = "age", modnames = Modnames)
 
-#as expected, issues warning because warn=FALSE, but it is a very bad
-#idea in this example since "mass" occurs with "mass2" and "sizecat:mass"
-#in some of the models - results are INCORRECT
+##as expected, issues warning because warn=FALSE, but it is a very bad
+##idea in this example since "mass" occurs with "mass2" and "sizecat:mass"
+##in some of the models - results are INCORRECT
 \dontrun{modavg(cand.set = Cand, parm = "mass", modnames = Modnames,
 warn = FALSE)}
 
-#correctly excludes models with quadratic term and interaction term
-#results are CORRECT
+##correctly excludes models with quadratic term and interaction term
+##results are CORRECT
 modavg(cand.set = Cand, parm = "mass", modnames = Modnames,
 exclude = list("mass2", "sizecat:mass")) 
 
 
-#correctly computes model-averaged estimate because no other parameter
-#occurs simultaneously in any of the models
+##correctly computes model-averaged estimate because no other parameter
+##occurs simultaneously in any of the models
 modavg(cand.set = Cand, parm = "sizesmall", modnames = Modnames) #correct
 
-#as expected, issues a warning because "sizecatab" occurs sometimes in
-#an interaction in some models
+##as expected, issues a warning because "sizecatab" occurs sometimes in
+##an interaction in some models
 \dontrun{modavg(cand.set = Cand, parm = "sizecatab",
 modnames = Modnames) }
 
-#exclude models with "sizecat:mass" interaction - results are CORRECT
+##exclude models with "sizecat:mass" interaction - results are CORRECT
 modavg(cand.set = Cand, parm = "sizecatab", modnames = Modnames,
 exclude = list("sizecat:mass")) 
 }

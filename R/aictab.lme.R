@@ -21,15 +21,29 @@ aictab.lme <-
     Results$Delta_AICc<-Results$AICc-min(Results$AICc)            #compute delta AICc
     Results$ModelLik<-exp(-0.5*Results$Delta_AICc)                #compute model likelihood required to compute Akaike weights
     Results$AICcWt<-Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights
-    if(sort)  {Results<-Results[rev(order(Results$AICcWt)),]}  	  #if sort=TRUE, models are ranked based on delta AICc
-    Results$Cum.Wt<-cumsum(Results$AICcWt)                        #display cumulative sum Akaike weights
 
+    
+    #check if ML or REML used and add column accordingly
+    if(identical(check.method, "ML")) {
+      Results$LL <- unlist(lapply(X=cand.set, FUN=function(i) logLik(i)[1]))      
+    }
+
+    if(identical(check.method, "REML")) {
+      Results$Res.LL <- unlist(lapply(X=cand.set, FUN=function(i) logLik(i)[1]))      
+    }
+
+    
     #rename correctly to AIC
     if(second.ord==FALSE) {
-      colnames(Results)<-c("Modnames", "K", "AIC", "Delta AIC", "ModelLik", "AICWt", "Cum.Wt")
+      colnames(Results)[1:6] <- c("Modnames", "K", "AIC", "Delta AIC", "ModelLik", "AICWt")
     }
+
+    if(sort)  {
+      Results<-Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results$Cum.Wt<-cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
+    } else {Results$Cum.Wt <- NULL}
+   
     
     class(Results) <- c("aictab", "data.frame")
     return(Results)
   }
-

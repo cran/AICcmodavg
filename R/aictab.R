@@ -49,14 +49,33 @@ aictab <-
     return(results)
   }
 
+
+
 print.aictab <-
-  function(x, digits = 2, ...) {
+  function(x, digits = 2, LL = TRUE, ...) {
     cat("\nModel selection based on", colnames(x)[3], ":\n")
-    if (ncol(x) > 7) {cat("(c-hat estimate = ", x$c_hat[1], ")\n")}
+    if (any(names(x) == "c_hat")) {cat("(c-hat estimate = ", x$c_hat[1], ")\n")}
     cat("\n")
-    nice.tab <- cbind(x[,2], x[,3], x[,4], x[,6], x[,7])
-    colnames(nice.tab) <- colnames(x)[c(2,3,4,6,7)]
-    rownames(nice.tab) <- x[,1]
+
+    #check if Cum.Wt should be printed
+    if(any(names(x) == "Cum.Wt")) {
+      nice.tab <- cbind(x[,2], x[,3], x[,4], x[,6], x[, "Cum.Wt"], x[,7])
+      colnames(nice.tab) <- c(colnames(x)[c(2,3,4,6)], "Cum.Wt", colnames(x)[7])
+      rownames(nice.tab) <- x[,1]
+    } else {
+      nice.tab <- cbind(x[,2], x[,3], x[,4], x[,6], x[,7])
+      colnames(nice.tab) <- c(colnames(x)[c(2,3,4,6,7)])
+      rownames(nice.tab) <- x[,1]
+    }
+    
+
+    #if LL==FALSE
+    if(identical(LL, FALSE)) {
+      names.cols <- colnames(nice.tab)
+      sel.LL <- which(attr(regexpr(pattern = "LL", text = names.cols), "match.length") > 1)
+      nice.tab <- nice.tab[, -sel.LL]
+    }
+    
     print(round(nice.tab, digits=digits)) #select rounding off with digits argument
     cat("\n")
   }

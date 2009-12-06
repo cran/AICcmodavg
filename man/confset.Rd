@@ -136,14 +136,14 @@ Marc J. Mazerolle
 \code{\link{modavgpred}} 
 }
 \examples{
-#anuran larvae example from Mazerolle (2006)
+##anuran larvae example from Mazerolle (2006)
 data(min.trap)
-#assign "UPLAND" as the reference level as in Mazerolle (2006)          
+##assign "UPLAND" as the reference level as in Mazerolle (2006)          
 min.trap$Type <- relevel(min.trap$Type, ref = "UPLAND") 
 
-#set up candidate models          
+##set up candidate models          
 Cand.mod <- list()
-#global model          
+##global model          
 Cand.mod[[1]] <- glm(Num_anura ~ Type + log.Perimeter + Num_ranatra,
 family = poisson, offset = log(Effort), data = min.trap) 
 Cand.mod[[2]] <- glm(Num_anura ~ Type + log.Perimeter, family = poisson,
@@ -161,29 +161,29 @@ offset = log(Effort), data = min.trap)
 Cand.mod[[8]] <- glm(Num_anura ~ 1, family = poisson,
 offset = log(Effort), data = min.trap) 
           
-#check c-hat for global model
+##check c-hat for global model
 c_hat(Cand.mod[[1]]) #uses Pearson's chi-square/df
-#note the very low overdispersion: in this case, the analysis could be
-#conducted without correcting for c-hat as its value is reasonably close
-#to 1  
+##note the very low overdispersion: in this case, the analysis could be
+##conducted without correcting for c-hat as its value is reasonably close
+##to 1  
 
-#assign names to each model
+##assign names to each model
 Modnames <- c("type + logperim + invertpred", "type + logperim", "type +
 invertpred", "type", "logperim + invertpred", "logperim", "invertpred",
 "intercept only") 
 
-#compute confidence set based on 'raw' method
+##compute confidence set based on 'raw' method
 confset(cand.set = Cand.mod, modnames = Modnames, second.ord = TRUE,
 method = "raw")  
 
 
 
-#example with mixed model
+##example with linear mixed model
 require(nlme)
 
-#set up candidate model list for Orthodont data set shown in Pinheiro
-#and Bates (2000:  Mixed-effect models in S and S-PLUS. Springer Verlag:
-#New York.)
+##set up candidate model list for Orthodont data set shown in Pinheiro
+##and Bates (2000:  Mixed-effect models in S and S-PLUS. Springer Verlag:
+##New York.)
 Cand.models <- list()
 Cand.models[[1]] <- lme(distance ~ age, random = ~age | Subject,
 data = Orthodont, method = "ML")
@@ -192,27 +192,27 @@ random = ~ 1 | Subject, method = "ML")
 Cand.models[[3]] <- lme(distance ~ 1, data = Orthodont,
 random = ~ 1 | Subject, method = "ML")
 
-#create a vector of model names
+##create a vector of model names
 Modnames <- NULL
 for (i in 1:length(Cand.models)) {
 Modnames[i] <- paste("mod", i, sep = "")
 }
 
-#compute confidence set based on 'raw' method
+##compute confidence set based on 'raw' method
 confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
 method = "raw")
-#round to 4 digits after decimal point
+##round to 4 digits after decimal point
 print(confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
 method = "raw"), digits = 4)
 
 confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
 level = 0.9, method = "raw")
 
-#compute confidence set based on 'ordinal' method
+##compute confidence set based on 'ordinal' method
 confset(cand.set = Cand.models, modnames = Modnames, c.hat = 1,
 second.ord = TRUE, method = "ordinal")
 
-#compute confidence set based on 'ratio' method
+##compute confidence set based on 'ratio' method
 confset(cand.set = Cand.models, modnames = Modnames, c.hat = 1,
 second.ord = TRUE, method = "ratio", delta = 4)
 

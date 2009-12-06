@@ -92,7 +92,7 @@ print.confset <-
     if(x$method=="ratio") {
       cat("\nConfidence set for the best model\n\n")
       cat("Method:\t", "ranking based on relative model likelihood\n\n")
-      round.cut <- round(x$cutoff, digits=4)
+      round.cut <- round(x$cutoff, digits=digits)
       cat("Cutoff value:\t", round.cut, "(corresponds to delta AIC of", paste(x$delta,")", sep=""),"\n\n")
       cat("Confidence set for best model:\n")
       nice.tab <- cbind(x$table[,2], x$table[,3], x$table[,4], x$table[,6])

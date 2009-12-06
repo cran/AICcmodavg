@@ -24,8 +24,8 @@ class), multinomial and ordinal logistic regressions ('multinom' and
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.04\cr
-Date: \tab 2009-11-11\cr
+Version: \tab 1.05\cr
+Date: \tab 2009-12-04\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }

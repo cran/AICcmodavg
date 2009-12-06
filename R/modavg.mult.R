@@ -28,7 +28,7 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
     #iterate over each element of formula[[i]] in list
     for (j in 1:length(form)) {
       idents[j] <- identical(parm, form[j])
-      idents.check[j] <- ifelse(attr(regexpr(parm, form[j]), "match.length")=="-1", 0, 1)  
+      idents.check[j] <- ifelse(attr(regexpr(parm, form[j], fixed=TRUE), "match.length")=="-1", 0, 1)  
     }
     include[i] <- ifelse(any(idents==1), 1, 0)
     include.check[i] <- ifelse(sum(idents.check)>1, "duplicates", "OK")
@@ -60,6 +60,15 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
     
   }
 
+  
+
+    #warn if exclude is neither a list nor NULL
+    if(!is.null(exclude)) {
+      if(!is.list(exclude)) {stop("Items in \"exclude\" must be specified as a list")}
+    }
+
+
+  
     #if exclude is list  
   if(is.list(exclude)) {
 
@@ -129,8 +138,8 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
 
 
 #recompute AIC table and associated measures
-  new_table<-aictab.mult(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE, c.hat=c.hat,
-                         second.ord=second.ord, nobs=nobs) 
+  new_table<-aictab.mult(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE,
+                         c.hat=c.hat, second.ord=second.ord, nobs=nobs) 
 
 #create object to store model-averaged estimate and SE's of k - 1 level of response
   out.est <- matrix(data=NA, nrow=length(check.levels), ncol=4)
@@ -140,9 +149,12 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
 #iterate over levels of response variable
   for (g in 1:length(check.levels)) {
   #extract beta estimate for parm
-    new_table$Beta_est <- unlist(lapply(new.cand.set, FUN=function(i) coef(i)[check.levels[g], paste(parm)]))
+    new_table$Beta_est <- unlist(lapply(new.cand.set,
+                                        FUN=function(i) coef(i)[check.levels[g], paste(parm)]))
   #extract SE of estimate for parm
-    new_table$SE <- unlist(lapply(new.cand.set, FUN=function(i) summary(i)$standard.errors[check.levels[g], paste(parm)]))
+    new_table$SE <- unlist(lapply(new.cand.set,
+                                  FUN=function(i) sqrt(diag(vcov(i)))[paste(check.levels[g], ":",
+                                    parm, sep="")]))
 
 #if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
     if(c.hat > 1) {new_table$SE<-new_table$SE*sqrt(c.hat)} 

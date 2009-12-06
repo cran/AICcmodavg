@@ -35,7 +35,7 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
     #iterate over each element of formula[[i]] in list
       for (j in 1:length(form)) {
         idents[j] <- identical(parm, form[j])
-        idents.check[j] <- ifelse(attr(regexpr(parm, form[j]), "match.length")=="-1", 0, 1)  
+        idents.check[j] <- ifelse(attr(regexpr(parm, form[j], fixed=TRUE), "match.length")=="-1", 0, 1)  
       }
       include[i] <- ifelse(any(idents==1), 1, 0)
       include.check[i] <- ifelse(sum(idents.check)>1, "duplicates", "OK")
@@ -65,7 +65,13 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
       
     }
 
-    
+
+
+    #warn if exclude is neither a list nor NULL
+    if(!is.null(exclude)) {
+      if(!is.list(exclude)) {stop("Items in \"exclude\" must be specified as a list")}
+    }
+
   
     #if exclude is list  
     if(is.list(exclude)) {
@@ -131,7 +137,7 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
 
     new_table<-aictab.glm(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE, c.hat=c.hat, second.ord=second.ord, nobs=nobs)  #recompute AIC table and associated measures
     new_table$Beta_est<-unlist(lapply(new.cand.set, FUN=function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
-    new_table$SE<-unlist(lapply(new.cand.set, FUN=function(i) summary(i)$coefficients[paste(parm),2]))
+    new_table$SE<-unlist(lapply(new.cand.set, FUN=function(i) sqrt(diag(vcov(i)))[paste(parm)]))
 
    
     #if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
@@ -143,7 +149,7 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
     #correct SE's for estimates of gamma regressions
     if(any(gam1)==TRUE)  {
       new_table$SE<-unlist(lapply(new.cand.set,
-                                  FUN=function(i) summary(i, dispersion=gamdisp)$coefficients[paste(parm),2]))
+                                  FUN=function(i) sqrt(diag(vcov(i, dispersion=gamdisp)))[paste(parm)]))
     } 
 
 
