@@ -7,6 +7,12 @@
 
 
 
+########################################################
+##revision 1.13 (10 January 2010)
+##- fixed minor bug in AICc.lme( ) on the computation of n in certain lme's
+
+
+
 #######################################################
 ##revision 1.12 (22 November 2010)
 ##- fixed minor bug in 'modavgpred.lme' that generated error message when second.ord = FALSE
