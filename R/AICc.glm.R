@@ -18,7 +18,8 @@ AICc.glm <-
       #adjust parameter count to include estimation of dispersion parameter
                                             } else{AICc <- (-2*LL/c.hat)+2*K}
                                         }
-      if(c.hat > 4) stop("High overdispersion and model fit is questionable")
+      if(c.hat > 4) stop("High overdispersion and model fit is questionable\n")
+      if(c.hat < 1) stop("You should set \'c.hat\' to 1 if < 1, but values << 1 might also indicate lack of fit\n")
 
       #check if negative binomial and add 1 to K for estimation of theta if glm( ) was used
       if(!is.na(charmatch(x="Negative Binomial", table=family(mod)$family))) {

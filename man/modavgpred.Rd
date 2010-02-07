@@ -1,6 +1,8 @@
 \name{modavgpred}
 \Rdversion{1.1}
 \alias{modavgpred}
+\alias{modavgpred.glm}
+\alias{modavgpred.lme}
 \alias{print.modavgpred}
 \title{
 Compute Model-averaged Predictions
@@ -9,28 +11,37 @@ Compute Model-averaged Predictions
 This function computes the model-averaged predictions and unconditional
 standard errors based on the entire candidate model set.  The function
 is currently implemented for 'lm' and 'glm' object classes that are
-stored in a list. 
+stored in a list, as well as for 'lme' classes. 
 }
 \usage{
 modavgpred(cand.set, modnames, newdata, type = "response", c.hat = 1,
-gamdisp = NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised")
+gamdisp = NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised") 
+
+modavgpred.glm(cand.set, modnames, newdata, type = "response",
+c.hat = 1, gamdisp = NULL, second.ord = TRUE, nobs = NULL,
+uncond.se = "revised") 
+
+modavgpred.lme(cand.set, modnames, newdata, second.ord = TRUE,
+         nobs = NULL, uncond.se = "revised")
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{cand.set}{
-a list storing each of the models in the candidate model set
+a list storing each of the models in the candidate model set.
 }
   \item{modnames}{
 a character vector of model names to facilitate the identification of
-each model in the model selection table
+each model in the model selection table.
 }
   \item{newdata}{
-a data.frame with the same structure as that of the original data.frame
-for which we want to make predictions
+a data frame with the same structure as that of the original data frame
+for which we want to make predictions.
 }
   \item{type}{
-the scale of prediction requested, one of "response" or "link". Note
-that the value "terms" is not defined for 'modavgpred').
+the scale of prediction requested, one of "response" or "link" (only
+relevant to 'glm' classes). Note that the value "terms" is not defined
+for 'modavgpred'). 
 }
   \item{c.hat}{
 value of overdispersion parameter (i.e., variance inflation factor) such
@@ -43,7 +54,7 @@ matrix of the estimates by this value (i.e., SE's are multiplied by
 sqrt(c.hat)). 
 }
 \item{gamdisp}{
-  the value of the gamma dispersion parameter
+  the value of the gamma dispersion parameter.
 }
 \item{second.ord}{
   logical. If TRUE, the function returns the second-order
@@ -51,10 +62,10 @@ sqrt(c.hat)).
 }
   \item{nobs}{
 this argument allows to specify a numeric value other than total sample
-size to compute the AICc.  This is relevant only for linear mixed models
-where sample size is not straightforward.  In such cases, one might use
-total number of observations or number of independent clusters as the
-value of 'nobs'. 
+size to compute the AICc (defaults to sample size).  This is relevant
+only for linear mixed models where sample size is not straightforward.
+In such cases, one might use total number of observations or number of
+independent clusters as the value of 'nobs'. 
 }
   \item{uncond.se}{either, "old", or "revised", specifying the equation
 used to compute the unconditional standard error of a model-averaged
@@ -85,7 +96,7 @@ freedom with profile likelihood intervals or bootstrapping.
 'modavgpred' returns an object of class 'modavgpred' with the
 following components:
 \item{type}{
-  the scale of predicted values (response or link).
+  the scale of predicted values (response or link) for 'glm' classes.
 }
 \item{mod.avg.pred}{
   the model-averaged prediction over the entire candidate model set.
@@ -111,7 +122,8 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{modavg}},  \code{\link{predict}},
 \code{\link{aictab}}, \code{\link{importance}},  \code{\link{c_hat}},
-\code{\link{evidence}}, \code{\link{confset}} 
+\code{\link{evidence}}, \code{\link{confset}},
+\code{\link{predict.glm}}, \code{\link{predictSE.lme}}
 }
 
 \examples{
@@ -156,7 +168,7 @@ print(modavgpred(cand.set = Cand.models, modnames = Modnames, newdata =
 new.dat, type = "response", uncond.se = "revised"), digits = 4)
 
 ##Gamma glm
-##clotting data example from gamma.shape( ) in MASS package of
+##clotting data example from 'gamma.shape' in MASS package of
 ##Venables and Ripley (2002, Modern applied statistics with
 ##S. Springer-Verlag: New York.)
 clotting <- data.frame(u = c(5, 10, 15, 20, 30, 40, 60, 80, 100),
@@ -195,6 +207,11 @@ gamdisp = gamma.dispersion(clot1), type = "link")
 modavgpred(cand.set = Cand, modnames = Modnames, newdata = clotting,
 gamdisp = gamma.dispersion(clot1), type = "terms") #returns an error
 ##because type = "terms" is not defined for 'modavgpred'
+}
+\dontrun{
+modavgpred(cand.set = Cand, modnames = Modnames, newdata = clotting,
+type = "terms") #returns an error because no gamma dispersion parameter
+##(i.e., 'gamdisp') was specified
 }
 }
 \keyword{models}

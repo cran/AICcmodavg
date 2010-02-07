@@ -148,6 +148,8 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
     gam1<-unlist(lapply(new.cand.set, FUN=function(i) family(i)$family[1]=="Gamma")) #check for gamma regression models
     #correct SE's for estimates of gamma regressions
     if(any(gam1)==TRUE)  {
+      ##check for specification of gamdisp argument
+      if(is.null(gamdisp)) stop("You must specify a gamma dispersion parameter with gamma generalized linear models\n")
       new_table$SE<-unlist(lapply(new.cand.set,
                                   FUN=function(i) sqrt(diag(vcov(i, dispersion=gamdisp)))[paste(parm)]))
     } 

@@ -2,6 +2,7 @@
 \Rdversion{1.1}
 \alias{modavg}
 \alias{modavg.glm}
+\alias{modavg.gls}
 \alias{modavg.lme}
 \alias{modavg.mult}
 \alias{modavg.polr}
@@ -24,6 +25,10 @@ warn = TRUE, uncond.se = "revised")
 modavg.glm(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
 conf.level = 0.95, second.ord = TRUE, nobs = NULL, exclude = NULL,
 warn = TRUE, uncond.se = "revised")
+
+modavg.gls(cand.set, parm, modnames, conf.level = 0.95,
+second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
+uncond.se = "revised")
 
 modavg.lme(cand.set, parm, modnames, conf.level = 0.95,
 second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
@@ -77,10 +82,11 @@ Akaike information criterion (i.e., AICc).
 }
   \item{nobs}{
 this argument allows to specify a numeric value other than total sample
-size to compute the AICc.  This is relevant only for linear mixed models
-where sample size is not straightforward.  In such cases, one might use
-total number of observations or number of independent clusters as the
-value of 'nobs'. 
+size to compute the AICc (i.e., 'nobs' defaults to total number of
+observations).  This is relevant only for linear mixed models where
+sample size is not straightforward. In such cases, one might use total
+number of observations or number of independent clusters as the value of
+'nobs'.
 }
   \item{exclude}{
 this argument excludes models based on the terms specified from the 
@@ -135,23 +141,24 @@ appear in the same model with the 'exclude' argument.  This will
 effectively exclude models from the computation of the model-averaged
 estimate.  
 
-When 'warn' = TRUE, modavg( ) looks for matches among the labels of the
-estimates with identical( ).  It then, compares the results to partial
-matches with regexpr( ), and issues a warning whenever they are
-different.  As a result, modavg( ) may issue a warning when some
+When 'warn' = TRUE, 'modavg' looks for matches among the labels of the
+estimates with 'identical'.  It then compares the results to partial
+matches with 'regexpr', and issues a warning whenever they are
+different.  As a result, 'modavg' may issue a warning when some
 variables or levels of categorical variables have nested names (e.g.,
 treat, treat10; L, TL).  When this warning is only due to the presence
 of similarly named variables in the models (and NOT due to interaction
-terms), you can suppress this warning by setting 'warn' = FALSE.    
+terms), you can suppress this warning by setting 'warn = FALSE'.    
 
-'modavg' is a function that calls 'modavg.glm', 'modavg.lme',
-'modavg.mult', or 'modavg.polr' depending on the class of the object.
-The current function is implemented for a list containing objects of
-'lm','glm', 'lme', 'multinom', and 'polr' classes. 
+'modavg' is a function that calls 'modavg.glm', 'modavg.gls',
+'modavg.lme', 'modavg.mult', or 'modavg.polr' depending on the class of
+the object.  The current function is implemented for a list containing
+objects of 'lm', 'glm', 'gls', 'lme', 'multinom', and 'polr' classes. 
 }
 \value{
-'modavg', 'modavg.glm', 'modavg.lme', 'modavg.mult', 'modavg.polr' and
-create an object of class 'modavg' with the following components:
+'modavg', 'modavg.glm', 'modavg.gls', 'modavg.lme', 'modavg.mult', and
+'modavg.polr' create an object of class 'modavg' with the following
+components: 
 
 \item{Parameter}{the parameter for which a model-averaged estimate was
   obtained} 

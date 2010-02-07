@@ -2,6 +2,7 @@
 \Rdversion{1.1}
 \alias{aictab}
 \alias{aictab.glm}
+\alias{aictab.gls}
 \alias{aictab.lme}
 \alias{aictab.mult}
 \alias{aictab.polr}
@@ -16,8 +17,8 @@ ranks the models based on the selected information criteria and also
 provides delta AIC and Akaike weights.  'aictab' selects the
 appropriate function to create the model selection table based on the 
 object class.  The current version works with objects of 'lm', 'glm',
-'lme', 'multinom', and 'polr' classes but does not yet allow mixing of
-different classes. 
+'gls', 'lme', 'multinom', and 'polr' classes but does not yet allow
+mixing of different classes. 
 }
 \usage{
 aictab(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE,
@@ -25,6 +26,9 @@ nobs = NULL)
 
 aictab.glm(cand.set, modnames, sort = TRUE, c.hat = 1,
 second.ord = TRUE, nobs = NULL)
+
+aictab.gls(cand.set, modnames, sort = TRUE, second.ord = TRUE,
+nobs = NULL) 
 
 aictab.lme(cand.set, modnames, sort = TRUE, second.ord = TRUE,
 nobs = NULL) 
@@ -63,18 +67,20 @@ Akaike information criterion (i.e., AICc).
 }
   \item{nobs}{
 this argument allows to specify a numeric value other than total sample
-size to compute the AICc.  This is relevant only for linear mixed models
-where sample size is not straightforward.  In such cases, one might use
-total number of observations or number of independent clusters as the
-value of 'nobs'. 
+size to compute the AICc (i.e., 'nobs' defaults to total number of
+observations).  This is relevant only for linear mixed models where
+sample size is not straightforward. In such cases, one might use total
+number of observations or number of independent clusters as the value of
+'nobs'. 
 }
 }
 \details{
-'aictab' is a function that calls either 'aictab.glm', 'aictab.lme',
-'aictab.mult', or 'aictab.polr' depending on the class of the object.
-The current function is implemented for 'lm', 'glm', 'lme', 'multinom',
-and 'lme' classes and constructs a model selection table based on one of
-the four information criteria:  AIC, AICc, QAIC, and QAICc. 
+'aictab' is a function that calls either 'aictab.glm', 'aictab.gls',
+'aictab.lme', 'aictab.mult', or 'aictab.polr' depending on the class of
+the object.  The current function is implemented for 'lm', 'glm', 'gls',
+'lme', 'multinom', and 'lme' classes and constructs a model selection
+table based on one of the four information criteria:  AIC, AICc, QAIC,
+and QAICc.
 
 Ten guidelines for model selection:
 
@@ -150,10 +156,10 @@ create an object of class 'aictab' with the following components:
   likelihood of the parameters given the data.  The relative likelihood
   can then be normalized across all models to get the model probabilities.} 
 \item{(Q)AIC(c)wt}{the Akaike weights, also termed "model
-  probabilities" sensu Burnham and Anderson (2002) and Anderson (2008).  These
-  measures indicate the level of support (i.e., weight of evidence) in
-  favor of any given model being the most parsimonious among the
-  candidate model set.}
+  probabilities" sensu Burnham and Anderson (2002) and Anderson (2008).
+  These measures indicate the level of support (i.e., weight of
+  evidence) in favor of any given model being the most parsimonious
+  among the candidate model set.}
 \item{Cum.Wt }{the cumulative Akaike weights.  These are only meaningful
 if results in table are sorted in decreasing order of Akaike weights
 (i.e., sort = TRUE).}

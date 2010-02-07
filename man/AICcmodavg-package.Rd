@@ -16,7 +16,8 @@ weights.  The package also includes functions to conduct model averaging
 values.  Other handy functions enable the computation of relative
 variable importance, evidence ratios, and confidence sets for the best
 model.  The present version works with linear models ('lm' class),
-generalized linear models ('glm' class), linear mixed models ('lme'
+generalized linear models ('glm' class), linear models fit by
+generalized least squares ('gls' class), linear mixed models ('lme'
 class), multinomial and ordinal logistic regressions ('multinom' and
 'polr' classes).   
 }
@@ -24,8 +25,8 @@ class), multinomial and ordinal logistic regressions ('multinom' and
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.05\cr
-Date: \tab 2009-12-04\cr
+Version: \tab 1.06\cr
+Date: \tab 2009-02-06\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -50,7 +51,11 @@ multimodel inference:
 \item{\code{\link{modavgpred}}}  {Computes model-average predictions and
   unconditional SE's among entire set of candidate models.}
 \item{\code{\link{c_hat}}}  {Computes an estimate of variance
-  inflation factor for binomial or Poisson GLM's based on Pearson's chi-square.}
+  inflation factor for binomial or Poisson GLM's based on Pearson's
+  chi-square.}
+\item{\code{\link{predictSE.lme}}}  {Computes predictions and associated 
+  standard errors for 'lme' object based on fixed effects (i.e., 
+  population predictions).} 
 }
 }
 \author{
