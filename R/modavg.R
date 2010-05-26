@@ -3,35 +3,35 @@ modavg <-
            nobs = NULL, exclude = NULL, warn = TRUE, uncond.se = "revised"){
 
     mod.avg <- NULL
-    known <- rep(0, 6) #create an identifier of class type other than lm, glm, lme, mult, polr, or gls
+    known <- rep(0, 7) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, or mer
     ##extract classes
-    mod.class <- unlist(lapply(X=cand.set, FUN=class))
+    mod.class <- unlist(lapply(X = cand.set, FUN = class))
     ##check if all are identical
     check.class <- unique(mod.class)
 
     ##determine if lm or glm  
     if(identical(check.class, "lm") || identical(check.class, c("glm", "lm"))) {
-      mod.avg <- modavg.glm(cand.set=cand.set, parm=parm, modnames=modnames, c.hat=c.hat, gamdisp=gamdisp,
-                            conf.level=conf.level, second.ord=second.ord, nobs=nobs, exclude=exclude,
-                            warn=warn, uncond.se=uncond.se)
+      mod.avg <- modavg.glm(cand.set = cand.set, parm = parm, modnames = modnames, c.hat = c.hat, gamdisp = gamdisp,
+                            conf.level = conf.level, second.ord = second.ord, nobs = nobs, exclude = exclude,
+                            warn = warn, uncond.se = uncond.se)
       known[1] <- 1
     }   
 
 
     ##determine if multinom
     if(identical(check.class, c("multinom", "nnet"))) {
-      mod.avg <- modavg.mult(cand.set=cand.set, parm=parm, modnames=modnames, c.hat=c.hat,
-                             conf.level=conf.level, second.ord=second.ord, nobs=nobs, exclude=exclude,
-                             warn=warn, uncond.se=uncond.se)
+      mod.avg <- modavg.mult(cand.set = cand.set, parm = parm, modnames = modnames, c.hat = c.hat,
+                             conf.level = conf.level, second.ord = second.ord, nobs = nobs, exclude = exclude,
+                             warn = warn, uncond.se = uncond.se)
       known[2] <- 1
     } 
 
     
     ##determine if polr
     if(identical(check.class, "polr")) {
-      mod.avg <- modavg.polr(cand.set=cand.set,parm=parm, modnames=modnames, conf.level=conf.level,
-                             second.ord=second.ord, nobs=nobs, exclude=exclude,
-                             warn=warn, uncond.se=uncond.se)
+      mod.avg <- modavg.polr(cand.set = cand.set,parm = parm, modnames = modnames, conf.level = conf.level,
+                             second.ord = second.ord, nobs = nobs, exclude = exclude,
+                             warn = warn, uncond.se = uncond.se)
       known[3] <- 1
     }   
       
@@ -39,30 +39,40 @@ modavg <-
     
     ##determine if lme
     if(identical(check.class, "lme"))  {
-      mod.avg <- modavg.lme(cand.set=cand.set, parm=parm, modnames=modnames,
-                            conf.level=conf.level, second.ord=second.ord, exclude=exclude,
-                            warn=warn, uncond.se=uncond.se)
+      mod.avg <- modavg.lme(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
+                            second.ord = second.ord, nobs = nobs, exclude = exclude,
+                            warn = warn, uncond.se = uncond.se)
       known[4] <- 1
     }      
 
     ##determine if gls
     if(identical(check.class, "gls"))  {
-      results <- modavg.gls(cand.set=cand.set, parm=parm, modnames=modnames,
-                            conf.level=conf.level, second.ord=second.ord, exclude=exclude,
-                            warn=warn, uncond.se=uncond.se)
+      mod.avg <- modavg.gls(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
+                            second.ord = second.ord, nobs = nobs, exclude = exclude,
+                            warn = warn, uncond.se = uncond.se)
       known[5] <- 1
     }
+
+    
+    ##determine if mer
+    if(identical(check.class, "mer"))  {
+      mod.avg <- modavg.mer(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
+                            second.ord = second.ord, nobs = nobs, exclude = exclude,
+                            warn = warn, uncond.se = uncond.se)
+      known[6] <- 1
+    }
+
 
     
     ##warn if models are from a mixture of model classes
     if(identical(sort(check.class), c("lm", "lme"))) {
       stop(cat("Function not appropriate for mixture of object classes:", "\n",
                "avoid mixing objects of classes lm and lme", "\n"))
-      known[6] <- 1
+      known[7] <- 1
     }
 
 
-    ##warn if class is neither lm, glm, multinom, polr, or lme
+    ##warn if class is neither lm, glm, multinom, polr, lme, gls nor mer
     if(sum(known) < 1) {stop("Function not yet defined for this object class\n")}
 
 

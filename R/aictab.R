@@ -1,47 +1,55 @@
 aictab <-
-  function(cand.set, modnames, sort=TRUE, c.hat=1, second.ord=TRUE, nobs=NULL) {
+  function(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE, nobs = NULL) {
     results <- NULL
-    known <- rep(0, 6) #create an identifier of class type other than lm, glm, multinom, polr, or lme
+    known <- rep(0, 7) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, or mer
     ##extract classes
-    mod.class <- unlist(lapply(X=cand.set, FUN=class))
+    mod.class <- unlist(lapply(X = cand.set, FUN = class))
     ##check if all are identical
     check.class <- unique(mod.class)
 
     ##determine if lm or glm
     if(identical(check.class, "lm") || identical(check.class, c("glm", "lm"))) {
-      results <- aictab.glm(cand.set=cand.set, modnames=modnames, sort=sort, c.hat=c.hat,
-                            second.ord=second.ord, nobs=nobs)
+      results <- aictab.glm(cand.set = cand.set, modnames = modnames, sort = sort, c.hat = c.hat,
+                            second.ord = second.ord, nobs = nobs)
       known[1] <- 1
     }   
 
     ##determine if multinom
     if(identical(sort(check.class), c("multinom", "nnet"))) {
-      results <- aictab.mult(cand.set=cand.set, modnames=modnames, sort=sort, c.hat=c.hat,
-                             second.ord=second.ord, nobs=nobs)
+      results <- aictab.mult(cand.set = cand.set, modnames = modnames, sort = sort, c.hat = c.hat,
+                             second.ord = second.ord, nobs = nobs)
       known[2] <- 1
     }   
 
     ##determine if polr
     if(identical(check.class, "polr")) {
-      results <- aictab.polr(cand.set=cand.set, modnames=modnames, sort=sort,
-                             second.ord=second.ord, nobs=nobs)
+      results <- aictab.polr(cand.set = cand.set, modnames = modnames, sort = sort,
+                             second.ord = second.ord, nobs = nobs)
       known[3] <- 1
     }   
       
 
     ##determine if lme
     if(identical(check.class, "lme"))  {
-      results <- aictab.lme(cand.set=cand.set, modnames=modnames, sort=sort,
-                            second.ord=second.ord, nobs=nobs)
+      results <- aictab.lme(cand.set = cand.set, modnames = modnames, sort = sort,
+                            second.ord = second.ord, nobs = nobs)
       known[4] <- 1
     }
 
 
     ##determine if gls
     if(identical(check.class, "gls"))  {
-      results <- aictab.gls(cand.set=cand.set, modnames=modnames, sort=sort,
-                            second.ord=second.ord, nobs=nobs)
+      results <- aictab.gls(cand.set = cand.set, modnames = modnames, sort = sort,
+                            second.ord = second.ord, nobs = nobs)
       known[5] <- 1
+    }
+
+    
+    ##determine if mer
+    if(identical(check.class, "mer"))  {
+      results <- aictab.mer(cand.set = cand.set, modnames = modnames, sort = sort,
+                            second.ord = second.ord, nobs = nobs)
+      known[6] <- 1
     }
 
     
@@ -49,10 +57,10 @@ aictab <-
     if(identical(sort(check.class), c("lm", "lme"))) {
       stop(cat("Function not appropriate for mixture of object classes:", "\n",
                "avoid mixing objects of classes \'lm\' and \'lme\'\n"))
-      known[6] <- 1
+      known[7] <- 1
     }
 
-#warn if class is neither lm, glm, multinom, polr, nor lme
+    ##warn if class is neither lm, glm, multinom, polr, lme, gls nor mer
     if(sum(known) < 1) {stop("Function not yet defined for this object class\n")}
 
     return(results)
@@ -85,7 +93,7 @@ print.aictab <-
       nice.tab <- nice.tab[, -sel.LL]
     }
     
-    print(round(nice.tab, digits=digits)) #select rounding off with digits argument
+    print(round(nice.tab, digits = digits)) #select rounding off with digits argument
     cat("\n")
   }
 

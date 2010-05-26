@@ -23,7 +23,7 @@ AICc.mult <-
       AICc
      
       
-    } else {stop("This function is only appropriate with multinom classes")}
+    } else {stop("This function is only appropriate with objects of \'multinom\' class")}
     
   }
 
