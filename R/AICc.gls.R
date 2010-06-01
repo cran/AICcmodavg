@@ -9,7 +9,7 @@ AICc.gls <-
       if(second.ord==TRUE) {AICc<--2*LL+2*K*(n/(n-K-1))}  else{AICc <- -2*LL+2*K}
       if(return.K==TRUE) AICc[1]<-K #attributes the first element of AICc to K
       AICc
-    } else {stop("This function is only appropriate with \'gls\' class")}
+    } else {stop("This function is only appropriate with objects of \'gls\' class")}
     
   }
 

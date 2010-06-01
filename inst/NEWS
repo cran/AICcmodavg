@@ -8,6 +8,15 @@
 
 
 #######################################################
+##revision 1.07 (24 May 2010)
+##  - modified modavg to include 'nobs' argument in call to modavg.lme and modavg.gls
+##  - added support for generalized linear mixed models of the mer class for AICc, aictab, modavg, evidence, importance, confset functions
+##  - updated information on support for 'mer' class in help files
+##  - added examples in some of the help files with 'mer'
+
+
+
+#######################################################
 #revisions 1.06 (6 February 2010)
 ## -added a 'polr' class check to 'AICc' function;
 ## -added function 'predictSE.lme' to make predictions based on fixed effects for objects

@@ -4,6 +4,7 @@
 \alias{AICc.glm}
 \alias{AICc.gls}
 \alias{AICc.lme}
+\alias{AICc.mer}
 \alias{AICc.mult}
 \alias{AICc.polr}
 \title{
@@ -24,6 +25,8 @@ AICc.gls(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 
 AICc.lme(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 
+AICc.mer(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
+
 AICc.mult(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, nobs =
 NULL) 
 
@@ -32,7 +35,7 @@ AICc.polr(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 }
 \arguments{
   \item{mod}{
-an object of class 'lm', 'glm', 'gls', 'lme', 'multinom', or 'polr' containing
+an object of class 'lm', 'glm', 'gls', 'lme', 'mer', 'multinom', or 'polr' containing
 the output of a model. 
 }
   \item{return.K}{
@@ -47,7 +50,8 @@ as that obtained from 'c_hat'.  Note that values of c.hat different from
 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
 success/trial or cbind(success, failure) syntax) or with Poisson
 GLM's.  If c.hat > 1, 'AICc' will return the quasi-likelihood analogue
-of the information criterion requested.
+of the information criterion requested.  This option is not yet
+supported for generalized linear mixed models of the 'mer' class. 
 }
 
 \item{second.ord}{ 
@@ -65,17 +69,18 @@ number of observations or number of independent clusters as the value of
 }
 \details{
 'AICc' is a function that calls either 'AICc.glm', 'AICc.gls',
-'AICc.lme', 'AICc.mult', or 'AICc.polr', depending on the class of the
-object.  The current function is implemented for 'lm','glm', 'gls',
-'lme', 'multinom', and 'polr' classes and computes one of the following
-four information criteria:  Akaike's information criterion (AIC, Akaike
-1973), the second-order or small sample AIC (AICc, Sugiura 1978, Hurvich
-and Tsai 1991), the quasi-likelihood AIC (QAIC, Burnham and Anderson
-2002), and the quasi-likelihood AICc (QAICc, Burnham and Anderson 2002).
-Note that AIC and AICc values are meaningful to select among 'gls' or
-'lme' models fit by maximum likelihood; AIC and AICc based on REML are
-valid to select among different models that only differ in their random
-effects (Pinheiro and Bates 2000).
+'AICc.lme', 'AICc.mer', 'AICc.mult', or 'AICc.polr', depending on the
+class of the object.  The current function is implemented for
+'lm','glm', 'gls', 'lme', 'mer', 'multinom', and 'polr' classes and
+computes one of the following four information criteria:  Akaike's
+information criterion (AIC, Akaike 1973), the second-order or small
+sample AIC (AICc, Sugiura 1978, Hurvich and Tsai 1991), the
+quasi-likelihood AIC (QAIC, Burnham and Anderson 2002), and the
+quasi-likelihood AICc (QAICc, Burnham and Anderson 2002). Note that AIC
+and AICc values are meaningful to select among 'gls' or 'lme' models fit
+by maximum likelihood; AIC and AICc based on REML are valid to select
+among different models that only differ in their random effects
+(Pinheiro and Bates 2000). 
 
 }
 \value{
@@ -89,6 +94,9 @@ of the arguments.
 arguments. 
 
 'AICc.lme' returns the AIC or AICc depending on the values of the
+arguments. 
+
+'AICc.mer' returns the AIC or AICc depending on the values of the
 arguments. 
 
 'AICc.mult' returns the AIC, AICc, QAIC, or QAICc depending on the

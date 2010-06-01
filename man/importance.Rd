@@ -31,15 +31,16 @@ each model in the model selection table.
 }
   \item{c.hat}{
 value of overdispersion parameter (i.e., variance inflation factor) such
-  as that obtained from 'c_hat'.  Note that values of c.hat different 
+  as that obtained from 'c_hat'.  Note that values of c.hat different  
   from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
   success/trial or cbind(success, failure) syntax) or with Poisson
   GLM's. If c.hat > 1, 'aictab' will return the quasi-likelihood
-  analogue of the information criteria requested.
+  analogue of the information criteria requested.  This option is not
+  yet supported for generalized linear mixed models of the 'mer' class.
 }
   \item{second.ord}{
-logical. If TRUE, the function returns the second-order
-Akaike information criterion (i.e., AICc).
+logical. If TRUE, the function returns the second-order Akaike
+  information criterion (i.e., AICc).
 }
   \item{nobs}{
 this argument allows to specify a numeric value other than total sample
@@ -57,8 +58,6 @@ following components:
 \item{w.plus}{the parameter for which an importance value is required.} 
 \item{w.minus}{the sum of Akaike weights for the models that exclude the
   parameter of interest} 
-
-
 }
 \references{
 Burnham, K. P., and Anderson, D. R. (2002) \emph{Model Selection and

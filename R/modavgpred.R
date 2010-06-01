@@ -23,7 +23,7 @@ modavgpred <- function(cand.set, modnames, newdata, type = "response", c.hat = 1
   }
 
     
-#warn if class is neither lm, glm, multinom, polr, nor lme
+#warn if class is neither lm, glm, nor lme
     if(sum(known) < 1) {stop("Function not yet defined for this object class")}
 
     return(results)

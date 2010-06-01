@@ -17,7 +17,7 @@ function(mod, return.K=FALSE, second.ord=TRUE, nobs=NULL){
     AICc
      
                    
-  } else {stop("This function is only appropriate with polr classes")}
+  } else {stop("This function is only appropriate with objects of \'polr\' class")}
   
 }
 

@@ -4,6 +4,7 @@
 \alias{aictab.glm}
 \alias{aictab.gls}
 \alias{aictab.lme}
+\alias{aictab.mer}
 \alias{aictab.mult}
 \alias{aictab.polr}
 \alias{print.aictab}
@@ -17,7 +18,7 @@ ranks the models based on the selected information criteria and also
 provides delta AIC and Akaike weights.  'aictab' selects the
 appropriate function to create the model selection table based on the 
 object class.  The current version works with objects of 'lm', 'glm',
-'gls', 'lme', 'multinom', and 'polr' classes but does not yet allow
+'gls', 'lme', 'mer', 'multinom', and 'polr' classes but does not yet allow
 mixing of different classes. 
 }
 \usage{
@@ -31,6 +32,9 @@ aictab.gls(cand.set, modnames, sort = TRUE, second.ord = TRUE,
 nobs = NULL) 
 
 aictab.lme(cand.set, modnames, sort = TRUE, second.ord = TRUE,
+nobs = NULL) 
+
+aictab.mer(cand.set, modnames, sort = TRUE, second.ord = TRUE,
 nobs = NULL) 
 
 aictab.mult(cand.set, modnames, sort = TRUE, c.hat = 1,
@@ -59,7 +63,8 @@ as that obtained from 'c_hat'.  Note that values of c.hat different from
 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
 success/trial or cbind(success, failure) syntax) or with Poisson GLM's.
 If c.hat > 1, 'aictab' will return the quasi-likelihood analogue of the
-information criteria requested.
+information criteria requested.  This option is not yet supported for
+generalized linear mixed models of the 'mer' class.
 }
   \item{second.ord}{
 logical.  If TRUE, the function returns the second-order
@@ -69,18 +74,18 @@ Akaike information criterion (i.e., AICc).
 this argument allows to specify a numeric value other than total sample
 size to compute the AICc (i.e., 'nobs' defaults to total number of
 observations).  This is relevant only for linear mixed models where
-sample size is not straightforward. In such cases, one might use total
+sample size is not straightforward.  In such cases, one might use total
 number of observations or number of independent clusters as the value of
 'nobs'. 
 }
 }
 \details{
 'aictab' is a function that calls either 'aictab.glm', 'aictab.gls',
-'aictab.lme', 'aictab.mult', or 'aictab.polr' depending on the class of
-the object.  The current function is implemented for 'lm', 'glm', 'gls',
-'lme', 'multinom', and 'lme' classes and constructs a model selection
-table based on one of the four information criteria:  AIC, AICc, QAIC,
-and QAICc.
+'aictab.lme', 'aictab.mer', 'aictab.mult', or 'aictab.polr' depending on
+the class of the object.  The current function is implemented for 'lm',
+'glm', 'gls', 'lme', 'mer', 'multinom', and 'lme' classes and constructs
+a model selection table based on one of the four information criteria:
+AIC, AICc, QAIC, and QAICc.
 
 Ten guidelines for model selection:
 
@@ -138,12 +143,13 @@ most parsimonious model.  When many models rank highly (i.e., delta
 (Q)AIC(c) < 4), one should model-average the parameters of interest
 appearing in the top models.  Model averaging consists in making
 inference based on the whole set of candidate models, instead of basing
-conclusions on a single 'best' model. It is an elegant way of making
+conclusions on a single 'best' model.  It is an elegant way of making
 inference based on the information contained in the entire model set.
 }
 \value{
-'aictab', 'aictab.glm', 'aictab.lme', 'aictab.mult', and 'aictab.polr'
-create an object of class 'aictab' with the following components:
+'aictab', 'aictab.glm', 'aictab.lme', 'aictab.mer', 'aictab.mult', and
+'aictab.polr' create an object of class 'aictab' with the following
+components: 
 
 \item{Modname}{the names of each model of the candidate model set.}
 \item{K }{the number of estimated parameters for each model.}
@@ -249,6 +255,21 @@ print(res.table, digits = 2, LL = TRUE) #print table with 2 digits and
 print(res.table, digits = 4, LL = FALSE) #print table with 4 digits and
 ##do not print log-likelihood
 
+
+
+##mer class example modified from ?glmer
+require(lme4)
+##create proportion of incidence
+cbpp$prop <- cbpp$incidence/cbpp$size
+gm1 <- glmer(prop ~ period + (1 | herd), family = binomial, weights =
+size, data = cbpp)
+gm2 <- glmer(prop ~ 1 + (1 | herd), family = binomial, weights =
+size, data = cbpp)
+
+Cands <- list(gm1, gm2)
+Model.names <- c("effect of period", "no effect of period")
+aictab(cand.set = Cands, modnames = Model.names, sort = TRUE)
+detach(package:lme4)
 }
 
 \keyword{models}

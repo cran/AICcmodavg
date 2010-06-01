@@ -4,6 +4,7 @@
 \alias{modavg.glm}
 \alias{modavg.gls}
 \alias{modavg.lme}
+\alias{modavg.mer}
 \alias{modavg.mult}
 \alias{modavg.polr}
 \alias{print.modavg}
@@ -31,6 +32,10 @@ second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
 uncond.se = "revised")
 
 modavg.lme(cand.set, parm, modnames, conf.level = 0.95,
+second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
+uncond.se = "revised")
+
+modavg.mer(cand.set, parm, modnames, conf.level = 0.95,
 second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
 uncond.se = "revised")
 
@@ -66,7 +71,8 @@ success/trial or cbind(success, failure) syntax) or for Poisson GLM's.
 If c.hat > 1, 'aictab' will return the quasi-likelihood analogue of the
 information criteria requested and multiply the variance-covariance
 matrix of the estimates by this value (i.e., SE's are multiplied by
-sqrt(c.hat)).
+sqrt(c.hat)).  This option is not yet supported for generalized linear
+mixed models of the 'mer' class.
 }
   \item{gamdisp}{
 if gamma GLM is used, the dispersion parameter should be specified here
@@ -151,14 +157,15 @@ of similarly named variables in the models (and NOT due to interaction
 terms), you can suppress this warning by setting 'warn = FALSE'.    
 
 'modavg' is a function that calls 'modavg.glm', 'modavg.gls',
-'modavg.lme', 'modavg.mult', or 'modavg.polr' depending on the class of
-the object.  The current function is implemented for a list containing
-objects of 'lm', 'glm', 'gls', 'lme', 'multinom', and 'polr' classes. 
+'modavg.lme', 'modavg.mer', 'modavg.mult', or 'modavg.polr' depending on
+the class of the object.  The current function is implemented for a list
+containing objects of 'lm', 'glm', 'gls', 'lme', 'multinom', and 'polr'
+classes.  
 }
 \value{
-'modavg', 'modavg.glm', 'modavg.gls', 'modavg.lme', 'modavg.mult', and
-'modavg.polr' create an object of class 'modavg' with the following
-components: 
+'modavg', 'modavg.glm', 'modavg.gls', 'modavg.lme', 'modavg.mer',
+'modavg.mult', and 'modavg.polr' create an object of class 'modavg' with
+the following components: 
 
 \item{Parameter}{the parameter for which a model-averaged estimate was
   obtained} 

@@ -24,7 +24,11 @@ importance <-
     if(identical(check.class, c("multinom", "nnet"))) {
       mod_formula<-lapply(cand.set, FUN=function(i) colnames(summary(i)$coefficients))
     }
-  
+
+    if(identical(check.class, "mer")) {
+      mod_formula<-lapply(cand.set, FUN=function(i) rownames(summary(i)@coefs))
+    }
+
 #setup matrix to indicate presence of parm in the model
     include <- matrix(NA, nrow=length(cand.set), ncol=1)
 

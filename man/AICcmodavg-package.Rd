@@ -18,15 +18,15 @@ variable importance, evidence ratios, and confidence sets for the best
 model.  The present version works with linear models ('lm' class),
 generalized linear models ('glm' class), linear models fit by
 generalized least squares ('gls' class), linear mixed models ('lme'
-class), multinomial and ordinal logistic regressions ('multinom' and
-'polr' classes).   
+class), generalized linear mixed models ('mer' class), multinomial and
+ordinal logistic regressions ('multinom' and 'polr' classes).  
 }
 \details{
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.06\cr
-Date: \tab 2009-02-06\cr
+Version: \tab 1.07\cr
+Date: \tab 2010-05-25\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
