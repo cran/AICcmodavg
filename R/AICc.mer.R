@@ -4,7 +4,12 @@ AICc.mer <-
     if(identical(paste(class(mod)), "mer")) {  #class(mod) yields different attributes
     
       if(identical(nobs, NULL)) {
-        n <- mod@dims["n"]
+        ##add check for binomial family to sum weights
+        if(identical(fam.link.mer(mod)$family, "binomial")) {
+          n <- sum(mod@frame$"(weights)")
+        } else {          
+          n <- mod@dims["n"]
+        }
       } else {n <- nobs}
       
       LL <- logLik(mod)[1]

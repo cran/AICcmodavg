@@ -11,13 +11,18 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
   if(!identical(check.class, "mer"))  {stop("This function is only appropriate with the \'mer\' class\n")}
 
 
-  ##check if family is the same for all models (only canonical links supported in current version of glmer( ))
-  if(identical(check.class, "mer")) {
-    mod.fam <- unlist(lapply(X = cand.set, FUN = function(i) strsplit(as.character(i@call["family"]), split = "\\(")[1]))
-    check.fam <- unique(mod.fam)
-    if(length(check.fam) > 1) stop(cat("\nIt is not appropriate to compute a model averaged beta estimate\n",
+###################
+  ##determine families of model
+  fam.list <- unlist(lapply(X = cand.set, FUN = function(i) fam.link.mer(i)$family))
+  check.fam <- unique(fam.list)
+  if(length(check.fam) > 1) stop(cat("\nIt is not appropriate to compute a model-averaged beta estimate\n",
                                        "from models using different families of distributions\n"))
-  }
+  ##determine link functions
+  link.list <- unlist(lapply(X = cand.set, FUN = function(i) fam.link.mer(i)$link))
+  check.link <- unique(link.list)
+  if(length(check.link) > 1) stop(cat("\nIt is not appropriate to compute a model-averaged beta estimate\n",
+                                       "from models using different link functions\n"))
+###################       
 
   
   ##extract model formula for each model in cand.set

@@ -27,6 +27,8 @@ aictab.lme <-
     Results$ModelLik <- exp(-0.5*Results$Delta_AICc)                #compute model likelihood required to compute Akaike weights
     Results$AICcWt <- Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights
 
+   ##check if some models are redundant
+    if(length(unique(Results$AICc)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
     
     #check if ML or REML used and add column accordingly
     if(identical(check.method, "ML")) {

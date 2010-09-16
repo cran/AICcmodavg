@@ -3,6 +3,7 @@
 \alias{modavgpred}
 \alias{modavgpred.glm}
 \alias{modavgpred.lme}
+\alias{modavgpred.mer}
 \alias{print.modavgpred}
 \title{
 Compute Model-averaged Predictions
@@ -10,8 +11,8 @@ Compute Model-averaged Predictions
 \description{
 This function computes the model-averaged predictions and unconditional
 standard errors based on the entire candidate model set.  The function
-is currently implemented for 'lm' and 'glm' object classes that are
-stored in a list, as well as for 'lme' classes. 
+is currently implemented for 'lm', 'glm', 'lme', and 'mer' object
+classes that are stored in a list. 
 }
 \usage{
 modavgpred(cand.set, modnames, newdata, type = "response", c.hat = 1,
@@ -23,6 +24,10 @@ uncond.se = "revised")
 
 modavgpred.lme(cand.set, modnames, newdata, second.ord = TRUE,
          nobs = NULL, uncond.se = "revised")
+
+modavgpred.mer(cand.set, modnames, newdata, type = "response",
+  c.hat = 1, second.ord = TRUE, nobs = NULL, uncond.se = "revised")
+
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -40,7 +45,7 @@ for which we want to make predictions.
 }
   \item{type}{
 the scale of prediction requested, one of "response" or "link" (only
-relevant to 'glm' classes). Note that the value "terms" is not defined
+relevant to 'glm' and 'mer' classes). Note that the value "terms" is not defined
 for 'modavgpred'). 
 }
   \item{c.hat}{
@@ -63,7 +68,7 @@ sqrt(c.hat)).
   \item{nobs}{
 this argument allows to specify a numeric value other than total sample
 size to compute the AICc (defaults to sample size).  This is relevant
-only for linear mixed models where sample size is not straightforward.
+only for mixed models where sample size is not straightforward.
 In such cases, one might use total number of observations or number of
 independent clusters as the value of 'nobs'. 
 }
@@ -82,10 +87,10 @@ unconditional standard errors.
 \details{
 Unconditional confidence intervals computed by 'modavgpred' assume
 asymptotic normality of the estimator, and are appropriate to estimate
-confidence intervals of beta estimates (or estimates on the linear 
+confidence intervals of beta estimates (i.e., estimates on the linear 
 predictor scale).  For predictions of some types of response variables
 (e.g., discrete values such as counts), the normal approximation may be
-inappropriate.  In such cases, it is probably better to compute the
+inappropriate.  In such cases, it is often better to compute the
 confidence intervals on the linear predictor scale and then
 back-transform the limits to the scale of the response variable.
 Burnham and Anderson (2002, p. 164) suggest alternative methods of
@@ -123,7 +128,7 @@ Marc J. Mazerolle
 \code{\link{AICc}}, \code{\link{modavg}},  \code{\link{predict}},
 \code{\link{aictab}}, \code{\link{importance}},  \code{\link{c_hat}},
 \code{\link{evidence}}, \code{\link{confset}},
-\code{\link{predict.glm}}, \code{\link{predictSE.lme}}
+\code{\link{predict.glm}}, \code{\link{predictSE.lme}}, \code{\link{predictSE.mer}}
 }
 
 \examples{

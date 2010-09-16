@@ -31,7 +31,7 @@ Marc J. Mazerolle
 }
 
 \seealso{
-\code{\link{modavg}}
+\code{\link{modavg}}, \code{\link[lme4]{glmer}}, \code{\link[lme4]{lmer}}
 }
 \examples{
 ##modified example from ?glmer

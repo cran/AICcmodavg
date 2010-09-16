@@ -19,7 +19,7 @@ predictSE.lme <- function(mod, newdata, se.fit = TRUE, level = 0, print.matrix =
   for(i in names(dataMix)) {
     if (inherits(dataMix[,i], "factor") && !is.null(contr[[i]])) {
       levs <- levels(dataMix[,i])
-      levsC <- dimnames(contr[[i]])[[1]]
+      levsC <- dimnames(contr[[i]])[[1]] ##could change to rownames(contr[[i]])
       if (any(wch <- is.na(match(levs, levsC)))) {
         stop(paste("Levels", paste(levs[wch], collapse = ","),
                    "not allowed for", i))
