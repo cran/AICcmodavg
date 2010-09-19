@@ -25,8 +25,8 @@ ordinal logistic regressions ('multinom' and 'polr' classes).
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.08\cr
-Date: \tab 2010-08-16\cr
+Version: \tab 1.09\cr
+Date: \tab 2010-09-16\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -43,6 +43,11 @@ multimodel inference:
 \item{\code{\link{evidence}}}  {Computes the evidence ratio between the
   highest-ranked model based on the information criteria selected and a
   lower-ranked model.}
+\item{\code{\link{extractSE.mer}}}  {Extracts standard errors of the
+  fixed effects of a generalized linear mixed model of class 'mer' and
+  adds the labels.}
+\item{\code{\link{fam.link.mer}}}  {Extracts the distribution family and 
+  link function from a generalized linear mixed model of class 'mer'.} 
 \item{\code{\link{importance}}}  {Computes importance values (w+) for
   the support of a given parameter among set of candidate models.}
 \item{\code{\link{modavg}}}  {Computes model-averaged estimate,
@@ -55,6 +60,9 @@ multimodel inference:
   chi-square.}
 \item{\code{\link{predictSE.lme}}}  {Computes predictions and associated 
   standard errors for 'lme' object based on fixed effects (i.e., 
+  population predictions).}
+\item{\code{\link{predictSE.mer}}}  {Computes predictions and associated 
+  standard errors for 'mer' object based on fixed effects (i.e., 
   population predictions).} 
 }
 }

@@ -6,6 +6,24 @@
 ####################################################################
 
 #######################################################
+##revision 1.09 (16 September 2010)
+##  - added function 'predictSE.mer' to compute predictions and SE's on predictions
+##    accounting only for fixed effects (mean population prediction) from objects
+##    of 'mer' class
+##  - added functionality to 'modavgpred' to include computation of model-averaged
+##    predictions from objects of class 'mer'
+##  - added a check for link function to ensure same link function was used for all models in 'modavg' when
+##    model averaging beta estimates
+##  - created a utility function to determine family and link function for objects of 'mer' class called by
+##    'modavg', 'modavgpred', and 'predictSE.mer'
+##  - added a warning when some models have an identical (Q)AIC(c) and are possibly redundant in 'aictab'
+##  - corrected minor bug in number of observations in 'modavgpred'
+##  - added a check for binomial family with events/trials syntax to use sum of weights as number of observations
+##    in 'AICc.mer' when nobs = NULL
+
+
+
+#######################################################
 ##revision 1.08 (16 August 2010)
 ##  - added Suggests "lme4" in DESCRIPTION file
 
