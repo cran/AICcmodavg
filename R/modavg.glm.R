@@ -17,6 +17,13 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
   
   if(identical(check.class, "lm") || identical(check.class, c("glm", "lm")))  {
 
+    ##check family of glm to avoid problems when requesting predictions with argument 'dispersion'
+    fam.type <- unlist(lapply(cand.set, FUN=function(i) family(i)$family))
+    fam.unique <- unique(fam.type)
+    if(identical(fam.unique, "gaussian")) {disp <- NULL} else{disp <- 1}
+    ##poisson, binomial, and negative binomial defaults to 1 (no separate parameter for variance)
+    ##gamma is treated separately
+ 
     mod_formula<-lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients)) #extract model formula for each model in cand.set
 
     nmods <- length(cand.set)
@@ -137,7 +144,7 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
 
     new_table<-aictab.glm(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE, c.hat=c.hat, second.ord=second.ord, nobs=nobs)  #recompute AIC table and associated measures
     new_table$Beta_est<-unlist(lapply(new.cand.set, FUN=function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
-    new_table$SE<-unlist(lapply(new.cand.set, FUN=function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+    new_table$SE<-unlist(lapply(new.cand.set, FUN=function(i) sqrt(diag(vcov(i, dispersion = disp)))[paste(parm)]))
 
    
     #if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
