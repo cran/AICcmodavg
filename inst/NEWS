@@ -6,10 +6,20 @@
 ####################################################################
 
 
+
+#######################################################
+##revision 1.11 (8 October 2010)
+##- fixed minor bug in 'modavgpred.glm' that generated an error message for Poisson, binomial, and negative 
+##  binomial distributions when 'c.hat' = 1 
+##- added additional example in 'predictSE.mer' with gaussian distribution but with log link
+
+
+
 #######################################################
 ##revision 1.10 (7 October 2010)
-##- fixed minor bug in 'modavgpred' for SE's of predictions from gaussian model
-##- fixed minor bug in 'modavg' for SE's of beta estimates from negative binomial glm
+##- fixed minor bug in 'modavgpred.glm' for SE's of predictions from gaussian model
+##- fixed minor bug in 'modavg.glm' for SE's of beta estimates from negative binomial glm
+
 
 
 #######################################################

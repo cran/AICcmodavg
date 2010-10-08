@@ -51,7 +51,9 @@ function(cand.set, modnames, newdata, type = "response", c.hat = 1, gamdisp = NU
   ##check family of glm to avoid problems when requesting predictions with argument 'dispersion'
   fam.type <- unlist(lapply(cand.set, FUN=function(i) family(i)$family))
   fam.unique <- unique(fam.type)
-  if(identical(fam.unique, "gaussian")) {dispersion <- NULL} #set to NULL if gaussian is used
+  if(identical(fam.unique, "gaussian")) {
+    dispersion <- NULL  #set to NULL if gaussian is used
+  } else{dispersion <- c.hat}
   ##poisson, binomial, and negative binomial defaults to 1 (no separate parameter for variance)
     
 ###################CHANGES####
