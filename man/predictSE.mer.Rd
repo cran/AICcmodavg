@@ -100,7 +100,6 @@ predictSE.mer(mod = gm1, newdata = newherd, se.fit = TRUE, type =
 "response", level = 0, print.matrix = TRUE)
 
 
-
 ##example with linear mixed model with Orthodont data from
 ##Pinheiro and Bates (2000)
 data(Orthodont, package = "nlme")
@@ -116,11 +115,19 @@ predictSE.mer(m2, newdata = neworth)
 ##uses an identity link
 predictSE.mer(m2, newdata = neworth, type = "link") 
 
-detach(package:lme4)
-
 \dontrun{
 predictSE.mer(m2, newdata = neworth, level = 1, print.matrix = TRUE)
 ##generates an error
 }
+
+##compare with the following:
+m3 <- glmer(distance ~ Sex + (1 | Subject), family = gaussian(link =
+log), data = Orthodont, nAGQ = 1)
+##predictions on original scale of response variable
+predictSE.mer(m3, newdata = neworth, type = "response")
+##predictions on log scale
+predictSE.mer(m3, newdata = neworth, type = "link")
+
+detach(package:lme4)
 }
 \keyword{models}
