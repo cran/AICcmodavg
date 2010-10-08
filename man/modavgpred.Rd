@@ -85,23 +85,32 @@ unconditional standard errors.
 }
 }
 \details{
-Unconditional confidence intervals computed by 'modavgpred' assume
-asymptotic normality of the estimator, and are appropriate to estimate
-confidence intervals of beta estimates (i.e., estimates on the linear 
-predictor scale).  For predictions of some types of response variables
-(e.g., discrete values such as counts), the normal approximation may be
-inappropriate.  In such cases, it is often better to compute the
-confidence intervals on the linear predictor scale and then
-back-transform the limits to the scale of the response variable.
-Burnham and Anderson (2002, p. 164) suggest alternative methods of
-computing unconditional confidence intervals for small degrees of
-freedom with profile likelihood intervals or bootstrapping.  
+  'modavgpred' is a function that calls 'modavgpred.glm',
+  'modavgpred.lme', or 'modavgpred.mer', depending on the class of the
+  object. The candidate models must be stored in a list. Note that a
+  data frame from which to make predictions must be supplied with the
+  'newdata' argument and that all variables appearing in the model
+  set must appear in this data frame.
+  
+  One can compute unconditional confidence intervals around the
+  predictions from the elements returned by 'modavgpred'. The classic
+  computation based on asymptotic normality of the estimator is
+  appropriate to estimate confidence intervals of beta estimates (i.e.,
+  estimates on the linear predictor scale).  For predictions of some types
+  of response variables (e.g., discrete values such as counts, or binary
+  variables), the normal approximation may be inappropriate. In such
+  cases, it is often better to compute the confidence intervals on the
+  linear predictor scale and then back-transform the limits to the scale
+  of the response variable. Burnham and Anderson (2002, p. 164) suggest
+  alternative methods of computing unconditional confidence intervals for
+  small degrees of freedom with profile likelihood intervals or
+  bootstrapping.
 }
 \value{
 'modavgpred' returns an object of class 'modavgpred' with the
 following components:
 \item{type}{
-  the scale of predicted values (response or link) for 'glm' classes.
+  the scale of predicted values (response or link) for 'glm' or 'mer' classes.
 }
 \item{mod.avg.pred}{
   the model-averaged prediction over the entire candidate model set.

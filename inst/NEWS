@@ -5,6 +5,13 @@
 ##
 ####################################################################
 
+
+#######################################################
+##revision 1.10 (7 October 2010)
+##- fixed minor bug in 'modavgpred' for SE's of predictions from gaussian model
+##- fixed minor bug in 'modavg' for SE's of beta estimates from negative binomial glm
+
+
 #######################################################
 ##revision 1.09 (16 September 2010)
 ##  - added function 'predictSE.mer' to compute predictions and SE's on predictions
