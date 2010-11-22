@@ -329,9 +329,9 @@ function(cand.set, modnames, newdata, second.ord = TRUE,
       for (obs in 1:nobserv) {
 
         ##extract fitted value for observation obs
-        fit<-unlist(lapply(X=cand.set, FUN=function(i)predict(i, se.fit=TRUE, newdata=newdata[obs, ])$fit))
+        fit<-unlist(lapply(X=cand.set, FUN=function(i)predictSE.lme(i, se.fit=TRUE, newdata=newdata[obs, ])$fit))
         ##extract SE for fitted value for observation obs
-        SE<-unlist(lapply(X=cand.set, FUN=function(i)predict(i, se.fit=TRUE, newdata=newdata[obs, ])$se.fit))
+        SE<-unlist(lapply(X=cand.set, FUN=function(i)predictSE.lme(i, se.fit=TRUE, newdata=newdata[obs, ])$se.fit))
 
         AICtmp<-AICctab
         AICtmp$fit<-fit
