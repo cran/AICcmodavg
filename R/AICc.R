@@ -32,6 +32,14 @@ AICc <-
                        nobs = nobs)
     }
 
+    ##determine if mer
+    if(identical(class(mod)[1], "mer")) {
+      aicc <- AICc.mer(mod = mod, return.K = return.K, second.ord = second.ord,
+                       nobs = nobs)
+    }
+
+    
+
     ##if(class(mod)[1]=="nlm") {aicc <- AICc.nlm(mod, return.K)}      #determine if object from nlm optimizer
     return(aicc)
   }

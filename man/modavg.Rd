@@ -159,8 +159,8 @@ terms), you can suppress this warning by setting 'warn = FALSE'.
 'modavg' is a function that calls 'modavg.glm', 'modavg.gls',
 'modavg.lme', 'modavg.mer', 'modavg.mult', or 'modavg.polr' depending on
 the class of the object.  The current function is implemented for a list
-containing objects of 'lm', 'glm', 'gls', 'lme', 'multinom', and 'polr'
-classes.  
+containing objects of 'lm', 'glm', 'gls', 'lme', 'mer', 'multinom', and
+'polr' classes.
 }
 \value{
 'modavg', 'modavg.glm', 'modavg.gls', 'modavg.lme', 'modavg.mer',

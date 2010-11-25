@@ -8,6 +8,15 @@
 
 
 #######################################################
+##revision 1.12 (22 November 2010)
+##- fixed minor bug in 'modavgpred.lme' that generated error message when second.ord = FALSE
+##- fixed minor bug by dispatching 'mer' class objects to AICc.mer( )
+##- fixed minor bug with incorrect computation of n for 'mer' models with binomial distribution using 
+##  cbind(incidence, size - incidence) or binary syntax
+
+
+
+#######################################################
 ##revision 1.11 (8 October 2010)
 ##- fixed minor bug in 'modavgpred.glm' that generated an error message for Poisson, binomial, and negative 
 ##  binomial distributions when 'c.hat' = 1 
