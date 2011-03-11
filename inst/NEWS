@@ -8,8 +8,14 @@
 
 
 ########################################################
-##revision 1.13 (10 January 2010)
-##- fixed minor bug in AICc.lme( ) on the computation of n in certain lme's
+##revision 1.14 (11 March 2011)
+##- fixed minor bug in modavg.mer( ) regarding exclusion of interaction terms as formula( ) includes spaces within interaction terms
+
+
+
+########################################################
+##revision 1.13 (10 January 2011)
+##- fixed minor bug in AICc.lme( ) on the computation of n in certain lme's with several levels
 
 
 
