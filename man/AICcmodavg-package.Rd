@@ -25,8 +25,8 @@ ordinal logistic regressions ('multinom' and 'polr' classes).
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.13\cr
-Date: \tab 2010-01-10\cr
+Version: \tab 1.14\cr
+Date: \tab 2011-03-11\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }

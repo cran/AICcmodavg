@@ -94,13 +94,18 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
     
     
     ##set up a new list with model formula
-    forms <- list()
+    forms.space <- list()
     for (i in 1:nmods) {
       form.tmp <- strsplit(as.character(not.include[i]), split="~")[[1]][-1]
       if(attr(regexpr("\\+", form.tmp), "match.length")==-1) {
-        forms[i] <- form.tmp
-      } else {forms[i] <- strsplit(form.tmp, split=" \\+ ")}
+        forms.space[i] <- form.tmp
+      } else {forms.space[i] <- strsplit(form.tmp, split=" \\+ ")}
     }
+
+    ######################################
+    ##remove leading and trailing spaces as well as spaces within string
+    forms <- lapply(forms.space, FUN = function(b) gsub('[[:space:]]+', "", b)) 
+    ######################################
     
     ##additional check to see whether some variable names include "+"
     check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\+", i), "match.length")>0)[[1]]))
