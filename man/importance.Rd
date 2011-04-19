@@ -36,7 +36,7 @@ value of overdispersion parameter (i.e., variance inflation factor) such
   success/trial or cbind(success, failure) syntax) or with Poisson
   GLM's. If c.hat > 1, 'aictab' will return the quasi-likelihood
   analogue of the information criteria requested.  This option is not
-  yet supported for generalized linear mixed models of the 'mer' class.
+  supported for generalized linear mixed models of the 'mer' class.
 }
   \item{second.ord}{
 logical. If TRUE, the function returns the second-order Akaike
@@ -70,8 +70,8 @@ Marc J. Mazerolle
 
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{c_hat}},
-\code{\link{modavg}}, \code{\link{evidence}}, \code{\link{confset}},
-\code{\link{modavgpred}} 
+\code{\link{confset}}, \code{\link{evidence}}, \code{\link{modavg}}, 
+\code{\link{modavg.shrink}}, \code{\link{modavgpred}} 
 }
 \examples{
 ##example on Orthodont data set in nlme

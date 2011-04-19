@@ -63,8 +63,8 @@ Marc J. Mazerolle
 
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{c_hat}},
-\code{\link{modavg}}, \code{\link{importance}}, \code{\link{confset}},
-\code{\link{modavgpred}} 
+\code{\link{confset}}, \code{\link{importance}}, \code{\link{modavg}},
+\code{\link{modavg.shrink}}, \code{\link{modavgpred}} 
 }
 \examples{
 ##run example from Burnham and Anderson (2002, p. 183) with two

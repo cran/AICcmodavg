@@ -199,8 +199,8 @@ Marc J. Mazerolle
 }
 \seealso{
 \code{\link{AICc}}, \code{\link{confset}}, \code{\link{c_hat}},
-\code{\link{evidence}}, \code{\link{modavg}}, \code{\link{importance}},
-\code{\link{modavgpred}} 
+\code{\link{evidence}}, \code{\link{importance}}, \code{\link{modavg}}, 
+\code{\link{modavg.shrink}}, \code{\link{modavgpred}} 
 }
 \examples{
 ##Mazerolle (2006) frog water loss example
