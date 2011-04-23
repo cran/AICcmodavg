@@ -56,7 +56,8 @@ success/trial or cbind(success, failure) syntax) or with Poisson GLM's.
 If c.hat > 1, 'aictab' will return the quasi-likelihood analogue of the
 information criteria requested and multiply the variance-covariance
 matrix of the estimates by this value (i.e., SE's are multiplied by
-sqrt(c.hat)). 
+sqrt(c.hat)).  This option is not supported for generalized linear mixed
+models of the 'mer' class.
 }
 \item{gamdisp}{
   the value of the gamma dispersion parameter.
@@ -134,10 +135,11 @@ Marc J. Mazerolle
 }
 
 \seealso{
-\code{\link{AICc}}, \code{\link{modavg}},  \code{\link{predict}},
-\code{\link{aictab}}, \code{\link{importance}},  \code{\link{c_hat}},
-\code{\link{evidence}}, \code{\link{confset}},
-\code{\link{predict.glm}}, \code{\link{predictSE.lme}}, \code{\link{predictSE.mer}}
+\code{\link{AICc}}, \code{\link{aictab}}, \code{\link{importance}},
+\code{\link{c_hat}}, \code{\link{confset}}, \code{\link{evidence}}, 
+\code{\link{modavg}}, \code{\link{modavg.shrink}},
+\code{\link{predict}}, \code{\link{predict.glm}},
+\code{\link{predictSE.lme}}, \code{\link{predictSE.mer}} 
 }
 
 \examples{

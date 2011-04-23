@@ -8,6 +8,15 @@
 
 
 ########################################################
+##revision 1.15 (19 April 2011)
+##- in modavg( ) and related functions, added functionality of dealing with specification of interaction terms (e.g., A:B, B:A, A*B, B*A)
+##  by adding two new utility functions to recognize the terms when user is not consistent in his model syntax
+##- created function 'modavg.shrink' for the shrinkage version of model-averaging estimates when the same number of models 
+##  include/exclude a variable  
+
+
+
+########################################################
 ##revision 1.14 (11 March 2011)
 ##- fixed minor bug in modavg.mer( ) regarding exclusion of interaction terms as formula( ) includes spaces within interaction terms
 

@@ -55,9 +55,9 @@ a list storing each of the models in the candidate model set.
 }
   \item{parm}{
 the parameter of interest, enclosed between quotes, for which a
-model-averaged estimate is required.  For categorical variables,
-the level for which an estimate is needed must be included (see
-'Details' below). 
+model-averaged estimate is required.  For a categorical variable, 
+the label of the estimate must be included as it appears in the output
+(see 'Details' below). 
 }
   \item{modnames}{
 a character vector of model names to facilitate the identification of
@@ -71,7 +71,7 @@ success/trial or cbind(success, failure) syntax) or for Poisson GLM's.
 If c.hat > 1, 'aictab' will return the quasi-likelihood analogue of the
 information criteria requested and multiply the variance-covariance
 matrix of the estimates by this value (i.e., SE's are multiplied by
-sqrt(c.hat)).  This option is not yet supported for generalized linear
+sqrt(c.hat)).  This option is not supported for generalized linear
 mixed models of the 'mer' class.
 }
   \item{gamdisp}{
@@ -95,8 +95,8 @@ number of observations or number of independent clusters as the value of
 'nobs'.
 }
   \item{exclude}{
-this argument excludes models based on the terms specified from the 
-computation of a model-averaged estimate on 'parm'.  The 'exclude'
+this argument excludes models based on the terms specified for the 
+computation of a model-averaged estimate of 'parm'.  The 'exclude'
 argument is set to NULL by default and does not exclude any models other
 than those without the 'parm'.  When 'parm' is a main effect but is also
 involved in interactions/polynomial terms in some models, one should
@@ -113,16 +113,17 @@ terms are constructed with the usual operators (e.g., I( ) for
 polynomial terms, ':' for interaction terms). 
 }
 
- \item{uncond.se}{either, "old", or "revised", specifying the equation
-used to compute the unconditional standard error of a model-averaged
-estimate.  With uncond.se = "old", computations are based on equation
-4.9 of Burnham and Anderson (2002), which was the former way to compute
-unconditional standard errors.  With uncond.se = "revised", equation
-6.12 of Burnham and Anderson (2002) is used.  Anderson (2008, p. 111)
-recommends use of the revised version for the computation of
-unconditional standard errors and it is now the default.  Note that
-versions of package AICcmodavg < 1.04 used the old method to compute
-unconditional standard errors. 
+\item{uncond.se}{
+  either, "old", or "revised", specifying the equation used to compute
+  the unconditional standard error of a model-averaged estimate.  With
+  uncond.se = "old", computations are based on equation 4.9 of Burnham
+  and Anderson (2002), which was the former way to compute unconditional
+  standard errors.  With uncond.se = "revised", equation 6.12 of Burnham
+  and Anderson (2002) is used.  Anderson (2008, p. 111) recommends use
+  of the revised version for the computation of unconditional standard
+  errors and it is now the default.  Note that versions of package
+  AICcmodavg < 1.04 used the old method to compute unconditional
+  standard errors.
 }
 }
 
@@ -209,8 +210,8 @@ Marc J. Mazerolle
 
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{c_hat}},
-\code{\link{importance}}, \code{\link{confset}}, \code{\link{evidence}},
-\code{\link{modavgpred}}
+\code{\link{confset}}, \code{\link{evidence}}, \code{\link{importance}},
+\code{\link{modavg.shrink}}, \code{\link{modavgpred}}
 }
 \examples{
 ##anuran larvae example from Mazerolle (2006)
@@ -256,7 +257,8 @@ print(modavg(parm = "TypeBOG", cand.set = Cand.mod, modnames =
 Modnames), digits = 4)
 
 
-##compute residual deviance as in Mazerolle (2006)          
+##compute c-hat estimate based on residual deviance as in Mazerolle
+##(2006)
 Cand.mod[[1]]$deviance/Cand.mod[[1]]$df.residual
 
 ##compute model-averaged estimate of TypeBOG as in Table 4 of

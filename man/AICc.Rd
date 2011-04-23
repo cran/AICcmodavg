@@ -151,7 +151,7 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{aictab}}, \code{\link{confset}}, \code{\link{importance}},
 \code{\link{evidence}}, \code{\link{c_hat}}, \code{\link{modavg}},
-\code{\link{modavgpred}}
+\code{\link{modavg.shrink}}, \code{\link{modavgpred}}
 }
 \examples{
 ##cement data from Burnham and Anderson (2002, p. 101)

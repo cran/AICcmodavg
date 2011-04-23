@@ -11,12 +11,13 @@ Description:  This package includes functions to create model selection
 tables based on Akaike's information criterion (AIC) and the
 second-order AIC (AICc), as well as their quasi-likelihood counterparts
 (QAIC, QAICc).  Tables are printed with delta AIC and Akaike
-weights.  The package also includes functions to conduct model averaging
-(multimodel inference) for a given parameter of interest or predicted
-values.  Other handy functions enable the computation of relative
-variable importance, evidence ratios, and confidence sets for the best
-model.  The present version works with linear models ('lm' class),
-generalized linear models ('glm' class), linear models fit by
+weights.  The package also features functions to conduct classic model
+averaging (multimodel inference) for a given parameter of interest or
+predicted values, as well as a shrinkage version of model averaging
+parameter estimates.  Other handy functions enable the computation of
+relative variable importance, evidence ratios, and confidence sets for
+the best model.  The present version works with linear models ('lm'
+class), generalized linear models ('glm' class), linear models fit by
 generalized least squares ('gls' class), linear mixed models ('lme'
 class), generalized linear mixed models ('mer' class), multinomial and
 ordinal logistic regressions ('multinom' and 'polr' classes).  
@@ -25,8 +26,8 @@ ordinal logistic regressions ('multinom' and 'polr' classes).
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.14\cr
-Date: \tab 2011-03-11\cr
+Version: \tab 1.15\cr
+Date: \tab 2011-04-19\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -53,6 +54,10 @@ multimodel inference:
 \item{\code{\link{modavg}}}  {Computes model-averaged estimate,
   unconditional standard error, and unconditional confidence interval of a
   parameter of interest among a set of candidate models.}
+\item{\code{\link{modavg.shrink}}}  {Computes shrinkage version of
+  model-averaged estimate, unconditional standard error, and
+  unconditional confidence interval of a parameter of interest among a
+  set of candidate models.} 
 \item{\code{\link{modavgpred}}}  {Computes model-average predictions and
   unconditional SE's among entire set of candidate models.}
 \item{\code{\link{c_hat}}}  {Computes an estimate of variance

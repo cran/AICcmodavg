@@ -8,7 +8,14 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
   check.class <- unique(mod.class)
   
   if(!identical(check.class, "polr")) {stop("This function is only appropriate with the \'polr\' class\n")}
-    
+
+#####MODIFICATIONS BEGIN#######
+  ##reverse parm
+  reversed.parm <- reverse.parm(parm)
+  exclude <- reverse.exclude(exclude = exclude)
+#####MODIFICATIONS END######
+
+  
   ##extract model formula for each model in cand.set    
   mod_formula<-lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients)) 
 
@@ -25,11 +32,27 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
     idents.check <- NULL
     form <- mod_formula[[i]]
 
+######################################################################################################
+######################################################################################################
+###MODIFICATIONS BEGIN
     ##iterate over each element of formula[[i]] in list
-    for (j in 1:length(form)) {
-      idents[j] <- identical(parm, form[j])
-      idents.check[j] <- ifelse(attr(regexpr(parm, form[j], fixed=TRUE), "match.length")==-1, 0, 1)  
-    }
+      if(is.null(reversed.parm)) {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(parm, form[j])
+          idents.check[j] <- ifelse(attr(regexpr(parm, form[j], fixed=TRUE), "match.length")== "-1" , 0, 1)  
+        }
+      } else {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+          idents.check[j] <- ifelse(attr(regexpr(parm, form[j], fixed=TRUE), "match.length")=="-1" & attr(regexpr(reversed.parm, form[j],
+                                                                  fixed=TRUE), "match.length")=="-1" , 0, 1)  
+        }
+      }
+###MODIFICATIONS END
+######################################################################################################
+######################################################################################################
+
+    
     include[i] <- ifelse(any(idents==1), 1, 0)
     include.check[i] <- ifelse(sum(idents.check)>1, "duplicates", "OK")
   }
@@ -100,13 +123,13 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
       for (i in 1:nmods) {
         idents <- NULL
         form.excl <- forms[[i]]
-
+                    
         ##iterate over each element of forms[[i]]
         for (j in 1:length(form.excl)) {
-          idents[j] <- identical(exclude[var][[1]], form.excl[j])
+          idents[j] <- identical(exclude[var][[1]], gsub("(^ +)|( +$)", "", form.excl[j]))
         }
         mod.exclude[i,var] <- ifelse(any(idents==1), 1, 0)
-      }    
+      }
       
     }
   

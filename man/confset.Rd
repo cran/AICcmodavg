@@ -31,7 +31,7 @@ as that obtained from 'c_hat'.  Note that values of c.hat different from
 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
 success/trial or cbind(success, failure) syntax) or with Poisson
 GLM's. If c.hat > 1, 'aictab' will return the quasi-likelihood analogue
-of the information criteria requested.  This option is not yet supported
+of the information criteria requested.  This option is not supported
 for generalized linear mixed models of the 'mer' class.
 }
   \item{second.ord}{
@@ -134,8 +134,8 @@ Marc J. Mazerolle
 
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{c_hat}},
-\code{\link{modavg}}, \code{\link{importance}}, \code{\link{evidence}},
-\code{\link{modavgpred}} 
+\code{\link{evidence}}, \code{\link{importance}}, \code{\link{modavg}},
+\code{\link{modavg.shrink}}, \code{\link{modavgpred}}
 }
 \examples{
 ##anuran larvae example from Mazerolle (2006)
