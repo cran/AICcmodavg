@@ -1,7 +1,7 @@
 aictab <-
   function(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE, nobs = NULL) {
     results <- NULL
-    known <- rep(0, 7) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, or mer
+    known <- rep(0, 8) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, or unmarked
     ##extract classes
     mod.class <- unlist(lapply(X = cand.set, FUN = class))
     ##check if all are identical
@@ -52,12 +52,22 @@ aictab <-
       known[6] <- 1
     }
 
+
+    ##determine if unmarked
+    unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO")
+    if(any(sapply(unmarked.class, FUN = function(i) identical(i, check.class)))) {
+      results <- aictab.unmarked(cand.set = cand.set, modnames = modnames, sort = sort,
+                                 c.hat = c.hat, second.ord = second.ord, nobs = nobs)
+      known[7] <- 1
+    }
+
+
     
     ##warn if models are from a mixture of lm and lme model classes
     if(identical(sort(check.class), c("lm", "lme"))) {
       stop(cat("Function not appropriate for mixture of object classes:", "\n",
                "avoid mixing objects of classes \'lm\' and \'lme\'\n"))
-      known[7] <- 1
+      known[8] <- 1
     }
 
     ##warn if class is neither lm, glm, multinom, polr, lme, gls nor mer
@@ -76,13 +86,13 @@ print.aictab <-
 
     #check if Cum.Wt should be printed
     if(any(names(x) == "Cum.Wt")) {
-      nice.tab <- cbind(x[,2], x[,3], x[,4], x[,6], x[, "Cum.Wt"], x[,7])
-      colnames(nice.tab) <- c(colnames(x)[c(2,3,4,6)], "Cum.Wt", colnames(x)[7])
-      rownames(nice.tab) <- x[,1]
+      nice.tab <- cbind(x[, 2], x[, 3], x[, 4], x[, 6], x[, "Cum.Wt"], x[, 7])
+      colnames(nice.tab) <- c(colnames(x)[c(2, 3, 4, 6)], "Cum.Wt", colnames(x)[7])
+      rownames(nice.tab) <- x[, 1]
     } else {
-      nice.tab <- cbind(x[,2], x[,3], x[,4], x[,6], x[,7])
-      colnames(nice.tab) <- c(colnames(x)[c(2,3,4,6,7)])
-      rownames(nice.tab) <- x[,1]
+      nice.tab <- cbind(x[, 2], x[, 3], x[, 4], x[, 6], x[, 7])
+      colnames(nice.tab) <- c(colnames(x)[c(2, 3, 4, 6, 7)])
+      rownames(nice.tab) <- x[, 1]
     }
     
 

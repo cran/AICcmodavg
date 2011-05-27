@@ -1,9 +1,9 @@
 modavg <-
   function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95, second.ord = TRUE,
-           nobs = NULL, exclude = NULL, warn = TRUE, uncond.se = "revised"){
+           nobs = NULL, exclude = NULL, warn = TRUE, uncond.se = "revised", parm.type = NULL){
 
     mod.avg <- NULL
-    known <- rep(0, 7) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, or mer
+    known <- rep(0, 8) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, or mer
     ##extract classes
     mod.class <- unlist(lapply(X = cand.set, FUN = class))
     ##check if all are identical
@@ -63,12 +63,21 @@ modavg <-
     }
 
 
-    
+    ##determine if unmarked
+    unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO")
+    if(any(sapply(unmarked.class, FUN = function(i) identical(i, check.class)))) {
+      mod.avg <- modavg.unmarked(cand.set = cand.set, parm = parm, modnames = modnames, c.hat = c.hat, conf.level = conf.level,
+                                 second.ord = second.ord, nobs = nobs, exclude = exclude, warn = warn, uncond.se = uncond.se,
+                                 parm.type = parm.type)
+      known[7] <- 1
+    }
+
+        
     ##warn if models are from a mixture of model classes
     if(identical(sort(check.class), c("lm", "lme"))) {
       stop(cat("Function not appropriate for mixture of object classes:", "\n",
                "avoid mixing objects of classes lm and lme", "\n"))
-      known[7] <- 1
+      known[8] <- 1
     }
 
 

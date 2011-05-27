@@ -60,7 +60,9 @@ reverse.parm(parm = "Ageyoung:time") #returns the reverse
 
 
 ##exclude two interaction terms
-reverse.exclude(exclude = list("Age*time", "A:B")) #returns all combinations
-reverse.exclude(exclude = list("Age:time", "A*B")) #returns all combinations
+reverse.exclude(exclude = list("Age*time", "A:B"))
+##returns all combinations
+reverse.exclude(exclude = list("Age:time", "A*B"))
+##returns all combinations
 }
 \keyword{models}

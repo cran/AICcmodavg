@@ -22,6 +22,9 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
                                        "from models using different link functions\n"))
 ###################       
 
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+  
   
   ##extract model formula for each model in cand.set
   mod_formula <- lapply(cand.set, FUN = function(i) rownames(summary(i)@coefs))

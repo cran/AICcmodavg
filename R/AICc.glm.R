@@ -1,9 +1,9 @@
 AICc.glm <-
-  function(mod, return.K=FALSE, c.hat=1, second.ord=TRUE, nobs=NULL){
+  function(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, nobs = NULL){
 #check whether object is of appropriate class
     if(identical(class(mod), "lm") || identical(class(mod), c("glm", "lm"))) {
     
-      if(identical(nobs, NULL)) {
+      if(is.null(nobs)) {
         if(identical(family(mod)[[1]], "binomial") && any(mod$prior.weights!=1)) {
           n <- sum(mod$prior.weights) } else {n<-length(mod$fitted)}
       } else {n <- nobs}

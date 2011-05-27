@@ -7,6 +7,7 @@
 \alias{aictab.mer}
 \alias{aictab.mult}
 \alias{aictab.polr}
+\alias{aictab.unmarked}
 \alias{print.aictab}
 \title{
 Create Model Selection Tables
@@ -18,32 +19,37 @@ ranks the models based on the selected information criteria and also
 provides delta AIC and Akaike weights.  'aictab' selects the
 appropriate function to create the model selection table based on the 
 object class.  The current version works with objects of 'lm', 'glm',
-'gls', 'lme', 'mer', 'multinom', and 'polr' classes but does not yet allow
-mixing of different classes. 
+'gls', 'lme', 'mer', 'multinom', 'polr' classes as well as various
+models of 'unmarkedFit' classes but does not yet allow mixing of
+different classes.  
 }
 \usage{
 aictab(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE,
-nobs = NULL) 
+       nobs = NULL)
 
 aictab.glm(cand.set, modnames, sort = TRUE, c.hat = 1,
-second.ord = TRUE, nobs = NULL)
+           second.ord = TRUE, nobs = NULL)
 
 aictab.gls(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-nobs = NULL) 
+           nobs = NULL) 
 
 aictab.lme(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-nobs = NULL) 
+           nobs = NULL) 
 
 aictab.mer(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-nobs = NULL) 
+           nobs = NULL) 
 
 aictab.mult(cand.set, modnames, sort = TRUE, c.hat = 1,
-second.ord = TRUE, nobs = NULL)
+            second.ord = TRUE, nobs = NULL)
 
 aictab.polr(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-nobs = NULL) 
+            nobs = NULL) 
+
+aictab.unmarked(cand.set, modnames, sort = TRUE, c.hat = 1,
+                second.ord = TRUE, nobs = NULL) 
 
 }
+
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{cand.set}{
@@ -61,10 +67,11 @@ logical.  If true, the model selection table is ranked according to the
 value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from 'c_hat'.  Note that values of c.hat different from
 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
-success/trial or cbind(success, failure) syntax) or with Poisson GLM's.
-If c.hat > 1, 'aictab' will return the quasi-likelihood analogue of the
-information criteria requested.  This option is not yet supported for
-generalized linear mixed models of the 'mer' class.
+success/trial or cbind(success, failure) syntax), with Poisson
+GLM's, or single-season occupancy models (MacKenzie et al. 2002).  If
+c.hat > 1, 'AICc' will return the quasi-likelihood analogue of the
+information criterion requested.  This option is not supported for
+generalized linear mixed models of the 'mer' class. 
 }
   \item{second.ord}{
 logical.  If TRUE, the function returns the second-order
@@ -73,19 +80,21 @@ Akaike information criterion (i.e., AICc).
   \item{nobs}{
 this argument allows to specify a numeric value other than total sample
 size to compute the AICc (i.e., 'nobs' defaults to total number of
-observations).  This is relevant only for linear mixed models where
-sample size is not straightforward.  In such cases, one might use total
-number of observations or number of independent clusters as the value of
-'nobs'. 
+observations).  This is relevant only for mixed models or various models
+of 'unmarkedFit' classes where sample size is not straightforward.  In
+such cases, one might use total number of observations or number of
+independent clusters (e.g., sites) as the value of 'nobs'.
 }
 }
 \details{
 'aictab' is a function that calls either 'aictab.glm', 'aictab.gls',
-'aictab.lme', 'aictab.mer', 'aictab.mult', or 'aictab.polr' depending on
-the class of the object.  The current function is implemented for 'lm',
-'glm', 'gls', 'lme', 'mer', 'multinom', and 'lme' classes and constructs
-a model selection table based on one of the four information criteria:
-AIC, AICc, QAIC, and QAICc.
+'aictab.lme', 'aictab.mer', 'aictab.mult', 'aictab.polr', or
+'aictab.unmarked' depending on the class of the object.  The current
+function is implemented for 'lm', 'glm', 'gls', 'lme', 'mer', 'multinom',
+and 'polr' classes as well as 'unmarkedFitOccu', 'unmarkedFitColExt',
+'unmarkedFitOccuRN', 'unmarkedFitPCount', 'unmarkedFitPCO' classes.  The
+function constructs a model selection table based on one of the four
+information criteria:  AIC, AICc, QAIC, and QAICc.
 
 Ten guidelines for model selection:
 
@@ -147,9 +156,9 @@ conclusions on a single 'best' model.  It is an elegant way of making
 inference based on the information contained in the entire model set.
 }
 \value{
-'aictab', 'aictab.glm', 'aictab.lme', 'aictab.mer', 'aictab.mult', and
-'aictab.polr' create an object of class 'aictab' with the following
-components: 
+'aictab', 'aictab.glm', 'aictab.lme', 'aictab.mer', 'aictab.mult', 
+'aictab.polr', and 'aictab.unmarked' create an object of class 'aictab'
+with the following components: 
 
 \item{Modname}{the names of each model of the candidate model set.}
 \item{K }{the number of estimated parameters for each model.}
@@ -190,6 +199,11 @@ Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
 understanding AIC and BIC in model selection. \emph{Sociological Methods
 and Research} \bold{33}, 261--304.
 
+MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
+J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
+detection probabilities are less than one. \emph{Ecology} \bold{83},
+2248--2255.
+
 Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
 Akaike's Information Criterion (AIC) to assess the strength of
 biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180.
@@ -207,38 +221,44 @@ Marc J. Mazerolle
 data(dry.frog)
 
 ##setup a subset of models of Table 1
-Cand.models<-list()
+Cand.models <- list( )
 Cand.models[[1]] <- lm(log_Mass_lost ~ Shade + Substrate +
-cent_Initial_mass + Initial_mass2, data = dry.frog)
+                       cent_Initial_mass + Initial_mass2,
+                       data = dry.frog)
 Cand.models[[2]] <- lm(log_Mass_lost ~ Shade + Substrate +
-cent_Initial_mass + Initial_mass2 + Shade:Substrate, data = dry.frog)
+                       cent_Initial_mass + Initial_mass2 +
+                       Shade:Substrate, data = dry.frog)
 Cand.models[[3]] <- lm(log_Mass_lost ~ cent_Initial_mass +
-Initial_mass2, data = dry.frog)
+                       Initial_mass2, data = dry.frog)
 Cand.models[[4]] <- lm(log_Mass_lost ~ Shade + cent_Initial_mass +
-Initial_mass2, data = dry.frog)
+                       Initial_mass2, data = dry.frog)
 Cand.models[[5]] <- lm(log_Mass_lost ~ Substrate + cent_Initial_mass +
-Initial_mass2, data = dry.frog)
+                       Initial_mass2, data = dry.frog)
 
 ##create a vector of names to trace back models in set
-Modnames<-paste("mod", 1:length(Cand.models), sep="")
+Modnames <- paste("mod", 1:length(Cand.models), sep = " ")
 
 ##generate AICc table
 aictab(cand.set = Cand.models, modnames = Modnames, sort = TRUE)
 ##round to 4 digits after decimal point and give log-likelihood
 print(aictab(cand.set = Cand.models, modnames = Modnames, sort = TRUE),
-digits = 4, LL = TRUE)
+      digits = 4, LL = TRUE)
+
+
 
 ##Burnham and Anderson (2002) flour beetle data
 data(beetle)
 ##models as suggested by Burnham and Anderson p. 198          
 Cand.set <- list( )
 Cand.set[[1]] <- glm(Mortality_rate ~ Dose, family =
-binomial(link = "logit"), weights = Number_tested, data = beetle)
+                     binomial(link = "logit"), weights = Number_tested,
+                     data = beetle)
 Cand.set[[2]] <- glm(Mortality_rate ~ Dose, family =
-binomial(link = "probit"), weights = Number_tested, data = beetle)
+                     binomial(link = "probit"), weights = Number_tested,
+                     data = beetle)
 Cand.set[[3]] <- glm(Mortality_rate ~ Dose, family =
-binomial(link ="cloglog"), weights = Number_tested, data = beetle)
-
+                     binomial(link ="cloglog"), weights = Number_tested,
+                     data = beetle)
 
 ##check c-hat
 c_hat(Cand.set[[1]])
@@ -247,8 +267,9 @@ c_hat(Cand.set[[3]])
 ##lowest value of c-hat < 1 for these non-nested models, thus use
 ##c.hat = 1 
        
-Modnames <- paste("Mod", 1:length(Cand.set), sep="")
-res.table <- aictab(cand.set = Cand.set, modnames = Modnames, second.ord = FALSE)
+Modnames <- paste("Mod", 1:length(Cand.set), sep = " ")
+res.table <- aictab(cand.set = Cand.set, modnames = Modnames,
+                    second.ord = FALSE)
 ##note that delta AIC and Akaike weights are identical to Table 4.7
 print(res.table, digits = 2, LL = TRUE) #print table with 2 digits and
 ##print log-likelihood in table
@@ -262,14 +283,43 @@ require(lme4)
 ##create proportion of incidence
 cbpp$prop <- cbpp$incidence/cbpp$size
 gm1 <- glmer(prop ~ period + (1 | herd), family = binomial, weights =
-size, data = cbpp)
+             size, data = cbpp)
 gm2 <- glmer(prop ~ 1 + (1 | herd), family = binomial, weights =
-size, data = cbpp)
+             size, data = cbpp)
 
 Cands <- list(gm1, gm2)
 Model.names <- c("effect of period", "no effect of period")
 aictab(cand.set = Cands, modnames = Model.names, sort = TRUE)
 detach(package:lme4)
+
+
+
+##single-season occupancy model example modified from ?occu
+require(unmarked)
+##single season
+data(frogs)
+pferUMF <- unmarkedFrameOccu(pfer.bin)
+## add some fake covariates for illustration
+siteCovs(pferUMF) <- data.frame(sitevar1 = rnorm(numSites(pferUMF)),
+                                sitevar2 = rnorm(numSites(pferUMF))) 
+     
+## observation covariates are in site-major, observation-minor order
+obsCovs(pferUMF) <- data.frame(obsvar1 = rnorm(numSites(pferUMF) *
+                                 obsNum(pferUMF))) 
+
+##set up candidate model set
+fm1 <- occu(~ obsvar1 ~ sitevar1, pferUMF)
+fm2 <- occu(~ 1 ~ sitevar1, pferUMF)
+fm3 <- occu(~ obsvar1 ~ sitevar2, pferUMF)
+fm4 <- occu(~ 1 ~ sitevar2, pferUMF)
+Cand.mods <- list(fm1, fm2, fm3, fm4)
+Modnames <- c("fm1", "fm2", "fm3", "fm4")
+
+##compute table
+aictab(cand.set = Cand.mods, modnames = Modnames,
+       second.ord = TRUE)
+
+detach(package:unmarked)
 }
 
 \keyword{models}

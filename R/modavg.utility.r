@@ -48,7 +48,10 @@ reverse.parm <- function(parm) {
 ####################################################
 ##function to reverse order of exclude terms with colon or asterisk
 reverse.exclude <- function(exclude) {
-  
+
+  ##remove all leading and trailing white space and within parm
+  exclude <- lapply(exclude, FUN = function(i) gsub('[[:space:]]+', "", i))
+    
   ##determine which terms are interactions with colons
   which.inter <- grep(pattern = ":", x = exclude)
   n.inter <- length(which.inter)

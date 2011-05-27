@@ -10,8 +10,11 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
   
   if(!identical(check.class, "gls"))  {stop("This function is only appropriate with the \'gls\' class\n")}
 
+  
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
 
-
+  
   ##check for frequency of each terms    
   ##extract model formula for each model in cand.set
   mod_formula <- lapply(cand.set, FUN = function(i) rownames(summary(i)$coefficients)) #extract model formula for each model in cand.set

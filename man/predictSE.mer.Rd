@@ -10,8 +10,8 @@ predictions) and associated standard errors from a generalized linear mixed effe
 model.
 }
 \usage{
-predictSE.mer(mod, newdata, se.fit = TRUE, type = "response", level = 0, 
-print.matrix = FALSE) 
+predictSE.mer(mod, newdata, se.fit = TRUE, type = "response",
+              level = 0, print.matrix = FALSE) 
 }
 \arguments{
   \item{mod}{
@@ -85,26 +85,27 @@ require(lme4)
 data(cbpp)
 ##create proportion of incidence
 cbpp$prop <- cbpp$incidence/cbpp$size
-gm1 <- glmer(prop ~ period + (1 | herd), family = binomial, weights =
-size, data = cbpp)
+gm1 <- glmer(prop ~ period + (1 | herd), family = binomial,
+             weights = size, data = cbpp)
 
 ##create a data set to make predictions
 newherd<- data.frame(period = as.factor(c("1", "2", "3", "4")))
 
 ##predictions on logit link scale
-predictSE.mer(mod = gm1, newdata = newherd, se.fit = TRUE, type =
-"link", level = 0, print.matrix = FALSE)
+predictSE.mer(mod = gm1, newdata = newherd, se.fit = TRUE,
+              type = "link", level = 0, print.matrix = FALSE)
 
 ##predictions on scale of original response variable
-predictSE.mer(mod = gm1, newdata = newherd, se.fit = TRUE, type =
-"response", level = 0, print.matrix = TRUE)
+predictSE.mer(mod = gm1, newdata = newherd, se.fit = TRUE,
+              type = "response", level = 0, print.matrix = TRUE)
+
 
 
 ##example with linear mixed model with Orthodont data from
 ##Pinheiro and Bates (2000)
 data(Orthodont, package = "nlme")
-m2 <- lmer(distance ~ Sex + (1 | Subject), data = Orthodont, REML =
-FALSE)
+m2 <- lmer(distance ~ Sex + (1 | Subject), data = Orthodont,
+           REML = FALSE)
 
 ##create data set for predictions for all combinations of Sex and 2 ages
 neworth <- expand.grid(Sex = c("Male", "Female"), age = c(8, 10))
@@ -121,10 +122,12 @@ predictSE.mer(m2, newdata = neworth, level = 1, print.matrix = TRUE)
 }
 
 ##compare with the following:
-m3 <- glmer(distance ~ Sex + (1 | Subject), family = gaussian(link =
-log), data = Orthodont, nAGQ = 1)
+m3 <- glmer(distance ~ Sex + (1 | Subject),
+            family = gaussian(link = log), data = Orthodont, nAGQ = 1)
+
 ##predictions on original scale of response variable
 predictSE.mer(m3, newdata = neworth, type = "response")
+
 ##predictions on log scale
 predictSE.mer(m3, newdata = neworth, type = "link")
 

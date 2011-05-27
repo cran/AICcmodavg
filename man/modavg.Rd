@@ -7,6 +7,7 @@
 \alias{modavg.mer}
 \alias{modavg.mult}
 \alias{modavg.polr}
+\alias{modavg.unmarked}
 \alias{print.modavg}
 
 \title{
@@ -19,35 +20,42 @@ error and unconditional confidence intervals as described in Buckland et
 al. (1997) and Burnham and Anderson (2002).
 }
 \usage{
-modavg(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
-conf.level = 0.95, second.ord = TRUE, nobs = NULL, exclude = NULL,
-warn = TRUE, uncond.se = "revised")
+modavg(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, 
+       conf.level = 0.95, second.ord = TRUE, nobs = NULL,
+       exclude = NULL, warn = TRUE, uncond.se = "revised",
+       parm.type = NULL)
 
 modavg.glm(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
-conf.level = 0.95, second.ord = TRUE, nobs = NULL, exclude = NULL,
-warn = TRUE, uncond.se = "revised")
+           conf.level = 0.95, second.ord = TRUE, nobs = NULL,
+           exclude = NULL, warn = TRUE, uncond.se = "revised")
 
 modavg.gls(cand.set, parm, modnames, conf.level = 0.95,
-second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
-uncond.se = "revised")
+           second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
+           uncond.se = "revised")
 
 modavg.lme(cand.set, parm, modnames, conf.level = 0.95,
-second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
-uncond.se = "revised")
+           second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
+           uncond.se = "revised")
 
 modavg.mer(cand.set, parm, modnames, conf.level = 0.95,
-second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
-uncond.se = "revised")
+           second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
+           uncond.se = "revised")
 
 modavg.mult(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95,
-second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
-uncond.se = "revised")
+            second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
+            uncond.se = "revised")
 
 modavg.polr(cand.set, parm, modnames, conf.level = 0.95,
-second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
-uncond.se = "revised")
+            second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
+            uncond.se = "revised")
+
+modavg.unmarked(cand.set, parm, modnames, c.hat = 1,
+                conf.level = 0.95, second.ord = TRUE, nobs = NULL,
+                exclude = NULL, warn = TRUE, uncond.se = "revised",
+                parm.type = NULL) 
 
 }
+
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{cand.set}{
@@ -66,13 +74,14 @@ each model in the model selection table.
   \item{c.hat}{
 value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from 'c_hat'.  Note that values of c.hat different from
-1 are only appropriate either for binomial GLM's with trials > 1 (i.e.,
-success/trial or cbind(success, failure) syntax) or for Poisson GLM's.
-If c.hat > 1, 'aictab' will return the quasi-likelihood analogue of the
-information criteria requested and multiply the variance-covariance
-matrix of the estimates by this value (i.e., SE's are multiplied by
-sqrt(c.hat)).  This option is not supported for generalized linear
-mixed models of the 'mer' class.
+1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
+success/trial or cbind(success, failure) syntax), with Poisson GLM's, or
+single-season occupancy models (MacKenzie et al. 2002).  If c.hat > 1,
+'modavg' will return the quasi-likelihood analogue of the information
+criteria requested and multiply the variance-covariance matrix of the
+estimates by this value (i.e., SE's are multiplied by sqrt(c.hat)).
+This option is not supported for generalized linear mixed models of the
+'mer' class.
 }
   \item{gamdisp}{
 if gamma GLM is used, the dispersion parameter should be specified here
@@ -89,10 +98,10 @@ Akaike information criterion (i.e., AICc).
   \item{nobs}{
 this argument allows to specify a numeric value other than total sample
 size to compute the AICc (i.e., 'nobs' defaults to total number of
-observations).  This is relevant only for linear mixed models where
-sample size is not straightforward. In such cases, one might use total
-number of observations or number of independent clusters as the value of
-'nobs'.
+observations).  This is relevant only for mixed models or various models
+of 'unmarkedFit' classes where sample size is not straightforward.  In
+such cases, one might use total number of observations or number of
+independent clusters (e.g., sites) as the value of 'nobs'.
 }
   \item{exclude}{
 this argument excludes models based on the terms specified for the 
@@ -125,24 +134,46 @@ polynomial terms, ':' for interaction terms).
   AICcmodavg < 1.04 used the old method to compute unconditional
   standard errors.
 }
+\item{parm.type}{
+  this argument specifies the parameter type of the estimate specified
+  in 'parm' and is only relevant for models of 'unmarkedFitOccu',
+  'unmarkedFitColExt', 'unmarkedFitOccuRN', 'unmarkedFitPCount',
+  'unmarkedFitPCO' classes.  The character strings supported vary with
+  the type of model fitted.  For 'unmarkedFitOccu' objects, either 'psi' 
+  or 'detect' can be supplied to indicate whether the parameter is on
+  occupancy or detectability, respectively.  For 'unmarkedFitColExt',
+  possible values are 'psi', 'gamma', 'epsilon', and 'detect', for
+  parameters on occupancy in the inital year, colonization, extinction,
+  and detectability, respectively.  For 'unmarkedFitOccuRN' objects,
+  either 'lambda or 'detect' can be entered for abundance and
+  detectability parameters, respectively.  For 'unmarkedFitPCount'
+  objects, 'lambda' or 'detect' denote parameters on abundance and
+  detectability, respectively.  For 'unmarkedFitPCO' objects, one can
+  enter 'lambda', 'gamma', 'omega', or 'detect', to specify parameters
+  on abundance, recruitment, apparent survival, and detectability,
+  respectively.
+}
 }
 
 \details{
-The parameter must be specified as it appears in the model output.  For
-factors, one must specify the name of the variable and the level of
-interest.  To avoid problems, one should specify interaction terms
-consistently for all models: e.g., either a:b or b:a for all models, but
-not a mixture of both.    
+The parameter for which a model-averaged estimate is requested must be
+specified with the 'parm' argument and must be identical to its label in
+the model output (e.g., from 'summary').  For factors, one must specify
+the name of the variable and the level of interest.  'modavg' includes
+checks to find variations of interaction terms specified in the 'parm'
+and 'exclude' arguments.  However, to avoid problems, one should specify
+interaction terms consistently for all models: e.g., either a:b or b:a
+for all models, but not a mixture of both. 
 
 Care must be taken when some models include interaction or polynomial
 terms, because main effect terms do not have the same interpretation
-when an interaction/polynomial term appears in the same model.  In such
-cases, one should exclude models containing interaction terms where the
-main effect is involved with the 'exclude' argument of modavg( ).  Note
-that modavg( ) checks for potential cases of multiple instances of a
-variable appearing more than once in a given model (presumably in an
-interaction) and issues a warning.  To correctly compute the
-model-averaged estimate of a main effect involved in
+when they also appear in an interaction/polynomial term in the same
+model.  In such cases, one should exclude models containing interaction
+terms where the main effect is involved with the 'exclude' argument of
+'modavg'.  Note that 'modavg' checks for potential cases of multiple
+instances of a variable appearing more than once in a given model
+(presumably in an interaction) and issues a warning.  To correctly
+compute the model-averaged estimate of a main effect involved in
 interaction/polynomial terms, specify the terms(s) that should not
 appear in the same model with the 'exclude' argument.  This will
 effectively exclude models from the computation of the model-averaged
@@ -158,15 +189,17 @@ of similarly named variables in the models (and NOT due to interaction
 terms), you can suppress this warning by setting 'warn = FALSE'.    
 
 'modavg' is a function that calls 'modavg.glm', 'modavg.gls',
-'modavg.lme', 'modavg.mer', 'modavg.mult', or 'modavg.polr' depending on
-the class of the object.  The current function is implemented for a list
-containing objects of 'lm', 'glm', 'gls', 'lme', 'mer', 'multinom', and
-'polr' classes.
+'modavg.lme', 'modavg.mer', 'modavg.mult', 'modavg.polr', or
+'modavg.unmarked' depending on the class of the object.  The current
+function is implemented for a list containing objects of 'lm', 'glm',
+'gls', 'lme', 'mer', 'multinom', and 'polr' classes as well as
+'unmarkedFitOccu', 'unmarkedFitColExt', 'unmarkedFitOccuRN',
+'unmarkedFitPCount', 'unmarkedFitPCO' classes.
 }
 \value{
 'modavg', 'modavg.glm', 'modavg.gls', 'modavg.lme', 'modavg.mer',
-'modavg.mult', and 'modavg.polr' create an object of class 'modavg' with
-the following components: 
+'modavg.mult', 'modavg.polr', and 'modavg.unmarked' create an object of
+class 'modavg' with the following components: 
 
 \item{Parameter}{the parameter for which a model-averaged estimate was
   obtained} 
@@ -199,6 +232,11 @@ Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
 understanding AIC and BIC in model selection. \emph{Sociological
 Methods and Research} \bold{33}, 261--304.
 
+MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
+J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
+detection probabilities are less than one. \emph{Ecology} \bold{83},
+2248--2255.
+
 Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
 Akaike's Information Criterion (AIC) to assess the strength of
 biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
@@ -220,24 +258,26 @@ data(min.trap)
 min.trap$Type <- relevel(min.trap$Type, ref = "UPLAND") 
 
 ##set up candidate models          
-Cand.mod <- list()
+Cand.mod <- list( )
 ##global model          
 Cand.mod[[1]] <- glm(Num_anura ~ Type + log.Perimeter + Num_ranatra,
-family = poisson, offset = log(Effort), data = min.trap) 
+                     family = poisson, offset = log(Effort),
+                     data = min.trap) 
 Cand.mod[[2]] <- glm(Num_anura ~ Type + log.Perimeter, family = poisson,
-offset = log(Effort), data = min.trap) 
+                     offset = log(Effort), data = min.trap) 
 Cand.mod[[3]] <- glm(Num_anura ~ Type + Num_ranatra, family = poisson,
-offset = log(Effort), data = min.trap) 
+                     offset = log(Effort), data = min.trap) 
 Cand.mod[[4]] <- glm(Num_anura ~ Type, family = poisson,
-offset = log(Effort), data = min.trap) 
+                     offset = log(Effort), data = min.trap) 
 Cand.mod[[5]] <- glm(Num_anura ~ log.Perimeter + Num_ranatra,
-family = poisson, offset = log(Effort), data = min.trap) 
+                     family = poisson, offset = log(Effort),
+                     data = min.trap) 
 Cand.mod[[6]] <- glm(Num_anura ~ log.Perimeter, family = poisson,
-offset = log(Effort), data = min.trap) 
+                     offset = log(Effort), data = min.trap) 
 Cand.mod[[7]] <- glm(Num_anura ~ Num_ranatra, family = poisson,
-offset = log(Effort), data = min.trap) 
+                     offset = log(Effort), data = min.trap) 
 Cand.mod[[8]] <- glm(Num_anura ~ 1, family = poisson,
-offset = log(Effort), data = min.trap) 
+                     offset = log(Effort), data = min.trap) 
           
 ##check c-hat for global model
 c_hat(Cand.mod[[1]]) #uses Pearson's chi-square/df
@@ -246,16 +286,15 @@ c_hat(Cand.mod[[1]]) #uses Pearson's chi-square/df
 ##to 1  
 
 ##assign names to each model
-Modnames <- c("type + logperim + invertpred", "type + logperim", "type +
-invertpred", "type", "logperim + invertpred", "logperim", "invertpred",
-"intercept only") 
+Modnames <- c("type + logperim + invertpred", "type + logperim",
+              "type + invertpred", "type", "logperim + invertpred",
+              "logperim", "invertpred", "intercept only") 
 
 ##compute model-averaged estimate of TypeBOG
 modavg(parm = "TypeBOG", cand.set = Cand.mod, modnames = Modnames)
 ##round to 4 digits after decimal point
-print(modavg(parm = "TypeBOG", cand.set = Cand.mod, modnames =
-Modnames), digits = 4)
-
+print(modavg(parm = "TypeBOG", cand.set = Cand.mod,
+             modnames = Modnames), digits = 4)
 
 ##compute c-hat estimate based on residual deviance as in Mazerolle
 ##(2006)
@@ -264,7 +303,8 @@ Cand.mod[[1]]$deviance/Cand.mod[[1]]$df.residual
 ##compute model-averaged estimate of TypeBOG as in Table 4 of
 ##Mazerolle (2006) 
 modavg(parm = "TypeBOG", cand.set = Cand.mod, modnames = Modnames,
-c.hat = 1.11) 
+       c.hat = 1.11) 
+
 
 
 ##example with similarly-named variables and interaction terms
@@ -278,10 +318,11 @@ age <- rpois(n = 40, lambda = 3.2)
 agecorr <- rpois(n = 40, lambda = 2) 
 sizecat <- rep(c("a", "ab"), times = 20)
 data1 <- data.frame(resp = resp, size = size, sizecat = sizecat,
-mass = mass, mass2 = mass2, age = age, agecorr = agecorr)
+                    mass = mass, mass2 = mass2, age = age,
+                    agecorr = agecorr)
 
 ##set up models in list
-Cand <- list()
+Cand <- list( )
 Cand[[1]] <- lm(resp ~ size + agecorr, data = data1)
 Cand[[2]] <- lm(resp ~ size + mass + agecorr, data = data1)
 Cand[[3]] <- lm(resp ~ age + mass, data = data1)
@@ -292,12 +333,10 @@ Cand[[7]] <- lm(resp ~ mass + mass2 + sizecat, data = data1)
 Cand[[8]] <- lm(resp ~ sizecat, data = data1)
 Cand[[9]] <- lm(resp ~ sizecat + mass + sizecat:mass, data = data1)
 Cand[[10]] <- lm(resp ~ agecorr + sizecat + mass + sizecat:mass,
-data = data1) 
+                 data = data1) 
 
-Modnames<-NULL
-for (i in 1:length(Cand)) {
-Modnames[i]<-paste("mod", i, sep="")
-}
+##create vector of model names
+Modnames <- paste("mod", 1:length(Cand), sep = "")
 
 aictab(cand.set = Cand, modnames = Modnames, sort = TRUE) #correct
 
@@ -312,13 +351,12 @@ modavg(cand.set = Cand, parm = "age", modnames = Modnames)
 ##idea in this example since "mass" occurs with "mass2" and "sizecat:mass"
 ##in some of the models - results are INCORRECT
 \dontrun{modavg(cand.set = Cand, parm = "mass", modnames = Modnames,
-warn = FALSE)}
+                warn = FALSE)}
 
 ##correctly excludes models with quadratic term and interaction term
 ##results are CORRECT
 modavg(cand.set = Cand, parm = "mass", modnames = Modnames,
-exclude = list("mass2", "sizecat:mass")) 
-
+       exclude = list("mass2", "sizecat:mass")) 
 
 ##correctly computes model-averaged estimate because no other parameter
 ##occurs simultaneously in any of the models
@@ -327,10 +365,47 @@ modavg(cand.set = Cand, parm = "sizesmall", modnames = Modnames) #correct
 ##as expected, issues a warning because "sizecatab" occurs sometimes in
 ##an interaction in some models
 \dontrun{modavg(cand.set = Cand, parm = "sizecatab",
-modnames = Modnames) }
+                modnames = Modnames) }
 
 ##exclude models with "sizecat:mass" interaction - results are CORRECT
 modavg(cand.set = Cand, parm = "sizecatab", modnames = Modnames,
-exclude = list("sizecat:mass")) 
+       exclude = list("sizecat:mass"))
+
+
+
+##example with multiple-season occupancy model modified from ?colext
+require(unmarked)
+data(frogs)
+umf <- formatMult(masspcru)
+obsCovs(umf) <- scale(obsCovs(umf))
+siteCovs(umf) <- rnorm(numSites(umf))
+yearlySiteCovs(umf) <- data.frame(year = factor(rep(1:7,
+                                    numSites(umf))))
+
+##set up model with constant transition rates
+fm <- colext(psiformula = ~ 1, gammaformula = ~ 1, epsilonformula = ~ 1,
+             pformula = ~ JulianDate + I(JulianDate^2), data = umf,
+             control = list(trace=1, maxit=1e4))
+
+##model with with year-dependent transition rates
+fm.yearly <- colext(psiformula = ~ 1, gammaformula = ~ year,
+                    epsilonformula = ~ year,
+                    pformula = ~ JulianDate + I(JulianDate^2),
+                    data = umf)
+
+##store in list and assign model names
+Cand.mods <- list(fm, fm.yearly)
+Modnames <- c("psi1(.)gam(.)eps(.)p(Date + Date2)",
+              "psi1(.)gam(Year)eps(Year)p(Date + Date2)")
+
+##compute model-averaged estimate of occupancy in the first year
+modavg(cand.set = Cand.mods, modnames = Modnames, parm = "(Intercept)",
+       parm.type = "psi")
+
+##compute model-averaged estimate of Julian Day squared on detectability
+modavg(cand.set = Cand.mods, modnames = Modnames,
+       parm = "I(JulianDate^2)", parm.type = "detect") 
+detach(package:unmarked)
+
 }
 \keyword{models}

@@ -20,14 +20,20 @@ the best model.  The present version works with linear models ('lm'
 class), generalized linear models ('glm' class), linear models fit by
 generalized least squares ('gls' class), linear mixed models ('lme'
 class), generalized linear mixed models ('mer' class), multinomial and
-ordinal logistic regressions ('multinom' and 'polr' classes).  
+ordinal logistic regressions ('multinom' and 'polr' classes).  The
+package also supports various models incorporating detection
+probabilities such as single-season occupancy models ('unmarkedFitOccu' 
+class), multiple-season occupancy models ('unmarkedFitColExt' class),
+single-season heterogeneity models ('unmarkedFitOccuRN' class), and
+single-season and multiple-season N-mixture models for repeated counts
+('unmarkedFitPCount' and 'unmarkedFitPCO' classes, respectively). 
 }
 \details{
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.15\cr
-Date: \tab 2011-04-19\cr
+Version: \tab 1.16\cr
+Date: \tab 2011-05-27\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -44,6 +50,8 @@ multimodel inference:
 \item{\code{\link{evidence}}}  {Computes the evidence ratio between the
   highest-ranked model based on the information criteria selected and a
   lower-ranked model.}
+\item{\code{\link{extract.LL.unmarked}}}  {Extracts log-likelihood from
+  models of class 'unmarkedFit'.}
 \item{\code{\link{extractSE.mer}}}  {Extracts standard errors of the
   fixed effects of a generalized linear mixed model of class 'mer' and
   adds the labels.}

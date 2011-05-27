@@ -43,7 +43,7 @@ aictab.mer <-
     
     #rename correctly to AIC
     if(second.ord == FALSE) {
-      colnames(Results)[1:6] <- c("Modnames", "K", "AIC", "Delta AIC", "ModelLik", "AICWt")
+      colnames(Results)[1:6] <- c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
     }
 
     if(sort)  {

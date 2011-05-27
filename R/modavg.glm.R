@@ -25,6 +25,9 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
     ##gamma is treated separately
 
 #####MODIFICATIONS BEGIN#######
+    ##remove all leading and trailing white space and within parm
+    parm <- gsub('[[:space:]]+', "", parm)
+     
     ##reverse parm
     reversed.parm <- reverse.parm(parm)
     exclude <- reverse.exclude(exclude = exclude)
@@ -166,7 +169,7 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
     new.mod.name <- modnames[which(include==1)]    #update model names
     ##
 
-    new_table<-aictab.glm(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE, c.hat=c.hat, second.ord=second.ord, nobs=nobs)  #recompute AIC table and associated measures
+    new_table <- aictab.glm(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE, c.hat=c.hat, second.ord=second.ord, nobs=nobs)  #recompute AIC table and associated measures
     new_table$Beta_est <- unlist(lapply(new.cand.set, FUN=function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
     new_table$SE <- unlist(lapply(new.cand.set, FUN=function(i) sqrt(diag(vcov(i, dispersion = disp)))[paste(parm)]))
 
