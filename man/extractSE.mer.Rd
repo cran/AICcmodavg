@@ -38,8 +38,8 @@ Marc J. Mazerolle
 require(lme4)
 ##create proportion of incidence
 cbpp$prop <- cbpp$incidence/cbpp$size
-gm1 <- glmer(prop ~ period + (1 | herd), family = binomial, weights =
-size, data = cbpp)
+gm1 <- glmer(prop ~ period + (1 | herd), family = binomial,
+             weights = size, data = cbpp)
 ##print summary
 summary(gm1)
 ##extract variance-covariance matrix of fixed effects
@@ -50,4 +50,3 @@ extractSE.mer(gm1)  #with labels
 detach(package:lme4)
 }
 \keyword{models}
-

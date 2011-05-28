@@ -11,6 +11,9 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
   if(!identical(check.class, "lme"))  {stop("This function is only appropriate with the \'lme\' class\n")}
 
 #####MODIFICATIONS BEGIN#######
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+  
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
   exclude <- reverse.exclude(exclude = exclude)
@@ -18,14 +21,14 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
 
   
   ##extract model formula for each model in cand.set
-  mod_formula<-lapply(cand.set, FUN=function(i) labels(summary(i)$coefficients$fixed))
+  mod_formula <- lapply(cand.set, FUN=function(i) labels(summary(i)$coefficients$fixed))
 
   nmods <- length(cand.set)
   
   ##setup matrix to indicate presence of parms in the model
-  include <- matrix(NA, nrow=nmods, ncol=1)
+  include <- matrix(NA, nrow = nmods, ncol = 1)
   ##add a check for multiple instances of same variable in given model (i.e., interactions)
-  include.check <- matrix(NA, nrow=nmods, ncol=1)
+  include.check <- matrix(NA, nrow = nmods, ncol = 1)
 
   ##iterate over each formula in mod_formula list
   for (i in 1:nmods) {

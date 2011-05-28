@@ -85,7 +85,8 @@ evidence(aic.table = aicctable.out, model.low = "raw density")
 evidence(aic.table = aicctable.out) #gives the same answer
 ##round to 4 digits after decimal point
 print(evidence(aic.table = aicctable.out, model.low = "raw density"),
-digits = 4)
+      digits = 4)
+
 
 
 ##run models for the Orthodont data set in nlme
@@ -95,29 +96,28 @@ require(nlme)
 Cand.models <- list()
 Cand.models[[1]] <- lme(distance ~ age, data = Orthodont, method = "ML")
 ##random is ~ age | Subject
-Cand.models[[2]] <- lme(distance ~ age + Sex, data = Orthodont, random =
-~ 1, method = "ML")
+Cand.models[[2]] <- lme(distance ~ age + Sex, data = Orthodont,
+                        random = ~ 1, method = "ML")
 Cand.models[[3]] <- lme(distance ~ 1, data = Orthodont, random = ~ 1,
-method = "ML")
+                        method = "ML")
 
 ##create a vector of model names
-Modnames <- paste("mod", 1:length(Cand.models), sep = "")
-
+Modnames <- paste("mod", 1:length(Cand.models), sep = " ")
 
 ##compute AICc table
 aic.table.1 <- aictab(cand.set = Cand.models, modnames = Modnames,
-second.ord = TRUE)
+                      second.ord = TRUE)
 
 ##compute evidence ratio between best model and second-ranked model
 evidence(aic.table = aic.table.1)
 
 ##compute the same value but from an unsorted model selection table
 evidence(aic.table = aictab(cand.set = Cand.models,
-modnames = Modnames, second.ord = TRUE, sort = FALSE))
+           modnames = Modnames, second.ord = TRUE, sort = FALSE))
 
 ##compute evidence ratio between second-best model and third-ranked
 ##model  
 evidence(aic.table = aic.table.1, model.high = "mod1",
-model.low = "mod3") 
+         model.low = "mod3")
 }
 \keyword{models}

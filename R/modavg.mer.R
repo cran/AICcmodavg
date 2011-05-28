@@ -11,6 +11,9 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
   if(!identical(check.class, "mer"))  {stop("This function is only appropriate with the \'mer\' class\n")}
 
 #####MODIFICATIONS BEGIN#######
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+  
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
   exclude <- reverse.exclude(exclude = exclude)

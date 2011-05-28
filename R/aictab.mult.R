@@ -26,7 +26,7 @@ aictab.mult <-
     
     ##rename correctly to QAICc and add column for c-hat
     if(second.ord==TRUE && c.hat > 1) {
-      colnames(Results) <- c("Modnames", "K", "QAICc", "Delta QAICc", "ModelLik", "QAICcWt")
+      colnames(Results) <- c("Modnames", "K", "QAICc", "Delta_QAICc", "ModelLik", "QAICcWt")
       LL <- unlist(lapply(X=cand.set, FUN=function(i) logLik(i)[1]))
       Results$Quasi.LL <- LL/c.hat
       Results$c_hat <- c.hat
@@ -35,13 +35,13 @@ aictab.mult <-
 
     ##rename correctly to AIC
     if(second.ord==FALSE && c.hat==1) {
-      colnames(Results)<-c("Modnames", "K", "AIC", "Delta AIC", "ModelLik", "AICWt")
+      colnames(Results)<-c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
       Results$LL <- unlist(lapply(X=cand.set, FUN=function(i) logLik(i)[1]))      
     }  
 
     ##rename correctly to QAIC and add column for c-hat
     if(second.ord==FALSE && c.hat > 1) {
-      colnames(Results)<-c("Modnames", "K", "QAIC", "Delta QAIC", "ModelLik", "QAICWt")
+      colnames(Results)<-c("Modnames", "K", "QAIC", "Delta_QAIC", "ModelLik", "QAICWt")
       LL <- unlist(lapply(X=cand.set, FUN=function(i) logLik(i)[1]))
       Results$Quasi.LL <- LL/c.hat
       Results$c_hat<-c.hat

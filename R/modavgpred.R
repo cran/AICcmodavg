@@ -1,9 +1,9 @@
 modavgpred <- function(cand.set, modnames, newdata, type = "response", c.hat = 1,
-                       gamdisp = NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised"){
+                       gamdisp = NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised", parm.type = NULL){
   results <- NULL
-  known <- rep(0, 3) #create an identifier of class type for lm, glm, lme, and mer
+  known <- rep(0, 4) #create an identifier of class type for lm, glm, lme, mer, and unmarked
   ##extract classes
-  mod.class <- unlist(lapply(X=cand.set, FUN=class))
+  mod.class <- unlist(lapply(X = cand.set, FUN = class))
   ##check if all are identical
   check.class <- unique(mod.class)
 
@@ -30,12 +30,20 @@ modavgpred <- function(cand.set, modnames, newdata, type = "response", c.hat = 1
       known[3] <- 1
     }
 
-    
-#warn if class is neither lm, glm, nor lme
-    if(sum(known) < 1) {stop("Function not yet defined for this object class")}
-
-    return(results)
+  ##determine if unmarked
+  unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO")
+  if(any(sapply(unmarked.class, FUN = function(i) identical(i, check.class)))) {
+    results <- modavgpred.unmarked(cand.set = cand.set, modnames = modnames, newdata = newdata,
+                                   type = type, c.hat = c.hat, second.ord = second.ord,
+                                   nobs = nobs, uncond.se = uncond.se, parm.type = parm.type)
+    known[4] <- 1
   }
+
+  ##warn if class is neither lm, glm, nor lme
+  if(sum(known) < 1) {stop("Function not yet defined for this object class")}
+  
+  return(results)
+}
 
 
 
@@ -46,7 +54,7 @@ modavgpred.glm <-
 function(cand.set, modnames, newdata, type = "response", c.hat = 1, gamdisp = NULL, second.ord = TRUE,
          nobs = NULL, uncond.se = "revised") {
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
-  if(type=="terms") {stop("The terms argument is not defined for this function")}
+  if(type == "terms") {stop("The terms argument is not defined for this function")}
 
   ##check family of glm to avoid problems when requesting predictions with argument 'dispersion'
   fam.type <- unlist(lapply(cand.set, FUN=function(i) family(i)$family))
@@ -58,22 +66,22 @@ function(cand.set, modnames, newdata, type = "response", c.hat = 1, gamdisp = NU
     
 ###################CHANGES####
 ##############################
-  if(c.hat>1) {dispersion <- c.hat }
+  if(c.hat > 1) {dispersion <- c.hat }
   if(!is.null(gamdisp)) {dispersion <- gamdisp}
-  if(c.hat>1 && !is.null(gamdisp)) {stop("You cannot specify values for both \'c.hat\' and \'gamdisp\'")}
+  if(c.hat > 1 && !is.null(gamdisp)) {stop("You cannot specify values for both \'c.hat\' and \'gamdisp\'")}
   ##dispersion is the dispersion parameter - this influences the SE's (to specify dispersion parameter for either overdispersed Poisson or Gamma glm)
   ##type enables to specify either "response" (original scale = point estimate) or "link" (linear predictor)
   
   ##check if object is of "lm" or "glm" class
   ##extract classes
-  mod.class <- unlist(lapply(X=cand.set, FUN=class))
+  mod.class <- unlist(lapply(X = cand.set, FUN = class))
   ##check if all are identical
   check.class <- unique(mod.class)
 
   ##check that link function is the same for all models if linear predictor is used
   if(identical(type, "link")) {
-    check.link <- unlist(lapply(X = cand.set, FUN=function(i) i$family$link))
-    unique.link <- unique(x=check.link)
+    check.link <- unlist(lapply(X = cand.set, FUN = function(i) i$family$link))
+    unique.link <- unique(x = check.link)
     if(length(unique.link) > 1) {stop(cat("It is not appropriate to compute a model averaged beta estimate\n",
                                           "with different link functions\n"))}
   }
@@ -83,9 +91,9 @@ function(cand.set, modnames, newdata, type = "response", c.hat = 1, gamdisp = NU
 
 
     ##check if model uses gamma distribution
-    gam1<-unlist(lapply(cand.set, FUN=function(i) family(i)$family[1]=="Gamma")) #check for gamma regression models
+    gam1<-unlist(lapply(cand.set, FUN = function(i) family(i)$family[1] == "Gamma")) #check for gamma regression models
     ##correct SE's for estimates of gamma regressions when gamdisp is specified
-    if(any(gam1)==TRUE)  {
+    if(any(gam1) == TRUE)  {
       ##check for specification of gamdisp argument
       if(is.null(gamdisp)) stop("You must specify a gamma dispersion parameter with gamma generalized linear models\n")
     }
@@ -101,43 +109,44 @@ function(cand.set, modnames, newdata, type = "response", c.hat = 1, gamdisp = NU
     if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
  
     ##store AICc table
-    AICctab<-aictab(cand.set=cand.set, modnames=modnames, c.hat=c.hat, second.ord=second.ord, nobs=nobs, sort=FALSE)
+    AICctab <- aictab(cand.set = cand.set, modnames = modnames, c.hat = c.hat, second.ord = second.ord,
+                    nobs = nobs, sort = FALSE)
 
     ##create object to hold Model-averaged estimates and unconditional SE's
-    Mod.avg.out<-matrix(NA, nrow=nobserv, ncol=2)
-    colnames(Mod.avg.out)<-c("Mod.avg.est", "Uncond.SE")
+    Mod.avg.out <- matrix(NA, nrow = nobserv, ncol = 2)
+    colnames(Mod.avg.out) <- c("Mod.avg.est", "Uncond.SE")
 
 
     ##begin loop - AICc
-    if(second.ord==TRUE && c.hat==1){
+    if(second.ord == TRUE && c.hat == 1){
       for (obs in 1:nobserv) {
 
         ##extract fitted value for observation obs
-        fit<-unlist(lapply(X=cand.set, FUN=function(i)predict(i, se.fit=TRUE, newdata=newdata[obs, ],
-                                         type=type, dispersion=dispersion)$fit))
+        fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                         type = type, dispersion = dispersion)$fit))
 
         ##extract SE for fitted value for observation obs
-        SE<-unlist(lapply(X=cand.set, FUN=function(i)predict(i, se.fit=TRUE, newdata=newdata[obs, ],
-                                        type=type, dispersion=dispersion)$se.fit))
+        SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                        type = type, dispersion = dispersion)$se.fit))
 
 
         ##create temporary data.frame to store fitted values and SE 
-        AICctmp<-AICctab
-        AICctmp$fit<-fit
-        AICctmp$SE<-SE
+        AICctmp <- AICctab
+        AICctmp$fit <- fit
+        AICctmp$SE <- SE
 
         ##compute model averaged prediction and store in output matrix
-        Mod.avg.out[obs, 1]<-sum(AICctmp$AICcWt*AICctmp$fit)
+        Mod.avg.out[obs, 1] <- sum(AICctmp$AICcWt*AICctmp$fit)
         ##compute unconditional SE and store in output matrix
 
         ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
         if(identical(uncond.se, "old")) {
-          Mod.avg.out[obs, 2]<-sum(AICctmp$AICcWt*sqrt(AICctmp$SE^2 + (AICctmp$fit- Mod.avg.out[obs, 1])^2))
+          Mod.avg.out[obs, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE^2 + (AICctmp$fit- Mod.avg.out[obs, 1])^2))
         }
 
         ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
         if(identical(uncond.se, "revised")) {
-          Mod.avg.out[obs, 2]<-sqrt(sum(AICctmp$AICcWt*(AICctmp$SE^2 + (AICctmp$fit- Mod.avg.out[obs, 1])^2)))
+          Mod.avg.out[obs, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE^2 + (AICctmp$fit- Mod.avg.out[obs, 1])^2)))
         }
       }
     }
@@ -150,28 +159,28 @@ function(cand.set, modnames, newdata, type = "response", c.hat = 1, gamdisp = NU
       for (obs in 1:nobserv) {
 
         ##extract fitted value for observation obs
-        fit<-unlist(lapply(X=cand.set, FUN=function(i)predict(i, se.fit=TRUE, newdata=newdata[obs, ],
-                                         type=type, dispersion=dispersion)$fit))
+        fit <- unlist(lapply(X = cand.set, FUN=function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                         type = type, dispersion = dispersion)$fit))
         ##extract SE for fitted value for observation obs
-        SE<-unlist(lapply(X=cand.set, FUN=function(i)predict(i, se.fit=TRUE, newdata=newdata[obs, ],
-                                        type=type, dispersion=dispersion)$se.fit))
+        SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                        type = type, dispersion = dispersion)$se.fit))
 
-        QAICctmp<-AICctab
-        QAICctmp$fit<-fit
-        QAICctmp$SE<-SE
+        QAICctmp <- AICctab
+        QAICctmp$fit <- fit
+        QAICctmp$SE <- SE
 
         ##compute model averaged prediction and store in output matrix
-        Mod.avg.out[obs, 1]<-sum(QAICctmp$QAICcWt*QAICctmp$fit)
+        Mod.avg.out[obs, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$fit)
 
         ##compute unconditional SE and store in output matrix
         ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
         if(identical(uncond.se, "old")) {
-          Mod.avg.out[obs, 2]<-sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE^2 + (QAICctmp$fit- Mod.avg.out[obs, 1])^2))
+          Mod.avg.out[obs, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE^2 + (QAICctmp$fit- Mod.avg.out[obs, 1])^2))
         }
 
         ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
         if(identical(uncond.se, "revised")) {
-          Mod.avg.out[obs, 2]<-sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE^2 + (QAICctmp$fit- Mod.avg.out[obs, 1])^2)))  
+          Mod.avg.out[obs, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE^2 + (QAICctmp$fit- Mod.avg.out[obs, 1])^2)))  
         }
       }
     }
@@ -180,32 +189,32 @@ function(cand.set, modnames, newdata, type = "response", c.hat = 1, gamdisp = NU
 
 
     ##create temporary data.frame to store fitted values and SE - AIC
-    if(second.ord==FALSE && c.hat==1) {
+    if(second.ord == FALSE && c.hat == 1) {
       for (obs in 1:nobserv) {
 
         ##extract fitted value for observation obs
-        fit<-unlist(lapply(X=cand.set, FUN=function(i)predict(i, se.fit=TRUE, newdata=newdata[obs, ],
-                                         type=type, dispersion=dispersion)$fit))
+        fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                         type = type, dispersion = dispersion)$fit))
         ##extract SE for fitted value for observation obs
-        SE<-unlist(lapply(X=cand.set, FUN=function(i)predict(i, se.fit=TRUE, newdata=newdata[obs, ], type=type,
-                                        dispersion=dispersion)$se.fit))
+        SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ], type = type,
+                                        dispersion = dispersion)$se.fit))
 
-        AICtmp<-AICctab
-        AICtmp$fit<-fit
-        AICtmp$SE<-SE
+        AICtmp <- AICctab
+        AICtmp$fit <- fit
+        AICtmp$SE <- SE
 
         ##compute model averaged prediction and store in output matrix
-        Mod.avg.out[obs, 1]<-sum(AICtmp$AICWt*AICtmp$fit)
+        Mod.avg.out[obs, 1] <- sum(AICtmp$AICWt*AICtmp$fit)
 
         ##compute unconditional SE and store in output matrix
         ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
         if(identical(uncond.se, "old")) {
-          Mod.avg.out[obs, 2]<-sum(AICtmp$AICWt*sqrt(AICtmp$SE^2 + (AICtmp$fit- Mod.avg.out[obs, 1])^2))
+          Mod.avg.out[obs, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE^2 + (AICtmp$fit- Mod.avg.out[obs, 1])^2))
         }
 
         ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
         if(identical(uncond.se, "revised")) {
-          Mod.avg.out[obs, 2]<-sqrt(sum(AICtmp$AICWt*(AICtmp$SE^2 + (AICtmp$fit- Mod.avg.out[obs, 1])^2)))
+          Mod.avg.out[obs, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE^2 + (AICtmp$fit- Mod.avg.out[obs, 1])^2)))
         }  
         
       }
@@ -215,31 +224,31 @@ function(cand.set, modnames, newdata, type = "response", c.hat = 1, gamdisp = NU
 
 
     ##create temporary data.frame to store fitted values and SE - QAIC
-    if(second.ord==FALSE && c.hat > 1) {
+    if(second.ord == FALSE && c.hat > 1) {
       for (obs in 1:nobserv) {
 
         ##extract fitted value for observation obs
-        fit<-unlist(lapply(X=cand.set, FUN=function(i)predict(i, se.fit=TRUE, newdata=newdata[obs, ],
-                                         type=type, dispersion=dispersion)$fit))
+        fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                         type = type, dispersion = dispersion)$fit))
         ##extract SE for fitted value for observation obs
-        SE<-unlist(lapply(X=cand.set, FUN=function(i)predict(i, se.fit=TRUE, newdata=newdata[obs, ],
-                                        type=type, dispersion=dispersion)$se.fit))
+        SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                        type = type, dispersion = dispersion)$se.fit))
 
-        QAICtmp<-AICctab
-        QAICtmp$fit<-fit
-        QAICtmp$SE<-SE
+        QAICtmp <- AICctab
+        QAICtmp$fit <- fit
+        QAICtmp$SE <- SE
 
         ##compute model averaged prediction and store in output matrix
-        Mod.avg.out[obs, 1]<-sum(QAICtmp$QAICWt*QAICtmp$fit)
+        Mod.avg.out[obs, 1] <- sum(QAICtmp$QAICWt*QAICtmp$fit)
 
         ##compute unconditional SE and store in output matrix
         if(identical(uncond.se, "old")) {
-          Mod.avg.out[obs, 2]<-sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE^2 + (QAICtmp$fit- Mod.avg.out[obs, 1])^2))
+          Mod.avg.out[obs, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE^2 + (QAICtmp$fit- Mod.avg.out[obs, 1])^2))
         }
 
         ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
         if(identical(uncond.se, "revised")) {
-          Mod.avg.out[obs, 2]<-sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE^2 + (QAICtmp$fit- Mod.avg.out[obs, 1])^2)))
+          Mod.avg.out[obs, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE^2 + (QAICtmp$fit- Mod.avg.out[obs, 1])^2)))
         }  
         
       }
@@ -478,6 +487,26 @@ modavgpred.mer <- function(cand.set, modnames, newdata, type = "response", c.hat
   return(Mod.pred.list)
   
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

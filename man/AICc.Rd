@@ -7,6 +7,7 @@
 \alias{AICc.mer}
 \alias{AICc.mult}
 \alias{AICc.polr}
+\alias{AICc.unmarked}
 \title{
 Computing AIC, AICc, QAIC, and QAICc
 }
@@ -18,8 +19,8 @@ second-order AIC (AICc), as well as their quasi-likelihood counterparts
 \usage{
 AICc(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, nobs = NULL) 
 
-AICc.glm(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, nobs = 
-NULL)
+AICc.glm(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE,
+         nobs = NULL)
 
 AICc.gls(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 
@@ -27,20 +28,26 @@ AICc.lme(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 
 AICc.mer(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 
-AICc.mult(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, nobs =
-NULL) 
+AICc.mult(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE,
+          nobs = NULL) 
 
 AICc.polr(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 
+AICc.unmarked(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE,
+              nobs = NULL)
+
 }
+
 \arguments{
   \item{mod}{
-an object of class 'lm', 'glm', 'gls', 'lme', 'mer', 'multinom', or 'polr' containing
-the output of a model. 
-}
+    an object of class 'lm', 'glm', 'gls', 'lme', 'mer', 'multinom',
+    'polr', and various 'unmarkedFit' classes containing the output of a
+    model.
+  }
+  
   \item{return.K}{
-logical. If FALSE, the function returns the information criteria
-specified. If TRUE, the function returns K (number of estimated
+    logical.  If FALSE, the function returns the information criteria
+specified.  If TRUE, the function returns K (number of estimated
 parameters) for a given model.  Using this argument to facilitate
 computation of tables was an original idea from T. Ergon.
 }
@@ -48,10 +55,11 @@ computation of tables was an original idea from T. Ergon.
 value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from 'c_hat'.  Note that values of c.hat different from
 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
-success/trial or cbind(success, failure) syntax) or with Poisson
-GLM's.  If c.hat > 1, 'AICc' will return the quasi-likelihood analogue
-of the information criterion requested.  This option is not yet
-supported for generalized linear mixed models of the 'mer' class. 
+success/trial or cbind(success, failure) syntax), with Poisson
+GLM's, or single-season occupancy models (MacKenzie et al. 2002).  If
+c.hat > 1, 'AICc' will return the quasi-likelihood analogue of the
+information criterion requested.  This option is not supported for
+generalized linear mixed models of the 'mer' class. 
 }
 
 \item{second.ord}{ 
@@ -61,27 +69,28 @@ information criterion (i.e., AICc).
 \item{nobs}{
 this argument allows to specify a numeric value other than total sample
 size to compute the AICc (i.e., 'nobs' defaults to total number of
-observations).  This is relevant only for linear mixed models where
-sample size is not straightforward. In such cases, one might use total
-number of observations or number of independent clusters as the value of
-'nobs'.
+observations).  This is relevant only for mixed models or various models
+of 'unmarkedFit' classes where sample size is not straightforward.  In
+such cases, one might use total number of observations or number of
+independent clusters (e.g., sites) as the value of 'nobs'.
 }
 }
 \details{
 'AICc' is a function that calls either 'AICc.glm', 'AICc.gls',
-'AICc.lme', 'AICc.mer', 'AICc.mult', or 'AICc.polr', depending on the
-class of the object.  The current function is implemented for
-'lm','glm', 'gls', 'lme', 'mer', 'multinom', and 'polr' classes and
-computes one of the following four information criteria:  Akaike's
-information criterion (AIC, Akaike 1973), the second-order or small
-sample AIC (AICc, Sugiura 1978, Hurvich and Tsai 1991), the
+'AICc.lme', 'AICc.mer', 'AICc.mult', 'AICc.polr', or 'AICc.unmarked'
+depending on the class of the object.  The current function is
+implemented for 'lm', 'glm', 'gls', 'lme', 'mer', 'multinom', and 'polr'
+classes as well as 'unmarkedFitOccu', 'unmarkedFitColExt',
+'unmarkedFitOccuRN', 'unmarkedFitPCount', 'unmarkedFitPCO' classes.  The
+function computes one of the following four information criteria:
+Akaike's information criterion (AIC, Akaike 1973), the second-order or
+small sample AIC (AICc, Sugiura 1978, Hurvich and Tsai 1991), the
 quasi-likelihood AIC (QAIC, Burnham and Anderson 2002), and the
-quasi-likelihood AICc (QAICc, Burnham and Anderson 2002). Note that AIC
+quasi-likelihood AICc (QAICc, Burnham and Anderson 2002).  Note that AIC
 and AICc values are meaningful to select among 'gls' or 'lme' models fit
 by maximum likelihood; AIC and AICc based on REML are valid to select
 among different models that only differ in their random effects
-(Pinheiro and Bates 2000). 
-
+(Pinheiro and Bates 2000).  
 }
 \value{
 'AICc' selects one of the functions below based on the class of the 
@@ -105,7 +114,8 @@ values of the arguments.
 'AICc.polr' returns the AIC or AICc depending on the values of
 the arguments.
 
-
+'AICc.unmarked' returns the AIC, AICc, QAIC, or QAICc depending on the
+values of the arguments.
 }
 
 \note{
@@ -137,6 +147,11 @@ Hurvich, C. M., Tsai, C.-L. (1991) Bias of the corrected AIC
 criterion for underfitted regression and time series
 models. \emph{Biometrika} \bold{78}, 499--509. 
 
+MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
+J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
+detection probabilities are less than one. \emph{Ecology} \bold{83},
+2248--2255.
+
 Pinheiro, J. C., Bates, D. M. (2000) \emph{Mixed-effect models in S and
 S-PLUS}. Springer Verlag: New York.  
 
@@ -153,6 +168,8 @@ Marc J. Mazerolle
 \code{\link{evidence}}, \code{\link{c_hat}}, \code{\link{modavg}},
 \code{\link{modavg.shrink}}, \code{\link{modavgpred}}
 }
+
+
 \examples{
 ##cement data from Burnham and Anderson (2002, p. 101)
 data(cement)
@@ -174,8 +191,9 @@ AICc(glob.mod, return.K = FALSE, second.ord = FALSE)
 ##Bates (2000)
 require(nlme)
 m1 <- lme(distance ~ age, random = ~1 | Subject, data = Orthodont,
-method= "ML")
+          method= "ML")
 AICc(m1, return.K = FALSE)
+
 
 }
 \keyword{models}

@@ -8,11 +8,29 @@
 
 
 ########################################################
-##revision 1.15 (19 April 2011)
+##revision 1.16 (27 May 2011)
+##- added model selection and multimodel inference functionality with 
+##  unmarked package for objects of classes unmarkedFitOccu, 
+##  unmarkedFitColExt, unmarkedFitPCount, unmarkedFitPCO, unmarkedFitOccuRN
+##  for models incorporating detectability 
+##- modifications of functions 'aictab', 'importance', 'confset', 'evidence', 
+##  'modavg', 'modavgpred', 'modavg.shrink', and extract.LL.unmarked utility 
+##  function added
+##- added new argument parm.type, to specify class of parameters for objects
+##   of unmarkedFit classes
+##- added several examples for dealing with objects of 'unmarkedFit' classes
+##- modified 'modavg', 'modavg.shrink', 'importance', and 'reverse.exclude' 
+##  functions to strip white spaces within elements entered inadvertently 
+##  by user in the parm and exclude arguments
+
+
+
+########################################################
+##revision 1.15 (21 April 2011)
 ##- in modavg( ) and related functions, added functionality of dealing with specification of interaction terms (e.g., A:B, B:A, A*B, B*A)
 ##  by adding two new utility functions to recognize the terms when user is not consistent in his model syntax
-##- created function 'modavg.shrink' for the shrinkage version of model-averaging estimates when the same number of models 
-##  include/exclude a variable  
+##- created function 'modavg.shrink' for the shrinkage version of model-averaging estimates to reduce model selection bias when 
+##  the same number of models include/exclude a variable  
 
 
 

@@ -25,7 +25,10 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
     ##poisson, binomial, and negative binomial defaults to 1 (no separate parameter for variance)
     ##gamma is treated separately
 
-
+    ##remove all leading and trailing white space and within parm
+    parm <- gsub('[[:space:]]+', "", parm)
+    
+    
     ##check for frequency of each terms    
     #extract model formula for each model in cand.set
     mod_formula <- lapply(cand.set, FUN = function(i) rownames(summary(i)$coefficients)) #extract model formula for each model in cand.set

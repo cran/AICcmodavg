@@ -11,7 +11,7 @@ model.
 }
 \usage{
 predictSE.lme(mod, newdata, se.fit = TRUE, level = 0,
-print.matrix = FALSE) 
+              print.matrix = FALSE) 
 }
 \arguments{
   \item{mod}{
@@ -78,23 +78,24 @@ Marc J. Mazerolle
 ##Orthodont data set in Pinheiro and Bates (2000)
 require(nlme)
 m1 <- lme(distance ~ age, random = ~1 | Subject, data = Orthodont,
-method= "ML")
+          method= "ML")
 ##create a new data frame to make predictions
 newOrth <- data.frame(Sex = c("Male","Male","Female","Female"),
-                           age = c(15, 20, 15, 20),
-                           Subject = c("M01","M01","F30","F30"))
+                      age = c(15, 20, 15, 20),
+                      Subject = c("M01","M01","F30","F30"))
 predictSE.lme(m1, newdata = newOrth, level = 0) 
-predict(m1, newdata = newOrth, level = 0) #compare against predict.lme( )
+predict(m1, newdata = newOrth, level = 0)
+##compare against predict.lme( )
 
 ##because only 'level = 0' is supported, the grouping levels are not
 ##necessary for prediction  
 newd <- data.frame(Sex = c("Male","Male","Female","Female"),
-                           age = c(15, 20, 15, 20))
+                   age = c(15, 20, 15, 20))
 predictSE.lme(m1, newdata = newd, level = 0)
 predictSE.lme(m1, newdata = newd, level = 0, print.matrix = TRUE)
 
 \dontrun{
-predictSE.lme(m1, newdata = newd, level = 1, print.matrix = TRUE)
+  predictSE.lme(m1, newdata = newd, level = 1, print.matrix = TRUE)
 ##generates an error
 }
 }

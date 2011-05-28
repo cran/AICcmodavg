@@ -10,6 +10,10 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
   
   if(!identical(check.class, c("multinom", "nnet"))) {stop("This function is only appropriate with the \'multinom\' class\n")}
 
+
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+  
  
   ##extract model formula for each model in cand.set    
   mod_formula <- lapply(cand.set, FUN = function(i) colnames(summary(i)$coefficients)) 

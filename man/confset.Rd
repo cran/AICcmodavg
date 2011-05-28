@@ -14,7 +14,7 @@ proposed by Burnham and Anderson (2002).
 }
 \usage{
 confset(cand.set, modnames, c.hat = 1, second.ord = TRUE, nobs = NULL,
-method = "raw", level = 0.95, delta = 6) 
+        method = "raw", level = 0.95, delta = 6) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,10 +29,11 @@ each model in the model selection table.
 value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from 'c_hat'.  Note that values of c.hat different from
 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
-success/trial or cbind(success, failure) syntax) or with Poisson
-GLM's. If c.hat > 1, 'aictab' will return the quasi-likelihood analogue
-of the information criteria requested.  This option is not supported
-for generalized linear mixed models of the 'mer' class.
+success/trial or cbind(success, failure) syntax), with Poisson
+GLM's, or single-season occupancy models (MacKenzie et al. 2002).  If
+c.hat > 1, 'AICc' will return the quasi-likelihood analogue of the
+information criterion requested.  This option is not supported for
+generalized linear mixed models of the 'mer' class. 
 }
   \item{second.ord}{
 logical.  If TRUE, the function returns the second-order
@@ -41,10 +42,10 @@ Akaike information criterion (i.e., AICc).
   \item{nobs}{
 this argument allows to specify a numeric value other than total sample
 size to compute the AICc (i.e., 'nobs' defaults to total number of
-observations).  This is relevant only for linear mixed models where
-sample size is not straightforward. In such cases, one might use total
-number of observations or number of independent clusters as the value of
-'nobs'.
+observations).  This is relevant only for mixed models or various models
+of 'unmarkedFit' classes where sample size is not straightforward.  In
+such cases, one might use total number of observations or number of
+independent clusters (e.g., sites) as the value of 'nobs'.
 }
   \item{method}{
 a character value, either as 'raw', 'ordinal', or 'ratio', indicating
@@ -127,6 +128,11 @@ when method = 'ordinal'
 Burnham, K. P., Anderson, D. R. (2002) \emph{Model Selection and
   Multimodel Inference: a practical information-theoretic
   approach}. Second edition. Springer: New York.
+
+MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
+J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
+detection probabilities are less than one. \emph{Ecology} \bold{83},
+2248--2255.
 }
 \author{
 Marc J. Mazerolle
@@ -147,21 +153,23 @@ min.trap$Type <- relevel(min.trap$Type, ref = "UPLAND")
 Cand.mod <- list()
 ##global model          
 Cand.mod[[1]] <- glm(Num_anura ~ Type + log.Perimeter + Num_ranatra,
-family = poisson, offset = log(Effort), data = min.trap) 
+                     family = poisson, offset = log(Effort),
+                     data = min.trap) 
 Cand.mod[[2]] <- glm(Num_anura ~ Type + log.Perimeter, family = poisson,
-offset = log(Effort), data = min.trap) 
+                     offset = log(Effort), data = min.trap) 
 Cand.mod[[3]] <- glm(Num_anura ~ Type + Num_ranatra, family = poisson,
-offset = log(Effort), data = min.trap) 
+                     offset = log(Effort), data = min.trap) 
 Cand.mod[[4]] <- glm(Num_anura ~ Type, family = poisson,
-offset = log(Effort), data = min.trap) 
+                     offset = log(Effort), data = min.trap) 
 Cand.mod[[5]] <- glm(Num_anura ~ log.Perimeter + Num_ranatra,
-family = poisson, offset = log(Effort), data = min.trap) 
+                     family = poisson, offset = log(Effort),
+                     data = min.trap) 
 Cand.mod[[6]] <- glm(Num_anura ~ log.Perimeter, family = poisson,
-offset = log(Effort), data = min.trap) 
+                     offset = log(Effort), data = min.trap) 
 Cand.mod[[7]] <- glm(Num_anura ~ Num_ranatra, family = poisson,
-offset = log(Effort), data = min.trap) 
+                     offset = log(Effort), data = min.trap) 
 Cand.mod[[8]] <- glm(Num_anura ~ 1, family = poisson,
-offset = log(Effort), data = min.trap) 
+                     offset = log(Effort), data = min.trap) 
           
 ##check c-hat for global model
 c_hat(Cand.mod[[1]]) #uses Pearson's chi-square/df
@@ -170,13 +178,13 @@ c_hat(Cand.mod[[1]]) #uses Pearson's chi-square/df
 ##to 1  
 
 ##assign names to each model
-Modnames <- c("type + logperim + invertpred", "type + logperim", "type +
-invertpred", "type", "logperim + invertpred", "logperim", "invertpred",
-"intercept only") 
+Modnames <- c("type + logperim + invertpred", "type + logperim",
+              "type + invertpred", "type", "logperim + invertpred",
+              "logperim", "invertpred", "intercept only") 
 
 ##compute confidence set based on 'raw' method
 confset(cand.set = Cand.mod, modnames = Modnames, second.ord = TRUE,
-method = "raw")  
+        method = "raw")  
 
 
 
@@ -188,38 +196,35 @@ require(nlme)
 ##New York.)
 Cand.models <- list()
 Cand.models[[1]] <- lme(distance ~ age, random = ~age | Subject,
-data = Orthodont, method = "ML")
+                        data = Orthodont, method = "ML")
 Cand.models[[2]] <- lme(distance ~ age + Sex, data = Orthodont,
-random = ~ 1 | Subject, method = "ML")
+                        random = ~ 1 | Subject, method = "ML")
 Cand.models[[3]] <- lme(distance ~ 1, data = Orthodont,
-random = ~ 1 | Subject, method = "ML")
+                        random = ~ 1 | Subject, method = "ML")
 
 ##create a vector of model names
-Modnames <- NULL
-for (i in 1:length(Cand.models)) {
-Modnames[i] <- paste("mod", i, sep = "")
-}
+Modnames <- paste("mod", 1:length(Cand.models), sep = "")
 
 ##compute confidence set based on 'raw' method
 confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
-method = "raw")
+        method = "raw")
 ##round to 4 digits after decimal point
-print(confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
-method = "raw"), digits = 4)
+print(confset(cand.set = Cand.models, modnames = Modnames,
+              second.ord = TRUE, method = "raw"), digits = 4)
 
 confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
-level = 0.9, method = "raw")
+        level = 0.9, method = "raw")
 
 ##compute confidence set based on 'ordinal' method
-confset(cand.set = Cand.models, modnames = Modnames, c.hat = 1,
-second.ord = TRUE, method = "ordinal")
+confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
+        method = "ordinal")
 
 ##compute confidence set based on 'ratio' method
-confset(cand.set = Cand.models, modnames = Modnames, c.hat = 1,
-second.ord = TRUE, method = "ratio", delta = 4)
+confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
+        method = "ratio", delta = 4)
 
-confset(cand.set = Cand.models, modnames = Modnames, c.hat = 1,
-second.ord = TRUE, method = "ratio", delta = 8)
+confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
+        method = "ratio", delta = 8)
 }
 
 \keyword{models}

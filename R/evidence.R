@@ -12,7 +12,7 @@ evidence <-
       top.wt <- sort.tab[1, 6]
     } else {
       top.name <- model.high
-      top.wt <- sort.tab[which(sort.tab$Modnames==paste(model.high)), 6]
+      top.wt <- sort.tab[which(sort.tab$Modnames == paste(model.high)), 6]
     }
 
     ##model compared
@@ -21,7 +21,7 @@ evidence <-
       sec.wt <- sort.tab[2, 6]
     } else {
       sec.name <- model.low
-      sec.wt <- sort.tab[which(sort.tab$Modnames==paste(model.low)), 6]
+      sec.wt <- sort.tab[which(sort.tab$Modnames == paste(model.low)), 6]
     }
 
     ##compute evidence ratio
@@ -34,5 +34,5 @@ evidence <-
 
 print.evidence <- function(x, digits = 2, ...) {
   cat("\nEvidence ratio between models '", x$Model.high,"' and '", x$Model.low, "':\n")
-  cat(round(x$Ev.ratio, digits=digits), "\n\n")
+  cat(round(x$Ev.ratio, digits = digits), "\n\n")
 }

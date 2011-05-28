@@ -21,7 +21,7 @@ aictab.polr <-
     
     #rename correctly to AIC
     if(second.ord==FALSE) {
-      colnames(Results)[1:6]<-c("Modnames", "K", "AIC", "Delta AIC", "ModelLik",
+      colnames(Results)[1:6]<-c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik",
                            "AICWt")
     }
 
