@@ -20,20 +20,21 @@ the best model.  The present version works with linear models ('lm'
 class), generalized linear models ('glm' class), linear models fit by
 generalized least squares ('gls' class), linear mixed models ('lme'
 class), generalized linear mixed models ('mer' class), multinomial and
-ordinal logistic regressions ('multinom' and 'polr' classes).  The
-package also supports various models incorporating detection
-probabilities such as single-season occupancy models ('unmarkedFitOccu' 
-class), multiple-season occupancy models ('unmarkedFitColExt' class),
-single-season heterogeneity models ('unmarkedFitOccuRN' class), and
-single-season and multiple-season N-mixture models for repeated counts
-('unmarkedFitPCount' and 'unmarkedFitPCO' classes, respectively). 
+ordinal logistic regressions ('multinom' and 'polr' classes), and
+nonlinear models ('nls' class).  The package also supports various
+models incorporating detection probabilities such as single-season
+occupancy models ('unmarkedFitOccu' class), multiple-season occupancy
+models ('unmarkedFitColExt' class), single-season heterogeneity models
+('unmarkedFitOccuRN' class), and single-season and multiple-season
+N-mixture models for repeated counts ('unmarkedFitPCount' and
+'unmarkedFitPCO' classes, respectively).
 }
 \details{
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.16\cr
-Date: \tab 2011-05-27\cr
+Version: \tab 1.17\cr
+Date: \tab 2011-06-17\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }

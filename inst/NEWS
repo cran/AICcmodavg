@@ -4,6 +4,9 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 1.17 (17 June 2011)
+##- fixed minor bug for external calls to AICc to assign 'unmarkedFit' classes
+##- added functionality of AICc( ), aictab( ), evidence( ), importance( ), confset( ) with nls fits
 
 
 

@@ -6,6 +6,7 @@
 \alias{aictab.lme}
 \alias{aictab.mer}
 \alias{aictab.mult}
+\alias{aictab.nls}
 \alias{aictab.polr}
 \alias{aictab.unmarked}
 \alias{print.aictab}
@@ -19,9 +20,9 @@ ranks the models based on the selected information criteria and also
 provides delta AIC and Akaike weights.  'aictab' selects the
 appropriate function to create the model selection table based on the 
 object class.  The current version works with objects of 'lm', 'glm',
-'gls', 'lme', 'mer', 'multinom', 'polr' classes as well as various
-models of 'unmarkedFit' classes but does not yet allow mixing of
-different classes.  
+'gls', 'lme', 'mer', 'multinom', 'nls', 'polr' classes as well as
+various models of 'unmarkedFit' classes but does not yet allow mixing of
+different classes.
 }
 \usage{
 aictab(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE,
@@ -41,6 +42,9 @@ aictab.mer(cand.set, modnames, sort = TRUE, second.ord = TRUE,
 
 aictab.mult(cand.set, modnames, sort = TRUE, c.hat = 1,
             second.ord = TRUE, nobs = NULL)
+
+aictab.nls(cand.set, modnames, sort = TRUE, second.ord = TRUE,
+           nobs = NULL) 
 
 aictab.polr(cand.set, modnames, sort = TRUE, second.ord = TRUE,
             nobs = NULL) 
@@ -88,8 +92,8 @@ independent clusters (e.g., sites) as the value of 'nobs'.
 }
 \details{
 'aictab' is a function that calls either 'aictab.glm', 'aictab.gls',
-'aictab.lme', 'aictab.mer', 'aictab.mult', 'aictab.polr', or
-'aictab.unmarked' depending on the class of the object.  The current
+'aictab.lme', 'aictab.mer', 'aictab.mult', 'aictab.nls', 'aictab.polr',
+or 'aictab.unmarked' depending on the class of the object.  The current
 function is implemented for 'lm', 'glm', 'gls', 'lme', 'mer', 'multinom',
 and 'polr' classes as well as 'unmarkedFitOccu', 'unmarkedFitColExt',
 'unmarkedFitOccuRN', 'unmarkedFitPCount', 'unmarkedFitPCO' classes.  The
@@ -156,9 +160,9 @@ conclusions on a single 'best' model.  It is an elegant way of making
 inference based on the information contained in the entire model set.
 }
 \value{
-'aictab', 'aictab.glm', 'aictab.lme', 'aictab.mer', 'aictab.mult', 
-'aictab.polr', and 'aictab.unmarked' create an object of class 'aictab'
-with the following components: 
+'aictab', 'aictab.glm', 'aictab.lme', 'aictab.mer', 'aictab.mult',
+'aictab.nls', 'aictab.polr', and 'aictab.unmarked' create an object of
+class 'aictab' with the following components:  
 
 \item{Modname}{the names of each model of the candidate model set.}
 \item{K }{the number of estimated parameters for each model.}

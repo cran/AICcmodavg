@@ -1,7 +1,7 @@
 aictab <-
   function(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE, nobs = NULL) {
     results <- NULL
-    known <- rep(0, 8) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, or unmarked
+    known <- rep(0, 9) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or nls
     ##extract classes
     mod.class <- unlist(lapply(X = cand.set, FUN = class))
     ##check if all are identical
@@ -62,15 +62,23 @@ aictab <-
     }
 
 
+    ##determine if nls
+    if(identical(check.class, "nls"))  {
+      results <- aictab.nls(cand.set = cand.set, modnames = modnames, sort = sort,
+                            second.ord = second.ord, nobs = nobs)
+      known[8] <- 1
+    }
+
+    
     
     ##warn if models are from a mixture of lm and lme model classes
     if(identical(sort(check.class), c("lm", "lme"))) {
       stop(cat("Function not appropriate for mixture of object classes:", "\n",
                "avoid mixing objects of classes \'lm\' and \'lme\'\n"))
-      known[8] <- 1
+      known[9] <- 1
     }
 
-    ##warn if class is neither lm, glm, multinom, polr, lme, gls nor mer
+    ##warn if class is neither lm, glm, multinom, polr, lme, gls, nls, mer, nor unmarkedFit
     if(sum(known) < 1) {stop("Function not yet defined for this object class\n")}
 
     return(results)
