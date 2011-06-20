@@ -41,11 +41,17 @@ AICc <-
 
     ##determine if unmarked
     unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO")
-    if(any(sapply(unmarked.class, FUN = function(i) identical(i, class(mod))))) {
+    if(any(sapply(unmarked.class, FUN = function(i) identical(i, class(mod)[1])))) {
       aicc <- AICc.unmarked(mod = mod, return.K = return.K, c.hat = c.hat, second.ord = second.ord,
                             nobs = nobs)
     }
-        
+
+    ##determine if nls
+    if(identical(class(mod)[1], "nls")) {
+      aicc <- AICc.nls(mod = mod, return.K = return.K, second.ord = second.ord,
+                       nobs = nobs)
+    }
+    
     
 
     ##if(class(mod)[1]=="nlm") {aicc <- AICc.nlm(mod, return.K)}      #determine if object from nlm optimizer

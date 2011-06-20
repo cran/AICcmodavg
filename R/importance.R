@@ -12,33 +12,49 @@ importance <-
 
     ##reverse parm
     reversed.parm <- reverse.parm(parm)
+
+    ##add check for supported classes
+    known <- rep(0, 9) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or nls
     
     if(identical(check.class, "lm") || identical(check.class, c("glm", "lm")))  {
     
       ##extract model formula for each model in cand.set
       mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients))
+      known[1] <- 1
     }
   
     if(identical(check.class, "lme")) {
       mod_formula <- lapply(cand.set, FUN=function(i) labels(summary(i)$coefficients$fixed))
+      known[2] <- 1
     }
 
     if(identical(check.class, "gls")) {
       mod_formula <- lapply(cand.set, FUN=function(i) labels(summary(i)$coefficients))
+      known[3] <- 1
     }
 
     if(identical(check.class, c("multinom", "nnet"))) {
       mod_formula <- lapply(cand.set, FUN=function(i) colnames(summary(i)$coefficients))
+      known[4] <- 1
     }
 
     if(identical(check.class, "mer")) {
       mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)@coefs))
+      known[5] <- 1
     }
 
+    if(identical(check.class, "polr")) {
+      mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients))
+      known[6] <- 1
+    }
+
+    
     ##determine if unmarked
     unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO")
     if(any(sapply(unmarked.class, FUN = function(i) identical(i, check.class)))) {
 
+      known[7] <- 1
+      
       ##check for parm.type and stop if NULL
       if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
 
@@ -168,6 +184,9 @@ importance <-
     }
   
 
+    ##warn if class is neither lm, glm, multinom, polr, lme, gls, nls, mer, nor unmarkedFit
+    if(sum(known) < 1) {stop("Function not yet defined for this object class\n")}
+    
     ##setup matrix to indicate presence of parm in the model
     include <- matrix(NA, nrow=length(cand.set), ncol=1)
 
