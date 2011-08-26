@@ -39,7 +39,7 @@ importance <-
     }
 
     if(identical(check.class, "mer")) {
-      mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)@coefs))
+      mod_formula <- lapply(cand.set, FUN=function(i) labels(fixef(i)))
       known[5] <- 1
     }
 

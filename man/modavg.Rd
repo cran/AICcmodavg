@@ -373,6 +373,33 @@ modavg(cand.set = Cand, parm = "sizecatab", modnames = Modnames,
 
 
 
+##example with generalized mixed model
+##modified example from ?glmer
+require(lme4)
+##create proportion of incidence
+cbpp$prop <- cbpp$incidence/cbpp$size
+##add bogus variable
+cbpp$randx <- rnorm(n = nrow(cbpp), mean = 12, sd = 3)
+
+##model with period
+gm1 <- glmer(prop ~ period + (1 | herd), family = binomial,
+             weights = size, data = cbpp)
+gm2 <- glmer(prop ~ period + randx + (1 | herd), family = binomial,
+             weights = size, data = cbpp)
+##model without period
+gm3 <- glmer(prop ~ 1 + (1 | herd), family = binomial,
+             weights = size, data = cbpp)
+Cands <- list(gm1, gm2, gm3)
+Modnames <- c("period", "period + randx", "null")
+
+##model selection
+aictab(cand.set = Cands, modnames = Modnames)
+##model average for difference between period 1 vs period 4
+modavg(cand.set = Cands, modnames = Modnames, parm = "period4")
+detach(package:lme4)
+
+
+
 ##example with multiple-season occupancy model modified from ?colext
 require(unmarked)
 data(frogs)
