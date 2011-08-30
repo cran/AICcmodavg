@@ -27,7 +27,7 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
   
   
   ##extract model formula for each model in cand.set
-  mod_formula <- lapply(cand.set, FUN = function(i) rownames(summary(i)@coefs))
+  mod_formula <- lapply(cand.set, FUN = function(i) labels(fixef(i)))
 
   ##determine frequency of each term across models (except (Intercept) ) 
   pooled.terms <- unlist(mod_formula)

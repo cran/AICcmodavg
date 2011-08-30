@@ -36,7 +36,7 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
 
   
   ##extract model formula for each model in cand.set
-  mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)@coefs))
+  mod_formula <- lapply(cand.set, FUN=function(i) labels(fixef(i)))
 
   nmods <- length(cand.set)
   
@@ -225,7 +225,9 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
 
 ##create SE extractor function that includes estimate labels
 extractSE.mer <- function(mod){
-  se <- sqrt(diag(vcov(mod)))
+  ##extract vcov matrix
+  vcov.mat <- as.matrix(vcov(mod))
+  se <- sqrt(diag(vcov.mat))
   fixed.labels <- names(fixef(mod))
   names(se) <- fixed.labels
   return(se)

@@ -4,6 +4,14 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 1.18 (26 August 2011)
+##- added NAMESPACE
+##- modified functions extractSE.mer( ) and streamlined extraction of estimate 
+##  labels of mer objects in modavg.mer( ), modavg.shrink.mer( ), importance( )
+
+
+
+####################################################################
 ##revision 1.17 (17 June 2011)
 ##- fixed minor bug for external calls to AICc to assign 'unmarkedFit' classes
 ##- added functionality of AICc( ), aictab( ), evidence( ), importance( ), confset( ) with nls fits

@@ -1,0 +1,15 @@
+exportPattern(".")
+import(methods)
+##import(lme4, MASS, nlme, nnet, stats, unmarked)
+##import(stats)
+##import(stats4)
+##importMethodsFrom(stats4,coef,logLik,summary)
+#importFrom(stats,
+#           anova,coef,deviance,family,fitted,residuals,
+#           formula,predict,update,vcov)
+#importFrom(stats4,
+#           anova,coef,deviance,family,fitted,residuals,
+#           formula,predict,update,vcov)
+#importFrom(Matrix, diag) 	
+
+
