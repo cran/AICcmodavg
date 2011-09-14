@@ -1,4 +1,4 @@
-712cbc974e80ac6af5dccc00ddeb3fbb *DESCRIPTION
+ecf54c290e795728dece5219c4ec34b3 *DESCRIPTION
 89b5b267b90f181402baeaa1487a8723 *NAMESPACE
 73c2e23339c36d443657dc1284b4c2ff *R/AICc.R
 01a5e519212e4696c310011c3a8d52aa *R/AICc.glm.R
@@ -40,8 +40,9 @@ dd2464cdb5278fe4abc2515c48656e55 *R/modavg.shrink.lme.R
 277ef93f23faa1fb9a862bf8c5f1f32e *R/modavg.shrink.unmarked.R
 95945d412da738a20832e4b3a6ec1d0b *R/modavg.unmarked.R
 31f987140eec5b4aae7ff78fdb57d139 *R/modavg.utility.r
-f5a10fc1951262ddfa25d3bfbbdda282 *R/modavgpred.R
+62f0cd4f26849e1827e8445bb2f0f8e9 *R/modavgpred.R
 c4d0811e75f6792460c428cc211ccc97 *R/modavgpred.unmarked.R
+b32251b3ad18929af13e0537c19aebc9 *R/predictSE.gls.r
 c80420a24f7977c7eec4344697792e7b *R/predictSE.lme.r
 455f7d3bb429d51f8b53a6b770d86115 *R/predictSE.mer.r
 ca5d7848397d5ff8cf3d4192e9db9ced *data/beetle.rda
@@ -50,9 +51,9 @@ b52a1a6c0847b5710711cf42ff5a0949 *data/dry.frog.rda
 661f2f96c3da8bc1819397949f3c4842 *data/min.trap.rda
 1b9161545a16e37ddaf47ce39f791bbf *data/pine.rda
 c08875499d1deb3871dfcc927077389c *inst/CITATION
-60d515efc785dc1d02126c27de52215c *inst/NEWS
+0399e690aaaab2339b47f0a73a7d7e81 *inst/NEWS
 bab3188ed506c0bd7d25e431f22622b4 *man/AICc.Rd
-12776c74c53169efdc1807aa4a6a93e8 *man/AICcmodavg-package.Rd
+acf0a3caf0c4e5809186b0ab83ccc675 *man/AICcmodavg-package.Rd
 8df5afb43b2528f697262a034fe0f11f *man/aictab.Rd
 8b7abdf1c061422dc3219a14007dee78 *man/beetle.Rd
 275a401de94073aad50903a3c4f0dbbd *man/c_hat.Rd
@@ -68,7 +69,8 @@ a92179d59b5329822d4b7021c537466e *man/extractSE.mer.Rd
 5b91a5267e4e0d891affe69b614fd0d1 *man/modavg.Rd
 5ecf0f739a2617b370549d1bd2d32bd3 *man/modavg.shrink.Rd
 b52f63101bffd422004aea4289d4e48e *man/modavg.utility.Rd
-ba740d1504c6b29936beec0ef5cd64e1 *man/modavgpred.Rd
+47ae7f39eaa8ac00d6b09504a5da95d7 *man/modavgpred.Rd
 6de66511d439d787f0f358106bc679f0 *man/pine.Rd
+e10ae9ce0016ca47ec23d91c76e82f6e *man/predictSE.gls.Rd
 9dbe425628a8d732d17b63cd10f42b79 *man/predictSE.lme.Rd
 d8e608eb604cad08ee0ad74b0e551f56 *man/predictSE.mer.Rd

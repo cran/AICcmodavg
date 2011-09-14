@@ -2,6 +2,7 @@
 \Rdversion{1.1}
 \alias{modavgpred}
 \alias{modavgpred.glm}
+\alias{modavgpred.gls}
 \alias{modavgpred.lme}
 \alias{modavgpred.mer}
 \alias{modavgpred.unmarked}
@@ -12,7 +13,7 @@ Compute Model-averaged Predictions
 \description{
 This function computes the model-averaged predictions and unconditional
 standard errors based on the entire candidate model set.  The function
-is currently implemented for 'lm', 'glm', 'lme', and 'mer' object
+is currently implemented for 'lm', 'glm', 'gls', 'lme', and 'mer' object
 classes that are stored in a list as well as various models of
 'unmarkedFit' classes.
 }
@@ -24,6 +25,9 @@ modavgpred(cand.set, modnames, newdata, type = "response", c.hat = 1,
 modavgpred.glm(cand.set, modnames, newdata, type = "response",
                c.hat = 1, gamdisp = NULL, second.ord = TRUE,
                nobs = NULL, uncond.se = "revised") 
+
+modavgpred.gls(cand.set, modnames, newdata, second.ord = TRUE,
+               nobs = NULL, uncond.se = "revised")
 
 modavgpred.lme(cand.set, modnames, newdata, second.ord = TRUE,
                nobs = NULL, uncond.se = "revised")
@@ -115,12 +119,13 @@ unconditional standard errors.
 }
 }
 \details{
-  'modavgpred' is a function that calls 'modavgpred.glm',
-  'modavgpred.lme', 'modavgpred.mer', or 'modavgpred.unmarked' depending
-  on the class of the object.  The candidate models must be stored in a
-  list. Note that a data frame from which to make predictions must be
-  supplied with the 'newdata' argument and that all variables appearing
-  in the model set must appear in this data frame.
+  'modavgpred' is a function that calls 'modavgpred.gls',
+  'modavgpred.glm', 'modavgpred.lme', 'modavgpred.mer', or
+  'modavgpred.unmarked' depending on the class of the object.  The
+  candidate models must be stored in a list. Note that a data frame from
+  which to make predictions must be supplied with the 'newdata' argument
+  and that all variables appearing in the model set must appear in this
+  data frame. 
   
   One can compute unconditional confidence intervals around the
   predictions from the elements returned by 'modavgpred'.  The classic
@@ -163,6 +168,8 @@ MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
 J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
 detection probabilities are less than one. \emph{Ecology} \bold{83},
 2248--2255.
+
+
 }
 \author{
 Marc J. Mazerolle
@@ -173,7 +180,8 @@ Marc J. Mazerolle
 \code{\link{c_hat}}, \code{\link{confset}}, \code{\link{evidence}}, 
 \code{\link{modavg}}, \code{\link{modavg.shrink}},
 \code{\link{predict}}, \code{\link{predict.glm}},
-\code{\link{predictSE.lme}}, \code{\link{predictSE.mer}} 
+\code{\link{predictSE.gls}}, \code{\link{predictSE.lme}},
+\code{\link{predictSE.mer}} 
 }
 
 \examples{
@@ -297,6 +305,29 @@ modavgpred(cand.set = Cands, modnames = Modnames, newdata =
                       date = 0), parm.type = "detect",
            type = "response")
 detach(package:unmarked)
+
+
+##example using Orthodont data set from Pinheiro and Bates (2000)
+require(nlme)
+
+##set up candidate models
+m1 <- gls(distance ~ age, correlation = corCompSymm(value = 0.5, form = ~ 1 | Subject), data = Orthodont,
+          method= "ML")
+
+m2 <- gls(distance ~ 1, correlation = corCompSymm(value = 0.5, form = ~ 1 | Subject), data = Orthodont,
+          method= "ML")
+
+##assemble in list
+Cand.models <- list(m1, m2)
+##model names
+Modnames <- c("age effect", "null model")
+
+##model selection table
+aictab(cand.set = Cand.models, modnames = Modnames)
+
+##model-averaged predictions
+modavgpred(cand.set = Cand.models, modnames = Modnames, newdata = data.frame(age = c(8, 10, 12, 14)))
+detach(package:nlme)
 }
 
 \keyword{models}
