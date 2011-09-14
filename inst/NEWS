@@ -4,17 +4,26 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 1.19 (14 September 2011)
+##- created function 'predictSE.gls' to compute predicted values 
+##  and SE's from 'gls' model fits and added functionality of 
+##  'modavgpred' with 'gls' model fit
+##- added documentation with examples for 'gls' 
+
+
+
+####################################################################
 ##revision 1.18 (26 August 2011)
 ##- added NAMESPACE
-##- modified functions extractSE.mer( ) and streamlined extraction of estimate 
-##  labels of mer objects in modavg.mer( ), modavg.shrink.mer( ), importance( )
+##- modified functions 'extractSE.mer' and streamlined extraction of estimate 
+##  labels of 'mer' objects in 'modavg.mer', 'modavg.shrink.mer', 'importance'
 
 
 
 ####################################################################
 ##revision 1.17 (17 June 2011)
 ##- fixed minor bug for external calls to AICc to assign 'unmarkedFit' classes
-##- added functionality of AICc( ), aictab( ), evidence( ), importance( ), confset( ) with nls fits
+##- added functionality of 'AICc', 'aictab', 'evidence', 'importance', 'confset' with 'nls' fits
 
 
 
@@ -38,7 +47,7 @@
 
 ########################################################
 ##revision 1.15 (21 April 2011)
-##- in modavg( ) and related functions, added functionality of dealing with specification of interaction terms (e.g., A:B, B:A, A*B, B*A)
+##- in 'modavg' and related functions, added functionality of dealing with specification of interaction terms (e.g., A:B, B:A, A*B, B*A)
 ##  by adding two new utility functions to recognize the terms when user is not consistent in his model syntax
 ##- created function 'modavg.shrink' for the shrinkage version of model-averaging estimates to reduce model selection bias when 
 ##  the same number of models include/exclude a variable  
@@ -47,20 +56,20 @@
 
 ########################################################
 ##revision 1.14 (11 March 2011)
-##- fixed minor bug in modavg.mer( ) regarding exclusion of interaction terms as formula( ) includes spaces within interaction terms
+##- fixed minor bug in 'modavg.mer' regarding exclusion of interaction terms as 'formula' includes spaces within interaction terms
 
 
 
 ########################################################
 ##revision 1.13 (10 January 2011)
-##- fixed minor bug in AICc.lme( ) on the computation of n in certain lme's with several levels
+##- fixed minor bug in 'AICc.lme' on the computation of n in certain lme's with several levels
 
 
 
 #######################################################
 ##revision 1.12 (22 November 2010)
 ##- fixed minor bug in 'modavgpred.lme' that generated error message when second.ord = FALSE
-##- fixed minor bug by dispatching 'mer' class objects to AICc.mer( )
+##- fixed minor bug by dispatching 'mer' class objects to 'AICc.mer'
 ##- fixed minor bug with incorrect computation of n for 'mer' models with binomial distribution using 
 ##  cbind(incidence, size - incidence) or binary syntax
 
