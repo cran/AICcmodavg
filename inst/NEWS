@@ -4,6 +4,13 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 1.20 (3 October 2011)
+##- added functionality of 'nobs' argument for objects created 
+##  in unmarked package
+
+
+
+####################################################################
 ##revision 1.19 (14 September 2011)
 ##- created function 'predictSE.gls' to compute predicted values 
 ##  and SE's from 'gls' model fits and added functionality of 
