@@ -15,7 +15,7 @@ AICc.unmarked <- function(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, n
   
   if(is.null(nobs)) {
     n <- dim(mod@data@y)[1]
-  }
+  } else {n <- nobs}
   
   if(c.hat == 1) {
     if(second.ord == TRUE) {AICc <- -2 * LL + 2 * K * (n/(n - K - 1))} else {AICc <- -2*LL + 2*K}
