@@ -33,8 +33,8 @@ N-mixture models for repeated counts ('unmarkedFitPCount' and
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.20\cr
-Date: \tab 2011-10-03\cr
+Version: \tab 1.21\cr
+Date: \tab 2011-11-04\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }

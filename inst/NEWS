@@ -4,6 +4,12 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 1.21 (4 November 2011)
+##- corrected error in computing sample size for binomial model with events/trials syntax in AICc.glm( ) and AICc.mer( )
+
+
+
+####################################################################
 ##revision 1.20 (3 October 2011)
 ##- added functionality of 'nobs' argument for objects created 
 ##  in unmarked package

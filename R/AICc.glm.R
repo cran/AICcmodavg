@@ -4,8 +4,7 @@ AICc.glm <-
     if(identical(class(mod), "lm") || identical(class(mod), c("glm", "lm"))) {
     
       if(is.null(nobs)) {
-        if(identical(family(mod)[[1]], "binomial") && any(mod$prior.weights!=1)) {
-          n <- sum(mod$prior.weights) } else {n<-length(mod$fitted)}
+        n <- length(mod$fitted)
       } else {n <- nobs}
       
       LL<-logLik(mod)[1]
