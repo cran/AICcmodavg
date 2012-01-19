@@ -120,16 +120,20 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
       forms <- list()
       for (i in 1:nmods) {
         form.tmp <- strsplit(as.character(not.include[i]), split="~")[[1]][-1]
-        if(attr(regexpr("\\+", form.tmp), "match.length")==-1) {
+        if(attr(regexpr("\\+", form.tmp), "match.length")==-1) {  #this line causes problems if intercept is removed from model
           forms[i] <- form.tmp
-        } else {forms[i] <- strsplit(form.tmp, split=" \\+ ")}
+        } else {forms[i] <- strsplit(form.tmp, split=" \\+ ")}    #this line causes problems if intercept is removed from model
       }
 
       ##additional check to see whether some variable names include "+"
       check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\+", i), "match.length")>0)[[1]]))
-      if (any(check.forms==TRUE)) stop("Please avoid \"+\" in variable names")
+      if (any(check.forms==TRUE)) stop("\nPlease avoid \"+\" in variable names\n")
 
+      ##additional check to determine if intercept was removed from models
+      check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\- 1", i), "match.length")>0)[[1]]))
+      if (any(check.forms==TRUE)) stop("\nModels without intercept are not supported in this version, please use alternative parameterization\n")
 
+ 
       ##search within formula for variables to exclude
       mod.exclude <- matrix(NA, nrow=nmods, ncol=nexcl)
 

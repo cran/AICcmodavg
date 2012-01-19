@@ -8,7 +8,8 @@ modavgpred.unmarked <- function(cand.set, modnames, newdata, second.ord = TRUE, 
   if(length(mod.type) > 1) stop("This function is not appropriate to model-average parameters from different model types")
 
   ##check for supported mod.type
-  supp.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO")
+  supp.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
+                  "unmarkedFitDS", "unmarkedFitGDS")
                   
   if(!any(supp.class == mod.type)) {stop("\nFunction not yet defined for this object class\n")}
   
@@ -35,6 +36,8 @@ modavgpred.unmarked <- function(cand.set, modnames, newdata, second.ord = TRUE, 
     if(identical(mod.type, "unmarkedFitPCount")) {parm.type1 <- "state"}
     if(identical(mod.type, "unmarkedFitPCO")) {parm.type1 <- "lambda"}
     if(identical(mod.type, "unmarkedFitOccuRN")) {parm.type1 <- "state"}
+    if(identical(mod.type, "unmarkedFitDS")) {parm.type1 <- "state"}
+    if(identical(mod.type, "unmarkedFitGDS")) {parm.type1 <- "state"}
   }
 
   ##omega
@@ -44,8 +47,15 @@ modavgpred.unmarked <- function(cand.set, modnames, newdata, second.ord = TRUE, 
 
   ##detect
   if(identical(parm.type, "detect")) parm.type1 <- "det"
+  if(identical(mod.type, "unmarkedFitDS") && identical(parm.type, "detect")) stop("\nModel-averaging predictions of detection not yet supported for unmarkedFitDS class\n")
+  if(identical(mod.type, "unmarkedFitGDS") && identical(parm.type, "detect")) stop("\nModel-averaging predictions of detection not yet supported for unmarkedFitGDS class\n")
 
-  
+  ##availability
+  if(identical(parm.type, "phi")) parm.type1 <- "phi"
+  if(identical(mod.type, "unmarkedFitGDS") && identical(parm.type, "phi")) stop("\nModel-averaging predictions of availability not yet supported for unmarkedFitGDS class\n")
+
+    
+     
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   
   ##determine number of observations in new data set

@@ -25,9 +25,10 @@ nonlinear models ('nls' class).  The package also supports various
 models incorporating detection probabilities such as single-season
 occupancy models ('unmarkedFitOccu' class), multiple-season occupancy
 models ('unmarkedFitColExt' class), single-season heterogeneity models
-('unmarkedFitOccuRN' class), and single-season and multiple-season
-N-mixture models for repeated counts ('unmarkedFitPCount' and
-'unmarkedFitPCO' classes, respectively).
+('unmarkedFitOccuRN' class), single-season and multiple-season N-mixture
+models for repeated counts ('unmarkedFitPCount' and 'unmarkedFitPCO'
+classes, respectively), and distance sampling models ('unmarkedFitDS'
+and 'unmarkedFitGDS' classes). 
 }
 \details{
 \tabular{ll}{

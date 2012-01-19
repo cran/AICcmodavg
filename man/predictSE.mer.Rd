@@ -45,7 +45,8 @@ predictSE.mer(mod, newdata, se.fit = TRUE, type = "response",
 \details{
   'predictSE.mer' computes predicted values based on fixed effects and
   associated standard errors.  Standard errors are approximated using
-  the delta method (Oehlert 1992). 
+  the delta method (Oehlert 1992).  The current version supports the use
+  of offsets only for the Poisson distribution.
 }
 \value{
   'predictSE.mer' returns requested values either as a matrix
@@ -130,6 +131,50 @@ predictSE.mer(m3, newdata = neworth, type = "response")
 
 ##predictions on log scale
 predictSE.mer(m3, newdata = neworth, type = "link")
+
+
+
+##example of Poisson mixed model with offset term
+##assign values
+set.seed(seed = 222)
+beta0 <- -3.45
+beta.CWD <- 0.01
+beta.basal.area <- 0.1
+block.var <- 0.28
+n.blocks <- 10
+rep.per.block <- 9
+n.obs <- n.blocks * rep.per.block
+CWD <- rnorm(n = n.obs, mean = 190, sd = 50)
+effort <- sample(10:20, size = n.obs, replace = TRUE)
+basal.area <- rnorm(n = n.obs, mean = 60, sd = 20)
+block.id <- sort(rep(1:n.blocks, rep.per.block))
+
+##generate data
+##random intercept (block)
+block.int <- rnorm(n = 10, mean = 0, sd = sqrt(block.var))
+lin.pred <- beta0 + beta.CWD * CWD + beta.basal.area * basal.area + log(effort)
+
+y.val <- rep(NA, n.obs)
+for (i in 1:n.obs) {
+y.val[i] <- rpois(n = 1, lambda = exp(lin.pred[i] + block.int[block.id[i]]))
+}
+sim.data <- data.frame(Y.val = y.val, CWD = CWD, Basal.area = basal.area, Block = as.factor(block.id), Effort = effort)
+sim.data$log.Effort <- log(sim.data$Effort)
+
+##run model with log transformation of offset variable within call
+m1 <- glmer(Y.val ~ CWD + Basal.area + (1 | Block) + offset(log(Effort)), data = sim.data, family = poisson)
+##predictions
+pred.data <- expand.grid(CWD = mean(sim.data$CWD), Basal.area = seq(from = 20, to = 50, by = 10), Effort = 20)
+predictSE.mer(m1, newdata = pred.data, type = "response")
+
+##run model with offset already on log scale
+m1 <- glmer(Y.val ~ CWD + Basal.area + (1 | Block) + offset(log.Effort), data = sim.data, family = poisson)
+##predictions
+pred.data <- expand.grid(CWD = mean(sim.data$CWD), Basal.area = seq(from = 20, to = 50, by = 10), log.Effort = log(20))
+predictSE.mer(m1, newdata = pred.data, type = "response")
+
+##both are identical
+
 
 detach(package:lme4)
 }

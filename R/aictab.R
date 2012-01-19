@@ -54,7 +54,8 @@ aictab <-
 
 
     ##determine if unmarked
-    unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO")
+    unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
+                        "unmarkedFitDS", "unmarkedFitGDS")
     if(any(sapply(unmarked.class, FUN = function(i) identical(i, check.class)))) {
       results <- aictab.unmarked(cand.set = cand.set, modnames = modnames, sort = sort,
                                  c.hat = c.hat, second.ord = second.ord, nobs = nobs)

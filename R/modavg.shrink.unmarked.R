@@ -10,7 +10,8 @@ modavg.shrink.unmarked <-
     if(length(mod.type) > 1) stop("This function is not appropriate to model-average parameters from different model types")
     
     ##check for supported mod.type
-    supp.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO")
+    supp.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
+                    "unmarkedFitDS", "unmarkedFitGDS")
                   
     if(!any(supp.class == mod.type)) {stop("\nFunction not yet defined for this object class\n")}
 
@@ -145,6 +146,50 @@ modavg.shrink.unmarked <-
         parm <- paste(parm.unmarked, "(", parm, ")", sep="")
       }
     }
+
+
+      ##Distance sampling model
+  if(identical(mod.type, "unmarkedFitDS")) {
+    ##lambda - abundance
+    if(identical(parm.type, "lambda")) {
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
+      parm <- paste("lam", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
+      not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
+    }
+    ##detect
+    if(identical(parm.type, "detect")) {
+      if(identical(parm.type, "detect")) {
+        stop("\nModel-averaging estimates of detection covariates not yet supported for unmarkedFitDS class\n")
+      }
+    }
+  }
+
+
+
+  ##Distance sampling model with availability
+  if(identical(mod.type, "unmarkedFitDS")) {
+    ##lambda - abundance
+    if(identical(parm.type, "lambda")) {
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
+      parm <- paste("lam", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
+      not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
+    }
+    ##detect
+    if(identical(parm.type, "detect")) {
+      if(identical(parm.type, "detect")) {
+        stop("\nModel-averaging estimates of detection covariates not yet supported for unmarkedFitGDS class\n")
+      }
+    }
+    ##availability
+    if(identical(parm.type, "phi")) {
+      stop("\nModel-averaging estimates of availability covariates not yet supported for unmarkedFitGDS class\n")
+    }
+  }
+
 
     ##NEED TO PASTE THE PARAMETER TYPE - INCLUDE THIS STEP ABOVE FOR EACH PARM.TYPE
     ##determine frequency of each term across models (except (Intercept) ) 

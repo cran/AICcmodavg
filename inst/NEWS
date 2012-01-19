@@ -4,6 +4,18 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 1.22 (19 January 2012)
+##- modified example in modavg( ) help file
+##- added error message for models without intercept with modavg( )
+##- added support for offset variable in predictSE.mer( ) for Poisson GLMM
+##- added support for 'distsamp' and 'gdistsamp' models from unmarked package 
+##  (Poisson or negative binomial abundance with log link)
+##- added example in modavg( ) and modavgpred( ) for 'distsamp' models
+##- added example for Poisson GLMM with log link and offset
+
+
+
+####################################################################
 ##revision 1.21 (4 November 2011)
 ##- corrected error in computing sample size for binomial model with events/trials syntax in AICc.glm( ) and AICc.mer( )
 

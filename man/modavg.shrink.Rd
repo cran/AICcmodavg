@@ -120,19 +120,21 @@ confidence intervals.
   this argument specifies the parameter type of the estimate specified
   in 'parm' and is only relevant for models of 'unmarkedFitOccu',
   'unmarkedFitColExt', 'unmarkedFitOccuRN', 'unmarkedFitPCount',
-  'unmarkedFitPCO' classes.  The character strings supported vary with
-  the type of model fitted.  For 'unmarkedFitOccu' objects, either 'psi' 
-  or 'detect' can be supplied to indicate whether the parameter is on
-  occupancy or detectability, respectively.  For 'unmarkedFitColExt',
-  possible values are 'psi', 'gamma', 'epsilon', and 'detect', for
-  parameters on occupancy in the inital year, colonization, extinction,
-  and detectability, respectively.  For 'unmarkedFitOccuRN'
-  objects, either 'lambda or 'detect' can be entered for abundance and
-  detectability parameters, respectively.  For 'unmarkedFitPCount' objects,
-  'lambda' or 'detect' denote parameters on abundance and detectability,
-  respectively.  For 'unmarkedFitPCO' objects, one can enter 'lambda',
-  'gamma', 'omega', or 'detect', to specify parameters on abundance,
-  recruitment, apparent survival, and detectability, respectively.
+  'unmarkedFitPCO', 'unmarkedFitDS' and 'unmarkedFitGDS' classes.  The
+  character strings supported vary with the type of model fitted.  For
+  'unmarkedFitOccu' objects, either 'psi' or 'detect' can be supplied to
+  indicate whether the parameter is on occupancy or detectability,
+  respectively.  For 'unmarkedFitColExt', possible values are 'psi',
+  'gamma', 'epsilon', and 'detect', for parameters on occupancy in the
+  inital year, colonization, extinction, and detectability,
+  respectively.  For 'unmarkedFitOccuRN' objects, either 'lambda or
+  'detect' can be entered for abundance and detectability parameters,
+  respectively.  For 'unmarkedFitPCount' objects, 'lambda' or 'detect'
+  denote parameters on abundance and detectability, respectively.  For
+  'unmarkedFitPCO' objects, one can enter 'lambda', 'gamma', 'omega', or
+  'detect', to specify parameters on abundance, recruitment, apparent
+  survival, and detectability, respectively. For 'unmarkedFitDS' and
+  'unmarkedFitGDS' objects, only 'lambda' is supported for the moment.
 }
 }
 
@@ -154,7 +156,7 @@ depending on the class of the object.  The current function is
 implemented for a list containing objects of 'lm', 'glm', 'gls', 'lme',
 'mer', 'multinom', and 'polr' classes as well as 'unmarkedFitOccu',
 'unmarkedFitColExt', 'unmarkedFitOccuRN', 'unmarkedFitPCount',
-'unmarkedFitPCO' classes. 
+'unmarkedFitPCO', 'unmarkedFitDS', and 'unmarkedFitGDS' classes. 
 }
 \value{
 'modavg.shrink', 'modavg.shrink.glm', 'modavg.shrink.gls',
