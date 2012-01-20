@@ -50,7 +50,8 @@ importance <-
 
     
     ##determine if unmarked
-    unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO")
+    unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
+                        "unmarkedFitDS", "unmarkedFitGDS")
     if(any(sapply(unmarked.class, FUN = function(i) identical(i, check.class)))) {
 
       known[7] <- 1
@@ -181,6 +182,52 @@ importance <-
           parm <- paste(parm.unmarked, "(", parm, ")", sep="")
         }
       }
+
+
+      ##Distance sampling model
+      if(identical(check.class, "unmarkedFitDS")) {
+        ##lambda - abundance
+        if(identical(parm.type, "lambda")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
+          parm.unmarked <- "lam"
+          parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+        }
+        ##detect
+        if(identical(parm.type, "detect")) {
+          stop("\nImportance values for detection covariates not yet supported for unmarkedFitDS class\n")
+        }
+      }
+
+      
+      ##Distance sampling model with availability
+      if(identical(check.class, "unmarkedFitGDS")) {
+        ##lambda - abundance
+        if(identical(parm.type, "lambda")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
+          parm.unmarked <- "lam"
+          parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+        }
+        ##detect
+        if(identical(parm.type, "detect")) {
+          stop("\nImportance values for detection covariates not yet supported for unmarkedFitGDS class\n")
+        }
+        ##availability
+        if(identical(parm.type, "phi")) {
+          stop("\nImportance values for availability covariates not yet supported for unmarkedFitGDS class\n")
+        }
+      }
+
+
+
+
+      
+
+
+      
+
+      
     }
   
 

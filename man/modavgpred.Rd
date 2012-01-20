@@ -103,21 +103,24 @@ unconditional standard errors.
   this argument specifies the parameter type of the estimate specified
   in 'parm' and is only relevant for models of 'unmarkedFitOccu',
   'unmarkedFitColExt', 'unmarkedFitOccuRN', 'unmarkedFitPCount',
-  'unmarkedFitPCO' classes.  The character strings supported vary with
-  the type of model fitted.  For 'unmarkedFitOccu' objects, either 'psi' 
-  or 'detect' can be supplied to indicate whether the parameter is on
-  occupancy or detectability, respectively.  For 'unmarkedFitColExt',
-  possible values are 'psi', 'gamma', 'epsilon', and 'detect', for
-  parameters on occupancy in the inital year, colonization, extinction,
-  and detectability, respectively.  For 'unmarkedFitOccuRN'
-  objects, either 'lambda or 'detect' can be entered for abundance and
-  detectability parameters, respectively.  For 'unmarkedFitPCount' objects,
-  'lambda' or 'detect' denote parameters on abundance and detectability,
-  respectively.  For 'unmarkedFitPCO' objects, one can enter 'lambda',
-  'gamma', 'omega', or 'detect', to specify parameters on abundance,
-  recruitment, apparent survival, and detectability, respectively.
+  'unmarkedFitPCO', 'unmarkedFitDS' and 'unmarkedFitGDS' classes.  The
+  character strings supported vary with the type of model fitted.  For
+  'unmarkedFitOccu' objects, either 'psi' or 'detect' can be supplied to
+  indicate whether the parameter is on occupancy or detectability,
+  respectively.  For 'unmarkedFitColExt', possible values are 'psi',
+  'gamma', 'epsilon', and 'detect', for parameters on occupancy in the
+  inital year, colonization, extinction, and detectability,
+  respectively.  For 'unmarkedFitOccuRN' objects, either 'lambda or
+  'detect' can be entered for abundance and detectability parameters,
+  respectively.  For 'unmarkedFitPCount' objects, 'lambda' or 'detect'
+  denote parameters on abundance and detectability, respectively.  For
+  'unmarkedFitPCO' objects, one can enter 'lambda', 'gamma', 'omega', or
+  'detect', to specify parameters on abundance, recruitment, apparent
+  survival, and detectability, respectively. For 'unmarkedFitDS' and
+  'unmarkedFitGDS' objects, only 'lambda' is supported for the moment.
 }
 }
+
 \details{
   'modavgpred' is a function that calls 'modavgpred.gls',
   'modavgpred.glm', 'modavgpred.lme', 'modavgpred.mer', or
@@ -304,7 +307,37 @@ modavgpred(cand.set = Cands, modnames = Modnames, newdata =
            data.frame(ivel = seq(from = -1.75, to = 5.9, by = 0.5),
                       date = 0), parm.type = "detect",
            type = "response")
+
+
+
+##example of model-averaged abundance from distance model
+data(linetran) #example from ?distsamp
+     
+ltUMF <- with(linetran, {
+  unmarkedFrameDS(y = cbind(dc1, dc2, dc3, dc4),
+                  siteCovs = data.frame(Length, area, habitat),
+                  dist.breaks = c(0, 5, 10, 15, 20),
+                  tlength = linetran$Length * 1000, survey = "line", unitsIn = "m")
+})
+     
+## Half-normal detection function. Density output (log scale). No covariates.
+fm1 <- distsamp(~ 1 ~ 1, ltUMF)
+     
+## Halfnormal. Covariates affecting both density and and detection.
+fm2 <- distsamp(~area + habitat ~ habitat, ltUMF)
+
+## Hazard function. Covariates affecting both density and and detection.
+fm3 <- distsamp(~area + habitat ~ habitat, ltUMF, keyfun="hazard")
+
+##assemble model list
+Cands <- list(fm1, fm2, fm3)
+Modnames <- paste("mod", 1:length(Cands), sep = "")
+
+##model-average predictions on abundance
+modavgpred(cand.set = Cands, modnames = Modnames, parm.type = "lambda", type = "link",
+           newdata = data.frame(area = mean(linetran$area), habitat = c("A", "B")))
 detach(package:unmarked)
+
 
 
 ##example using Orthodont data set from Pinheiro and Bates (2000)
@@ -326,8 +359,10 @@ Modnames <- c("age effect", "null model")
 aictab(cand.set = Cand.models, modnames = Modnames)
 
 ##model-averaged predictions
-modavgpred(cand.set = Cand.models, modnames = Modnames, newdata = data.frame(age = c(8, 10, 12, 14)))
+modavgpred(cand.set = Cand.models, modnames = Modnames, newdata =
+data.frame(age = c(8, 10, 12, 14)))
 detach(package:nlme)
+
 }
 
 \keyword{models}

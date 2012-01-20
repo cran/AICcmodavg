@@ -6,6 +6,8 @@
 ##RN heterogeneity model: state, det - USE lambda, detect
 ##N-mixture: state, det - USE lambda, detect
 ##Open N-mixture: lambda, gamma, omega, det - USE lambda, gamma, omega, detect
+##distsamp: state, det - USE lambda, detect
+##gdistsamp: state, det, phi - USE lambda, detect, phi
 
 modavg.unmarked <-
 function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TRUE, nobs = NULL, exclude = NULL,
@@ -19,7 +21,8 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
   if(length(mod.type) > 1) stop("This function is not appropriate to model-average parameters from different model types")
 
   ##check for supported mod.type
-  supp.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO")
+  supp.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
+                  "unmarkedFitDS", "unmarkedFitGDS")
                   
   if(!any(supp.class == mod.type)) {stop("\nFunction not yet defined for this object class\n")}
 
@@ -166,7 +169,7 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
         mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
         parm <- paste("lam", "(", parm, ")", sep="")
         if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
-        not.include <- lapply(cand.set, FUN = function(i) i$formula[[3]])
+        not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
       }
       ##detect
       if(identical(parm.type, "detect")) {
@@ -176,6 +179,49 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
         not.include <- lapply(cand.set, FUN = function(i) i@formula[[2]])
       }
     }
+
+
+  ##Distance sampling model
+  if(identical(mod.type, "unmarkedFitDS")) {
+    ##lambda - abundance
+    if(identical(parm.type, "lambda")) {
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
+      parm <- paste("lam", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
+      not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
+    }
+    ##detect
+    if(identical(parm.type, "detect")) {
+      if(identical(parm.type, "detect")) {
+        stop("\nModel-averaging estimates of detection covariates not yet supported for unmarkedFitDS class\n")
+      }
+    }
+  }
+
+
+
+  ##Distance sampling model with availability
+  if(identical(mod.type, "unmarkedFitGDS")) {
+    ##lambda - abundance
+    if(identical(parm.type, "lambda")) {
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
+      parm <- paste("lam", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
+      not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
+    }
+    ##detect
+    if(identical(parm.type, "detect")) {
+      if(identical(parm.type, "detect")) {
+        stop("\nModel-averaging estimates of detection covariates not yet supported for unmarkedFitGDS class\n")
+      }
+    }
+    ##availability
+    if(identical(parm.type, "phi")) {
+      stop("\nModel-averaging estimates of availability covariates not yet supported for unmarkedFitGDS class\n")
+    }
+  }
   
 
   nmods <- length(cand.set)
@@ -270,7 +316,11 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
       check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\+", i), "match.length")>0)[[1]]))
       if (any(check.forms==TRUE)) stop("Please avoid \"+\" in variable names")
 
+      ##additional check to determine if intercept was removed from models
+      check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\- 1", i), "match.length")>0)[[1]]))
+      if (any(check.forms==TRUE)) stop("\nModels without intercept are not supported in this version, please use alternative parameterization\n")
 
+ 
       #search within formula for variables to exclude
       mod.exclude <- matrix(NA, nrow=nmods, ncol=nexcl)
 

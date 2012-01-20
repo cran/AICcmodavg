@@ -1,3 +1,5 @@
+##current function only works for offset with Poisson distribution and log link
+
 ##########################################################################
 ##########################################################################
 ##FUNCTION STARTS HERE
@@ -7,9 +9,6 @@
 predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level = 0, print.matrix = FALSE){
   ##check for model type
   if(!identical(paste(class(mod)), "mer")) stop(cat("\nThis function is only appropriate with \'mer\' objects\n"))
-
-  ##check for offset
-  if(length(mod@offset) > 0) stop(cat("\nOffsets are not supported at the moment\n"))
   
 ##########################################################################
 ###determine characteristics of glmm
@@ -22,6 +21,8 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
   if(identical(supp.link, "no")) stop("\nOnly canonical link is supported with current version of function\n")
     
   if(identical(link.type, "other")) stop("\nThis function is not yet defined for the specified link function\n")
+
+  if(length(mod@offset) > 0 && !identical(fam.type, "poisson") && identical(link.type, "log")) stop("\nFunction only currently supports offset for Poisson family\n")
 ##########################################################################      
 
 
@@ -72,10 +73,35 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
 #################################################################################################################
 ########################### The previous clever piece of code is modified from predict.lme( ) from nlme package
 #################################################################################################################
+  
+###############################################
+###############################################
+###  THIS BIT IS MODIFIED FOR OFFSET
+###############################################
+  ##check for offset
+  if(length(mod@offset) > 0) {
 
-  m <- model.frame(TT, data=dataMix)
+    offset.values <- model.offset(dataMix)
+    
+    ##identify which variable is offset
+    offset.number <- attr(TT, "offset")
+
+    ##extract name of column with offset
+    offset.name <- attr(TT, "variables")[[offset.number+1]] #this might need to be changed
+    ##also see offset.name[2] to extract variable name only
+    names(dataMix)[offset.number] <- as.character(offset.name[2])
+  }
+###############################################
+###END OF MODIFICATIONS FOR OFFSET
+###############################################
+###############################################
+  
+  #m <- model.frame(TT, data = dataMix) gives error when offset is converted to log( ) scale within call
+  m <- model.frame(TT, data = newdata)
   des.matrix <- model.matrix(TT, m)
-  newdata <- des.matrix  #we now have a design matrix 
+  newdata <- des.matrix  #we now have a design matrix
+
+
 
   
 ##logical test for level
@@ -142,7 +168,34 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
                     srcfile = NULL)
   ##parse returns the unevaluated expression
 
+  
+##############################################
+########BEGIN MODIFIED FOR OFFSET############
+##############################################
+##############################################
+  if(length(mod@offset) > 0) {
+    ##iterate and combine betas and covariates
+  formula2 <- character(length = ncoefs+1)
+  for(b in 1:ncoefs) {
+    formula2[b] <- paste(formula[b], names.cov[b], sep="*")
+  }
 
+  ##add offset variable to formula
+  formula2[ncoefs+1] <- "offset.vals"
+  
+  ##replace with Beta0 if fixed intercept term present
+  if(int.yes) {formula2[1] <- "Beta0"}
+  
+  ##collapse into a single equation and convert to expression
+  equation <- parse(text  = as.expression(paste(formula2, collapse="+")),
+                    srcfile = NULL) 
+}
+##############################################
+########END MODIFIED FOR OFFSET###############
+##############################################
+##############################################
+
+  
   ##determine number of covariates excluding interaction terms
   ncovs <- ncoefs - length(id)
 
@@ -213,6 +266,16 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
         var_hat<-mat_tpartialdevs%*%vcmat%*%mat_partialdevs
         SE<-sqrt(var_hat)
         predicted.vals <- fix.coef%*%cov.values.mat[w,]
+
+######################################
+###BEGIN MODIFIED FOR OFFSET
+######################################
+        if(length(mod@offset) > 0) {
+          predicted.vals <- fix.coef%*%cov.values.mat[w,] + offset.values[w]
+        }
+######################################
+###END MODIFIED FOR OFFSET
+######################################
         predicted.SE[w, 1] <- predicted.vals
         predicted.SE[w, 2] <- SE@x #to extract only value computed
       }
@@ -225,6 +288,16 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
       rownames(predicted.SE) <- 1:nvals
       for (w in 1:nvals) {
         predicted.vals <- fix.coef%*%cov.values.mat[w,]
+######################################
+###BEGIN MODIFIED FOR OFFSET
+######################################
+        if(length(mod@offset) > 0) {
+          predicted.vals <- fix.coef%*%cov.values.mat[w,] + offset.values[w]
+        }
+######################################
+###END MODIFIED FOR OFFSET
+######################################
+
         predicted.SE[w, 1] <- predicted.vals
       }
       
@@ -288,7 +361,19 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
             for(r in 2:ncoefs) {
               ##create commands
               cmds[[r]] <- paste(names.cov[r], "=", "cov.values[[names.cov[", r, "]]][", w, "]")
-            } 
+            }
+######################################
+###BEGIN MODIFIED FOR OFFSET
+######################################
+
+            ##if offset present, add in equation
+            if(length(mod@offset) > 0) {
+              cmds[[ncoefs+1]] <- paste("offset.vals = offset.values[w]")
+            }
+######################################
+###END MODIFIED FOR OFFSET
+######################################
+
             ##assemble commands
             cmd.arg <- paste(unlist(cmds), collapse = ", ")
             cmd.eval <- paste("eval(expr = part.devs[[", p, "]],", "envir = list(", cmd.arg, ")", ")")
@@ -318,6 +403,16 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
         var_hat<-mat_tpartialdevs%*%vcmat%*%mat_partialdevs
         SE<-sqrt(var_hat)
         predicted.vals <- fix.coef%*%cov.values.mat[w,]
+######################################
+###BEGIN MODIFIED FOR OFFSET
+######################################
+        if(length(mod@offset) > 0) {
+          predicted.vals <- fix.coef%*%cov.values.mat[w,] + offset.values[w]
+        }
+######################################
+###END MODIFIED FOR OFFSET
+######################################
+
         if(identical(link.type, "logit")) {
           predicted.SE[w, 1] <- exp(predicted.vals)/(1 + exp(predicted.vals))
         } else {
@@ -325,6 +420,7 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
             predicted.SE[w, 1] <- exp(predicted.vals)
           }
         }
+
         predicted.SE[w, 2] <- SE@x #to extract only value computed
       }
       out.fit.SE <- list(fit = predicted.SE[,"Pred.value"], se.fit = predicted.SE[, "SE"])
@@ -335,6 +431,16 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
       rownames(predicted.SE) <- 1:nvals
       for (w in 1:nvals) {
         predicted.vals <- fix.coef%*%cov.values.mat[w,]
+######################################
+###BEGIN MODIFIED FOR OFFSET
+######################################
+        if(length(mod@offset) > 0) {
+          predicted.vals <- fix.coef%*%cov.values.mat[w,] + offset.values[w]
+        }
+######################################
+###END MODIFIED FOR OFFSET
+######################################
+        
         if(identical(link.type, "logit")) {
           predicted.SE[w, 1] <- exp(predicted.vals)/(1 + exp(predicted.vals))
         } else {

@@ -136,7 +136,11 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
     check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\+", i), "match.length")>0)[[1]]))
     if (any(check.forms==TRUE)) stop("Please avoid \"+\" in variable names")
     
-    
+    ##additional check to determine if intercept was removed from models
+    check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\- 1", i), "match.length")>0)[[1]]))
+    if (any(check.forms==TRUE)) stop("\nModels without intercept are not supported in this version, please use alternative parameterization\n")
+
+ 
     ##search within formula for variables to exclude
     mod.exclude <- matrix(NA, nrow=nmods, ncol=nexcl)
 

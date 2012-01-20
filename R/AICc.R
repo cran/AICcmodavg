@@ -40,7 +40,8 @@ AICc <-
 
 
     ##determine if unmarked
-    unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO")
+    unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
+                        "unmarkedFitDS", "unmarkedFitGDS")
     if(any(sapply(unmarked.class, FUN = function(i) identical(i, class(mod)[1])))) {
       aicc <- AICc.unmarked(mod = mod, return.K = return.K, c.hat = c.hat, second.ord = second.ord,
                             nobs = nobs)
