@@ -4,6 +4,13 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 1.23 (27 January 2012)
+##- corrected minor bug following revision 1.22 on predictSE.mer( ) 
+##  to avoid problems with factors
+
+
+
+####################################################################
 ##revision 1.22 (19 January 2012)
 ##- modified example in modavg( ) help file
 ##- added error message for models without intercept with modavg( )

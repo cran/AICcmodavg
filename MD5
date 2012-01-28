@@ -1,4 +1,4 @@
-22ade1713d56172fce9f9ca1d3a367ed *DESCRIPTION
+b8f21a8c40016c8fdc42339a9a5677a1 *DESCRIPTION
 89b5b267b90f181402baeaa1487a8723 *NAMESPACE
 b21e2e68361496dc67abba1b87291e68 *R/AICc.R
 4a0e5be2b25b9ddfef240d1704c8f9aa *R/AICc.glm.R
@@ -44,16 +44,16 @@ dd2464cdb5278fe4abc2515c48656e55 *R/modavg.shrink.lme.R
 1f43c1fbadf5da99764213443b37d43f *R/modavgpred.unmarked.R
 b32251b3ad18929af13e0537c19aebc9 *R/predictSE.gls.r
 c80420a24f7977c7eec4344697792e7b *R/predictSE.lme.r
-1351a92edf799789d44ac151ec38a4fd *R/predictSE.mer.r
+478d796d8c6ff505d38b8fd0cbf6fa14 *R/predictSE.mer.r
 ca5d7848397d5ff8cf3d4192e9db9ced *data/beetle.rda
 a5b8fad18ae765810922ec658f3dd72e *data/cement.rda
 b52a1a6c0847b5710711cf42ff5a0949 *data/dry.frog.rda
 661f2f96c3da8bc1819397949f3c4842 *data/min.trap.rda
 1b9161545a16e37ddaf47ce39f791bbf *data/pine.rda
 c08875499d1deb3871dfcc927077389c *inst/CITATION
-cfef525a62b843f929c7f26bd36f2e74 *inst/NEWS
+da66c487b96178accc1cd69a90f1108c *inst/NEWS
 bab3188ed506c0bd7d25e431f22622b4 *man/AICc.Rd
-ad62829c18fc39eee58ac3a47126aa23 *man/AICcmodavg-package.Rd
+458348fed493519209774a31613d8f6c *man/AICcmodavg-package.Rd
 8df5afb43b2528f697262a034fe0f11f *man/aictab.Rd
 8b7abdf1c061422dc3219a14007dee78 *man/beetle.Rd
 275a401de94073aad50903a3c4f0dbbd *man/c_hat.Rd

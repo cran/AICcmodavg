@@ -32,6 +32,7 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
   TT <- delete.response(tt)
   newdata <- as.data.frame(newdata)
 
+ 
 #################################################################################################################
 ########################### This following clever piece of code is modified from predict.lme( ) from nlme package
 #################################################################################################################  
@@ -81,6 +82,7 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
   ##check for offset
   if(length(mod@offset) > 0) {
 
+    ##offset values
     offset.values <- model.offset(dataMix)
     
     ##identify which variable is offset
@@ -88,21 +90,24 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
 
     ##extract name of column with offset
     offset.name <- attr(TT, "variables")[[offset.number+1]] #this might need to be changed
-    ##also see offset.name[2] to extract variable name only
-    names(dataMix)[offset.number] <- as.character(offset.name[2])
+    split.off <- unlist(strsplit(as.character(offset.name), split = "\\("))
+    n.strings <- length(split.off)
+    off.name <- unlist(strsplit(split.off[n.strings], split = ")"))
+    
+    ##rename dataMix column to avoid error
+    names(dataMix)[offset.number] <- off.name
   }
 ###############################################
 ###END OF MODIFICATIONS FOR OFFSET
 ###############################################
 ###############################################
   
-  #m <- model.frame(TT, data = dataMix) gives error when offset is converted to log( ) scale within call
-  m <- model.frame(TT, data = newdata)
+  m <- model.frame(TT, data = dataMix) 
+  #m <- model.frame(TT, data = newdata) gives error when offset is converted to log( ) scale within call
   des.matrix <- model.matrix(TT, m)
   newdata <- des.matrix  #we now have a design matrix
 
-
-
+  
   
 ##logical test for level
   if(!identical(level, 0)) stop(cat("This function does not support computation of predicted values\n",
