@@ -34,8 +34,8 @@ and 'unmarkedFitGDS' classes).
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.23\cr
-Date: \tab 2012-01-27\cr
+Version: \tab 1.24\cr
+Date: \tab 2012-02-06\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
