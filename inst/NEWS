@@ -4,6 +4,13 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 1.24 (6 Fevruary 2012)
+##- corrected minor bug in AICc.nls( ) to determine number of observations
+##  automatically when "second.ord = TRUE"
+
+
+
+####################################################################
 ##revision 1.23 (27 January 2012)
 ##- corrected minor bug following revision 1.22 on predictSE.mer( ) 
 ##  to avoid problems with factors
