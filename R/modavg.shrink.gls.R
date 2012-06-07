@@ -8,7 +8,7 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
 #check if all are identical
   check.class <- unique(mod.class)
   
-  if(!identical(check.class, "gls"))  {stop("This function is only appropriate with the \'gls\' class\n")}
+  if(!identical(check.class, "gls"))  {stop("\nThis function is only appropriate with the \'gls\' class\n")}
 
   
   ##remove all leading and trailing white space and within parm
@@ -24,7 +24,7 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
 
   ##check whether parm is involved in interaction
   parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
@@ -44,7 +44,7 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
   new_table$SE[is.na(new_table$SE)] <- 0
 
   ##add a check to determine if parameter occurs in any model
-  if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("Parameter not found in any of the candidate models") }
+  if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("\nParameter not found in any of the candidate models\n") }
 
   ##compute model-averaged estimates, unconditional SE, and 95% CL
   if(second.ord == TRUE) {

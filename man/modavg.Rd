@@ -1,6 +1,7 @@
 \name{modavg}
 \Rdversion{1.1}
 \alias{modavg}
+\alias{modavg.coxph}
 \alias{modavg.glm}
 \alias{modavg.gls}
 \alias{modavg.lme}
@@ -24,6 +25,10 @@ modavg(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
        conf.level = 0.95, second.ord = TRUE, nobs = NULL,
        exclude = NULL, warn = TRUE, uncond.se = "revised",
        parm.type = NULL)
+
+modavg.coxph(cand.set, parm, modnames, conf.level = 0.95,
+             second.ord = TRUE, nobs = NULL, exclude = NULL,
+             warn = TRUE, uncond.se = "revised")
 
 modavg.glm(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
            conf.level = 0.95, second.ord = TRUE, nobs = NULL,
@@ -189,19 +194,19 @@ treat, treat10; L, TL).  When this warning is only due to the presence
 of similarly named variables in the models (and NOT due to interaction
 terms), you can suppress this warning by setting 'warn = FALSE'.    
 
-'modavg' is a function that calls 'modavg.glm', 'modavg.gls',
-'modavg.lme', 'modavg.mer', 'modavg.mult', 'modavg.polr', or
-'modavg.unmarked' depending on the class of the object.  The current
-function is implemented for a list containing objects of 'lm', 'glm',
-'gls', 'lme', 'mer', 'multinom', and 'polr' classes as well as
+'modavg' is a function that calls 'modavg.coxph', 'modavg.glm',
+'modavg.gls', 'modavg.lme', 'modavg.mer', 'modavg.mult', 'modavg.polr',
+or 'modavg.unmarked' depending on the class of the object.  The current
+function is implemented for a list containing objects of 'coxph', 'glm',
+'gls', 'lm', 'lme', 'mer', 'multinom', and 'polr' classes as well as
 'unmarkedFitOccu', 'unmarkedFitColExt', 'unmarkedFitOccuRN',
 'unmarkedFitPCount', 'unmarkedFitPCO', 'unmarkedFitDS', and
 'unmarkedFitGDS' classes.
 }
 \value{
-'modavg', 'modavg.glm', 'modavg.gls', 'modavg.lme', 'modavg.mer',
-'modavg.mult', 'modavg.polr', and 'modavg.unmarked' create an object of
-class 'modavg' with the following components: 
+'modavg', 'modavg.coxph', 'modavg.glm', 'modavg.gls', 'modavg.lme',
+'modavg.mer', 'modavg.mult', 'modavg.polr', and 'modavg.unmarked' create
+an object of class 'modavg' with the following components: 
 
 \item{Parameter}{the parameter for which a model-averaged estimate was
   obtained} 
@@ -251,7 +256,8 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{c_hat}},
 \code{\link{confset}}, \code{\link{evidence}}, \code{\link{importance}},
-\code{\link{modavg.shrink}}, \code{\link{modavgpred}}
+\code{\link{modavg.effect}}, \code{\link{modavg.shrink}},
+\code{\link{modavgpred}} 
 }
 \examples{
 ##anuran larvae example from Mazerolle (2006)
@@ -400,8 +406,27 @@ modavg(cand.set = Cands, modnames = Modnames, parm = "period4")
 detach(package:lme4)
 
 
+##modified example of Cox regression from ?coxph
+require(survival)
+##Create a simple data set for a time-dependent model
+test2 <- list(start=c(1, 2, 5, 2, 1, 7, 3, 4, 8, 8),
+              stop =c(2, 3, 6, 7, 8, 9, 9, 9,14,17),
+              event=c(1, 1, 1, 1, 1, 1, 1, 0, 0, 0),
+              x    =c(1, 0, 0, 1, 0, 1, 1, 1, 0, 0),
+              height = c(12.3, 10.5, 9.2, 5.6, 8.9,
+                11.0, 16.1, 10.2, 9.9, 14.8))
+m.cox <- coxph(Surv(start, stop, event) ~ x, test2)
+m.cox2 <- coxph(Surv(start, stop, event) ~ x + height, test2)
+Cands <- list(m.cox, m.cox2)
+Mods <- c("x", "additive")
+aictab(Cands, Mods)
+modavg(Cands, Mods, parm = "x")
+
+
 
 ##example with multiple-season occupancy model modified from ?colext
+##this is a bit longer
+\dontrun{
 require(unmarked)
 data(frogs)
 umf <- formatMult(masspcru)
@@ -433,10 +458,12 @@ modavg(cand.set = Cand.mods, modnames = Modnames, parm = "(Intercept)",
 ##compute model-averaged estimate of Julian Day squared on detectability
 modavg(cand.set = Cand.mods, modnames = Modnames,
        parm = "I(JulianDate^2)", parm.type = "detect")
-
+}
 
 
 ##example of model-averaged estimate of area from distance model
+##this is a bit longer
+\dontrun{
 data(linetran) #example modified from ?distsamp
      
 ltUMF <- with(linetran, {
@@ -462,5 +489,6 @@ Modnames <- paste("mod", 1:length(Cands), sep = "")
 ##model-average estimate of area on abundance
 modavg(cand.set = Cands, modnames = Modnames, parm = "area", parm.type = "lambda")
 detach(package:unmarked)
+}
 }
 \keyword{models}

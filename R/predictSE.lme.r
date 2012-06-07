@@ -1,6 +1,6 @@
 predictSE.lme <- function(mod, newdata, se.fit = TRUE, level = 0, print.matrix = FALSE){
   ##check for model type
-  if(!identical(class(mod), "lme")) stop(cat("This function is only appropriate with \'lme\' objects"))
+  if(!identical(class(mod), "lme")) stop("\nThis function is only appropriate with \'lme\' objects")
 
   ##first part of code converts data.frame (including factors) into design matrix of model
   fixed <- mod$call$fixed[-2] #extract only fixed portion of model formula
@@ -37,8 +37,8 @@ predictSE.lme <- function(mod, newdata, se.fit = TRUE, level = 0, print.matrix =
 
   
 ##logical test for level
-if(!identical(level, 0)) stop(cat("This function does not support computation of predicted values\n",
-"or standard errors for higher levels of nesting\n"))
+if(!identical(level, 0)) stop("\nThis function does not support computation of predicted values\n",
+"or standard errors for higher levels of nesting\n")
 
 
 ######START OF PREDICT FUNCTION
@@ -52,7 +52,7 @@ nvals <- dim(newdata)[1]
 int.yes <- any(names.coef == "(Intercept)")
 
 ##if no intercept term, return error
-  if(!int.yes) stop("This function does not work with models excluding the intercept terms\n")
+  if(!int.yes) stop("\nThis function does not work with models excluding the intercept terms\n")
   
 formula <- character(length=ncoefs)
 

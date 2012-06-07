@@ -3,7 +3,7 @@ aictab.mer <-
 
     ##add check to see whether response variable is the same for all models
     check.resp <- lapply(X = cand.set, FUN = function(b) formula(b)[2])
-    if(length(unique(check.resp)) > 1) stop("You must use the same response variable for all models\n")
+    if(length(unique(check.resp)) > 1) stop("\nYou must use the same response variable for all models\n")
        
     Results <- NULL
 #check if models were fit with same method (REML or ML)
@@ -11,14 +11,14 @@ aictab.mer <-
     check_ML <- ifelse(check_bin == 1, "REML", "ML")
     
     if (any(check_ML != "ML")) {
-      warning(paste("Model selection for fixed effects is only appropriate with ML estimation:", "\n",
-                    "REML (default) should only be used to select random effects for a constant set of fixed effects"))
+      warning("\nModel selection for fixed effects is only appropriate with ML estimation:", "\n",
+                    "REML (default) should only be used to select random effects for a constant set of fixed effects\n")
     }
     
     check.method <- unique(check_ML)
     
     if(length(check.method) > 1) {
-      stop("You should not have models fit with REML and ML in the same candidate model set")
+      stop("\nYou should not have models fit with REML and ML in the same candidate model set\n")
     }
     
     Results<-data.frame(Modnames = modnames)                    #assign model names to first column

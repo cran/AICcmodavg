@@ -1,7 +1,7 @@
 ##predictions not accounting for correlation structure - using Delta method
 predictSE.gls <- function(mod, newdata, se.fit = TRUE, print.matrix = FALSE){
   ##check for model type
-  if(!identical(class(mod), "gls")) stop(cat("This function is only appropriate with \'gls\' objects"))
+  if(!identical(class(mod), "gls")) stop("\nThis function is only appropriate with \'gls\' objects")
 
   ##first part of code converts data.frame (including factors) into design matrix of model
   fixed <- mod$call$model[-2] #extract only fixed portion of model formula
@@ -49,7 +49,7 @@ nvals <- dim(newdata)[1]
 int.yes <- any(names.coef == "(Intercept)")
 
 ##if no intercept term, return error
-  if(!int.yes) stop("This function does not work with models excluding the intercept terms\n")
+  if(!int.yes) stop("\nThis function does not work with models excluding the intercept terms\n")
   
 formula <- character(length=ncoefs)
 

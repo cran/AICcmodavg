@@ -1,6 +1,7 @@
 \name{modavg.shrink}
 \Rdversion{1.1}
 \alias{modavg.shrink}
+\alias{modavg.shrink.coxph}
 \alias{modavg.shrink.glm}
 \alias{modavg.shrink.gls}
 \alias{modavg.shrink.lme}
@@ -27,6 +28,10 @@ al. (1997) and Burnham and Anderson (2002).
 modavg.shrink(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
               conf.level = 0.95, second.ord = TRUE, nobs = NULL,
               uncond.se = "revised", parm.type = NULL)
+
+modavg.shrink.coxph(cand.set, parm, modnames, conf.level = 0.95,
+                    second.ord = TRUE, nobs = NULL,
+                    uncond.se = "revised") 
 
 modavg.shrink.glm(cand.set, parm, modnames, c.hat = 1,
                   gamdisp = NULL, conf.level = 0.95, second.ord = TRUE,
@@ -149,20 +154,21 @@ must appear the same number of times in the models) and has the same
 interpretation across all models.  As a result, models with interaction
 terms or polynomial terms are not supported by 'modavg.shrink'.
 
-'modavg.shrink' is a function that calls 'modavg.shrink.glm',
-'modavg.shrink.gls', 'modavg.shrink.lme', 'modavg.shrink.mer',
-'modavg.shrink.mult', 'modavg.shrink.polr', or 'modavg.shrink.unmarked'
-depending on the class of the object.  The current function is
-implemented for a list containing objects of 'lm', 'glm', 'gls', 'lme',
-'mer', 'multinom', and 'polr' classes as well as 'unmarkedFitOccu',
-'unmarkedFitColExt', 'unmarkedFitOccuRN', 'unmarkedFitPCount',
-'unmarkedFitPCO', 'unmarkedFitDS', and 'unmarkedFitGDS' classes. 
+'modavg.shrink' is a function that calls 'modavg.shrink.coxph',
+'modavg.shrink.glm', 'modavg.shrink.gls', 'modavg.shrink.lme',
+'modavg.shrink.mer', 'modavg.shrink.mult', 'modavg.shrink.polr', or
+'modavg.shrink.unmarked' depending on the class of the object.  The
+current function is implemented for a list containing objects of
+'coxph', 'glm', 'gls', 'lm', 'lme', 'mer', 'multinom', and 'polr'
+classes as well as 'unmarkedFitOccu', 'unmarkedFitColExt',
+'unmarkedFitOccuRN', 'unmarkedFitPCount', 'unmarkedFitPCO',
+'unmarkedFitDS', and 'unmarkedFitGDS' classes. 
 }
 \value{
-'modavg.shrink', 'modavg.shrink.glm', 'modavg.shrink.gls',
-'modavg.shrink.lme', 'modavg.shrink.mer', 'modavg.shrink.mult',
-'modavg.shrink.polr', and 'modavg.shrink.unmarked' create an object of
-class 'modavg' with the following components:  
+'modavg.shrink', 'modavg.shrink.coxph', 'modavg.shrink.glm',
+'modavg.shrink.gls', 'modavg.shrink.lme', 'modavg.shrink.mer',
+'modavg.shrink.mult', 'modavg.shrink.polr', and 'modavg.shrink.unmarked'
+create an object of class 'modavg' with the following components:  
 
 \item{Parameter}{the parameter for which a model-averaged estimate with
   shrinkage was obtained} 

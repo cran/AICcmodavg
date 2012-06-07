@@ -3,7 +3,7 @@ aictab.polr <-
 
     ##add check to see whether response variable is the same for all models
     check.resp <- lapply(X = cand.set, FUN = function(b) formula(b)[2])
-    if(length(unique(check.resp)) > 1) stop("You must use the same response variable for all models\n")
+    if(length(unique(check.resp)) > 1) stop("\nYou must use the same response variable for all models\n")
     
     Results <- NULL
     Results<-data.frame(Modnames=modnames)                    #assign model names to first column

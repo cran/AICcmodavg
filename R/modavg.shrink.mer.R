@@ -8,18 +8,18 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
   ##check if all are identical
   check.class <- unique(mod.class)
 
-  if(!identical(check.class, "mer"))  {stop("This function is only appropriate with the \'mer\' class\n")}
+  if(!identical(check.class, "mer"))  {stop("\nThis function is only appropriate with the \'mer\' class\n")}
 
   ##determine families of model
   fam.list <- unlist(lapply(X = cand.set, FUN = function(i) fam.link.mer(i)$family))
   check.fam <- unique(fam.list)
-  if(length(check.fam) > 1) stop(cat("\nIt is not appropriate to compute a model-averaged beta estimate\n",
-                                       "from models using different families of distributions\n"))
+  if(length(check.fam) > 1) stop("\nIt is not appropriate to compute a model-averaged beta estimate\n",
+                                       "from models using different families of distributions\n")
   ##determine link functions
   link.list <- unlist(lapply(X = cand.set, FUN = function(i) fam.link.mer(i)$link))
   check.link <- unique(link.list)
-  if(length(check.link) > 1) stop(cat("\nIt is not appropriate to compute a model-averaged beta estimate\n",
-                                       "from models using different link functions\n"))
+  if(length(check.link) > 1) stop("\nIt is not appropriate to compute a model-averaged beta estimate\n",
+                                       "from models using different link functions\n")
 ###################       
 
   ##remove all leading and trailing white space and within parm
@@ -34,7 +34,7 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
 
   
   ##check whether parm is involved in interaction
@@ -56,7 +56,7 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
   new_table$SE[is.na(new_table$SE)] <- 0
 
   ##add a check to determine if parameter occurs in any model
-  if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("Parameter not found in any of the candidate models") }
+  if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("\nParameter not found in any of the candidate models\n") }
 
   
 

@@ -3,7 +3,7 @@ modavg <-
            nobs = NULL, exclude = NULL, warn = TRUE, uncond.se = "revised", parm.type = NULL){
 
     mod.avg <- NULL
-    known <- rep(0, 8) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, or mer
+    known <- rep(0, 9) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or coxph
     ##extract classes
     mod.class <- unlist(lapply(X = cand.set, FUN = class))
     ##check if all are identical
@@ -73,22 +73,30 @@ modavg <-
       known[7] <- 1
     }
 
+
+    ##determine if coxph
+    if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph"))) {
+      mod.avg <- modavg.coxph(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
+                              second.ord = second.ord, nobs = nobs, exclude = exclude,
+                              warn = warn, uncond.se = uncond.se)
+      known[8] <- 1
+    }
+    
         
     ##warn if models are from a mixture of model classes
     if(identical(sort(check.class), c("lm", "lme"))) {
-      stop(cat("Function not appropriate for mixture of object classes:", "\n",
-               "avoid mixing objects of classes lm and lme", "\n"))
-      known[8] <- 1
+      stop("\nFunction not appropriate for mixture of object classes:\navoid mixing objects of classes lm and lme\n")
+      known[9] <- 1
     }
 
 
     ##warn if class is neither lm, glm, multinom, polr, lme, gls nor mer
-    if(sum(known) < 1) {stop("Function not yet defined for this object class\n")}
+    if(sum(known) < 1) {stop("\nFunction not yet defined for this object class\n")}
 
 
     ##warn if exclude is neither a list nor NULL
     if(!is.null(exclude)) {
-      if(!is.list(exclude)) {stop("Items in \"exclude\" must be specified as a list\n")}
+      if(!is.list(exclude)) {stop("\nItems in \"exclude\" must be specified as a list\n")}
     }
 
     

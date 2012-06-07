@@ -1,7 +1,7 @@
 aictab <-
   function(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE, nobs = NULL) {
     results <- NULL
-    known <- rep(0, 9) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or nls
+    known <- rep(0, 10) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, nls, or coxph
     ##extract classes
     mod.class <- unlist(lapply(X = cand.set, FUN = class))
     ##check if all are identical
@@ -70,17 +70,26 @@ aictab <-
       known[8] <- 1
     }
 
-    
-    
-    ##warn if models are from a mixture of lm and lme model classes
-    if(identical(sort(check.class), c("lm", "lme"))) {
-      stop(cat("Function not appropriate for mixture of object classes:", "\n",
-               "avoid mixing objects of classes \'lm\' and \'lme\'\n"))
+
+    ##determine if coxph
+    if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph"))) {
+      results <- aictab.coxph(cand.set = cand.set, modnames = modnames, sort = sort,
+                              second.ord = second.ord, nobs = nobs)
       known[9] <- 1
     }
+    
+        
+    ##warn if models are from a mixture of lm and lme model classes
+    if(identical(sort(check.class), c("lm", "lme"))) {
+      stop("\nFunction not appropriate for mixture of object classes:", "\n",
+               "avoid mixing objects of classes \'lm\' and \'lme\'\n")
+      known[10] <- 1
+    }
 
+
+    
     ##warn if class is neither lm, glm, multinom, polr, lme, gls, nls, mer, nor unmarkedFit
-    if(sum(known) < 1) {stop("Function not yet defined for this object class\n")}
+    if(sum(known) < 1) {stop("\nFunction not yet defined for this object class\n")}
 
     return(results)
   }
