@@ -7,7 +7,7 @@ modavg.shrink.unmarked <-
     mod.class <- unlist(lapply(cand.set, FUN = function(i) class(i)[1]))
     mod.type <- unique(mod.class)
 
-    if(length(mod.type) > 1) stop("This function is not appropriate to model-average parameters from different model types")
+    if(length(mod.type) > 1) stop("\nThis function is not appropriate to model-average parameters from different model types\n")
     
     ##check for supported mod.type
     supp.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
@@ -219,7 +219,7 @@ modavg.shrink.unmarked <-
     new_table$SE[is.na(new_table$SE)] <- 0
 
     ##add a check to determine if parameter occurs in any model
-    if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("Parameter not found in any of the candidate models") }
+    if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("\nParameter not found in any of the candidate models\n") }
 
     
     ##if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat

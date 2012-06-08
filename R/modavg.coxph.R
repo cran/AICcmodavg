@@ -1,44 +1,30 @@
-modavg.glm <-
-function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95, second.ord = TRUE, nobs = NULL,
-         exclude = NULL, warn = TRUE, uncond.se = "revised"){
+modavg.coxph <- function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = NULL, exclude = NULL,
+                         warn = TRUE, uncond.se = "revised"){
+
   ##check if class is appropriate
   ##extract classes
-  mod.class <- unlist(lapply(X=cand.set, FUN=class))
+  mod.class <- unlist(lapply(X = cand.set, FUN = class))
   ##check if all are identical
   check.class <- unique(mod.class)
 
-  ##check that link function is the same for all models
-  if(identical(check.class[1], "glm")) {
-    check.link <- unlist(lapply(X = cand.set, FUN=function(i) i$family$link))
-    unique.link <- unique(x=check.link)
-    if(length(unique.link) > 1) stop("\nIt is not appropriate to compute a model-averaged beta estimate\n",
-                                         "from models using different link functions\n")
-  }
-  
-  if(identical(check.class, "lm") || identical(check.class, c("glm", "lm")))  {
-
-    ##check family of glm to avoid problems when requesting predictions with argument 'dispersion'
-    fam.type <- unlist(lapply(cand.set, FUN=function(i) family(i)$family))
-    fam.unique <- unique(fam.type)
-    if(identical(fam.unique, "gaussian")) {disp <- NULL} else{disp <- 1}
-    ##poisson, binomial, and negative binomial defaults to 1 (no separate parameter for variance)
-    ##gamma is treated separately
-
+  if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph"))) {
+    
 #####MODIFICATIONS BEGIN#######
     ##remove all leading and trailing white space and within parm
     parm <- gsub('[[:space:]]+', "", parm)
-     
+    
     ##reverse parm
     reversed.parm <- reverse.parm(parm)
     exclude <- reverse.exclude(exclude = exclude)
 #####MODIFICATIONS END######
 
+      
     ##extract model formula for each model in cand.set
-    mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients)) #extract model formula for each model in cand.set
-
+    mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients))
+    
     nmods <- length(cand.set)
-  
-    ##setup matrix to indicate presence of parm in the model
+    
+    ##setup matrix to indicate presence of parms in the model
     include <- matrix(NA, nrow=nmods, ncol=1)
     ##add a check for multiple instances of same variable in given model (i.e., interactions)
     include.check <- matrix(NA, nrow=nmods, ncol=1)
@@ -68,9 +54,7 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
 ###MODIFICATIONS END
 ######################################################################################################
 ######################################################################################################
-
-
-      
+  
       include[i] <- ifelse(any(idents==1), 1, 0)
       include.check[i] <- ifelse(sum(idents.check)>1, "duplicates", "OK")
     }
@@ -78,13 +62,14 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
 #####################################################
     ##exclude == NULL; warn=TRUE:  warn that duplicates occur and stop
     if(is.null(exclude) && identical(warn, TRUE)) {
+      ##check for duplicates in same model
       if(any(include.check == "duplicates")) {
-        stop("\nSome models possibly include more than one instance of the parameter of interest.\n",
+        stop("\nSome models include more than one instance of the parameter of interest. \n",
              "This may be due to the presence of interaction/polynomial terms, or variables\n",
              "with similar names:\n",
              "\tsee \"?modavg\" for details on variable specification and \"exclude\" argument\n")
       }
-
+        
     }
 
     ##exclude == NULL; warn=FALSE:  compute model-averaged beta estimate from models including variable of interest,
@@ -92,21 +77,19 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
     ##warn that models were not excluded
     if(is.null(exclude) && identical(warn, FALSE)) {
       if(any(include.check == "duplicates")) {
-        warning("Multiple instances of parameter of interest in given model is presumably\n",
+        warning("\nMultiple instances of parameter of interest in given model is presumably\n",
                 "not due to interaction or polynomial terms - these models will not be\n",
                 "excluded from the computation of model-averaged estimate\n")
       }
       
     }
-
-
-
+    
     ##warn if exclude is neither a list nor NULL
     if(!is.null(exclude)) {
       if(!is.list(exclude)) {stop("\nItems in \"exclude\" must be specified as a list\n")}
     }
 
-  
+
     ##if exclude is list  
     if(is.list(exclude)) {
 
@@ -117,23 +100,23 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
       not.include <- lapply(cand.set, FUN=formula)
 
       ##set up a new list with model formula
-      forms <- list()
+      forms <- list( )
       for (i in 1:nmods) {
         form.tmp <- strsplit(as.character(not.include[i]), split="~")[[1]][-1]
-        if(attr(regexpr("\\+", form.tmp), "match.length")==-1) {  #this line causes problems if intercept is removed from model
+        if(attr(regexpr("\\+", form.tmp), "match.length")==-1) {
           forms[i] <- form.tmp
-        } else {forms[i] <- strsplit(form.tmp, split=" \\+ ")}    #this line causes problems if intercept is removed from model
+        } else {forms[i] <- strsplit(form.tmp, split=" \\+ ")}
       }
 
       ##additional check to see whether some variable names include "+"
       check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\+", i), "match.length")>0)[[1]]))
       if (any(check.forms==TRUE)) stop("\nPlease avoid \"+\" in variable names\n")
-
+      
       ##additional check to determine if intercept was removed from models
       check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\- 1", i), "match.length")>0)[[1]]))
       if (any(check.forms==TRUE)) stop("\nModels without intercept are not supported in this version, please use alternative parameterization\n")
-
- 
+      
+        
       ##search within formula for variables to exclude
       mod.exclude <- matrix(NA, nrow=nmods, ncol=nexcl)
 
@@ -150,126 +133,72 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
             idents[j] <- identical(exclude[var][[1]], gsub("(^ +)|( +$)", "", form.excl[j]))
           }
           mod.exclude[i,var] <- ifelse(any(idents==1), 1, 0)
-        }    
-        
+        }            
       }
   
       ##determine outcome across all variables to exclude
       to.exclude <- rowSums(mod.exclude)
-  
-  
+        
+      
       ##exclude models following models from model averaging  
       include[which(to.exclude>=1)] <- 0
       
-      
+        
     }
 
-
-
+      
+    
     ##add a check to determine if include always == 0
     if (sum(include)==0) {stop("\nParameter not found in any of the candidate models\n") }
-
+    
     new.cand.set <- cand.set[which(include==1)] #select models including a given parameter
     new.mod.name <- modnames[which(include==1)]    #update model names
-    ##
 
-    new_table <- aictab.glm(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE, c.hat=c.hat, second.ord=second.ord, nobs=nobs)  #recompute AIC table and associated measures
+    new_table <- aictab.coxph(cand.set=new.cand.set, modnames=new.mod.name, sort=FALSE,
+                              second.ord=second.ord, nobs=nobs)  #recompute AIC table and associated measures
     new_table$Beta_est <- unlist(lapply(new.cand.set, FUN=function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
-    new_table$SE <- unlist(lapply(new.cand.set, FUN=function(i) sqrt(diag(vcov(i, dispersion = disp)))[paste(parm)]))
-
-   
-    ##if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
-    if(c.hat > 1) {
-      new_table$SE <- new_table$SE*sqrt(c.hat)
-    } 
-
-    gam1<-unlist(lapply(new.cand.set, FUN=function(i) family(i)$family[1]=="Gamma")) #check for gamma regression models
-    ##correct SE's for estimates of gamma regressions
-    if(any(gam1)==TRUE)  {
-      ##check for specification of gamdisp argument
-      if(is.null(gamdisp)) stop("\nYou must specify a gamma dispersion parameter with gamma generalized linear models\n")
-      new_table$SE <- unlist(lapply(new.cand.set,
-                                  FUN=function(i) sqrt(diag(vcov(i, dispersion=gamdisp)))[paste(parm)]))
-    } 
-
-
-
-    ##AICc
+    new_table$SE <- unlist(lapply(new.cand.set, FUN=function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+    
     ##compute model-averaged estimates, unconditional SE, and 95% CL
-    if(c.hat == 1 && second.ord == TRUE) {
+    if(second.ord==TRUE) {
       Modavg_beta <- sum(new_table$AICcWt*new_table$Beta_est)
-
+        
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
         Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
       }
-      
+
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
         Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
-      }
-    }
-
-    
-    
-    ##QAICc
-    if(c.hat > 1 && second.ord == TRUE) {
-      Modavg_beta <- sum(new_table$QAICcWt*new_table$Beta_est)
-      
-      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
-      if(identical(uncond.se, "old")) {      
-        Uncond_SE <- sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
-      }
-      
-      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
-      if(identical(uncond.se, "revised")) {
-        Uncond_SE <- sqrt(sum(new_table$QAICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
-      }
-    }     
+      } 
 
 
-
-    ##AIC
-    if(c.hat == 1 && second.ord == FALSE) {
+    } else {
       Modavg_beta <- sum(new_table$AICWt*new_table$Beta_est)
-      
+
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
         Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
       }
-      
+
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
         Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
       }
+
+                      
     }
-
-
-
-    ##QAIC
-    if(c.hat > 1 && second.ord == FALSE) {
-      Modavg_beta <- sum(new_table$QAICWt*new_table$Beta_est)
-
-      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
-      if(identical(uncond.se, "old")) {
-        Uncond_SE <- sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
-      }
-
-      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
-      if(identical(uncond.se, "revised")) {
-        Uncond_SE <- sqrt(sum(new_table$QAICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
-      }  
-    }     
-
-    zcrit <- qnorm(p=(1-conf.level)/2, lower.tail=FALSE)
-    Lower_CL <- Modavg_beta-zcrit*Uncond_SE
-    Upper_CL <- Modavg_beta+zcrit*Uncond_SE
-    out.modavg <- list("Parameter"=paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta,
-                       "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level, "Lower.CL"= Lower_CL, "Upper.CL" = Upper_CL)
-  } else {stop("\nThis function is only appropriate with either \'lm\' or \'glm\' classes\n")}
+  
+    zcrit <- qnorm(p = (1 - conf.level)/2, lower.tail = FALSE)
+    Lower_CL <- Modavg_beta - zcrit*Uncond_SE
+    Upper_CL <- Modavg_beta + zcrit*Uncond_SE
+    out.modavg <- list("Parameter" = paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta,
+                       "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level, "Lower.CL" = Lower_CL,
+                       "Upper.CL" = Upper_CL)
+    
+  } else {stop("\nThis function is only appropriate with the \'coxph\' class\n")}
   
   class(out.modavg) <- c("modavg", "list")
   return(out.modavg)
-
 }
-

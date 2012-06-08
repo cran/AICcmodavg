@@ -12,8 +12,8 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
   if(identical(check.class[1], "glm")) {
   check.link <- unlist(lapply(X = cand.set, FUN=function(i) i$family$link))
   unique.link <- unique(x=check.link)
-  if(length(unique.link) > 1) stop(cat("\nIt is not appropriate to compute a model averaged beta estimate\n",
-"from models using different link functions\n"))
+  if(length(unique.link) > 1) stop("\nIt is not appropriate to compute a model averaged beta estimate\n",
+"from models using different link functions\n")
 }
   
   if(identical(check.class, "lm") || identical(check.class, c("glm", "lm")))  {
@@ -38,7 +38,7 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
 
 
     ##check whether parm is involved in interaction
@@ -59,7 +59,7 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
     new_table$SE[is.na(new_table$SE)] <- 0
 
     ##add a check to determine if parameter occurs in any model
-    if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("Parameter not found in any of the candidate models") }
+    if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("\nParameter not found in any of the candidate models\n") }
 
     
     #if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
@@ -71,7 +71,7 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
     #correct SE's for estimates of gamma regressions
     if(any(gam1) == TRUE)  {
       ##check for specification of gamdisp argument
-      if(is.null(gamdisp)) stop("You must specify a gamma dispersion parameter with gamma generalized linear models\n")
+      if(is.null(gamdisp)) stop("\nYou must specify a gamma dispersion parameter with gamma generalized linear models\n")
       new_table$SE <- unlist(lapply(cand.set,
                                   FUN = function(i) sqrt(diag(vcov(i, dispersion = gamdisp)))[paste(parm)]))
     } 
@@ -150,7 +150,7 @@ function(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, conf.level = 0.95,
     Upper_CL <- Modavg_beta + zcrit*Uncond_SE
     out.modavg <- list("Parameter" = paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta, "Uncond.SE" = Uncond_SE,
                        "Conf.level" = conf.level, "Lower.CL"= Lower_CL, "Upper.CL" = Upper_CL)
-  } else {stop("This function is only appropriate with either \'lm\' or \'glm\' classes\n")}
+  } else {stop("\nThis function is only appropriate with either \'lm\' or \'glm\' classes\n")}
 
   class(out.modavg) <- c("modavg.shrink", "list")
   return(out.modavg)

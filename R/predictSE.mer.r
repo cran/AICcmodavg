@@ -8,7 +8,7 @@
 ##create function
 predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level = 0, print.matrix = FALSE){
   ##check for model type
-  if(!identical(paste(class(mod)), "mer")) stop(cat("\nThis function is only appropriate with \'mer\' objects\n"))
+  if(!identical(paste(class(mod)), "mer")) stop("\nThis function is only appropriate with \'mer\' objects\n")
   
 ##########################################################################
 ###determine characteristics of glmm
@@ -110,8 +110,8 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
   
   
 ##logical test for level
-  if(!identical(level, 0)) stop(cat("This function does not support computation of predicted values\n",
-                                    "or standard errors for higher levels of nesting\n"))
+  if(!identical(level, 0)) stop("\nThis function does not support computation of predicted values\n",
+                                    "or standard errors for higher levels of nesting\n")
 
 
 ######START OF PREDICT FUNCTION
@@ -125,7 +125,7 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
   int.yes <- any(names.coef == "(Intercept)")
 
   ##if no intercept term, return error
-  if(!int.yes) stop("This function does not work with models excluding the intercept terms\n")
+  if(!int.yes) stop("\nThis function does not work with models excluding the intercept\n")
   
   formula <- character(length=ncoefs)
 

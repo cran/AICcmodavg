@@ -5,7 +5,7 @@ modavgpred.unmarked <- function(cand.set, modnames, newdata, second.ord = TRUE, 
   mod.class <- unlist(lapply(cand.set, FUN = function(i) class(i)[1]))
   mod.type <- unique(mod.class)
 
-  if(length(mod.type) > 1) stop("This function is not appropriate to model-average parameters from different model types")
+  if(length(mod.type) > 1) stop("\nThis function is not appropriate to model-average parameters from different model types\n")
 
   ##check for supported mod.type
   supp.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",

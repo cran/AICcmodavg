@@ -1,6 +1,6 @@
 evidence <-
   function(aic.table, model.high = "top", model.low = "second.ranked") {
-    if(!identical(class(aic.table)[1], "aictab")) {stop("The input object must be of class 'aic.tab'")}
+    if(!identical(class(aic.table)[1], "aictab")) {stop("\nThe input object must be of class 'aic.tab'\n")}
 
     ##sort model table in case it is not
     sort.tab <- aic.table[order(aic.table[, 4]), ]

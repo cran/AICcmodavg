@@ -14,7 +14,7 @@ importance <-
     reversed.parm <- reverse.parm(parm)
 
     ##add check for supported classes
-    known <- rep(0, 9) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or nls
+    known <- rep(0, 9) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or coxph
     
     if(identical(check.class, "lm") || identical(check.class, c("glm", "lm")))  {
     
@@ -57,7 +57,7 @@ importance <-
       known[7] <- 1
       
       ##check for parm.type and stop if NULL
-      if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+      if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
 
       ##if (Intercept) is chosen assign (Int) - for compatibility
       if(identical(parm, "(Intercept)")) parm <- "Int"
@@ -218,21 +218,19 @@ importance <-
           stop("\nImportance values for availability covariates not yet supported for unmarkedFitGDS class\n")
         }
       }
-
-
-
-
-      
-
-
-      
-
-      
     }
-  
 
-    ##warn if class is neither lm, glm, multinom, polr, lme, gls, nls, mer, nor unmarkedFit
-    if(sum(known) < 1) {stop("Function not yet defined for this object class\n")}
+
+    if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph"))) {
+      mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients))
+      known[8] <- 1
+    }
+
+
+
+      
+    ##warn if class is neither lm, glm, multinom, polr, lme, gls, nls, mer, unmarkedFit, nor coxph
+    if(sum(known) < 1) {stop("\nFunction not yet defined for this object class\n")}
     
     ##setup matrix to indicate presence of parm in the model
     include <- matrix(NA, nrow=length(cand.set), ncol=1)
@@ -258,13 +256,13 @@ importance <-
     }
 
     ##add a check to determine if include always == 0
-    if (sum(include)==0) {stop("Parameter not found in any of the candidate models") }
+    if (sum(include)==0) {stop("\nParameter not found in any of the candidate models\n") }
 
     new_table <- aictab(cand.set = cand.set, modnames = modnames, sort = FALSE, c.hat = c.hat, second.ord = second.ord, nobs = nobs)  
 
     ##add a check to determine if the same number of models include and exlude parameter
     if (length(which(include == 1)) != length(which(include != 1)) ) {
-      stop("Importance values are only meaningful when the number of models with and without parameter are equal")
+      stop("\nImportance values are only meaningful when the number of models with and without parameter are equal\n")
     }
 
     w.plus <- sum(new_table[which(include == 1), 6]) #select models including a given parameter

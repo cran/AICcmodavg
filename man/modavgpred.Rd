@@ -13,9 +13,9 @@ Compute Model-averaged Predictions
 \description{
 This function computes the model-averaged predictions and unconditional
 standard errors based on the entire candidate model set.  The function
-is currently implemented for 'lm', 'glm', 'gls', 'lme', and 'mer' object
-classes that are stored in a list as well as various models of
-'unmarkedFit' classes.
+is currently implemented for 'glm', 'gls', 'lm', 'lme', and
+'mer' object classes that are stored in a list as well as various models
+of 'unmarkedFit' classes.
 }
 \usage{
 modavgpred(cand.set, modnames, newdata, type = "response", c.hat = 1,
@@ -128,7 +128,7 @@ unconditional standard errors.
   candidate models must be stored in a list. Note that a data frame from
   which to make predictions must be supplied with the 'newdata' argument
   and that all variables appearing in the model set must appear in this
-  data frame. 
+  data frame.  
   
   One can compute unconditional confidence intervals around the
   predictions from the elements returned by 'modavgpred'.  The classic
@@ -181,10 +181,10 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{importance}},
 \code{\link{c_hat}}, \code{\link{confset}}, \code{\link{evidence}}, 
-\code{\link{modavg}}, \code{\link{modavg.shrink}},
-\code{\link{predict}}, \code{\link{predict.glm}},
-\code{\link{predictSE.gls}}, \code{\link{predictSE.lme}},
-\code{\link{predictSE.mer}} 
+\code{\link{modavg}}, \code{\link{modavg.effect}},
+\code{\link{modavg.shrink}}, \code{\link{predict}},
+\code{\link{predict.glm}}, \code{\link{predictSE.gls}},
+\code{\link{predictSE.lme}}, \code{\link{predictSE.mer}} 
 }
 
 \examples{
@@ -277,7 +277,8 @@ modavgpred(cand.set = Cand, modnames = Modnames, newdata = clotting,
 
 
 ##example of model-averaged predictions from N-mixture model
-##each variable appears twice in the models
+##each variable appears twice in the models - this a bit longer
+\dontrun{
 require(unmarked)
 data(mallard)
 mallardUMF <- unmarkedFramePCount(mallard.y, siteCovs = mallard.site,
@@ -307,10 +308,12 @@ modavgpred(cand.set = Cands, modnames = Modnames, newdata =
            data.frame(ivel = seq(from = -1.75, to = 5.9, by = 0.5),
                       date = 0), parm.type = "detect",
            type = "response")
-
+}
 
 
 ##example of model-averaged abundance from distance model
+##this a bit longer
+\dontrun{
 data(linetran) #example from ?distsamp
      
 ltUMF <- with(linetran, {
@@ -337,7 +340,7 @@ Modnames <- paste("mod", 1:length(Cands), sep = "")
 modavgpred(cand.set = Cands, modnames = Modnames, parm.type = "lambda", type = "link",
            newdata = data.frame(area = mean(linetran$area), habitat = c("A", "B")))
 detach(package:unmarked)
-
+}
 
 
 ##example using Orthodont data set from Pinheiro and Bates (2000)

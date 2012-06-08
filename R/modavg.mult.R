@@ -7,7 +7,7 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
   ##check if all are identical
   check.class <- unique(mod.class)
   
-  if(!identical(check.class, c("multinom", "nnet"))) {stop("This function is only appropriate with the \'multinom\' class\n")}
+  if(!identical(check.class, c("multinom", "nnet"))) {stop("\nThis function is only appropriate with the \'multinom\' class\n")}
 
 #####MODIFICATIONS BEGIN#######
   ##remove all leading and trailing white space and within parm
@@ -64,7 +64,7 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
 ##exclude == NULL; warn=TRUE:  warn that duplicates occur and stop
   if(is.null(exclude) && identical(warn, TRUE)) {
     if(any(include.check == "duplicates")) {
-      stop("Some models possibly include more than one instance of the parameter of interest.\n",
+      stop("\nSome models possibly include more than one instance of the parameter of interest.\n",
            "This may be due to the presence of interaction/polynomial terms, or variables\n",
            "with similar names:\n",
            "\tsee \"?modavg\" for details on variable specification and \"exclude\" argument\n")
@@ -79,7 +79,7 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
   ##warn that models were not excluded
   if(is.null(exclude) && identical(warn, FALSE)) {
     if(any(include.check == "duplicates")) {
-      warning("Multiple instances of parameter of interest in given model is presumably\n",
+      warning("\nMultiple instances of parameter of interest in given model is presumably\n",
               "not due to interaction or polynomial terms - these models will not be\n",
               "excluded from the computation of model-averaged estimate\n")
     }
@@ -90,7 +90,7 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
 
   ##warn if exclude is neither a list nor NULL
   if(!is.null(exclude)) {
-    if(!is.list(exclude)) {stop("Items in \"exclude\" must be specified as a list")}
+    if(!is.list(exclude)) {stop("\nItems in \"exclude\" must be specified as a list\n")}
   }
 
 
@@ -115,7 +115,7 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
 
     ##additional check to see whether some variable names include "+"
     check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\+", i), "match.length")>0)[[1]]))
-    if (any(check.forms==TRUE)) stop("Please avoid \"+\" in variable names")
+    if (any(check.forms==TRUE)) stop("\nPlease avoid \"+\" in variable names\n")
 
     ##additional check to determine if intercept was removed from models
     check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\- 1", i), "match.length")>0)[[1]]))
@@ -155,7 +155,7 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
 
   
   ##add a check to determine if include always == 0
-  if (sum(include)==0) {stop("Parameter not found in any of the candidate models") }
+  if (sum(include)==0) {stop("\nParameter not found in any of the candidate models\n") }
 
   new.cand.set<-cand.set[which(include==1)] #select models including a given parameter
   new.mod.name<-modnames[which(include==1)]    #update model names

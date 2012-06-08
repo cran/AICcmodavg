@@ -4,7 +4,16 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
-##revision 1.24 (6 Fevruary 2012)
+##revision 1.25 (7 June 2012)
+##- added Cox proportional hazards model support
+##- added modavg.effect functions to compute model-averaged effect
+##  sizes for true experiments as an information-theoretic analogue 
+##  to multiple comparisons
+
+
+
+####################################################################
+##revision 1.24 (6 February 2012)
 ##- corrected minor bug in AICc.nls( ) to determine number of observations
 ##  automatically when "second.ord = TRUE"
 

@@ -1,7 +1,7 @@
 ##utility function to determine family of distribution and link function on object of 'mer' class
 fam.link.mer <- function(mod) {
   
-  if(!identical(paste(class(mod)), "mer")) stop(cat("\nThis function is only appropriate with \'mer\' objects\n"))
+  if(!identical(paste(class(mod)), "mer")) stop("\nThis function is only appropriate with \'mer\' objects\n")
 
   call.mod <- mod@call
 

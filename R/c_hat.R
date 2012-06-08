@@ -18,12 +18,12 @@ c_hat <- function(mod){
       chisq <- sum(residuals(mod, type="pearson")^2)
       c_hat.est <- chisq/mod$df.residual
       known[2] <- 1
-    } else {stop("With a binomial GLM, the number of successes must be summarized for valid computation of c-hat")}
+    } else {stop("\nWith a binomial GLM, the number of successes must be summarized for valid computation of c-hat\n")}
 
   }
 
 #return an error if other than binomial or Poisson glm used
-  if( sum(known) == 0 ) stop("Model needs to be of class glm with either Poisson or binomial distribution")
+  if( sum(known) == 0 ) stop("\nModel needs to be of class glm with either Poisson or binomial distribution\n")
 
   return(c_hat.est)
 }
