@@ -4,6 +4,19 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+#revision 1.26 (August 2012)
+#- added support for robust regression models of class 'rlm' - AICc, aictab, importance, modavg, modavg.effect, modavg.shrink, modavgpred
+#- added support for ordinal logistic regression models of classes 'clm' and 'clmm' - AICc, aictab, importance, modavg, modavg.effect, modavg.shrink, 
+#- modified modavg.unmarked( ) to enable treatment of gamma parameter in pcountOpen models 
+#  with different formulations (Const, Trend, AR)
+#- added reference of Luckacs et al. 2010 about model averaging with shrinkage in modavg.shrink.Rd file
+#- added references Burnham et al. 2011 for using model selection as alternative to multiple comparisons in modavg.effect.Rd file
+#- removed white space from formulas to reduce chance of reaching character limit in parse( ) in predictSE.mer( ), predictSE.lme( ), and predictSE.gls( )
+#- changed treatment of parm with modavg.unmarked to add object parm.strip (line 35) to enable functionality with regexpr( )
+
+
+
+####################################################################
 ##revision 1.25 (7 June 2012)
 ##- added Cox proportional hazards model support
 ##- added modavg.effect functions to compute model-averaged effect

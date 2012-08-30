@@ -58,6 +58,26 @@ AICc <-
       aicc <- AICc.coxph(mod = mod, return.K = return.K, second.ord = second.ord,
                          nobs = nobs)}
 
+    ##determine if rlm
+    if(identical(class(mod)[1], "rlm")) {
+      aicc <- AICc.rlm(mod = mod, return.K = return.K, second.ord = second.ord,
+                       nobs = nobs)
+    }
+
+    
+    ##determine if clm
+    if(identical(class(mod)[1], c("sclm", "clm"))) {
+      aicc <- AICc.clm(mod = mod, return.K = return.K, second.ord = second.ord,
+                       nobs = nobs)
+    }
+
+    ##determine if clmm
+    if(identical(class(mod)[1], "clmm")) {
+      aicc <- AICc.clmm(mod = mod, return.K = return.K, second.ord = second.ord,
+                        nobs = nobs)
+    }
+
+    
     ##if(class(mod)[1]=="nlm") {aicc <- AICc.nlm(mod, return.K)}      #determine if object from nlm optimizer
     return(aicc)
   }

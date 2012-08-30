@@ -3,7 +3,7 @@ modavg.shrink <-
            nobs = NULL, uncond.se = "revised", parm.type = NULL){
 
     mod.avg.shrink <- NULL
-    known <- rep(0, 9) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, coxph
+    known <- rep(0, 12) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, coxph
     ##extract classes
     mod.class <- unlist(lapply(X = cand.set, FUN = class))
     ##check if all are identical
@@ -27,7 +27,7 @@ modavg.shrink <-
     
     ##determine if polr
     if(identical(check.class, "polr")) {
-      mod.avg.shrink <- modavg.shrink.polr(cand.set = cand.set,parm = parm, modnames = modnames, conf.level = conf.level,
+      mod.avg.shrink <- modavg.shrink.polr(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                              second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
       known[3] <- 1
     }   
@@ -75,12 +75,35 @@ modavg.shrink <-
     }
 
 
+
+    ##determine if rlm
+    if(identical(check.class, c("rlm", "lm")))  {
+      mod.avg.shrink <- modavg.shrink.rlm(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
+                                          second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
+      known[9] <- 1
+    }      
+
+    ##determine if clm
+    if(identical(check.class, c("sclm", "clm")))  {
+      mod.avg.shrink <- modavg.shrink.clm(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
+                                          second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
+      known[10] <- 1
+    }
+
+    ##determine if clmm
+    if(identical(check.class, c("clmm")))  {
+      mod.avg.shrink <- modavg.shrink.clmm(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
+                                           second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
+      known[11] <- 1
+    }      
+
+
     
     ##warn if models are from a mixture of model classes
     if(identical(sort(check.class), c("lm", "lme"))) {
       stop("\nFunction not appropriate for mixture of object classes:", "\n",
                "avoid mixing objects of classes lm and lme", "\n")
-      known[9] <- 1
+      known[12] <- 1
     }
 
 

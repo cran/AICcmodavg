@@ -70,8 +70,8 @@ Marc J. Mazerolle
 \examples{
 ##Orthodont data from Pinheiro and Bates (2000) revisited
 require(nlme)
-m1 <- gls(distance ~ age, correlation = corCompSymm(value = 0.5, form = ~ 1 | Subject), data = Orthodont,
-          method= "ML")
+m1 <- gls(distance ~ age, correlation = corCompSymm(value = 0.5, form = ~ 1 | Subject),
+          data = Orthodont, method= "ML")
 \dontrun{
 ##compare against lme fit
   identical(logLik(m1),

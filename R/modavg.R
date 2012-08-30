@@ -3,7 +3,7 @@ modavg <-
            nobs = NULL, exclude = NULL, warn = TRUE, uncond.se = "revised", parm.type = NULL){
 
     mod.avg <- NULL
-    known <- rep(0, 9) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or coxph
+    known <- rep(0, 12) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or coxph
     ##extract classes
     mod.class <- unlist(lapply(X = cand.set, FUN = class))
     ##check if all are identical
@@ -81,12 +81,38 @@ modavg <-
                               warn = warn, uncond.se = uncond.se)
       known[8] <- 1
     }
+
+
+    ##determine if rlm
+    if(identical(check.class, c("rlm", "lm")))  {
+      mod.avg <- modavg.rlm(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
+                            second.ord = second.ord, nobs = nobs, exclude = exclude,
+                            warn = warn, uncond.se = uncond.se)
+      known[9] <- 1
+    }      
+
+    ##determine if clm
+    if(identical(check.class, c("sclm", "clm")))  {
+      mod.avg <- modavg.clm(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
+                            second.ord = second.ord, nobs = nobs, exclude = exclude,
+                            warn = warn, uncond.se = uncond.se)
+      known[10] <- 1
+    }      
+
+    ##determine if clmm
+    if(identical(check.class, "clmm"))  {
+      mod.avg <- modavg.clmm(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
+                             second.ord = second.ord, nobs = nobs, exclude = exclude,
+                             warn = warn, uncond.se = uncond.se)
+      known[11] <- 1
+    }      
+
+
     
-        
     ##warn if models are from a mixture of model classes
     if(identical(sort(check.class), c("lm", "lme"))) {
       stop("\nFunction not appropriate for mixture of object classes:\navoid mixing objects of classes lm and lme\n")
-      known[9] <- 1
+      known[12] <- 1
     }
 
 

@@ -158,19 +158,24 @@ y.val <- rep(NA, n.obs)
 for (i in 1:n.obs) {
 y.val[i] <- rpois(n = 1, lambda = exp(lin.pred[i] + block.int[block.id[i]]))
 }
-sim.data <- data.frame(Y.val = y.val, CWD = CWD, Basal.area = basal.area, Block = as.factor(block.id), Effort = effort)
+sim.data <- data.frame(Y.val = y.val, CWD = CWD, Basal.area = basal.area,
+                       Block = as.factor(block.id), Effort = effort)
 sim.data$log.Effort <- log(sim.data$Effort)
 
 ##run model with log transformation of offset variable within call
-m1 <- glmer(Y.val ~ CWD + Basal.area + (1 | Block) + offset(log(Effort)), data = sim.data, family = poisson)
+m1 <- glmer(Y.val ~ CWD + Basal.area + (1 | Block) + offset(log(Effort)), data = sim.data,
+            family = poisson)
 ##predictions
-pred.data <- expand.grid(CWD = mean(sim.data$CWD), Basal.area = seq(from = 20, to = 50, by = 10), Effort = 20)
+pred.data <- expand.grid(CWD = mean(sim.data$CWD), Basal.area = seq(from = 20, to = 50, by = 10),
+                         Effort = 20)
 predictSE.mer(m1, newdata = pred.data, type = "response")
 
 ##run model with offset already on log scale
-m1 <- glmer(Y.val ~ CWD + Basal.area + (1 | Block) + offset(log.Effort), data = sim.data, family = poisson)
+m1 <- glmer(Y.val ~ CWD + Basal.area + (1 | Block) + offset(log.Effort), data = sim.data,
+family = poisson)
 ##predictions
-pred.data <- expand.grid(CWD = mean(sim.data$CWD), Basal.area = seq(from = 20, to = 50, by = 10), log.Effort = log(20))
+pred.data <- expand.grid(CWD = mean(sim.data$CWD), Basal.area = seq(from = 20, to = 50, by = 10),
+log.Effort = log(20))
 predictSE.mer(m1, newdata = pred.data, type = "response")
 
 ##both are identical

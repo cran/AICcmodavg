@@ -1,6 +1,8 @@
 \name{modavg}
 \Rdversion{1.1}
 \alias{modavg}
+\alias{modavg.clm}
+\alias{modavg.clmm}
 \alias{modavg.coxph}
 \alias{modavg.glm}
 \alias{modavg.gls}
@@ -8,6 +10,7 @@
 \alias{modavg.mer}
 \alias{modavg.mult}
 \alias{modavg.polr}
+\alias{modavg.rlm}
 \alias{modavg.unmarked}
 \alias{print.modavg}
 
@@ -25,6 +28,14 @@ modavg(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
        conf.level = 0.95, second.ord = TRUE, nobs = NULL,
        exclude = NULL, warn = TRUE, uncond.se = "revised",
        parm.type = NULL)
+
+modavg.clm(cand.set, parm, modnames, conf.level = 0.95,
+           second.ord = TRUE, nobs = NULL, exclude = NULL,
+           warn = TRUE, uncond.se = "revised")
+
+modavg.clmm(cand.set, parm, modnames, conf.level = 0.95,
+            second.ord = TRUE, nobs = NULL, exclude = NULL,
+            warn = TRUE, uncond.se = "revised")
 
 modavg.coxph(cand.set, parm, modnames, conf.level = 0.95,
              second.ord = TRUE, nobs = NULL, exclude = NULL,
@@ -53,6 +64,10 @@ modavg.mult(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95,
 modavg.polr(cand.set, parm, modnames, conf.level = 0.95,
             second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
             uncond.se = "revised")
+
+modavg.rlm(cand.set, parm, modnames, conf.level = 0.95,
+           second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
+           uncond.se = "revised")
 
 modavg.unmarked(cand.set, parm, modnames, c.hat = 1,
                 conf.level = 0.95, second.ord = TRUE, nobs = NULL,
@@ -194,19 +209,21 @@ treat, treat10; L, TL).  When this warning is only due to the presence
 of similarly named variables in the models (and NOT due to interaction
 terms), you can suppress this warning by setting 'warn = FALSE'.    
 
-'modavg' is a function that calls 'modavg.coxph', 'modavg.glm',
-'modavg.gls', 'modavg.lme', 'modavg.mer', 'modavg.mult', 'modavg.polr',
-or 'modavg.unmarked' depending on the class of the object.  The current
-function is implemented for a list containing objects of 'coxph', 'glm',
-'gls', 'lm', 'lme', 'mer', 'multinom', and 'polr' classes as well as
-'unmarkedFitOccu', 'unmarkedFitColExt', 'unmarkedFitOccuRN',
+'modavg' is a function that calls 'modavg.clm', 'modavg.clmm',
+'modavg.coxph', 'modavg.glm', 'modavg.gls', 'modavg.lme', 'modavg.mer',
+'modavg.mult', 'modavg.polr', 'modavg.rlm', or 'modavg.unmarked'
+depending on the class of the object.  The current function is
+implemented for a list containing objects of 'clm', 'clmm', 'coxph',
+'glm', 'gls', 'lm', 'lme', 'mer', 'multinom', 'polr', and 'rlm' classes
+as well as 'unmarkedFitOccu', 'unmarkedFitColExt', 'unmarkedFitOccuRN',
 'unmarkedFitPCount', 'unmarkedFitPCO', 'unmarkedFitDS', and
 'unmarkedFitGDS' classes.
 }
 \value{
-'modavg', 'modavg.coxph', 'modavg.glm', 'modavg.gls', 'modavg.lme',
-'modavg.mer', 'modavg.mult', 'modavg.polr', and 'modavg.unmarked' create
-an object of class 'modavg' with the following components: 
+'modavg', 'modavg.clm', 'modavg.clmm', 'modavg.coxph', 'modavg.glm',
+'modavg.gls', 'modavg.lme', 'modavg.mer', 'modavg.mult', 'modavg.polr',
+'modavg.rlm', and 'modavg.unmarked' create an object of class 'modavg'
+with the following components:
 
 \item{Parameter}{the parameter for which a model-averaged estimate was
   obtained} 
