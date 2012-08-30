@@ -32,12 +32,14 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
 #####MODIFICATIONS BEGIN#######
   ##remove all leading and trailing white space and within parm
   parm <- gsub('[[:space:]]+', "", parm)
-
+  parm.strip <- parm #to use later
+  
   ##if (Intercept) is chosen assign (Int) - for compatibility
   if(identical(parm, "(Intercept)")) parm <- "Int"
 
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
+  reversed.parm.strip <- reversed.parm #to use later
   exclude <- reverse.exclude(exclude = exclude)
 #####MODIFICATIONS END######
   
@@ -136,15 +138,22 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
       if(identical(parm.type, "gamma")) {
         ##extract model formula for each model in cand.set
         mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$gamma)))
+
+        ##determine if same H0 on gamma (gamConst, gamAR, gamTrend)
+        strip.gam <- sapply(mod_formula, FUN = function(i) unlist(strsplit(i, "\\("))[[1]])
+        unique.gam <- unique(strip.gam)
+        if(length(unique.gam) > 1) stop("\nDifferent formulations of gamma parameter occur among models:\n
+beta estimates cannot be model-averaged\n")
+
         ##create label for parm
-        parm <- paste("gam", "(", parm, ")", sep="")
-        if(!is.null(reversed.parm)) {reversed.parm <- paste("gam", "(", reversed.parm, ")", sep="")}
+        parm <- paste(unique.gam, "(", parm, ")", sep="")
+        if(!is.null(reversed.parm)) {reversed.parm <- paste(unique.gam, "(", reversed.parm, ")", sep="")}
         not.include <- lapply(cand.set, FUN = function(i) i@formlist$gammaformula)
       }
       ##omega - apparent survival
       if(identical(parm.type, "omega")) {
         ##extract model formula for each model in cand.set
-        mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$omega)))
+        mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$omega)))   
         ##create label for parm
         parm <- paste("omega", "(", parm, ")", sep="")
         if(!is.null(reversed.parm)) {reversed.parm <- paste("omega", "(", reversed.parm, ")", sep="")}
@@ -231,6 +240,12 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
   ##add a check for multiple instances of same variable in given model (i.e., interactions)
   include.check <- matrix(NA, nrow=nmods, ncol=1)
 
+##################################
+##################################
+###ADDED A NEW OBJECT TO STRIP AWAY lam( ) from parm on line 35
+###to enable search with regexpr( ) 
+  
+  
   ##iterate over each formula in mod_formula list
   for (i in 1:nmods) {
     idents <- NULL
@@ -245,12 +260,13 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
       if(is.null(reversed.parm)) {
         for (j in 1:length(form)) {
           idents[j] <- identical(parm, form[j])
-          idents.check[j] <- ifelse(attr(regexpr(parm, form[j], fixed=TRUE), "match.length")== "-1" , 0, 1)  
+          ##added parm.strip here for regexpr( )
+          idents.check[j] <- ifelse(attr(regexpr(parm.strip, form[j], fixed=TRUE), "match.length")== "-1" , 0, 1)  
         }
       } else {
         for (j in 1:length(form)) {
           idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
-          idents.check[j] <- ifelse(attr(regexpr(parm, form[j], fixed=TRUE), "match.length")=="-1" & attr(regexpr(reversed.parm, form[j],
+          idents.check[j] <- ifelse(attr(regexpr(parm.strip, form[j], fixed=TRUE), "match.length")=="-1" & attr(regexpr(reversed.parm.strip, form[j],
                                                                   fixed=TRUE), "match.length")=="-1" , 0, 1)  
         }
       }

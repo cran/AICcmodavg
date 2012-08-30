@@ -5,6 +5,7 @@
 \alias{modavgpred.gls}
 \alias{modavgpred.lme}
 \alias{modavgpred.mer}
+\alias{modavgpred.rlm}
 \alias{modavgpred.unmarked}
 \alias{print.modavgpred}
 \title{
@@ -35,6 +36,9 @@ modavgpred.lme(cand.set, modnames, newdata, second.ord = TRUE,
 modavgpred.mer(cand.set, modnames, newdata, type = "response",
                c.hat = 1, second.ord = TRUE, nobs = NULL,
                uncond.se = "revised")
+
+modavgpred.rlm(cand.set, modnames, newdata, second.ord = TRUE,
+               nobs = NULL, uncond.se = "revised")
 
 modavgpred.unmarked(cand.set, modnames, newdata, second.ord = TRUE,
                     type = "response", c.hat = 1, nobs = NULL,
@@ -123,12 +127,13 @@ unconditional standard errors.
 
 \details{
   'modavgpred' is a function that calls 'modavgpred.gls',
-  'modavgpred.glm', 'modavgpred.lme', 'modavgpred.mer', or
-  'modavgpred.unmarked' depending on the class of the object.  The
-  candidate models must be stored in a list. Note that a data frame from
-  which to make predictions must be supplied with the 'newdata' argument
-  and that all variables appearing in the model set must appear in this
-  data frame.  
+  'modavgpred.glm', 'modavgpred.lme', 'modavgpred.mer',
+  'modavgpred.rlm', or 'modavgpred.unmarked' depending on the class of
+  the object.  The candidate models must be stored in a list. Note that
+  a data frame from which to make predictions must be supplied with the
+  'newdata' argument and that all variables appearing in the model set
+  must appear in this data frame.  Variables must be of the same type as
+  in the original analysis (e.g., factor, numeric).
   
   One can compute unconditional confidence intervals around the
   predictions from the elements returned by 'modavgpred'.  The classic
@@ -347,11 +352,11 @@ detach(package:unmarked)
 require(nlme)
 
 ##set up candidate models
-m1 <- gls(distance ~ age, correlation = corCompSymm(value = 0.5, form = ~ 1 | Subject), data = Orthodont,
-          method= "ML")
+m1 <- gls(distance ~ age, correlation = corCompSymm(value = 0.5, form = ~ 1 | Subject),
+          data = Orthodont, method = "ML")
 
-m2 <- gls(distance ~ 1, correlation = corCompSymm(value = 0.5, form = ~ 1 | Subject), data = Orthodont,
-          method= "ML")
+m2 <- gls(distance ~ 1, correlation = corCompSymm(value = 0.5, form = ~ 1 | Subject),
+          data = Orthodont, method = "ML")
 
 ##assemble in list
 Cand.models <- list(m1, m2)

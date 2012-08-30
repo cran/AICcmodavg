@@ -5,6 +5,7 @@
 \alias{modavg.effect.gls}
 \alias{modavg.effect.lme}
 \alias{modavg.effect.mer}
+\alias{modavg.effect.rlm}
 \alias{modavg.effect.unmarked}
 \alias{print.modavg.effect}
 
@@ -18,8 +19,8 @@ Compute Model-averaged Effect Sizes (Multimodel Inference on Group Differences)
   intervals as described in Buckland et al. (1997) and Burnham and
   Anderson (2002). This can be particularly useful when dealing with
   data from an experiment (e.g., ANOVA) and the focus is to determine
-  the effect of a given factor and is an information-theoretic
-  alternative to multiple comparisons.
+  the effect of a given factor. This is an information-theoretic
+  alternative to multiple comparisons (e.g., Burnham et al. 2011).
 }
 \usage{
 modavg.effect(cand.set, modnames, newdata, type = "response",
@@ -40,6 +41,9 @@ modavg.effect.lme(cand.set, modnames, newdata, conf.level = 0.95,
 modavg.effect.mer(cand.set, modnames, newdata, type = "response",
                   c.hat = 1, conf.level = 0.95, second.ord = TRUE,
                   nobs = NULL, uncond.se = "revised")
+
+modavg.effect.rlm(cand.set, modnames, newdata, conf.level = 0.95,
+                  second.ord = TRUE, nobs = NULL, uncond.se = "revised")
 
 modavg.effect.unmarked(cand.set, modnames, newdata, type = "response",
                        c.hat = 1, conf.level = 0.95, second.ord = TRUE,
@@ -165,17 +169,19 @@ set is used instead of being restricted to a single model. See
 'Examples' below for applications.
 
 'modavg.effect' is a function that calls 'modavg.effect.glm',
-'modavg.effect.gls', 'modavg.effect.lme', 'modavg.effect.mer', or
-'modavg.unmarked' depending on the class of the object.  The current 
-function is implemented for a list containing objects of 'glm',
-'gls', 'lm', 'lme', 'mer', as well as 'unmarkedFitOccu',
-'unmarkedFitColExt', 'unmarkedFitOccuRN', 'unmarkedFitPCount',
-'unmarkedFitPCO', 'unmarkedFitDS', and 'unmarkedFitGDS' classes.
+'modavg.effect.gls', 'modavg.effect.lme', 'modavg.effect.mer',
+'modavg.effect.rlm', or 'modavg.unmarked' depending on the class of the
+object.  The current function is implemented for a list containing
+objects of 'glm', 'gls', 'lm', 'lme', 'mer', 'rlm', as well as
+'unmarkedFitOccu', 'unmarkedFitColExt', 'unmarkedFitOccuRN',
+'unmarkedFitPCount', 'unmarkedFitPCO', 'unmarkedFitDS', and
+'unmarkedFitGDS' classes. 
 }
 \value{
 'modavg.effect', 'modavg.effect.glm', 'modavg.effect.gls',
-'modavg.effect.lme', 'modavg.effect.mer', and 'modavg.unmarked' create 
-an object of class 'modavg.effect' with the following components: 
+'modavg.effect.lme', 'modavg.effect.mer', 'modavg.effect.rlm', and
+'modavg.unmarked' create an object of class 'modavg.effect' with the
+following components:
 
 \item{Group.variable}{the grouping variable defining the two groups
   compared} 
@@ -208,6 +214,11 @@ approach}. Second edition. Springer: New York.
 Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
 understanding AIC and BIC in model selection. \emph{Sociological
 Methods and Research} \bold{33}, 261--304.
+
+Burnham, K. P., Anderson, D. R., Huyvaert, K. P. (2011) AIC model
+selection and multimodel inference in behaviorial ecology: some
+background, observations and comparisons. \emph{Behavioral Ecology and
+Sociobiology} \bold{65}, 23--25. 
 
 MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
 J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
@@ -419,7 +430,9 @@ pferUMF <- unmarkedFrameOccu(pfer.bin)
 site.group <- c(rep(1, times = nrow(pfer.bin)/2), rep(0, nrow(pfer.bin)/2))
 
 ## add some fake covariates for illustration
-siteCovs(pferUMF) <- data.frame(site.group, sitevar1 = rnorm(numSites(pferUMF)), sitevar2 = runif(numSites(pferUMF)))
+siteCovs(pferUMF) <- data.frame(site.group, sitevar1 =
+                                rnorm(numSites(pferUMF)),
+                                sitevar2 = runif(numSites(pferUMF)))
      
 ## observation covariates are in site-major, observation-minor order
 obsCovs(pferUMF) <- data.frame(obsvar1 = rnorm(numSites(pferUMF) * obsNum(pferUMF)))

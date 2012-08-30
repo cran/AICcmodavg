@@ -3,7 +3,7 @@ modavg.effect <-
            conf.level = 0.95, second.ord = TRUE, nobs = NULL, uncond.se = "revised", parm.type = NULL){
 
     mod.avg.eff <- NULL
-    known <- rep(0, 6) #create an identifier of class type other than lm, glm, lme, gls, mer, unmarked
+    known <- rep(0, 7) #create an identifier of class type other than lm, glm, lme, gls, mer, unmarked
     ##extract classes
     mod.class <- unlist(lapply(X = cand.set, FUN = class))
     ##check if all are identical
@@ -55,11 +55,20 @@ modavg.effect <-
     }
 
 
+    ##determine if rlm
+    if(identical(check.class, c("rlm", "lm")))  {
+      mod.avg.eff <- modavg.effect.rlm(cand.set = cand.set, modnames = modnames, newdata = newdata,
+                                       conf.level = conf.level, second.ord = second.ord, nobs = nobs,
+                                       uncond.se = uncond.se)
+      known[6] <- 1
+    }      
+
+
      
     ##warn if models are from a mixture of model classes
     if(identical(sort(check.class), c("lm", "lme"))) {
       stop("\nFunction not appropriate for mixture of object classes:\navoid mixing objects of classes lm and lme\n")
-      known[6] <- 1
+      known[7] <- 1
     }
 
 

@@ -14,7 +14,7 @@ importance <-
     reversed.parm <- reverse.parm(parm)
 
     ##add check for supported classes
-    known <- rep(0, 9) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or coxph
+    known <- rep(0, 11) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or coxph
     
     if(identical(check.class, "lm") || identical(check.class, c("glm", "lm")))  {
     
@@ -227,9 +227,23 @@ importance <-
     }
 
 
+    if(identical(check.class, c("rlm", "lm"))) {
+      mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients))
+      known[9] <- 1
+    }
+
+    if(identical(check.class, c("sclm", "clm"))) {
+      mod_formula <- lapply(cand.set, FUN = function(i) rownames(summary(i)$coefficients))
+      known[10] <- 1
+    }
+
+    if(identical(check.class, "clmm")) {
+      mod_formula <- lapply(cand.set, FUN = function(i) rownames(summary(i)$coefficients))
+      known[11] <- 1
+    }
 
       
-    ##warn if class is neither lm, glm, multinom, polr, lme, gls, nls, mer, unmarkedFit, nor coxph
+    ##warn if class is neither lm, glm, multinom, polr, lme, gls, mer, unmarkedFit, nor coxph
     if(sum(known) < 1) {stop("\nFunction not yet defined for this object class\n")}
     
     ##setup matrix to indicate presence of parm in the model

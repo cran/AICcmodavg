@@ -96,10 +96,15 @@ for(b in 1:ncoefs) {
 ##replace with Beta0 if fixed intercept term present
 if(int.yes) {formula2[1] <- "Beta0"}
   
-##collapse into a single equation and convert to expression
-equation <- parse(text  = as.expression(paste(formula2, collapse="+")),
-                  srcfile = NULL)
-##parse returns the unevaluated expression
+  ##collapse into a single equation and convert to expression
+  ##parse returns the unevaluated expression
+  eq.space <- parse(text  = as.expression(paste(formula2, collapse="+")),
+                    srcfile = NULL)
+  ##add step to remove white space to avoid reaching 500 character limit
+  
+  ##remove space within expression
+  no.space <- gsub("[[:space:]]+", "", as.character(eq.space))
+  equation <- parse(text = as.expression(no.space))
 
 
 ##

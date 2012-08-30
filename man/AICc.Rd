@@ -1,6 +1,8 @@
 \name{AICc}
 \Rdversion{1.1}
 \alias{AICc}
+\alias{AICc.clm}
+\alias{AICc.clmm}
 \alias{AICc.coxph}
 \alias{AICc.glm}
 \alias{AICc.gls}
@@ -9,6 +11,7 @@
 \alias{AICc.mult}
 \alias{AICc.nls}
 \alias{AICc.polr}
+\alias{AICc.rlm}
 \alias{AICc.unmarked}
 \title{
 Computing AIC, AICc, QAIC, and QAICc
@@ -20,6 +23,10 @@ second-order AIC (AICc), as well as their quasi-likelihood counterparts
 }
 \usage{
 AICc(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE, nobs = NULL) 
+
+AICc.clm(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
+
+AICc.clmm(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 
 AICc.coxph(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 
@@ -39,6 +46,8 @@ AICc.nls(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 
 AICc.polr(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
 
+AICc.rlm(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL)
+
 AICc.unmarked(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE,
               nobs = NULL)
 
@@ -46,9 +55,9 @@ AICc.unmarked(mod, return.K = FALSE, c.hat = 1, second.ord = TRUE,
 
 \arguments{
   \item{mod}{
-    an object of class 'lm', 'glm', 'gls', 'lme', 'mer', 'multinom',
-    'nls', 'polr', 'coxph', and various 'unmarkedFit' classes containing the
-  output of a model.
+    an object of class 'clm', 'clmm', 'coxph', 'glm', 'gls', 'lm',
+  'lme', 'mer', 'multinom', 'nls', 'polr',  'rlm', and various
+  'unmarkedFit' classes containing the output of a model.
   }
   
   \item{return.K}{
@@ -82,15 +91,16 @@ independent clusters (e.g., sites) as the value of 'nobs'.
 }
 }
 \details{
-'AICc' is a function that calls either 'AICc.coxph', 'AICc.glm',
-'AICc.gls', 'AICc.lme', 'AICc.mer', 'AICc.mult', 'AICc.nls',
-'AICc.polr', or 'AICc.unmarked' depending on the class of the object.
-The current function is implemented for 'coxph', 'glm', 'gls', 'lm',
-'lme', 'mer', 'multinom', 'nls', and 'polr' classes as well as
+'AICc' is a function that calls either 'AICc.clm', 'AICc.clmm',
+'AICc.coxph', 'AICc.glm', 'AICc.gls', 'AICc.lme', 'AICc.mer',
+'AICc.mult', 'AICc.nls', 'AICc.polr', 'AICc.rlm' or 'AICc.unmarked'
+depending on the class of the object. The current function is
+implemented for 'clm', 'clmm', 'coxph', 'glm', 'gls', 'lm', 'lme',
+'mer', 'multinom', 'nls', 'polr', and 'rlm' classes as well as
 'unmarkedFitOccu', 'unmarkedFitColExt', 'unmarkedFitOccuRN',
 'unmarkedFitPCount', 'unmarkedFitPCO', 'unmarkedFitDS', 'unmarkedFitGDS'
 classes.  The function computes one of the following four information
-criteria: Akaike's information criterion (AIC, Akaike 1973), the
+criteria: Akaike's information criterion (AIC, Akaike 1973), the 
 second-order or small sample AIC (AICc, Sugiura 1978, Hurvich and Tsai
 1991), the quasi-likelihood AIC (QAIC, Burnham and Anderson 2002), and
 the quasi-likelihood AICc (QAICc, Burnham and Anderson 2002). Note that
@@ -102,6 +112,12 @@ select among different models that only differ in their random effects
 \value{
 'AICc' selects one of the functions below based on the class of the 
 object:
+
+'AICc.clm' returns the AIC or AICc depending on the values of the
+arguments.
+
+'AICc.clmm' returns the AIC or AICc depending on the values of the
+arguments.
 
 'AICc.coxph' returns the AIC or AICc depending on the values of the
 arguments.
@@ -125,6 +141,9 @@ values of the arguments.
 arguments. 
 
 'AICc.polr' returns the AIC or AICc depending on the values of
+the arguments.
+
+'AICc.rlm' returns the AIC or AICc depending on the values of
 the arguments.
 
 'AICc.unmarked' returns the AIC, AICc, QAIC, or QAICc depending on the

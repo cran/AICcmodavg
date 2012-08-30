@@ -169,9 +169,15 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
   if(int.yes) {formula2[1] <- "Beta0"}
   
   ##collapse into a single equation and convert to expression
-  equation <- parse(text  = as.expression(paste(formula2, collapse="+")),
-                    srcfile = NULL)
   ##parse returns the unevaluated expression
+  eq.space <- parse(text  = as.expression(paste(formula2, collapse="+")),
+                    srcfile = NULL)
+  ##add step to remove white space to avoid reaching 500 character limit
+  
+  ##remove space within expression
+  no.space <- gsub("[[:space:]]+", "", as.character(eq.space))
+  equation <- parse(text = as.expression(no.space))
+
 
   
 ##############################################
@@ -192,8 +198,13 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
   if(int.yes) {formula2[1] <- "Beta0"}
   
   ##collapse into a single equation and convert to expression
-  equation <- parse(text  = as.expression(paste(formula2, collapse="+")),
-                    srcfile = NULL) 
+  eq.space <- parse(text  = as.expression(paste(formula2, collapse="+")),
+                    srcfile = NULL)
+  ##add step to remove white space to avoid reaching 500 character limit
+  
+  ##remove space within expression
+  no.space <- gsub("[[:space:]]+", "", as.character(eq.space))
+  equation <- parse(text = as.expression(no.space))
 }
 ##############################################
 ########END MODIFIED FOR OFFSET###############
@@ -324,8 +335,14 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
     ##for binomial GLMM with logit link
     if(identical(link.type, "logit")) {
       ##build partial derivatives
-      logit.eq <- parse(text  = as.expression(paste("exp(", equation, ")/(1 + exp(", equation, "))")),
-                        srcfile = NULL)
+      logit.eq.space <- parse(text  = as.expression(paste("exp(", equation, ")/(1+exp(", equation, "))")),
+                              srcfile = NULL)
+      ##add step to remove white space to avoid reaching 500 character limit
+  
+      ##remove space within expression
+      no.space <- gsub("[[:space:]]+", "", as.character(logit.eq.space))
+      logit.eq <- parse(text = as.expression(no.space))
+      
       part.devs <- list( )
       for(j in 1:ncoefs) {
         part.devs[[j]] <- D(logit.eq, formula[j])
@@ -335,8 +352,13 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
     ##for poisson, gaussian or Gamma GLMM with log link
     if(identical(link.type, "log")) {
       ##build partial derivatives
-      log.eq <- parse(text  = as.expression(paste("exp(", equation, ")")),
-                        srcfile = NULL)
+      log.eq.space <- parse(text  = as.expression(paste("exp(", equation, ")")),
+                            srcfile = NULL)
+
+      ##remove space within expression
+      no.space <- gsub("[[:space:]]+", "", as.character(log.eq.space))
+      log.eq <- parse(text = as.expression(no.space))
+     
       part.devs <- list( )
       for(j in 1:ncoefs) {
         part.devs[[j]] <- D(log.eq, formula[j])
@@ -402,12 +424,12 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
         ##extract vc matrix
         vcmat <- vcov(mod)
       
-        mat_partialdevs<-as.matrix(part.devs.solved) #create matrix from vector of 2 rows by 1 column
-        mat_tpartialdevs<-t(part.devs.solved)        #transpose of partial derivatives to have 2 columns by 1 row
+        mat_partialdevs <- as.matrix(part.devs.solved) #create matrix from vector of 2 rows by 1 column
+        mat_tpartialdevs <- t(part.devs.solved)        #transpose of partial derivatives to have 2 columns by 1 row
       
-        var_hat<-mat_tpartialdevs%*%vcmat%*%mat_partialdevs
-        SE<-sqrt(var_hat)
-        predicted.vals <- fix.coef%*%cov.values.mat[w,]
+        var_hat <- mat_tpartialdevs %*% vcmat%*%mat_partialdevs
+        SE <- sqrt(var_hat)
+        predicted.vals <- fix.coef %*% cov.values.mat[w,]
 ######################################
 ###BEGIN MODIFIED FOR OFFSET
 ######################################
