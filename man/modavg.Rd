@@ -21,7 +21,9 @@ Compute Model-averaged Parameter Estimate (Multimodel Inference)
 This function model-averages the estimate of a parameter of interest
 among a set of candidate models, computes the unconditional standard
 error and unconditional confidence intervals as described in Buckland et
-al. (1997) and Burnham and Anderson (2002).
+al. (1997) and Burnham and Anderson (2002). This model-averaged estimate
+is also referred to as a natural average of the estimate by Burnham and
+Anderson (2002, p. 152).
 }
 \usage{
 modavg(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, 

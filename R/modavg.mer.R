@@ -19,7 +19,8 @@ function(cand.set, parm, modnames, conf.level = 0.95, second.ord = TRUE, nobs = 
   exclude <- reverse.exclude(exclude = exclude)
 #####MODIFICATIONS END######
 
-  
+##check for nlmer models
+if(any(unlist(lapply(X = cand.set, FUN = function(i) as.character(i@call)[1])) == "nlmer")) warning("\nNon-linear models are part of the candidate model set: model-averaged estimates may not be meaningful\n")
 
 ###################
   ##determine families of model

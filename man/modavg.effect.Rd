@@ -260,7 +260,7 @@ Modnames <- c("Fert", "null")
 ##compute model selection table to compare
 ##both hypotheses
 aictab(cand.set = Cands, modnames = Modnames)
-##not that model with fertilizer effect is much better supported
+##note that model with fertilizer effect is much better supported
 ##than the null
 
 ##compute model-averaged effect sizes: one model hypothesizes a
@@ -360,15 +360,15 @@ aictab(Cands, Mods)
 ##M - F
 sex.data <- data.frame(Sex = c("M", "F"), Hormone = c("1", "1"))
 modavg.effect(Cands, Mods, newdata = sex.data)
-##no support for an age main effect
+##no support for a sex main effect
 
 ##hormone 1 - 3, but set Sex to a constant value
 horm1.data <- data.frame(Sex = c("M", "M"), Hormone = c("1", "3"))
 modavg.effect(Cands, Mods, newdata = horm1.data)
 
-##hormone 1 - 3, but set Sex to a constant value
+##hormone 2 - 3, but set Sex to a constant value
 horm2.data <- data.frame(Sex = c("M", "M"), Hormone = c("2", "3"))
-modavg.effect(Cands, Mods, newdata = horm1.data)
+modavg.effect(Cands, Mods, newdata = horm2.data)
 
 
 
