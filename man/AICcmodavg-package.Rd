@@ -22,21 +22,22 @@ models ('glm' class), linear models fit by generalized least squares
 ('gls' class), linear mixed models ('lme' class), generalized linear
 mixed models ('mer' class), multinomial and ordinal logistic regressions
 ('multinom', 'polr', 'clm', and 'clmm' classes), robust regression
-models ('rlm' class), and nonlinear models ('nls' class).  The package
-also supports various models incorporating detection probabilities such
-as single-season occupancy models ('unmarkedFitOccu' class),
-multiple-season occupancy models ('unmarkedFitColExt' class),
-single-season heterogeneity models ('unmarkedFitOccuRN' class),
-single-season and multiple-season N-mixture models for repeated counts
-('unmarkedFitPCount' and 'unmarkedFitPCO' classes, respectively), and
-distance sampling models ('unmarkedFitDS' and 'unmarkedFitGDS' classes).
+models ('rlm' class), nonlinear models ('nls' class), and nonlinear
+mixed models ('nlme' class).  The package also supports various models
+incorporating detection probabilities such as single-season occupancy
+models ('unmarkedFitOccu' class), multiple-season occupancy models
+('unmarkedFitColExt' class), single-season heterogeneity models
+('unmarkedFitOccuRN' class), single-season and multiple-season N-mixture
+models for repeated counts ('unmarkedFitPCount' and 'unmarkedFitPCO'
+classes, respectively), and distance sampling models ('unmarkedFitDS'
+and 'unmarkedFitGDS' classes). 
 }
 \details{
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.26\cr
-Date: \tab 2012-08-30\cr
+Version: \tab 1.27\cr
+Date: \tab 2013-02-07\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }

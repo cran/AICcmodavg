@@ -282,7 +282,7 @@ modavgpred(cand.set = Cand, modnames = Modnames, newdata = clotting,
 
 
 ##example of model-averaged predictions from N-mixture model
-##each variable appears twice in the models - this a bit longer
+##each variable appears twice in the models - this is a bit longer
 \dontrun{
 require(unmarked)
 data(mallard)
@@ -317,7 +317,7 @@ modavgpred(cand.set = Cands, modnames = Modnames, newdata =
 
 
 ##example of model-averaged abundance from distance model
-##this a bit longer
+##this is a bit longer
 \dontrun{
 data(linetran) #example from ?distsamp
      

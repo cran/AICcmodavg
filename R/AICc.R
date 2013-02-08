@@ -77,6 +77,12 @@ AICc <-
                         nobs = nobs)
     }
 
+    ##determine if nlme
+    if(identical(class(mod)[1], "nlme")) {
+      aicc <- AICc.nlme(mod = mod, return.K = return.K, second.ord = second.ord,
+                       nobs = nobs)
+    }      
+
     
     ##if(class(mod)[1]=="nlm") {aicc <- AICc.nlm(mod, return.K)}      #determine if object from nlm optimizer
     return(aicc)

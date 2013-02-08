@@ -9,6 +9,7 @@
 \alias{aictab.lme}
 \alias{aictab.mer}
 \alias{aictab.mult}
+\alias{aictab.nlme}
 \alias{aictab.nls}
 \alias{aictab.polr}
 \alias{aictab.rlm}
@@ -24,9 +25,9 @@ ranks the models based on the selected information criteria and also
 provides delta AIC and Akaike weights.  'aictab' selects the
 appropriate function to create the model selection table based on the 
 object class.  The current version works with objects of 'clm', 'clmm',
-'coxph', 'glm', 'gls', 'lm', 'lme', 'mer', 'multinom', 'nls', 'polr',
-'rlm' classes as well as various models of 'unmarkedFit' classes but
-does not yet allow mixing of different classes.
+'coxph', 'glm', 'gls', 'lm', 'lme', 'mer', 'multinom', 'nlme', 'nls',
+'polr', 'rlm' classes as well as various models of 'unmarkedFit' classes
+but does not yet allow mixing of different classes.
 }
 \usage{
 aictab(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE,
@@ -55,6 +56,9 @@ aictab.mer(cand.set, modnames, sort = TRUE, second.ord = TRUE,
 
 aictab.mult(cand.set, modnames, sort = TRUE, c.hat = 1,
             second.ord = TRUE, nobs = NULL)
+
+aictab.nlme(cand.set, modnames, sort = TRUE, second.ord = TRUE,
+            nobs = NULL) 
 
 aictab.nls(cand.set, modnames, sort = TRUE, second.ord = TRUE,
            nobs = NULL) 
@@ -109,14 +113,15 @@ independent clusters (e.g., sites) as the value of 'nobs'.
 \details{
 'aictab' is a function that calls either 'aictab.clm', 'aictab.clmm',
 'aictab.coxph', 'aictab.glm', 'aictab.gls', 'aictab.lme', 'aictab.mer',
-'aictab.mult', 'aictab.nls', 'aictab.polr', or 'aictab.unmarked'
-depending on the class of the object.  The current function is
-implemented for 'coxph', 'glm', 'gls','lm', 'lme', 'mer', 'multinom',
-'polr', and 'rlm' classes as well as 'unmarkedFitDS' 'unmarkedFitGDS',
-'unmarkedFitOccu', 'unmarkedFitColExt', 'unmarkedFitOccuRN',
-'unmarkedFitPCount', and 'unmarkedFitPCO' classes.  The function
-constructs a model selection table based on one of the four information
-criteria: AIC, AICc, QAIC, and QAICc.
+'aictab.mult', 'aictab.nlme', 'aictab.nls', 'aictab.polr', or
+'aictab.unmarked' depending on the class of the object.  The current
+function is implemented for 'coxph', 'glm', 'gls','lm', 'lme', 'mer',
+'multinom', 'nlme', 'nls', 'polr', and 'rlm' classes as well as
+'unmarkedFitDS' 'unmarkedFitGDS', 'unmarkedFitOccu',
+'unmarkedFitColExt', 'unmarkedFitOccuRN', 'unmarkedFitPCount', and
+'unmarkedFitPCO' classes.  The function constructs a model selection
+table based on one of the four information criteria: AIC, AICc, QAIC,
+and QAICc.
 
 Ten guidelines for model selection:
 
@@ -179,9 +184,9 @@ inference based on the information contained in the entire model set.
 }
 \value{
 'aictab', 'aictab.clm', 'aictab.clmm', 'aictab.coxph', 'aictab.glm',
-'aictab.lme', 'aictab.mer', 'aictab.mult', 'aictab.nls', 'aictab.polr',
-'aictab.rlm', and 'aictab.unmarked' create an object of class 'aictab'
-with the following components:
+'aictab.lme', 'aictab.mer', 'aictab.mult', 'aictab.nlme', 'aictab.nls',
+'aictab.polr', 'aictab.rlm', and 'aictab.unmarked' create an object of
+class 'aictab' with the following components:
 
 \item{Modname}{the names of each model of the candidate model set.}
 \item{K }{the number of estimated parameters for each model.}

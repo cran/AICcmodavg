@@ -37,7 +37,7 @@ modavgpred.unmarked <- function(cand.set, modnames, newdata, second.ord = TRUE, 
     if(identical(mod.type, "unmarkedFitPCO")) {parm.type1 <- "lambda"}
     if(identical(mod.type, "unmarkedFitOccuRN")) {parm.type1 <- "state"}
     if(identical(mod.type, "unmarkedFitDS")) {parm.type1 <- "state"}
-    if(identical(mod.type, "unmarkedFitGDS")) {parm.type1 <- "state"}
+    if(identical(mod.type, "unmarkedFitGDS")) {parm.type1 <- "lambda"}
   }
 
   ##omega

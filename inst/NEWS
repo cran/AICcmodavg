@@ -4,9 +4,15 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
-#revision 1.26 (August 2012)
+#revision 1.27 (7 February 2013)
+#- implemented model-averaging estimates and predictions for 'gdistsamp' models
+#- added support for nonlinear mixed models of class 'nlme'
+
+
+####################################################################
+#revision 1.26 (30 August 2012)
 #- added support for robust regression models of class 'rlm' - AICc, aictab, importance, modavg, modavg.effect, modavg.shrink, modavgpred
-#- added support for ordinal logistic regression models of classes 'clm' and 'clmm' - AICc, aictab, importance, modavg, modavg.effect, modavg.shrink, 
+#- added support for ordinal logistic regression models of classes 'clm' and 'clmm' - AICc, aictab, importance, modavg, modavg.effect, modavg.shrink 
 #- modified modavg.unmarked( ) to enable treatment of gamma parameter in pcountOpen models 
 #  with different formulations (Const, Trend, AR)
 #- added reference of Luckacs et al. 2010 about model averaging with shrinkage in modavg.shrink.Rd file

@@ -215,8 +215,8 @@ beta estimates cannot be model-averaged\n")
     ##lambda - abundance
     if(identical(parm.type, "lambda")) {
       ##extract model formula for each model in cand.set
-      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
-      parm <- paste("lam", "(", parm, ")", sep="")
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$lambda)))
+      parm <- paste("lambda", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
       not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
     }
