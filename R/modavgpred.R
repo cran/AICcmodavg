@@ -32,7 +32,7 @@ modavgpred <- function(cand.set, modnames, newdata, type = "response", c.hat = 1
 
   ##determine if unmarked
   unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
-                      "unmarkedFitDS", "unmarkedFitGDS")
+                      "unmarkedFitDS", "unmarkedFitGDS", "unmarkedFitOccuFP")
   if(any(sapply(unmarked.class, FUN = function(i) identical(i, check.class)))) {
     results <- modavgpred.unmarked(cand.set = cand.set, modnames = modnames, newdata = newdata,
                                    type = type, c.hat = c.hat, second.ord = second.ord,

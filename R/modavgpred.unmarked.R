@@ -18,6 +18,7 @@ modavgpred.unmarked <- function(cand.set, modnames, newdata, second.ord = TRUE, 
   if(identical(parm.type, "psi")) {
     if(identical(mod.type, "unmarkedFitOccu")) {parm.type1 <- "state"}
     if(identical(mod.type, "unmarkedFitColExt")) {parm.type1 <- "psi"}
+    if(identical(mod.type, "unmarkedFitOccuFP")) {parm.type1 <- "state"; parm.id <- "psi"}
   }
 
   ##gamma
@@ -38,8 +39,22 @@ modavgpred.unmarked <- function(cand.set, modnames, newdata, second.ord = TRUE, 
     if(identical(mod.type, "unmarkedFitOccuRN")) {parm.type1 <- "state"}
     if(identical(mod.type, "unmarkedFitDS")) {parm.type1 <- "state"}
     if(identical(mod.type, "unmarkedFitGDS")) {parm.type1 <- "lambda"}
-  }
 
+    if(identical(mod.type, "unmarkedFitPCount") || identical(mod.type, "unmarkedFitPCO")) {
+      ##check for mixture type
+      mixture.type <- sapply(X = cand.set, FUN = function(i) i@mixture)
+      unique.mixture <- unique(mixture.type)
+      if(length(unique.mixture) > 1) {
+        if(any(unique.mixture == "ZIP")) stop("\nThis function does not yet support mixing ZIP with other distributions\n")
+      } else {
+        mixture.id <- unique(mixture.type)
+        if(identical(unique.mixture, "ZIP")) {
+          if(identical(type, "link")) stop("\nLink scale not yet supported for ZIP mixtures\n")
+        }
+      }
+    }
+  }
+  
   ##omega
   if(identical(parm.type, "omega")) {
     if(identical(mod.type, "unmarkedFitPCO")) {parm.type1 <- "omega"}
@@ -54,7 +69,9 @@ modavgpred.unmarked <- function(cand.set, modnames, newdata, second.ord = TRUE, 
   if(identical(parm.type, "phi")) parm.type1 <- "phi"
   if(identical(mod.type, "unmarkedFitGDS") && identical(parm.type, "phi")) stop("\nModel-averaging predictions of availability not yet supported for unmarkedFitGDS class\n")
 
-    
+  ##false positives
+  if(identical(parm.type, "fp")) parm.type1 <- "fp"
+  
      
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   
@@ -82,12 +99,20 @@ modavgpred.unmarked <- function(cand.set, modnames, newdata, second.ord = TRUE, 
 
       if(identical(type, "response")) {
       ##extract fitted value for observation obs
-      fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
-                                       type = parm.type1)$Predicted))
+      if(identical(parm.type, "lambda") && identical(mixture.id, "ZIP")) {
+        fit <- unlist(lapply(X = cand.set, FUN = function(i)predictSE.zip(i, se.fit = TRUE,
+                                             newdata = newdata[obs, ])$fit))
+        SE <- unlist(lapply(X = cand.set, FUN = function(i)predictSE.zip(i, se.fit = TRUE,
+                                            newdata = newdata[obs, ])$se.fit))
 
-      ##extract SE for fitted value for observation obs
-      SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
-                                      type = parm.type1)$SE))
+      } else {
+        fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                             type = parm.type1)$Predicted))
+
+        ##extract SE for fitted value for observation obs
+        SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                            type = parm.type1)$SE))
+      }
     }
       
       if(identical(type, "link")) {
@@ -175,13 +200,22 @@ modavgpred.unmarked <- function(cand.set, modnames, newdata, second.ord = TRUE, 
 
       if(identical(type, "response")) {
         
-        ##extract fitted value for observation obs
-        fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
-                                         type = parm.type1)$Predicted))
-        ##extract SE for fitted value for observation obs
-        SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
-                                        type = parm.type1)$SE))
+        if(identical(parm.type, "lambda") && identical(mixture.id, "ZIP")) {
+          fit <- unlist(lapply(X = cand.set, FUN = function(i)predictSE.zip(i, se.fit = TRUE,
+                                               newdata = newdata[obs, ])$fit))
+          SE <- unlist(lapply(X = cand.set, FUN = function(i)predictSE.zip(i, se.fit = TRUE,
+                                              newdata = newdata[obs, ])$se.fit))
+
+        } else {
+          fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                               type = parm.type1)$Predicted))
+
+          ##extract SE for fitted value for observation obs
+          SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                              type = parm.type1)$SE))
+        }
       }
+
 
      if(identical(type, "link")) {
       ##extract fitted value for observation obs

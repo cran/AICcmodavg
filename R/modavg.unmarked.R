@@ -8,6 +8,7 @@
 ##Open N-mixture: lambda, gamma, omega, det - USE lambda, gamma, omega, detect
 ##distsamp: state, det - USE lambda, detect
 ##gdistsamp: state, det, phi - USE lambda, detect, phi
+##false-positive occupancy: state, det, fp - USE psi, detect, fp
 
 modavg.unmarked <-
 function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TRUE, nobs = NULL, exclude = NULL,
@@ -22,7 +23,7 @@ function(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95, second.ord = TR
 
   ##check for supported mod.type
   supp.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
-                  "unmarkedFitDS", "unmarkedFitGDS")
+                  "unmarkedFitDS", "unmarkedFitGDS", "unmarkedFitOccuFP")
                   
   if(!any(supp.class == mod.type)) {stop("\nFunction not yet defined for this object class\n")}
 
@@ -233,6 +234,32 @@ beta estimates cannot be model-averaged\n")
   }
   
 
+  ##single-season false-positive occupancy model
+  if(identical(mod.type, "unmarkedFitOccuFP")) {
+    ##psi
+    if(identical(parm.type, "psi")) {
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
+      parm <- paste("psi", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("psi", "(", reversed.parm, ")", sep="")}
+      not.include <- lapply(cand.set, FUN = function(i) i@stateformula)      
+    }
+    ##detect
+    if(identical(parm.type, "detect")) {
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+      parm <- paste("p", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
+      not.include <- lapply(cand.set, FUN = function(i) i@detformula)
+    }
+    ##false positives - fp
+    if(identical(parm.type, "fp")) {
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$fp)))
+      parm <- paste("fp", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("fp", "(", reversed.parm, ")", sep="")}
+      not.include <- lapply(cand.set, FUN = function(i) i@FPformula)
+    }
+  }
+  
   nmods <- length(cand.set)
   
   ##setup matrix to indicate presence of parms in the model

@@ -18,9 +18,10 @@ Compute Model-averaged Effect Sizes (Multimodel Inference on Group Differences)
   computes the unconditional standard error and unconditional confidence
   intervals as described in Buckland et al. (1997) and Burnham and
   Anderson (2002). This can be particularly useful when dealing with
-  data from an experiment (e.g., ANOVA) and the focus is to determine
-  the effect of a given factor. This is an information-theoretic
-  alternative to multiple comparisons (e.g., Burnham et al. 2011).
+  data from an experiment (e.g., ANOVA) and when the focus is to
+  determine the effect of a given factor. This is an
+  information-theoretic alternative to multiple comparisons (e.g.,
+  Burnham et al. 2011).
 }
 \usage{
 modavg.effect(cand.set, modnames, newdata, type = "response",
@@ -130,21 +131,25 @@ value of 'nobs'.
   this argument specifies the parameter type on which the effect size 
   will be computed and is only relevant for models of 'unmarkedFitOccu',
   'unmarkedFitColExt', 'unmarkedFitOccuRN', 'unmarkedFitPCount',
-  'unmarkedFitPCO', 'unmarkedFitDS' and 'unmarkedFitGDS' classes.  The
-  character strings supported vary with the type of model fitted.  For 
-  'unmarkedFitOccu' objects, either 'psi' or 'detect' can be supplied to
-  indicate whether the parameter is on occupancy or detectability,
-  respectively.  For 'unmarkedFitColExt', possible values are 'psi',
-  'gamma', 'epsilon', and 'detect', for parameters on occupancy in the
-  inital year, colonization, extinction, and detectability,
-  respectively.  For 'unmarkedFitOccuRN' objects, either 'lambda or
-  'detect' can be entered for abundance and detectability parameters,
-  respectively.  For 'unmarkedFitPCount' objects, 'lambda' or 'detect'
-  denote parameters on abundance and detectability, respectively.  For
-  'unmarkedFitPCO' objects, one can enter 'lambda', 'gamma', 'omega', or
-  'detect', to specify parameters on abundance, recruitment, apparent
-  survival, and detectability, respectively. For 'unmarkedFitDS' and
-  'unmarkedFitGDS' objects, only 'lambda' is supported for the moment.
+  'unmarkedFitPCO', 'unmarkedFitDS', 'unmarkedFitGDS', and
+  'unmarkedFitOccuFP' classes.  The character strings supported vary
+  with the type of model fitted.  For 'unmarkedFitOccu' objects, either
+  'psi' or 'detect' can be supplied to indicate whether the parameter is
+  on occupancy or detectability, respectively.  For 'unmarkedFitColExt',
+  possible values are 'psi', 'gamma', 'epsilon', and 'detect', for
+  parameters on occupancy in the inital year, colonization, extinction,
+  and detectability, respectively.  For 'unmarkedFitOccuRN' objects,
+  either 'lambda or 'detect' can be entered for abundance and
+  detectability parameters, respectively.  For 'unmarkedFitPCount'
+  objects, 'lambda' or 'detect' denote parameters on abundance and
+  detectability, respectively.  For 'unmarkedFitPCO' objects, one can
+  enter 'lambda', 'gamma', 'omega', or 'detect', to specify parameters
+  on abundance, recruitment, apparent survival, and detectability,
+  respectively. For 'unmarkedFitDS' and 'unmarkedFitGDS' objects, only
+  'lambda' is supported for the moment. For 'unmarkedFitOccuFP' objects,
+  one can specify 'psi', 'detect', or 'fp', for occupancy,
+  detectability, and probability of assigning false-positives,
+  respectively.
 }
 }
 

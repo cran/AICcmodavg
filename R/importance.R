@@ -51,7 +51,7 @@ importance <-
     
     ##determine if unmarked
     unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
-                        "unmarkedFitDS", "unmarkedFitGDS")
+                        "unmarkedFitDS", "unmarkedFitGDS", "unmarkedFitOccuFP")
     if(any(sapply(unmarked.class, FUN = function(i) identical(i, check.class)))) {
 
       known[7] <- 1
@@ -218,6 +218,31 @@ importance <-
           stop("\nImportance values for availability covariates not yet supported for unmarkedFitGDS class\n")
         }
       }
+
+      
+      ##single-season false-positive occupancy model
+      if(identical(check.class, "unmarkedFitOccuFP")) {
+        ##psi
+        if(identical(parm.type, "psi")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
+          parm.unmarked <- "psi"
+          parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+        }
+        ##detect
+        if(identical(parm.type, "detect")) {
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+          parm.unmarked <- "p"
+          parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+        }
+        ##false positives - fp
+        if(identical(parm.type, "fp")) {
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$fp)))
+          parm.unmarked <- "fp"
+          parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+        }
+      }
+
     }
 
 

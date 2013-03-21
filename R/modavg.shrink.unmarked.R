@@ -11,7 +11,7 @@ modavg.shrink.unmarked <-
     
     ##check for supported mod.type
     supp.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
-                    "unmarkedFitDS", "unmarkedFitGDS")
+                    "unmarkedFitDS", "unmarkedFitGDS", "unmarkedFitOccuFP")
                   
     if(!any(supp.class == mod.type)) {stop("\nFunction not yet defined for this object class\n")}
 
@@ -190,7 +190,33 @@ modavg.shrink.unmarked <-
     }
   }
 
+##single-season false-positive occupancy model
+  if(identical(mod.type, "unmarkedFitOccuFP")) {
+    ##psi
+    if(identical(parm.type, "psi")) {
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
+      parm <- paste("psi", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("psi", "(", reversed.parm, ")", sep="")}
+      not.include <- lapply(cand.set, FUN = function(i) i@stateformula)      
+    }
+    ##detect
+    if(identical(parm.type, "detect")) {
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+      parm <- paste("p", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
+      not.include <- lapply(cand.set, FUN = function(i) i@detformula)
+    }
+    ##false positives - fp
+    if(identical(parm.type, "fp")) {
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$fp)))
+      parm <- paste("fp", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("fp", "(", reversed.parm, ")", sep="")}
+      not.include <- lapply(cand.set, FUN = function(i) i@FPformula)
+    }
+  }
 
+    
     ##NEED TO PASTE THE PARAMETER TYPE - INCLUDE THIS STEP ABOVE FOR EACH PARM.TYPE
     ##determine frequency of each term across models (except (Intercept) ) 
     pooled.terms <- unlist(mod_formula)

@@ -52,22 +52,28 @@ such cases, one might use total number of observations or number of
 independent clusters (e.g., sites) as the value of 'nobs'.
 }
 \item{parm.type}{
-  this argument specifies the parameter type of the estimate specified
-  in 'parm' and is only relevant for models of 'unmarkedFitOccu',
+  this argument specifies the parameter type on which the effect size 
+  will be computed and is only relevant for models of 'unmarkedFitOccu',
   'unmarkedFitColExt', 'unmarkedFitOccuRN', 'unmarkedFitPCount',
-  'unmarkedFitPCO' classes.  The character strings supported vary with
-  the type of model fitted.  For 'unmarkedFitOccu' objects, either 'psi' 
-  or 'detect' can be supplied to indicate whether the parameter is on
-  occupancy or detectability, respectively.  For 'unmarkedFitColExt',
+  'unmarkedFitPCO', 'unmarkedFitDS', 'unmarkedFitGDS', and
+  'unmarkedFitOccuFP' classes.  The character strings supported vary
+  with the type of model fitted.  For 'unmarkedFitOccu' objects, either
+  'psi' or 'detect' can be supplied to indicate whether the parameter is
+  on occupancy or detectability, respectively.  For 'unmarkedFitColExt',
   possible values are 'psi', 'gamma', 'epsilon', and 'detect', for
   parameters on occupancy in the inital year, colonization, extinction,
-  and detectability, respectively.  For 'unmarkedFitOccuRN'
-  objects, either 'lambda or 'detect' can be entered for abundance and
-  detectability parameters, respectively.  For 'unmarkedFitPCount' objects,
-  'lambda' or 'detect' denote parameters on abundance and detectability,
-  respectively.  For 'unmarkedFitPCO' objects, one can enter 'lambda',
-  'gamma', 'omega', or 'detect', to specify parameters on abundance,
-  recruitment, apparent survival, and detectability, respectively.
+  and detectability, respectively.  For 'unmarkedFitOccuRN' objects,
+  either 'lambda or 'detect' can be entered for abundance and
+  detectability parameters, respectively.  For 'unmarkedFitPCount'
+  objects, 'lambda' or 'detect' denote parameters on abundance and
+  detectability, respectively.  For 'unmarkedFitPCO' objects, one can
+  enter 'lambda', 'gamma', 'omega', or 'detect', to specify parameters
+  on abundance, recruitment, apparent survival, and detectability,
+  respectively. For 'unmarkedFitDS' and 'unmarkedFitGDS' objects, only
+  'lambda' is supported for the moment. For 'unmarkedFitOccuFP' objects,
+  one can specify 'psi', 'detect', or 'fp', for occupancy,
+  detectability, and probability of assigning false-positives,
+  respectively.
 }
 }
 

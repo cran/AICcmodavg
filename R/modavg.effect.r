@@ -46,7 +46,7 @@ modavg.effect <-
 
     ##determine if unmarked
     unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
-                        "unmarkedFitDS", "unmarkedFitGDS")
+                        "unmarkedFitDS", "unmarkedFitGDS", "unmarkedFitOccuFP")
     if(any(sapply(unmarked.class, FUN = function(i) identical(i, check.class)))) {
       mod.avg.eff <- modavg.effect.unmarked(cand.set = cand.set, modnames = modnames, newdata = newdata,
                                      type = type, c.hat = c.hat, conf.level = conf.level,
