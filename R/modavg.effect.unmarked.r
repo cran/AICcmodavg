@@ -9,7 +9,7 @@ modavg.effect.unmarked <- function(cand.set, modnames, newdata, type = "response
 
   ##check for supported mod.type
   supp.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
-                  "unmarkedFitDS", "unmarkedFitGDS")
+                  "unmarkedFitDS", "unmarkedFitGDS", "unmarkedFitOccuFP")
                   
   if(!any(supp.class == mod.type)) {stop("\nFunction not yet defined for this object class\n")}
   
@@ -18,6 +18,7 @@ modavg.effect.unmarked <- function(cand.set, modnames, newdata, type = "response
   if(identical(parm.type, "psi")) {
     if(identical(mod.type, "unmarkedFitOccu")) {parm.type1 <- "state"; parm.id <- "psi"}
     if(identical(mod.type, "unmarkedFitColExt")) {parm.type1 <- "psi"; parm.id <- "psi"}
+    if(identical(mod.type, "unmarkedFitOccuFP")) {parm.type1 <- "state"; parm.id <- "psi"}
   }
 
   ##gamma
@@ -38,6 +39,20 @@ modavg.effect.unmarked <- function(cand.set, modnames, newdata, type = "response
     if(identical(mod.type, "unmarkedFitOccuRN")) {parm.type1 <- "state"; parm.id <- "lam"}
     if(identical(mod.type, "unmarkedFitDS")) {parm.type1 <- "state"; parm.id <- "lam"}
     if(identical(mod.type, "unmarkedFitGDS")) {parm.type1 <- "state"; parm.id <- "lam"}
+
+    if(identical(mod.type, "unmarkedFitPCount") || identical(mod.type, "unmarkedFitPCO")) {
+      ##check for mixture type
+      mixture.type <- sapply(X = cand.set, FUN = function(i) i@mixture)
+      unique.mixture <- unique(mixture.type)
+      if(length(unique.mixture) > 1) {
+        if(any(unique.mixture == "ZIP")) stop("\nThis function does not yet support mixing ZIP with other distributions\n")
+      } else {
+        mixture.id <- unique(mixture.type)
+        if(identical(unique.mixture, "ZIP")) {
+          if(identical(type, "link")) stop("\nLink scale not yet supported for ZIP mixtures\n")
+        }
+      }
+    }
   }
 
   ##omega
@@ -54,6 +69,8 @@ modavg.effect.unmarked <- function(cand.set, modnames, newdata, type = "response
   if(identical(parm.type, "phi")) parm.type1 <- "phi"
   if(identical(mod.type, "unmarkedFitGDS") && identical(parm.type, "phi")) stop("\nModel-averaging effect sizes on availability not yet supported for unmarkedFitGDS class\n")
 
+  ##false positives
+  if(identical(parm.type, "fp")) parm.type1 <- "fp"
     
      
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
@@ -90,16 +107,27 @@ modavg.effect.unmarked <- function(cand.set, modnames, newdata, type = "response
   ##point estimate
   if(identical(type, "response")) {
     ##extract fitted value for observation obs
-    fit <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata,
-                                         type = parm.type1)$Predicted)),
-                  nrow = nmods, ncol = 2, byrow = TRUE)
+    if(identical(parm.type, "lambda") && identical(mixture.id, "ZIP")) {
+      fit <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predictSE.zip(i, se.fit = TRUE,
+                                           newdata = newdata)$fit)),
+                    nrow = nmods, ncol = 2, byrow = TRUE)
+      
+      SE <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predictSE.zip(i, se.fit = TRUE,
+                                          newdata = newdata)$se.fit)),
+                   nrow = nmods, ncol = 2, byrow = TRUE)
+      
+    } else {
+      fit <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata,
+                                                         type = parm.type1)$Predicted)),
+                    nrow = nmods, ncol = 2, byrow = TRUE)
 
     ##extract SE for fitted value for observation obs
     SE <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata,
                                         type = parm.type1)$SE)),
                  nrow = nmods, ncol = 2, byrow = TRUE)
+    }
   }
-
+  
   ##link scale
   if(identical(type, "link")) {
     ##extract fitted value for observation obs

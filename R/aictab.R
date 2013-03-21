@@ -55,7 +55,7 @@ aictab <-
 
     ##determine if unmarked
     unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",
-                        "unmarkedFitDS", "unmarkedFitGDS")
+                        "unmarkedFitDS", "unmarkedFitGDS", "unmarkedFitOccuFP")
     if(any(sapply(unmarked.class, FUN = function(i) identical(i, check.class)))) {
       results <- aictab.unmarked(cand.set = cand.set, modnames = modnames, sort = sort,
                                  c.hat = c.hat, second.ord = second.ord, nobs = nobs)
@@ -86,7 +86,7 @@ aictab <-
       known[10] <- 1
     }
 
-    ##determine if rlm
+    ##determine if clm
     if(identical(check.class, c("sclm", "clm")))  {
       results <- aictab.clm(cand.set = cand.set, modnames = modnames, sort = sort,
                             second.ord = second.ord, nobs = nobs)

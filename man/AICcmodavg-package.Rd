@@ -25,19 +25,19 @@ mixed models ('mer' class), multinomial and ordinal logistic regressions
 models ('rlm' class), nonlinear models ('nls' class), and nonlinear
 mixed models ('nlme' class).  The package also supports various models
 incorporating detection probabilities such as single-season occupancy
-models ('unmarkedFitOccu' class), multiple-season occupancy models
-('unmarkedFitColExt' class), single-season heterogeneity models
-('unmarkedFitOccuRN' class), single-season and multiple-season N-mixture
-models for repeated counts ('unmarkedFitPCount' and 'unmarkedFitPCO'
-classes, respectively), and distance sampling models ('unmarkedFitDS'
-and 'unmarkedFitGDS' classes). 
+models ('unmarkedFitOccu' and 'unmarkedFitOccuFP' classes),
+multiple-season occupancy models ('unmarkedFitColExt' class),
+single-season heterogeneity models ('unmarkedFitOccuRN' class),
+single-season and multiple-season N-mixture models for repeated counts
+('unmarkedFitPCount' and 'unmarkedFitPCO' classes, respectively), and
+distance sampling models ('unmarkedFitDS' and 'unmarkedFitGDS' classes).
 }
 \details{
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.27\cr
-Date: \tab 2013-02-07\cr
+Version: \tab 1.28\cr
+Date: \tab 2013-03-21\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -84,7 +84,10 @@ multimodel inference:
   population predictions).}
 \item{\code{\link{predictSE.mer}}}  {Computes predictions and associated 
   standard errors for 'mer' object based on fixed effects (i.e., 
-  population predictions).} 
+  population predictions).}
+\item{\code{\link{predictSE.mer}}}  {Computes predictions and associated 
+  standard errors for 'unmarkedFitPCount' and 'unmarkedFitPCO' objects
+  that use zero-inflated Poisson distributions on abundance.} 
 }
 }
 \author{

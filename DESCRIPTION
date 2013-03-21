@@ -1,8 +1,8 @@
 Package: AICcmodavg
 Type: Package
 Title: Model selection and multimodel inference based on (Q)AIC(c)
-Version: 1.27
-Date: 2013-02-07
+Version: 1.28
+Date: 2013-03-21
 Author: Marc J. Mazerolle <marc.mazerolle@uqat.ca>.  Special thanks to
         T. Ergon for the original idea of storing candidate models in a
         list.
@@ -30,15 +30,16 @@ Description: This package includes functions to create model selection
         nonlinear models ('nls' class), and nonlinear mixed models
         ('nlme' class).  The package also supports various models
         incorporating detection probabilities such as single-season
-        occupancy models ('unmarkedFitOccu' class), multiple-season
-        occupancy models ('unmarkedFitColExt' class), single-season
-        heterogeneity models ('unmarkedFitOccuRN' class), single-season
-        and multiple-season N-mixture models for repeated counts
-        ('unmarkedFitPCount' and 'unmarkedFitPCO' classes,
-        respectively), and distance sampling models ('unmarkedFitDS'
-        and 'unmarkedFitGDS' classes).
+        occupancy models ('unmarkedFitOccu' and 'unmarkedFitOccuFP
+        classes), multiple-season occupancy models ('unmarkedFitColExt'
+        class), single-season heterogeneity models ('unmarkedFitOccuRN'
+        class), single-season and multiple-season N-mixture models for
+        repeated counts ('unmarkedFitPCount' and 'unmarkedFitPCO'
+        classes, respectively), and distance sampling models
+        ('unmarkedFitDS' and 'unmarkedFitGDS' classes).
 License: GPL (>= 2)
 LazyLoad: yes
-Packaged: 2013-02-07 21:50:43 UTC; mazerolm
+Packaged: 2013-03-21 20:30:53 UTC; mazerolm
+NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2013-02-08 07:23:24
+Date/Publication: 2013-03-21 22:39:38

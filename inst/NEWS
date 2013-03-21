@@ -4,6 +4,13 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+#revision 1.28 (21 March 2013)
+#- added functionality for zip models to compute SE's of predictions on abundance of N-mixture models from unmarked
+#- added functionality for 'occuFP' models (detections with false-positives)
+
+
+
+####################################################################
 #revision 1.27 (7 February 2013)
 #- implemented model-averaging estimates and predictions for 'gdistsamp' models
 #- added support for nonlinear mixed models of class 'nlme'
