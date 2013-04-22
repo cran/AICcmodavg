@@ -52,11 +52,11 @@ information criteria (either QAICc or QAIC, depending on the value of
 the 'second.ord' argument) by scaling the log-likelihood of the model by
 c-hat.  The value of c-hat can influence the ranking of the models:  as
 c-hat increases, QAIC or QAICc will favor models with fewer
-parameters.  As an additional check against this potential problem, on
-can create generate several model selection tables by incrementing
-values of c-hat to assess the model selection uncertainty.  If ranking
-changes little up to the c-hat value observed, one can be confident in
-making inference.
+parameters.  As an additional check against this potential problem, one
+can create several model selection tables by incrementing values of
+c-hat to assess the model selection uncertainty.  If ranking changes
+little up to the c-hat value observed, one can be confident in making
+inference. 
 
 In cases of underdispersion (c-hat < 1), it is recommended to keep the
 value of c-hat to 1.  However, note that values of c-hat << 1 can also
@@ -94,8 +94,9 @@ Marc J. Mazerolle
 }
 
 \seealso{
-\code{\link{AICc}}, \code{\link{confset}}, \code{\link{evidence}},
-\code{\link{modavg}}, \code{\link{importance}}, \code{\link{modavgpred}}
+\code{\link{AICc}}, \code{\link{confset}}, \code{\link{evidence}}, 
+\code{\link{modavg}}, \code{\link{importance}},
+\code{\link{modavgpred}}, \code{\link{mb.gof.test}}
 }
 
 \examples{

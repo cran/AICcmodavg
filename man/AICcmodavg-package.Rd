@@ -10,17 +10,17 @@ Model Selection and Multimodel Inference Based on (Q)AIC(c)
 Description:  This package includes functions to create model selection
 tables based on Akaike's information criterion (AIC) and the
 second-order AIC (AICc), as well as their quasi-likelihood counterparts
-(QAIC, QAICc).  Tables are printed with delta AIC and Akaike
-weights.  The package also features functions to conduct classic model
-averaging (multimodel inference) for a given parameter of interest or
-predicted values, as well as a shrinkage version of model averaging
-parameter estimates.  Other handy functions enable the computation of
-relative variable importance, evidence ratios, and confidence sets for
-the best model.  The present version works with Cox proportional hazards
-models ('coxph' class), linear models ('lm' class), generalized linear
-models ('glm' class), linear models fit by generalized least squares
-('gls' class), linear mixed models ('lme' class), generalized linear
-mixed models ('mer' class), multinomial and ordinal logistic regressions
+(QAIC, QAICc).  Tables are printed with delta AIC and Akaike weights.
+The package also features functions to conduct classic model averaging
+(multimodel inference) for a given parameter of interest or predicted
+values, as well as a shrinkage version of model averaging parameter
+estimates.  Other handy functions enable the computation of relative
+variable importance, evidence ratios, and confidence sets for the best
+model.  The present version works with Cox proportional hazards models
+('coxph' class), linear models ('lm' class), generalized linear models
+('glm' class), linear models fit by generalized least squares ('gls'
+class), linear mixed models ('lme' class), generalized linear mixed
+models ('mer' class), multinomial and ordinal logistic regressions
 ('multinom', 'polr', 'clm', and 'clmm' classes), robust regression
 models ('rlm' class), nonlinear models ('nls' class), and nonlinear
 mixed models ('nlme' class).  The package also supports various models
@@ -30,14 +30,15 @@ multiple-season occupancy models ('unmarkedFitColExt' class),
 single-season heterogeneity models ('unmarkedFitOccuRN' class),
 single-season and multiple-season N-mixture models for repeated counts
 ('unmarkedFitPCount' and 'unmarkedFitPCO' classes, respectively), and
-distance sampling models ('unmarkedFitDS' and 'unmarkedFitGDS' classes).
+distance sampling models ('unmarkedFitDS' and 'unmarkedFitGDS'
+classes).
 }
 \details{
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.28\cr
-Date: \tab 2013-03-21\cr
+Version: \tab 1.29\cr
+Date: \tab 2013-04-22\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -77,6 +78,9 @@ multimodel inference:
 \item{\code{\link{c_hat}}}  {Computes an estimate of variance
   inflation factor for binomial or Poisson GLM's based on Pearson's
   chi-square.}
+\item{\code{\link{mb.gof.test}}}  {Computes the MacKenzie and Bailey
+  goodness-of-fit test for single season occupancy models using the
+  Pearson chi-square statistic.}
 \item{\code{\link{predictSE.gls}}}  {Computes predictions and associated 
   standard errors for 'gls' object based on linear predictor.}
 \item{\code{\link{predictSE.lme}}}  {Computes predictions and associated 
@@ -85,7 +89,7 @@ multimodel inference:
 \item{\code{\link{predictSE.mer}}}  {Computes predictions and associated 
   standard errors for 'mer' object based on fixed effects (i.e., 
   population predictions).}
-\item{\code{\link{predictSE.mer}}}  {Computes predictions and associated 
+\item{\code{\link{predictSE.zip}}}  {Computes predictions and associated 
   standard errors for 'unmarkedFitPCount' and 'unmarkedFitPCO' objects
   that use zero-inflated Poisson distributions on abundance.} 
 }
