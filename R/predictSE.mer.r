@@ -22,7 +22,6 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
     
   if(identical(link.type, "other")) stop("\nThis function is not yet defined for the specified link function\n")
 
-  if(length(mod@offset) > 0 && !identical(fam.type, "poisson") && identical(link.type, "log")) stop("\nFunction only currently supports offset for Poisson family\n")
 ##########################################################################      
 
 
@@ -81,30 +80,19 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, type = "response", level 
 ###############################################
   ##check for offset
   if(length(mod@offset) > 0) {
-
+    calls <- attr(TT, "variables")
+    off.num <- attr(TT, "offset")
     ##offset values
-    offset.values <- model.offset(dataMix)
-    
-    ##identify which variable is offset
-    offset.number <- attr(TT, "offset")
-
-    ##extract name of column with offset
-    offset.name <- attr(TT, "variables")[[offset.number+1]] #this might need to be changed
-    split.off <- unlist(strsplit(as.character(offset.name), split = "\\("))
-    n.strings <- length(split.off)
-    off.name <- unlist(strsplit(split.off[n.strings], split = ")"))
-    
-    ##rename dataMix column to avoid error
-    names(dataMix)[offset.number] <- off.name
+    offset.values <- eval(calls[[off.num+1]], newdata)
   }
 ###############################################
 ###END OF MODIFICATIONS FOR OFFSET
 ###############################################
 ###############################################
   
-  m <- model.frame(TT, data = dataMix) 
+  #m <- model.frame(TT, data = dataMix) 
   #m <- model.frame(TT, data = newdata) gives error when offset is converted to log( ) scale within call
-  des.matrix <- model.matrix(TT, m)
+  des.matrix <- model.matrix(TT, dataMix)
   newdata <- des.matrix  #we now have a design matrix
 
   

@@ -45,8 +45,7 @@ predictSE.mer(mod, newdata, se.fit = TRUE, type = "response",
 \details{
   'predictSE.mer' computes predicted values based on fixed effects and
   associated standard errors.  Standard errors are approximated using
-  the delta method (Oehlert 1992).  The current version supports the use
-  of offsets only for the Poisson distribution.
+  the delta method (Oehlert 1992).  Offsets are also supported.
 }
 \value{
   'predictSE.mer' returns requested values either as a matrix
@@ -175,7 +174,7 @@ m1 <- glmer(Y.val ~ CWD + Basal.area + (1 | Block) + offset(log.Effort), data = 
 family = poisson)
 ##predictions
 pred.data <- expand.grid(CWD = mean(sim.data$CWD), Basal.area = seq(from = 20, to = 50, by = 10),
-log.Effort = log(20))
+                         log.Effort = log(20))
 predictSE.mer(m1, newdata = pred.data, type = "response")
 
 ##both are identical

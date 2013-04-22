@@ -117,11 +117,6 @@ predictSE.zip <- function(mod, newdata, se.fit = TRUE, parm.type = "lambda", typ
   ##if no intercept term, return error
   if(!int.yes) stop("\nThis function does not work with models excluding the intercept terms: change model parameterization\n")
 
-  ##extract variables on lambda
-  ##lam.a <- lapply(strsplit(lam.lab, split = "lam"), FUN = function(i) i[2])
-  ##lam.b <- gsub(pattern = "\\(", replacement = "", x = lam.a)
-  ##lam.names <- gsub(pattern = "\\)", replacement = "", x = lam.b)
-
   ##number of estimates (not counting intercept)
   n.est <- n.est.lam - 1
 

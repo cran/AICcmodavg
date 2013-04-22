@@ -101,7 +101,7 @@ the best model.}
 \item{table}{a reduced table with the models included in the confidence
   set.}
 
-when method = 'ordinal'
+when method = 'ordinal':
 \item{method}{identifies the method of determining the confidence set on
 the best model.}
 \item{substantial}{a reduced table with the models included in the
@@ -113,7 +113,7 @@ the best model.}
 \item{none}{a reduced table with the models included in the confidence
   set for which delta (Q)AIC(c) > 10.}
 
-when method = 'ordinal'
+when method = 'ratio':
 \item{method}{identifies the method of determining the confidence set on
   the best model.}
 \item{cutoff}{the cutoff value for the ratios used to determine the
