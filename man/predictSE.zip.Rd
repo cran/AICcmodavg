@@ -80,6 +80,7 @@ Marc J. Mazerolle
 \code{\link[unmarked]{pcountOpen}}, \code{\link[unmarked]{unmarkedFit-class}}
 }
 \examples{
+\dontrun{
 library(unmarked)
 ##example with mallard data set from unmarked package
 data(mallard)
@@ -94,5 +95,7 @@ predictSE.zip(fm.mall.one, type = "response", parm.type = "lambda",
 ##compare against predict
 predict(fm.mall.one, type = "state", backTransform = TRUE,
         newdata = data.frame(length = 0, forest = 0, elev = 0))
+detach(package:unmarked)
+}
 }
 \keyword{models}

@@ -332,6 +332,7 @@ detach(package:nlme)
 
 
 
+\dontrun{
 ##example of N-mixture model modified from ?pcount
 require(unmarked)
 data(mallard)
@@ -353,6 +354,7 @@ Modnames <- c("length + forest", "elev + forest", "length + elev")
 modavg.shrink(cand.set = Cands, modnames = Modnames, parm = "elev",
               parm.type = "lambda")
 detach(package:unmarked)
+}
 
 }
 \keyword{models}

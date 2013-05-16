@@ -426,6 +426,7 @@ modavg.effect(cand.set = Cand.models, modnames = Modnames, newdata = data.other,
               conf.level = 0.95, second.ord = TRUE, nobs = NULL, uncond.se = "revised")
 
 
+\dontrun{
 ##site occupancy analysis example
 library(unmarked)
 ##single season model
@@ -460,7 +461,6 @@ modavg.effect(cand.set = Cand.mods, modnames = Modnames, type = "response",
 ##created this bogus variable just for this example
 
 
-
 ##single season N-mixture models
 data(mallard)
 ##this variable was created to illustrate the use of modavg.effect( )
@@ -488,5 +488,6 @@ modavg.effect(Cands, Modnames, newdata = data.frame(site.group = c(0, 1)),
               parm.type = "detect", type = "link")
 
 detach(package:unmarked)
+}
 }
 \keyword{models}

@@ -4,6 +4,12 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+#revision 1.30 (16 May 2013)
+#- modified example code of predictSE.zip( ) to avoid errors on some platforms during package building
+
+
+
+####################################################################
 #revision 1.29 (22 April 2013)
 #- added a 'mb.chisq' to implement MacKenzie and Bailey (2004) goodness-of-fit test on single-season occupancy models
 #  and 'mb.gof.test' to compute P-values, c-hat, and histogram of bootstrapped test statistics
