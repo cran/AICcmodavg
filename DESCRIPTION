@@ -1,8 +1,8 @@
 Package: AICcmodavg
 Type: Package
 Title: Model selection and multimodel inference based on (Q)AIC(c)
-Version: 1.29
-Date: 2013-04-22
+Version: 1.30
+Date: 2013-05-16
 Author: Marc J. Mazerolle <marc.mazerolle@uqat.ca>.  Special thanks to
         T. Ergon for the original idea of storing candidate models in a
         list.
@@ -39,7 +39,7 @@ Description: This package includes functions to create model selection
         ('unmarkedFitDS' and 'unmarkedFitGDS' classes).
 License: GPL (>= 2)
 LazyLoad: yes
-Packaged: 2013-04-22 14:04:26 UTC; mazerolm
+Packaged: 2013-05-16 13:25:12 UTC; mazerolm
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2013-04-22 19:06:33
+Date/Publication: 2013-05-16 17:20:27

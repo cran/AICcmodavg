@@ -37,8 +37,8 @@ classes).
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.29\cr
-Date: \tab 2013-04-22\cr
+Version: \tab 1.30\cr
+Date: \tab 2013-05-16\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }

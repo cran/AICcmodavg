@@ -47,18 +47,26 @@ Marc J. Mazerolle
 }
 
 \examples{
-##modified example of single-season model with heterogeneity from ?occuRN
+##single-season occupancy model example modified from ?occu
 require(unmarked)
-data(birds)
-woodthrushUMF <- unmarkedFrameOccu(woodthrush.bin)
+##single season
+data(frogs)
+pferUMF <- unmarkedFrameOccu(pfer.bin)
+## add some fake covariates for illustration
+siteCovs(pferUMF) <- data.frame(sitevar1 = rnorm(numSites(pferUMF)),
+                                sitevar2 = rnorm(numSites(pferUMF))) 
+     
+## observation covariates are in site-major, observation-minor order
+obsCovs(pferUMF) <- data.frame(obsvar1 = rnorm(numSites(pferUMF) *
+                                 obsNum(pferUMF))) 
 
-##survey occasion-specific detection probabilities
-fm.wood.rn <- occuRN(~ obsNum ~ 1, woodthrushUMF)
+##run model set
+fm1 <- occu(~ obsvar1 ~ sitevar1, pferUMF)
 
 ##extract log-likelihood
-extract.LL(fm.wood.rn)
-
+extract.LL(fm1)
 detach(package:unmarked)
+
 
 
 ##modified example of Cox regression from ?coxph
@@ -71,6 +79,7 @@ test2 <- list(start=c(1, 2, 5, 2, 1, 7, 3, 4, 8, 8),
 m.cox <- coxph(Surv(start, stop, event) ~ x, test2)
 extract.LL(m.cox)
 detach(package:survival)
+
 }
 \keyword{models}
 
