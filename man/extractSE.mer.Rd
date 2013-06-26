@@ -1,6 +1,7 @@
 \name{extractSE.mer}
 \Rdversion{1.1}
 \alias{extractSE.mer}
+\alias{extractSE.merMod}
 \title{
 Extract SE of Fixed Effects of 'glmer' Fit
 }
@@ -11,16 +12,19 @@ labels.
 }
 \usage{
 extractSE.mer(mod)
+
+extractSE.merMod(mod)
 }
 
 \arguments{
   \item{mod}{
-an object of 'mer' class resulting from the fit of 'glmer'.
+an object of 'mer' or 'merMod' class resulting from the fit of 'glmer'.
 }
 }
 \details{
-This is an extractor function that uses 'vcov.mer' from the 'lme4'
-  package and it is called by 'modavg.mer'.
+These are extractor functions that use 'vcov.mer' and 'vcov.merMod'
+  from the 'lme4' package and are called by 'modavg.mer' and
+  'modavg.merMod'.
 }
 \value{
 Returns the SE's of the fixed effects with the appropriate labels for each.

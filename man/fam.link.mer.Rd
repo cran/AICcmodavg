@@ -14,13 +14,16 @@ fam.link.mer(mod)
 
 \arguments{
   \item{mod}{
-an object of 'mer' class resulting from the fit of 'glmer' or 'lmer'.
+an object of 'mer' or 'merMod' class resulting from the fit of 'glmer'
+or 'lmer'.
 }
 }
 \details{
-This utility function extracts the information from an 'mer' object
-  resulting from 'glmer' or 'lmer'.  The function is called by
-  'modavg.mer',  'modavgpred.mer', and 'predictSE.mer'.
+This utility function extracts the information from an 'mer' or 'merMod'
+  object resulting from 'glmer' or 'lmer'.  The function is called by
+  'modavg.mer', 'modavg.merMod', 'modavg.effect.mer',
+  'modavg.effect.merMod', 'modavgpred.mer', 'modavgpred.merMod',
+  'predictSE.mer', and 'predictSE.merMod'.
 }
 \value{
   'fam.link.mer' returns a list with the following components:
@@ -28,7 +31,8 @@ This utility function extracts the information from an 'mer' object
   \item{family}{the family of the distribution of the model.}
   \item{link}{the link function of the model.}
   \item{supp.link}{a character value indicating whether the link
-  function used is supported by 'predictSE.mer' and 'modavgpred.mer'.}
+    function used is supported by 'predictSE.mer', 'predictSE.merMod',
+    'modavgpred.mer', and 'modavgpred.merMod'.}
 }
 
 \author{

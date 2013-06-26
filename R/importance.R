@@ -14,38 +14,38 @@ importance <-
     reversed.parm <- reverse.parm(parm)
 
     ##add check for supported classes
-    known <- rep(0, 11) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or coxph
+    known <- 0 #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or coxph
     
     if(identical(check.class, "lm") || identical(check.class, c("glm", "lm")))  {
     
       ##extract model formula for each model in cand.set
       mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients))
-      known[1] <- 1
+      known <- 1
     }
   
     if(identical(check.class, "lme")) {
       mod_formula <- lapply(cand.set, FUN=function(i) labels(summary(i)$coefficients$fixed))
-      known[2] <- 1
+      known <- 1
     }
 
     if(identical(check.class, "gls")) {
       mod_formula <- lapply(cand.set, FUN=function(i) labels(summary(i)$coefficients))
-      known[3] <- 1
+      known <- 1
     }
 
     if(identical(check.class, c("multinom", "nnet"))) {
       mod_formula <- lapply(cand.set, FUN=function(i) colnames(summary(i)$coefficients))
-      known[4] <- 1
+      known <- 1
     }
 
     if(identical(check.class, "mer")) {
       mod_formula <- lapply(cand.set, FUN=function(i) labels(fixef(i)))
-      known[5] <- 1
+      known <- 1
     }
 
     if(identical(check.class, "polr")) {
       mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients))
-      known[6] <- 1
+      known <- 1
     }
 
     
@@ -54,7 +54,7 @@ importance <-
                         "unmarkedFitDS", "unmarkedFitGDS", "unmarkedFitOccuFP")
     if(any(sapply(unmarked.class, FUN = function(i) identical(i, check.class)))) {
 
-      known[7] <- 1
+      known <- 1
       
       ##check for parm.type and stop if NULL
       if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
@@ -248,23 +248,28 @@ importance <-
 
     if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph"))) {
       mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients))
-      known[8] <- 1
+      known <- 1
     }
 
 
     if(identical(check.class, c("rlm", "lm"))) {
       mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients))
-      known[9] <- 1
+      known <- 1
     }
 
     if(identical(check.class, c("sclm", "clm"))) {
       mod_formula <- lapply(cand.set, FUN = function(i) rownames(summary(i)$coefficients))
-      known[10] <- 1
+      known <- 1
     }
 
     if(identical(check.class, "clmm")) {
       mod_formula <- lapply(cand.set, FUN = function(i) rownames(summary(i)$coefficients))
-      known[11] <- 1
+      known <- 1
+    }
+
+    if(identical(check.class, "lmerMod") || identical(check.class, "glmerMod") || identical(check.class, "nlmerMod")) {
+      mod_formula <- lapply(cand.set, FUN=function(i) labels(fixef(i)))
+      known <- 1
     }
 
       

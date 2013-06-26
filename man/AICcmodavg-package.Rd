@@ -20,25 +20,25 @@ model.  The present version works with Cox proportional hazards models
 ('coxph' class), linear models ('lm' class), generalized linear models
 ('glm' class), linear models fit by generalized least squares ('gls'
 class), linear mixed models ('lme' class), generalized linear mixed
-models ('mer' class), multinomial and ordinal logistic regressions
-('multinom', 'polr', 'clm', and 'clmm' classes), robust regression
-models ('rlm' class), nonlinear models ('nls' class), and nonlinear
-mixed models ('nlme' class).  The package also supports various models
-incorporating detection probabilities such as single-season occupancy
-models ('unmarkedFitOccu' and 'unmarkedFitOccuFP' classes),
-multiple-season occupancy models ('unmarkedFitColExt' class),
-single-season heterogeneity models ('unmarkedFitOccuRN' class),
-single-season and multiple-season N-mixture models for repeated counts
-('unmarkedFitPCount' and 'unmarkedFitPCO' classes, respectively), and
-distance sampling models ('unmarkedFitDS' and 'unmarkedFitGDS'
-classes).
+models ('mer' and 'merMod' classes), multinomial and ordinal logistic
+regressions ('multinom', 'polr', 'clm', and 'clmm' classes), robust
+regression models ('rlm' class), nonlinear models ('nls' class), and
+nonlinear mixed models ('nlme' class).  The package also supports
+various models incorporating detection probabilities such as
+single-season occupancy models ('unmarkedFitOccu' and
+'unmarkedFitOccuFP' classes), multiple-season occupancy models
+('unmarkedFitColExt' class), single-season heterogeneity models
+('unmarkedFitOccuRN' class), single-season and multiple-season N-mixture
+models for repeated counts ('unmarkedFitPCount' and 'unmarkedFitPCO'
+classes, respectively), and distance sampling models ('unmarkedFitDS'
+and 'unmarkedFitGDS' classes).
 }
 \details{
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.30\cr
-Date: \tab 2013-05-16\cr
+Version: \tab 1.31\cr
+Date: \tab 2013-06-26\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -50,6 +50,9 @@ multimodel inference:
 \item{\code{\link{aictab}}}  {Constructs model selection tables with
   number of parameters, AIC, delta AIC, Akaike weights or variants based
   on other AICc, QAIC, and QAICc for a set of candidate models.}
+\item{\code{\link{c_hat}}}  {Computes an estimate of variance
+  inflation factor for binomial or Poisson GLM's based on Pearson's
+  chi-square.}
 \item{\code{\link{confset}}}  {Determines the confidence set for the best
   model based on one of three criteria.}
 \item{\code{\link{evidence}}}  {Computes the evidence ratio between the
@@ -58,12 +61,16 @@ multimodel inference:
 \item{\code{\link{extract.LL}}}  {Extracts log-likelihood from
   models of class 'coxph' and 'unmarkedFit'.}
 \item{\code{\link{extractSE.mer}}}  {Extracts standard errors of the
-  fixed effects of a generalized linear mixed model of class 'mer' and
-  adds the labels.}
+  fixed effects of a generalized linear mixed model of classes 'mer' and
+  'merMod' and adds the labels.}
 \item{\code{\link{fam.link.mer}}}  {Extracts the distribution family and 
-  link function from a generalized linear mixed model of class 'mer'.} 
+  link function from a generalized linear mixed model of classes 'mer'
+  and 'merMod'.} 
 \item{\code{\link{importance}}}  {Computes importance values (w+) for
   the support of a given parameter among set of candidate models.}
+\item{\code{\link{mb.gof.test}}}  {Computes the MacKenzie and Bailey
+  goodness-of-fit test for single season occupancy models using the
+  Pearson chi-square statistic.}
 \item{\code{\link{modavg}}}  {Computes model-averaged estimate,
   unconditional standard error, and unconditional confidence interval of a
   parameter of interest among a set of candidate models.}
@@ -75,20 +82,14 @@ multimodel inference:
   set of candidate models.} 
 \item{\code{\link{modavgpred}}}  {Computes model-average predictions and
   unconditional SE's among entire set of candidate models.}
-\item{\code{\link{c_hat}}}  {Computes an estimate of variance
-  inflation factor for binomial or Poisson GLM's based on Pearson's
-  chi-square.}
-\item{\code{\link{mb.gof.test}}}  {Computes the MacKenzie and Bailey
-  goodness-of-fit test for single season occupancy models using the
-  Pearson chi-square statistic.}
 \item{\code{\link{predictSE.gls}}}  {Computes predictions and associated 
   standard errors for 'gls' object based on linear predictor.}
 \item{\code{\link{predictSE.lme}}}  {Computes predictions and associated 
   standard errors for 'lme' object based on fixed effects (i.e., 
   population predictions).}
 \item{\code{\link{predictSE.mer}}}  {Computes predictions and associated 
-  standard errors for 'mer' object based on fixed effects (i.e., 
-  population predictions).}
+  standard errors for 'mer' and 'merMod' objects based on fixed effects
+  (i.e., population predictions).}
 \item{\code{\link{predictSE.zip}}}  {Computes predictions and associated 
   standard errors for 'unmarkedFitPCount' and 'unmarkedFitPCO' objects
   that use zero-inflated Poisson distributions on abundance.} 
