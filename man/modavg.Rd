@@ -8,6 +8,7 @@
 \alias{modavg.gls}
 \alias{modavg.lme}
 \alias{modavg.mer}
+\alias{modavg.merMod}
 \alias{modavg.mult}
 \alias{modavg.polr}
 \alias{modavg.rlm}
@@ -58,6 +59,10 @@ modavg.lme(cand.set, parm, modnames, conf.level = 0.95,
 modavg.mer(cand.set, parm, modnames, conf.level = 0.95,
            second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
            uncond.se = "revised")
+
+modavg.merMod(cand.set, parm, modnames, conf.level = 0.95,
+              second.ord = TRUE, nobs = NULL, exclude = NULL,
+              warn = TRUE, uncond.se = "revised")
 
 modavg.mult(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95,
             second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
@@ -188,19 +193,19 @@ and 'exclude' arguments.  However, to avoid problems, one should specify
 interaction terms consistently for all models: e.g., either a:b or b:a
 for all models, but not a mixture of both. 
 
-Care must be taken when some models include interaction or polynomial
-terms, because main effect terms do not have the same interpretation
-when they also appear in an interaction/polynomial term in the same
-model.  In such cases, one should exclude models containing interaction
-terms where the main effect is involved with the 'exclude' argument of
-'modavg'.  Note that 'modavg' checks for potential cases of multiple
-instances of a variable appearing more than once in a given model
+You must exercise caution when some models include interaction or
+polynomial terms, because main effect terms do not have the same
+interpretation when they also appear in an interaction/polynomial term
+in the same model.  In such cases, one should exclude models containing
+interaction terms where the main effect is involved with the 'exclude'
+argument of 'modavg'.  Note that 'modavg' checks for potential cases of
+multiple instances of a variable appearing more than once in a given model
 (presumably in an interaction) and issues a warning.  To correctly
 compute the model-averaged estimate of a main effect involved in
-interaction/polynomial terms, specify the terms(s) that should not
-appear in the same model with the 'exclude' argument.  This will
-effectively exclude models from the computation of the model-averaged
-estimate.  
+interaction/polynomial terms, specify the interaction terms(s) that
+should not appear in the same model with the 'exclude' argument.  This
+will effectively exclude models from the computation of the
+model-averaged estimate.  
 
 When 'warn' = TRUE, 'modavg' looks for matches among the labels of the
 estimates with 'identical'.  It then compares the results to partial
@@ -213,19 +218,19 @@ terms), you can suppress this warning by setting 'warn = FALSE'.
 
 'modavg' is a function that calls 'modavg.clm', 'modavg.clmm',
 'modavg.coxph', 'modavg.glm', 'modavg.gls', 'modavg.lme', 'modavg.mer',
-'modavg.mult', 'modavg.polr', 'modavg.rlm', or 'modavg.unmarked'
-depending on the class of the object.  The current function is
-implemented for a list containing objects of 'clm', 'clmm', 'coxph',
-'glm', 'gls', 'lm', 'lme', 'mer', 'multinom', 'polr', and 'rlm' classes
-as well as 'unmarkedFitOccu', 'unmarkedFitColExt', 'unmarkedFitOccuRN',
-'unmarkedFitPCount', 'unmarkedFitPCO', 'unmarkedFitDS', and
-'unmarkedFitGDS' classes.
+'modavg.merMod', 'modavg.mult', 'modavg.polr', 'modavg.rlm', or
+'modavg.unmarked' depending on the class of the object.  The current
+function is implemented for a list containing objects of 'clm', 'clmm',
+'coxph', 'glm', 'gls', 'lm', 'lme', 'mer', 'merMod', 'multinom', 'polr',
+and 'rlm' classes as well as 'unmarkedFitOccu', 'unmarkedFitColExt',
+'unmarkedFitOccuRN', 'unmarkedFitPCount', 'unmarkedFitPCO',
+'unmarkedFitDS', and 'unmarkedFitGDS' classes.
 }
 \value{
 'modavg', 'modavg.clm', 'modavg.clmm', 'modavg.coxph', 'modavg.glm',
-'modavg.gls', 'modavg.lme', 'modavg.mer', 'modavg.mult', 'modavg.polr',
-'modavg.rlm', and 'modavg.unmarked' create an object of class 'modavg'
-with the following components:
+'modavg.gls', 'modavg.lme', 'modavg.mer', 'modavg.merMod',
+'modavg.mult', 'modavg.polr', 'modavg.rlm', and 'modavg.unmarked' create 
+an object of class 'modavg' with the following components:
 
 \item{Parameter}{the parameter for which a model-averaged estimate was
   obtained} 

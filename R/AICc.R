@@ -38,6 +38,12 @@ AICc <-
                        nobs = nobs)
     }
 
+    ##determine if merMod
+    if(identical(class(mod)[1], "lmerMod") || identical(class(mod)[1], "glmerMod") ) {
+      aicc <- AICc.merMod(mod = mod, return.K = return.K, second.ord = second.ord,
+                       nobs = nobs)
+    }
+
 
     ##determine if unmarked
     unmarked.class <- c("unmarkedFitOccu", "unmarkedFitColExt", "unmarkedFitOccuRN", "unmarkedFitPCount", "unmarkedFitPCO",

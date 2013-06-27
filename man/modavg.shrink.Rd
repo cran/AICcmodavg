@@ -8,6 +8,7 @@
 \alias{modavg.shrink.gls}
 \alias{modavg.shrink.lme}
 \alias{modavg.shrink.mer}
+\alias{modavg.shrink.merMod}
 \alias{modavg.shrink.mult}
 \alias{modavg.shrink.polr}
 \alias{modavg.shrink.rlm}
@@ -56,6 +57,10 @@ modavg.shrink.lme(cand.set, parm, modnames, conf.level = 0.95,
 
 modavg.shrink.mer(cand.set, parm, modnames, conf.level = 0.95,
                   second.ord = TRUE, nobs = NULL, uncond.se = "revised")
+
+modavg.shrink.merMod(cand.set, parm, modnames, conf.level = 0.95, 
+                     second.ord = TRUE, nobs = NULL,
+                     uncond.se = "revised") 
 
 modavg.shrink.mult(cand.set, parm, modnames, c.hat = 1,
                    conf.level = 0.95, second.ord = TRUE, nobs = NULL,
@@ -137,7 +142,7 @@ confidence intervals.
   standard errors.  
 }
 \item{parm.type}{
-    this argument specifies the parameter type on which the effect size 
+  this argument specifies the parameter type on which the effect size 
   will be computed and is only relevant for models of 'unmarkedFitOccu',
   'unmarkedFitColExt', 'unmarkedFitOccuRN', 'unmarkedFitPCount',
   'unmarkedFitPCO', 'unmarkedFitDS', 'unmarkedFitGDS', and
@@ -176,20 +181,22 @@ terms or polynomial terms are not supported by 'modavg.shrink'.
 'modavg.shrink' is a function that calls 'modavg.shrink.clm',
 'modavg.shrink.clmm', 'modavg.shrink.coxph', 'modavg.shrink.glm',
 'modavg.shrink.gls', 'modavg.shrink.lme', 'modavg.shrink.mer',
-'modavg.shrink.mult', 'modavg.shrink.polr', 'modavg.shrink.rlm', or
-'modavg.shrink.unmarked' depending on the class of the object.  The
-current function is implemented for a list containing objects of 'clm',
-'clmm', 'coxph', 'glm', 'gls', 'lm', 'lme', 'mer', 'multinom', 'polr',
-and 'rlm' classes as well as 'unmarkedFitOccu', 'unmarkedFitColExt',
-'unmarkedFitOccuRN', 'unmarkedFitPCount', 'unmarkedFitPCO',
-'unmarkedFitDS', and 'unmarkedFitGDS' classes.  
+'modavg.shrink.merMod', 'modavg.shrink.mult', 'modavg.shrink.polr',
+'modavg.shrink.rlm', or 'modavg.shrink.unmarked' depending on the class
+of the object.  The current function is implemented for a list
+containing objects of 'clm', 'clmm', 'coxph', 'glm', 'gls', 'lm', 'lme',
+'mer', 'merMod', 'multinom', 'polr', and 'rlm' classes as well as
+'unmarkedFitOccu', 'unmarkedFitColExt', 'unmarkedFitOccuRN',
+'unmarkedFitPCount', 'unmarkedFitPCO', 'unmarkedFitDS', and
+'unmarkedFitGDS' classes.   
 }
 \value{
 'modavg.shrink', 'modavg.shrink.clm', 'modavg.shrink.clmm',
 'modavg.shrink.coxph', 'modavg.shrink.glm', 'modavg.shrink.gls',
-'modavg.shrink.lme', 'modavg.shrink.mer', 'modavg.shrink.mult',
-'modavg.shrink.polr', 'modavg.shrink.rlm', and 'modavg.shrink.unmarked'
-create an object of class 'modavg' with the following components:
+'modavg.shrink.lme', 'modavg.shrink.mer', 'modavg.shrink.merMod',
+'modavg.shrink.mult', 'modavg.shrink.polr', 'modavg.shrink.rlm', and
+'modavg.shrink.unmarked' create an object of class 'modavg' with the
+following components: 
 
 \item{Parameter}{the parameter for which a model-averaged estimate with
   shrinkage was obtained} 

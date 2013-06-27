@@ -11,11 +11,12 @@ model.
 }
 \usage{
 predictSE.mer(mod, newdata, se.fit = TRUE, type = "response",
-              level = 0, print.matrix = FALSE) 
+              level = 0, print.matrix = FALSE)
 }
 \arguments{
   \item{mod}{
-    an object of class 'mer' containing the output of a model.
+    an object of class 'mer' or 'merMod' containing the output of a
+    model.
   }
   \item{newdata}{
     a data frame with the same structure as that of the original data
@@ -49,8 +50,9 @@ predictSE.mer(mod, newdata, se.fit = TRUE, type = "response",
 }
 \value{
   'predictSE.mer' returns requested values either as a matrix
-    ('print.matrix = TRUE') or list ('print.matrix = FALSE') with
-    components:
+  ('print.matrix = TRUE') or list ('print.matrix = FALSE') with
+  components: 
+  
     \item{fit}{
       the predicted values.
     }
@@ -77,7 +79,7 @@ Marc J. Mazerolle
 }
 
 \seealso{
-\code{\link{predictSE.lme}}, \code{\link[lme4]{mer-class}}, \code{\link[lme4]{lmer}}, \code{\link[lme4]{glmer}}
+\code{\link{predictSE.lme}}, \code{\link[lme4]{lmer}}, \code{\link[lme4]{glmer}}
 }
 \examples{
 ##contagious bovine pleuropneumonia example modified from lme4

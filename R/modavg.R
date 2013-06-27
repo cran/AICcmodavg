@@ -3,7 +3,7 @@ modavg <-
            nobs = NULL, exclude = NULL, warn = TRUE, uncond.se = "revised", parm.type = NULL){
 
     mod.avg <- NULL
-    known <- rep(0, 12) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or coxph
+    known <- 0 #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, or coxph
     ##extract classes
     mod.class <- unlist(lapply(X = cand.set, FUN = class))
     ##check if all are identical
@@ -14,7 +14,7 @@ modavg <-
       mod.avg <- modavg.glm(cand.set = cand.set, parm = parm, modnames = modnames, c.hat = c.hat, gamdisp = gamdisp,
                             conf.level = conf.level, second.ord = second.ord, nobs = nobs, exclude = exclude,
                             warn = warn, uncond.se = uncond.se)
-      known[1] <- 1
+      known <- 1
     }   
 
 
@@ -23,7 +23,7 @@ modavg <-
       mod.avg <- modavg.mult(cand.set = cand.set, parm = parm, modnames = modnames, c.hat = c.hat,
                              conf.level = conf.level, second.ord = second.ord, nobs = nobs, exclude = exclude,
                              warn = warn, uncond.se = uncond.se)
-      known[2] <- 1
+      known <- 1
     } 
 
     
@@ -32,7 +32,7 @@ modavg <-
       mod.avg <- modavg.polr(cand.set = cand.set,parm = parm, modnames = modnames, conf.level = conf.level,
                              second.ord = second.ord, nobs = nobs, exclude = exclude,
                              warn = warn, uncond.se = uncond.se)
-      known[3] <- 1
+      known <- 1
     }   
       
 
@@ -42,7 +42,7 @@ modavg <-
       mod.avg <- modavg.lme(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                             second.ord = second.ord, nobs = nobs, exclude = exclude,
                             warn = warn, uncond.se = uncond.se)
-      known[4] <- 1
+      known <- 1
     }      
 
     ##determine if gls
@@ -50,7 +50,7 @@ modavg <-
       mod.avg <- modavg.gls(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                             second.ord = second.ord, nobs = nobs, exclude = exclude,
                             warn = warn, uncond.se = uncond.se)
-      known[5] <- 1
+      known <- 1
     }
 
     
@@ -59,7 +59,7 @@ modavg <-
       mod.avg <- modavg.mer(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                             second.ord = second.ord, nobs = nobs, exclude = exclude,
                             warn = warn, uncond.se = uncond.se)
-      known[6] <- 1
+      known <- 1
     }
 
 
@@ -70,7 +70,7 @@ modavg <-
       mod.avg <- modavg.unmarked(cand.set = cand.set, parm = parm, modnames = modnames, c.hat = c.hat, conf.level = conf.level,
                                  second.ord = second.ord, nobs = nobs, exclude = exclude, warn = warn, uncond.se = uncond.se,
                                  parm.type = parm.type)
-      known[7] <- 1
+      known <- 1
     }
 
 
@@ -79,7 +79,7 @@ modavg <-
       mod.avg <- modavg.coxph(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                               second.ord = second.ord, nobs = nobs, exclude = exclude,
                               warn = warn, uncond.se = uncond.se)
-      known[8] <- 1
+      known <- 1
     }
 
 
@@ -88,7 +88,7 @@ modavg <-
       mod.avg <- modavg.rlm(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                             second.ord = second.ord, nobs = nobs, exclude = exclude,
                             warn = warn, uncond.se = uncond.se)
-      known[9] <- 1
+      known <- 1
     }      
 
     ##determine if clm
@@ -96,7 +96,7 @@ modavg <-
       mod.avg <- modavg.clm(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                             second.ord = second.ord, nobs = nobs, exclude = exclude,
                             warn = warn, uncond.se = uncond.se)
-      known[10] <- 1
+      known <- 1
     }      
 
     ##determine if clmm
@@ -104,7 +104,7 @@ modavg <-
       mod.avg <- modavg.clmm(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                              second.ord = second.ord, nobs = nobs, exclude = exclude,
                              warn = warn, uncond.se = uncond.se)
-      known[11] <- 1
+      known <- 1
     }      
 
 
@@ -112,10 +112,19 @@ modavg <-
     ##warn if models are from a mixture of model classes
     if(identical(sort(check.class), c("lm", "lme"))) {
       stop("\nFunction not appropriate for mixture of object classes:\navoid mixing objects of classes lm and lme\n")
-      known[12] <- 1
+      known <- 1
     }
 
 
+    ##determine if merMod
+    if(identical(check.class, "lmerMod") || identical(check.class, "glmerMod"))  {
+      mod.avg <- modavg.merMod(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
+                            second.ord = second.ord, nobs = nobs, exclude = exclude,
+                            warn = warn, uncond.se = uncond.se)
+      known <- 1
+    }
+
+    
     ##warn if class is neither lm, glm, multinom, polr, lme, gls nor mer
     if(sum(known) < 1) {stop("\nFunction not yet defined for this object class\n")}
 

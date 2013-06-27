@@ -5,6 +5,7 @@
 \alias{modavgpred.gls}
 \alias{modavgpred.lme}
 \alias{modavgpred.mer}
+\alias{modavgpred.merMod}
 \alias{modavgpred.rlm}
 \alias{modavgpred.unmarked}
 \alias{print.modavgpred}
@@ -14,9 +15,9 @@ Compute Model-averaged Predictions
 \description{
 This function computes the model-averaged predictions and unconditional
 standard errors based on the entire candidate model set.  The function
-is currently implemented for 'glm', 'gls', 'lm', 'lme', and
-'mer' object classes that are stored in a list as well as various models
-of 'unmarkedFit' classes.
+is currently implemented for 'glm', 'gls', 'lm', 'lme', 'mer', and
+'merMod' object classes that are stored in a list as well as various
+models of 'unmarkedFit' classes.
 }
 \usage{
 modavgpred(cand.set, modnames, newdata, type = "response", c.hat = 1,
@@ -36,6 +37,10 @@ modavgpred.lme(cand.set, modnames, newdata, second.ord = TRUE,
 modavgpred.mer(cand.set, modnames, newdata, type = "response",
                c.hat = 1, second.ord = TRUE, nobs = NULL,
                uncond.se = "revised")
+
+modavgpred.merMod(cand.set, modnames, newdata, type = "response",
+                  c.hat = 1, second.ord = TRUE, nobs = NULL,
+                  uncond.se = "revised")
 
 modavgpred.rlm(cand.set, modnames, newdata, second.ord = TRUE,
                nobs = NULL, uncond.se = "revised")
@@ -132,12 +137,13 @@ unconditional standard errors.
 \details{
   'modavgpred' is a function that calls 'modavgpred.gls',
   'modavgpred.glm', 'modavgpred.lme', 'modavgpred.mer',
-  'modavgpred.rlm', or 'modavgpred.unmarked' depending on the class of
-  the object.  The candidate models must be stored in a list. Note that
-  a data frame from which to make predictions must be supplied with the
-  'newdata' argument and that all variables appearing in the model set
-  must appear in this data frame.  Variables must be of the same type as
-  in the original analysis (e.g., factor, numeric).
+  'modavgpred.merMod', 'modavgpred.rlm', or 'modavgpred.unmarked'
+  depending on the class of the object.  The candidate models must be
+  stored in a list. Note that a data frame from which to make
+  predictions must be supplied with the 'newdata' argument and that all
+  variables appearing in the model set must appear in this data frame.
+  Variables must be of the same type as in the original analysis (e.g.,
+  factor, numeric).
   
   One can compute unconditional confidence intervals around the
   predictions from the elements returned by 'modavgpred'.  The classic
@@ -157,8 +163,8 @@ unconditional standard errors.
 'modavgpred' returns an object of class 'modavgpred' with the
 following components:
 \item{type}{
-  the scale of predicted values (response or link) for 'glm', 'mer', or
-  'unmarkedFit' classes.
+  the scale of predicted values (response or link) for 'glm', 'mer',
+  'merMod', or 'unmarkedFit' classes.
 }
 \item{mod.avg.pred}{
   the model-averaged prediction over the entire candidate model set.

@@ -5,6 +5,7 @@
 \alias{modavg.effect.gls}
 \alias{modavg.effect.lme}
 \alias{modavg.effect.mer}
+\alias{modavg.effect.merMod}
 \alias{modavg.effect.rlm}
 \alias{modavg.effect.unmarked}
 \alias{print.modavg.effect}
@@ -42,6 +43,10 @@ modavg.effect.lme(cand.set, modnames, newdata, conf.level = 0.95,
 modavg.effect.mer(cand.set, modnames, newdata, type = "response",
                   c.hat = 1, conf.level = 0.95, second.ord = TRUE,
                   nobs = NULL, uncond.se = "revised")
+
+modavg.effect.merMod(cand.set, modnames, newdata, type = "response",
+                     c.hat = 1, conf.level = 0.95, second.ord = TRUE,
+                     nobs = NULL, uncond.se = "revised")
 
 modavg.effect.rlm(cand.set, modnames, newdata, conf.level = 0.95,
                   second.ord = TRUE, nobs = NULL, uncond.se = "revised")
@@ -175,18 +180,18 @@ set is used instead of being restricted to a single model. See
 
 'modavg.effect' is a function that calls 'modavg.effect.glm',
 'modavg.effect.gls', 'modavg.effect.lme', 'modavg.effect.mer',
-'modavg.effect.rlm', or 'modavg.unmarked' depending on the class of the
-object.  The current function is implemented for a list containing
-objects of 'glm', 'gls', 'lm', 'lme', 'mer', 'rlm', as well as
-'unmarkedFitOccu', 'unmarkedFitColExt', 'unmarkedFitOccuRN',
-'unmarkedFitPCount', 'unmarkedFitPCO', 'unmarkedFitDS', and
-'unmarkedFitGDS' classes. 
+'modavg.effect.merMod', 'modavg.effect.rlm', or 'modavg.unmarked'
+depending on the class of the object.  The current function is
+implemented for a list containing objects of 'glm', 'gls', 'lm', 'lme',
+'mer', 'merMod', 'rlm', as well as 'unmarkedFitOccu',
+'unmarkedFitColExt', 'unmarkedFitOccuRN', 'unmarkedFitPCount',
+'unmarkedFitPCO', 'unmarkedFitDS', and 'unmarkedFitGDS' classes. 
 }
 \value{
 'modavg.effect', 'modavg.effect.glm', 'modavg.effect.gls',
-'modavg.effect.lme', 'modavg.effect.mer', 'modavg.effect.rlm', and
-'modavg.unmarked' create an object of class 'modavg.effect' with the
-following components:
+'modavg.effect.lme', 'modavg.effect.mer', 'modavg.effect.merMod',
+'modavg.effect.rlm', and 'modavg.unmarked' create an object of class
+'modavg.effect' with the following components:
 
 \item{Group.variable}{the grouping variable defining the two groups
   compared} 

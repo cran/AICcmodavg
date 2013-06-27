@@ -3,7 +3,7 @@ modavg.shrink <-
            nobs = NULL, uncond.se = "revised", parm.type = NULL){
 
     mod.avg.shrink <- NULL
-    known <- rep(0, 12) #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, coxph
+    known <- 0 #create an identifier of class type other than lm, glm, multinom, polr, lme, gls, mer, unmarked, coxph
     ##extract classes
     mod.class <- unlist(lapply(X = cand.set, FUN = class))
     ##check if all are identical
@@ -13,7 +13,7 @@ modavg.shrink <-
     if(identical(check.class, "lm") || identical(check.class, c("glm", "lm"))) {
       mod.avg.shrink <- modavg.shrink.glm(cand.set = cand.set, parm = parm, modnames = modnames, c.hat = c.hat, gamdisp = gamdisp,
                                    conf.level = conf.level, second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
-      known[1] <- 1
+      known <- 1
     }   
 
 
@@ -21,7 +21,7 @@ modavg.shrink <-
     if(identical(check.class, c("multinom", "nnet"))) {
       mod.avg.shrink <- modavg.shrink.mult(cand.set = cand.set, parm = parm, modnames = modnames, c.hat = c.hat,
                                     conf.level = conf.level, second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
-      known[2] <- 1
+      known <- 1
     } 
 
     
@@ -29,7 +29,7 @@ modavg.shrink <-
     if(identical(check.class, "polr")) {
       mod.avg.shrink <- modavg.shrink.polr(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                              second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
-      known[3] <- 1
+      known <- 1
     }   
       
 
@@ -38,14 +38,14 @@ modavg.shrink <-
     if(identical(check.class, "lme"))  {
       mod.avg.shrink <- modavg.shrink.lme(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                             second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
-      known[4] <- 1
+      known <- 1
     }      
 
     ##determine if gls
     if(identical(check.class, "gls"))  {
       mod.avg.shrink <- modavg.shrink.gls(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                             second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
-      known[5] <- 1
+      known <- 1
     }
 
     
@@ -53,7 +53,7 @@ modavg.shrink <-
     if(identical(check.class, "mer"))  {
       mod.avg.shrink <- modavg.shrink.mer(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                             second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
-      known[6] <- 1
+      known <- 1
     }
 
     
@@ -63,7 +63,7 @@ modavg.shrink <-
     if(any(sapply(unmarked.class, FUN = function(i) identical(i, check.class)))) {
       mod.avg.shrink <- modavg.shrink.unmarked(cand.set = cand.set, parm = parm, modnames = modnames, c.hat = c.hat, conf.level = conf.level,
                                         second.ord = second.ord, nobs = nobs, uncond.se = uncond.se, parm.type = parm.type)
-      known[7] <- 1
+      known <- 1
     }
     
 
@@ -71,7 +71,7 @@ modavg.shrink <-
     if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph"))) {
       mod.avg.shrink <- modavg.shrink.coxph(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                               second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
-      known[8] <- 1
+      known <- 1
     }
 
 
@@ -80,21 +80,21 @@ modavg.shrink <-
     if(identical(check.class, c("rlm", "lm")))  {
       mod.avg.shrink <- modavg.shrink.rlm(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                                           second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
-      known[9] <- 1
+      known <- 1
     }      
 
     ##determine if clm
     if(identical(check.class, c("sclm", "clm")))  {
       mod.avg.shrink <- modavg.shrink.clm(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                                           second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
-      known[10] <- 1
+      known <- 1
     }
 
     ##determine if clmm
     if(identical(check.class, c("clmm")))  {
       mod.avg.shrink <- modavg.shrink.clmm(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                                            second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
-      known[11] <- 1
+      known <- 1
     }      
 
 
@@ -103,10 +103,18 @@ modavg.shrink <-
     if(identical(sort(check.class), c("lm", "lme"))) {
       stop("\nFunction not appropriate for mixture of object classes:", "\n",
                "avoid mixing objects of classes lm and lme", "\n")
-      known[12] <- 1
+      known <- 1
     }
 
 
+    ##determine if merMod
+    if(identical(check.class, "lmerMod") || identical(check.class, "glmerMod"))  {
+      mod.avg.shrink <- modavg.shrink.merMod(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
+                                             second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
+      known <- 1
+    }
+
+    
     ##warn if class is neither lm, glm, multinom, polr, lme, gls nor mer
     if(sum(known) < 1) {stop("\nFunction not yet defined for this object class\n")}
 
