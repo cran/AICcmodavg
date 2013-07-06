@@ -92,6 +92,7 @@ indicate lack-of-fit and that an alternative model should be investigated.
 \item{chi.square}{the Pearson chi-square statistic.
 }
 
+
   'mb.gof.test' returns the following components:
 
   \item{chisq.table}{the table of observed and expected values for each

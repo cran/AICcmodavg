@@ -4,6 +4,13 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+#revision 1.32 (5 July 2013)
+#- corrected minor bug in 'modavg' when model-averaging with models of classes 'clm' and 'clmm' when the 'exclude' argument was used
+#- added function to extract DIC and create model selection tables based on DIC (functions 'DIC' and 'dictab')
+
+
+
+####################################################################
 #revision 1.31 (26 June 2013)
 #- added functions to work with new 'merMod' classes of package lme4
 
