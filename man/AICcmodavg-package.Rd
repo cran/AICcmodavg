@@ -31,14 +31,16 @@ single-season occupancy models ('unmarkedFitOccu' and
 ('unmarkedFitOccuRN' class), single-season and multiple-season N-mixture
 models for repeated counts ('unmarkedFitPCount' and 'unmarkedFitPCO'
 classes, respectively), and distance sampling models ('unmarkedFitDS'
-and 'unmarkedFitGDS' classes).
+and 'unmarkedFitGDS' classes). Some functions also allow the creation of
+model selection tables for Bayesian models of the 'bugs' and 'rjags'
+classes.
 }
 \details{
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.31\cr
-Date: \tab 2013-06-26\cr
+Version: \tab 1.32\cr
+Date: \tab 2013-07-06\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -55,6 +57,10 @@ multimodel inference:
   chi-square.}
 \item{\code{\link{confset}}}  {Determines the confidence set for the best
   model based on one of three criteria.}
+\item{\code{\link{DIC}}}  {Extracts DIC.}
+\item{\code{\link{dictab}}}  {Constructs model selection tables with
+  number of parameters, DIC, delta DIC, DIC weights for a set of
+  candidate models.}
 \item{\code{\link{evidence}}}  {Computes the evidence ratio between the
   highest-ranked model based on the information criteria selected and a
   lower-ranked model.}

@@ -203,7 +203,7 @@ components:
   data (exp(-0.5*delta[i])).  This is not to be confused with the
   likelihood of the parameters given the data.  The relative likelihood
   can then be normalized across all models to get the model probabilities.} 
-\item{(Q)AIC(c)wt}{the Akaike weights, also termed "model
+\item{(Q)AIC(c)Wt}{the Akaike weights, also termed "model
   probabilities" sensu Burnham and Anderson (2002) and Anderson (2008).
   These measures indicate the level of support (i.e., weight of
   evidence) in favor of any given model being the most parsimonious

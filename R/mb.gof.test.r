@@ -263,7 +263,7 @@ mb.gof.test <- function(mod, nsim = 5, plot.hist = TRUE){#more bootstrap samples
   ##create plot
   if(plot.hist) {
   hist(out@t.star, main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples)", sep = ""),
-       xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", out@t0, ")", sep = ""))
+       xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
   title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
   abline(v = out@t0, lty = "dashed", col = "red")
 }

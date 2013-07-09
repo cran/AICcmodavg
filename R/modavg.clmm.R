@@ -111,7 +111,7 @@ modavg.clmm <-
       ##set up a new list with model formula
       forms <- list()
       for (i in 1:nmods) {
-        form.tmp <- as.character(not.include[i])[3]
+        form.tmp <- as.character(not.include[[i]])[3]
         if(attr(regexpr("\\+", form.tmp), "match.length")==-1) {
           forms[i] <- form.tmp
         } else {forms[i] <- strsplit(form.tmp, split=" \\+ ")}
