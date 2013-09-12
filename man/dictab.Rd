@@ -42,11 +42,13 @@ DIC values.
 'dictab' is a function that calls 'dictab.bugs' and 'dictab.rjags'.  The
 current function is implemented for 'bugs' classes. The function
 constructs a model selection table based on the DIC (Spiegelhalter et
-al. 2002).
+al. 2002).  Note that DIC might not be appropriate to select among a set
+of hierarchical models and that modifications to the information
+criterion have been proposed (Millar 2009).
 }
 \value{
 'dictab', 'dictab.bugs', and 'dictab.rjags' create an object of class
-'aictab' with the following components: 
+'dictab' with the following components: 
 
 \item{Modname}{the names of each model of the candidate model set.}
 \item{pD}{the effective number of estimated parameters for each
@@ -88,7 +90,7 @@ Marc J. Mazerolle
 } 
 \examples{
 ##from ?jags example in R2jags package
-require(R2jags)
+if(require(R2jags)) {
 model.file <- system.file(package="R2jags", "model", "schools.txt")
 file.show(model.file)     
 
@@ -120,5 +122,7 @@ Model.names <- "hierarchical model"
 
 ##model selection table
 dictab(cand.set = Cand.mods, modnames = Model.names)
+detach(package:R2jags)
+}
 }
 \keyword{models}

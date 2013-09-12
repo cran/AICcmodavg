@@ -48,7 +48,7 @@ Marc J. Mazerolle
 
 \examples{
 ##single-season occupancy model example modified from ?occu
-require(unmarked)
+if(require(unmarked)) {
 ##single season
 data(frogs)
 pferUMF <- unmarkedFrameOccu(pfer.bin)
@@ -66,6 +66,7 @@ fm1 <- occu(~ obsvar1 ~ sitevar1, pferUMF)
 ##extract log-likelihood
 extract.LL(fm1)
 detach(package:unmarked)
+}
 
 
 

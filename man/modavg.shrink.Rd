@@ -341,7 +341,7 @@ detach(package:nlme)
 
 \dontrun{
 ##example of N-mixture model modified from ?pcount
-require(unmarked)
+if(require(unmarked)) {
 data(mallard)
 mallardUMF <- unmarkedFramePCount(mallard.y, siteCovs = mallard.site,
                                   obsCovs = mallard.obs)
@@ -361,6 +361,7 @@ Modnames <- c("length + forest", "elev + forest", "length + elev")
 modavg.shrink(cand.set = Cands, modnames = Modnames, parm = "elev",
               parm.type = "lambda")
 detach(package:unmarked)
+}
 }
 
 }

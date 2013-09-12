@@ -405,7 +405,9 @@ beta estimates cannot be model-averaged\n")
   new_table <- aictab.unmarked(cand.set = new.cand.set, modnames = new.mod.name, sort = FALSE, c.hat = c.hat,
                         second.ord = second.ord, nobs = nobs)  #recompute AIC table and associated measures
   new_table$Beta_est <- unlist(lapply(new.cand.set, FUN = function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
+  ##if reversed.parm is not null and varies across models, potentially check for it here
   new_table$SE <- unlist(lapply(new.cand.set, FUN = function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+  ##if reversed.parm is not null and varies across models, potentially check for it here
 
   ##if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
   if(c.hat > 1) {

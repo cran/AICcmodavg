@@ -37,9 +37,8 @@ function of the unmarked package. 'mb.chisq' computes the table of
 observed and expected values based on the detection histories and single
 season occupancy model used. 'mb.gof.test' calls internally 'mb.chisq'
 and 'parboot' to generate simulated data sets based on the model and
-compute the MacKenzie and Bailey test statistic. Missing values can also
-be accomodated by creating cohorts for each pattern of missing 
-values.
+compute the MacKenzie and Bailey test statistic. Missing values are
+accomodated by creating cohorts for each pattern of missing values.
 
 It is also possible to obtain an estimate of the overdispersion
 parameter (c-hat) for the model at hand by dividing the observed
@@ -146,7 +145,7 @@ Marc J. Mazerolle
 
 \examples{
 ##single-season occupancy model example modified from ?occu
-require(unmarked)
+if(require(unmarked)) {
 ##single season
 data(frogs)
 pferUMF <- unmarkedFrameOccu(pfer.bin)
@@ -192,6 +191,7 @@ mb.gof.test(m1, nsim = 3)
 }
 
 detach(package:unmarked)
+}
 }
 
 \keyword{models}

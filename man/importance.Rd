@@ -80,7 +80,7 @@ independent clusters (e.g., sites) as the value of 'nobs'.
 \value{
 'importance' returns an object of class 'importance' consisting of the
 following components:
-\item{parm}{the parameter for which an importance value is required.} 
+\item{parm}{the parameter for which an importance value is require.} 
 \item{w.plus}{the parameter for which an importance value is required.} 
 \item{w.minus}{the sum of Akaike weights for the models that exclude the
   parameter of interest} 
@@ -131,7 +131,7 @@ print(importance(cand.set = Cand.models, parm = "age", modnames = Modnames,
 
 
 ##single-season occupancy model example modified from ?occu
-require(unmarked)
+if(require(unmarked)) {
 ##single season
 data(frogs)
 pferUMF <- unmarkedFrameOccu(pfer.bin)
@@ -158,5 +158,6 @@ importance(cand.set = Cand.mods, modnames = Modnames, parm = "sitevar1",
 importance(cand.set = Cand.mods, modnames = Modnames, parm = "obsvar1",
            parm.type = "detect")
 detach(package:unmarked)
+}
 }
 \keyword{models}

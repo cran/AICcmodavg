@@ -3,7 +3,7 @@
 \alias{cement}
 \docType{data}
 \title{
-Heat expended following hardening of Portland cement.
+Heat Expended Following Hardening of Portland Cement
 }
 \description{
 This data set illustrates the heat expended (calories) from mixtures of four
@@ -12,12 +12,12 @@ different ingredients of Portland cement expressed as a percentage by weight.}
 \format{
   A data frame with 13 observations on the following 5 variables.
   \describe{
-    \item{\code{x1}}{calcium aluminate}
-    \item{\code{x2}}{tricalcium silicate}
-    \item{\code{x3}}{tetracalcium alumino ferrite}
-    \item{\code{x4}}{dicalcium silicate}
+    \item{\code{x1}}{calcium aluminate.}
+    \item{\code{x2}}{tricalcium silicate.}
+    \item{\code{x3}}{tetracalcium alumino ferrite.}
+    \item{\code{x4}}{dicalcium silicate.}
     \item{\code{y}}{calories of heat per gram of cement following 180
-      days of hardening}
+      days of hardening.}
   }
 }
 \details{

@@ -3,7 +3,7 @@
 \alias{pine}
 \docType{data}
 \title{
-Strength of pine wood based on the density adjusted for resin content.
+Strength of Pine Wood Based on the Density Adjusted for Resin Content
 }
 \description{
 This data set consists of the strength of pine wood as a function of
@@ -13,9 +13,9 @@ density or density adjusted for resin content.
 \format{
   A data frame with 42 observations on the following 3 variables.
   \describe{
-    \item{\code{y}}{pine wood strength}
-    \item{\code{x}}{pine wood density}
-    \item{\code{z}}{pine wood density adjusted for resin content}
+    \item{\code{y}}{pine wood strength.}
+    \item{\code{x}}{pine wood density.}
+    \item{\code{z}}{pine wood density adjusted for resin content.}
   }
 }
 \details{
