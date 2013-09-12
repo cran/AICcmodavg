@@ -3,7 +3,7 @@
 \alias{beetle}
 \docType{data}
 \title{
-Flour beetle data.
+Flour Beetle Data
 }
 \description{
 This data set illustrates the acute mortality of flour beetles
@@ -14,13 +14,13 @@ gas.
 \format{
   A data frame with 8 rows and 4 variables.
   \describe{
-    \item{\code{Dose}}{dose of carbon disulfide in mg/L}
+    \item{\code{Dose}}{dose of carbon disulfide in mg/L.}
     \item{\code{Number_tested}}{number of beetles exposed to given dose
-      of carbon disulfide} 
-    \item{\code{Number_killed}}{Number of beetles dead after 5 hour
-      exposure to given dose of carbon disulfide}
+      of carbon disulfide.} 
+    \item{\code{Number_killed}}{number of beetles dead after 5 hour
+      exposure to given dose of carbon disulfide.}
     \item{\code{Mortality_rate}}{proportion of total beetles found dead
-      after 5 hour exposure} 
+      after 5 hour exposure.} 
   }
 }
 \details{

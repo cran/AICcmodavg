@@ -294,7 +294,7 @@ modavgpred(cand.set = Cand, modnames = Modnames, newdata = clotting,
 ##example of model-averaged predictions from N-mixture model
 ##each variable appears twice in the models - this is a bit longer
 \dontrun{
-require(unmarked)
+if(require(unmarked)) {
 data(mallard)
 mallardUMF <- unmarkedFramePCount(mallard.y, siteCovs = mallard.site,
                                   obsCovs = mallard.obs)
@@ -326,6 +326,7 @@ modavgpred(cand.set = Cands, modnames = Modnames, newdata =
 }
 
 
+
 ##example of model-averaged abundance from distance model
 ##this is a bit longer
 \dontrun{
@@ -355,6 +356,7 @@ Modnames <- paste("mod", 1:length(Cands), sep = "")
 modavgpred(cand.set = Cands, modnames = Modnames, parm.type = "lambda", type = "link",
            newdata = data.frame(area = mean(linetran$area), habitat = c("A", "B")))
 detach(package:unmarked)
+}
 }
 
 

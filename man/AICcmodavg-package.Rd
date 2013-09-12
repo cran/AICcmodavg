@@ -39,24 +39,25 @@ classes.
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.32\cr
-Date: \tab 2013-07-06\cr
+Version: \tab 1.33\cr
+Date: \tab 2013-09-12\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
 This package contains several useful functions for model selection and
 multimodel inference:
 \itemize{
-\item{\code{\link{AICc}}}  {Computes AIC, AICc, and their quasi-likelihood
-  counterparts (QAIC, QAICc).}
+\item{\code{\link{AICc}}}  {Computes AIC, AICc, and their
+  quasi-likelihood counterparts (QAIC, QAICc).}
 \item{\code{\link{aictab}}}  {Constructs model selection tables with
   number of parameters, AIC, delta AIC, Akaike weights or variants based
   on other AICc, QAIC, and QAICc for a set of candidate models.}
-\item{\code{\link{c_hat}}}  {Computes an estimate of variance
-  inflation factor for binomial or Poisson GLM's based on Pearson's
-  chi-square.}
-\item{\code{\link{confset}}}  {Determines the confidence set for the best
-  model based on one of three criteria.}
+\item{\code{\link{boot.wt}}}  {Computes model selection relative
+  frequencies based on the bootstrap.}
+\item{\code{\link{c_hat}}}  {Computes an estimate of variance inflation
+  factor for binomial or Poisson GLM's based on Pearson's chi-square.}
+\item{\code{\link{confset}}}  {Determines the confidence set for the
+  best model based on one of three criteria.}
 \item{\code{\link{DIC}}}  {Extracts DIC.}
 \item{\code{\link{dictab}}}  {Constructs model selection tables with
   number of parameters, DIC, delta DIC, DIC weights for a set of
@@ -78,16 +79,18 @@ multimodel inference:
   goodness-of-fit test for single season occupancy models using the
   Pearson chi-square statistic.}
 \item{\code{\link{modavg}}}  {Computes model-averaged estimate,
-  unconditional standard error, and unconditional confidence interval of a
-  parameter of interest among a set of candidate models.}
-\item{\code{\link{modavg.effect}}}  {Computes model-averaged effect sizes 
-  between groups based on the entire candidate model set.}
+  unconditional standard error, and unconditional confidence interval of
+  a parameter of interest among a set of candidate models.}
+\item{\code{\link{modavg.effect}}}  {Computes model-averaged effect
+  sizes between groups based on the entire candidate model set.}
 \item{\code{\link{modavg.shrink}}}  {Computes shrinkage version of
   model-averaged estimate, unconditional standard error, and
   unconditional confidence interval of a parameter of interest among a
   set of candidate models.} 
-\item{\code{\link{modavgpred}}}  {Computes model-average predictions and
+\item{\code{\link{modavgpred}}}  {Computes model-average predictions and 
   unconditional SE's among entire set of candidate models.}
+\item{\code{\link{mult.comp}}}  {Performs multiple comparisons in a
+  model selection framework.} 
 \item{\code{\link{predictSE.gls}}}  {Computes predictions and associated 
   standard errors for 'gls' object based on linear predictor.}
 \item{\code{\link{predictSE.lme}}}  {Computes predictions and associated 
@@ -197,7 +200,7 @@ modavgpred(cand.set = Cand.mod, modnames = Modnames,
 
 
 ##single-season occupancy model example modified from ?occu
-require(unmarked)
+if(require(unmarked)) {
 ##single season
 data(frogs)
 pferUMF <- unmarkedFrameOccu(pfer.bin)
@@ -255,8 +258,7 @@ dat.pred <- data.frame(sitevar1 = seq(from = min(siteCovs(pferUMF)$sitevar1),
 modavgpred(cand.set = Cand.models, modnames = Modnames,
            newdata = dat.pred, parm.type = "psi")
 detach(package:unmarked)
-
+}
 }
 
 \keyword{ models }
-

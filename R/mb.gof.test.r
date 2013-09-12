@@ -2,17 +2,32 @@
 mb.chisq <- function(mod, print.table = TRUE) {
 ##step 1:
 ##extract detection histories
-y.data <- getData(mod)@y
-N <- nrow(y.data)
+y.raw <- getData(mod)@y
+
+##if some rows are all NA and sites are discarded, adjust sample size accordingly
+N.raw <- nrow(y.raw)
+#if(all NA) {N - number of rows with all NA}
+##identify sites without data
+na.raw <- apply(X = y.raw, MARGIN = 1, FUN = function(i) all(is.na(i)))
+  
+##remove sites without data
+y.data <- y.raw[!na.raw, ]
+
+N <- N.raw - sum(na.raw)
+
+#N is required for computations in the end
 T <- ncol(y.data)
 
 det.hist <- apply(X = y.data, MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
 
 ##compute predicted values of occupancy
 preds.psi <- predict(mod, type = "state")$Predicted
+
+
+
 ##compute predicted values of p
 preds.p <- matrix(data = predict(mod, type = "det")$Predicted,
-                  nrow = N, ncol = T, byrow = TRUE)
+                  ncol = T, byrow = TRUE)
 
 ##assemble in data.frame
 out.hist <- data.frame(det.hist, preds.psi)
@@ -109,7 +124,7 @@ if(n.cohort.not.na > 0) {  ##expected frequencies for non-missing data
       eq.solved[j] <- eval(parse(text = as.expression(combo.psi.p)))
     }
     
-    exp.freqs[i] <- sum(eq.solved)
+    exp.freqs[i] <- sum(eq.solved, na.rm = TRUE)
   }
 
 
@@ -133,14 +148,16 @@ if(n.cohort.not.na > 0) {  ##expected frequencies for non-missing data
 if(na.vals) {
 ##create list to store the chisquare for each cohort
   missing.cohorts <- list( )
+  ##check if preds.p.na has only 1 row and change to matrix
+  if(!is.matrix(preds.p.na)) {preds.p.na <- matrix(data = preds.p.na, nrow = 1)}
   
   for(m in 1:n.missing.cohorts) {
     ##select cohort
     select.cohort <- out.hist.na[which(out.hist.na$coh == names(freqs.missing.cohorts)[m]), ]
     select.preds.p.na <- preds.p.na[which(out.hist.na$coh == names(freqs.missing.cohorts)[m]), ]
     ##replace NA's with 1 to remove from likelihood
+    if(!is.matrix(select.preds.p.na)) {select.preds.p.na <- matrix(data = select.preds.p.na, nrow = 1)}
     select.preds.p.na[, gregexpr(pattern = "N", text = gsub(pattern = "NA", replacement = "N", x = select.cohort$det[1]))[[1]]] <- 1
-
     n.total.sites <- nrow(select.cohort)
     freqs.na <- table(droplevels(select.cohort$det.hist))
     cohort.na.un <- sort(unique(select.cohort$det))
@@ -179,7 +196,7 @@ if(na.vals) {
               eq.solved[j] <- eval(parse(text = as.expression(combo.psi.p)))
             }
             
-            exp.na[i] <- sum(eq.solved)
+            exp.na[i] <- sum(eq.solved, na.rm = TRUE)
           }
 
     ##compute chisq for missing data cohorts

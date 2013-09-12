@@ -25,7 +25,7 @@ DIC.rjags(mod, return.pD = FALSE)
   
   \item{return.pD}{
     logical.  If FALSE, the function returns the DIC.  If TRUE, the
-    function returns K (effective number of estimated parameters, pD)
+    function returns the effective number of estimated parameters (pD)
     for a given model.
   }  
 }
@@ -51,10 +51,16 @@ The actual DIC values are not really interesting in themselves, as
 they depend directly on the data, parameters estimated, and
 likelihood function.  Furthermore, a single value does not tell much
 about model fit.  Information criteria become relevant when compared to
-one another for a given data set and set of candidate models.
+Yone another for a given data set and set of candidate models.  Model
+selection with hierarchical models is problematic as the classic DIC is
+not appropriate for such types of models (Millar 2009).
 }
 
 \references{
+Millar, R. B. (2009) Comparison of hierarchical Bayesian models for
+overdispersed count data using DIC and Bayes'
+factors. \emph{Biometrics}, \bold{65}, 962--969.
+
 Spiegelhalter, D. J., Best, N. G., Carlin, B. P., van der Linde,
 A. (2002). Bayesian measures of complexity and fit. \emph{Journal of the
   Royal Statistical Society, Series B} \bold{64}, 583--639.
@@ -71,7 +77,7 @@ Marc J. Mazerolle
 
 \examples{
 ##from ?jags example in R2jags package
-require(R2jags)
+if(require(R2jags)) {
 ##example model file
 model.file <- system.file(package="R2jags", "model", "schools.txt")
 file.show(model.file)     
@@ -104,5 +110,7 @@ schools.sim <- jags(data = jags.data, inits = jags.inits,
 DIC(schools.sim)
 ##extract pD
 DIC(schools.sim, return.pD = TRUE)
+detach(package:R2jags)
+}
 }   
 \keyword{models}

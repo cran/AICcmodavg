@@ -345,7 +345,7 @@ detach(package:lme4)
 
 
 ##single-season occupancy model example modified from ?occu
-require(unmarked)
+if(require(unmarked)) {
 ##single season
 data(frogs)
 pferUMF <- unmarkedFrameOccu(pfer.bin)
@@ -370,6 +370,7 @@ aictab(cand.set = Cand.mods, modnames = Modnames,
        second.ord = TRUE)
 
 detach(package:unmarked)
+}
 }
 
 \keyword{models}

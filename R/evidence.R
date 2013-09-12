@@ -1,6 +1,15 @@
 evidence <-
   function(aic.table, model.high = "top", model.low = "second.ranked") {
-    if(!identical(class(aic.table)[1], "aictab")) {stop("\nThe input object must be of class 'aic.tab'\n")}
+    ##if mult.comp object, extract relevant table
+    if(identical(class(aic.table)[1], "mult.comp")) {
+      if(!is.data.frame(aic.table)) {
+        aic.table <- aic.table$model.table
+      }  
+      ##coerce to aictab
+      class(aic.table) <- c("aictab", "data.frame")
+    }
+    
+    if(!identical(class(aic.table)[1], "aictab")) {stop("\nThe input object must be of class 'aictab'\n")}
 
     ##sort model table in case it is not
     sort.tab <- aic.table[order(aic.table[, 4]), ]

@@ -4,8 +4,19 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+#revision 1.33 (12 September 2013)
+#- added 'mult.comp' function to compute multiple comparisons on factors
+#- added 'boot.wt' function to compute bootstrapped relative frequencies
+#- corrected minor bug in 'mb.chisq' for certain patterns of missing values
+#- added conditional test to avoid problems on CRAN with some packages unavailable
+#  on certain platforms
+#- added the lizards habitat preference data set
+
+
+####################################################################
 #revision 1.32 (5 July 2013)
 #- corrected minor bug in 'modavg' when model-averaging with models of classes 'clm' and 'clmm' when the 'exclude' argument was used
+#- corrected bug with certain types of missing values in mb.chisq( )
 #- added function to extract DIC and create model selection tables based on DIC (functions 'DIC' and 'dictab')
 
 

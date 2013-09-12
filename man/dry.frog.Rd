@@ -3,32 +3,38 @@
 \alias{dry.frog}
 \docType{data}
 \title{
-Frog dehydration experiment on three different substrate types.
+Frog Dehydration Experiment on Three Substrate Types
 }
 \description{
-This is a data set modified from Mazerolle and Desrochers (2005) on the mass lost by frogs after spending two hours on one of three substrates that are encountered in some landscape types.
+This is a data set modified from Mazerolle and Desrochers (2005) on the
+mass lost by frogs after spending two hours on one of three substrates
+that are encountered in some landscape types.
 }
 \usage{data(dry.frog)}
 \format{
   A data frame with 121 observations on the following 16 variables.
   \describe{
-    \item{\code{Individual}}{a numeric vector}
-    \item{\code{Species}}{a factor with levels \code{Racla}}
-    \item{\code{Shade}}{a numeric vector}
-    \item{\code{SVL}}{a numeric vector}
-    \item{\code{Substrate}}{a factor with levels \code{PEAT},
-      \code{SOIL}, and \code{SPHAGNUM}}
-    \item{\code{Initial_mass}}{a numeric vector}
-    \item{\code{Mass_lost}}{a numeric vector}
-    \item{\code{Airtemp}}{a numeric vector}
-    \item{\code{Wind_cat}}{a numeric vector}
-    \item{\code{Cloud}}{a numeric vector}
-    \item{\code{cent_Initial_mass}}{a numeric vector}
-    \item{\code{Initial_mass2}}{a numeric vector}
-    \item{\code{cent_Air}}{a numeric vector}
-    \item{\code{Perc.cloud}}{a numeric vector}
-    \item{\code{Wind}}{a numeric vector}
-    \item{\code{log_Mass_lost}}{a numeric vector}
+    \item{\code{Individual}}{a numeric identifier unique to each
+      individual.} 
+    \item{\code{Species}}{a factor with levels \code{Racla}.}
+    \item{\code{Shade}}{a numeric vector, either 1 (shade) or 0 (no
+      shade).} 
+    \item{\code{SVL}}{the snout-vent length of the individual.}
+    \item{\code{Substrate}}{the substrate type, a factor with levels
+      \code{PEAT}, \code{SOIL}, and \code{SPHAGNUM}.}
+    \item{\code{Initial_mass}}{the initial mass of individuals.}
+    \item{\code{Mass_lost}}{the mass lost in g.}
+    \item{\code{Airtemp}}{the air temperature in degrees C.}
+    \item{\code{Wind_cat}}{the wind intensity, either 0 (no wind), 1
+      (low wind), 2 (moderate wind), or 3 (strong wind).}
+    \item{\code{Cloud}}{cloud cover expressed as a percentage.}
+    \item{\code{cent_Initial_mass}}{centered inital mass.}
+    \item{\code{Initial_mass2}}{initial mass squared.}
+    \item{\code{cent_Air}}{centered air temperature.}
+    \item{\code{Perc.cloud}}{proportion of cloud cover}
+    \item{\code{Wind}}{wind intensity, either 1 (no or low wind) or 1
+      (moderate to strong wind).}
+    \item{\code{log_Mass_lost}}{log of mass lost.}
   }
 }
 \details{

@@ -81,7 +81,7 @@ Marc J. Mazerolle
 }
 \examples{
 \dontrun{
-library(unmarked)
+if(require(unmarked)) {
 ##example with mallard data set from unmarked package
 data(mallard)
 mallardUMF <- unmarkedFramePCount(mallard.y, siteCovs = mallard.site,
@@ -96,6 +96,7 @@ predictSE.zip(fm.mall.one, type = "response", parm.type = "lambda",
 predict(fm.mall.one, type = "state", backTransform = TRUE,
         newdata = data.frame(length = 0, forest = 0, elev = 0))
 detach(package:unmarked)
+}
 }
 }
 \keyword{models}
