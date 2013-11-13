@@ -75,7 +75,7 @@ modavg <-
 
 
     ##determine if coxph
-    if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph"))) {
+    if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph")) || identical(check.class, c("clogit", "coxph"))) {
       mod.avg <- modavg.coxph(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
                               second.ord = second.ord, nobs = nobs, exclude = exclude,
                               warn = warn, uncond.se = uncond.se)

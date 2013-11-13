@@ -7,7 +7,8 @@ modavg.coxph <- function(cand.set, parm, modnames, conf.level = 0.95, second.ord
   ##check if all are identical
   check.class <- unique(mod.class)
 
-  if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph"))) {
+  if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph")) || identical(check.class, c("clogit", "coxph"))) {
+
     
 #####MODIFICATIONS BEGIN#######
     ##remove all leading and trailing white space and within parm

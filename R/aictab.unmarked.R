@@ -6,7 +6,7 @@ aictab.unmarked <- function(cand.set, modnames, sort = TRUE, c.hat = 1, second.o
   mod.type <- unique(mod.class)
 
   ##add check for use of c-hat - only with single season occupancy models
-  if(c.hat > 1 && !identical(mod.type, "unmarkedFitOccu"))  stop("\nThe correction for overdispersion is only appropriate for single season occupancy models\n")
+  if(c.hat > 1 && !identical(mod.type, "unmarkedFitOccu") && !identical(mod.type, "unmarkedFitPCount") && !identical(mod.type, "unmarkedFitPCO"))  stop("\nThe correction for overdispersion is only appropriate for single season occupancy and N-mixture models\n")
 
   Results <- NULL
   Results <- data.frame(Modnames = modnames)                    #assign model names to first column

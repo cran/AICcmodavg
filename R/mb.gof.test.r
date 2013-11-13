@@ -1,5 +1,11 @@
 ##MacKenzie and Bailey goodness of fit test for single season occupancy models
 mb.chisq <- function(mod, print.table = TRUE) {
+
+##for single-season occupancy models
+  if(!identical(class(mod)[1], "unmarkedFitOccu")) {
+    stop("\nThis function is only appropriate for single-season occupancy models\n")
+  }
+  
 ##step 1:
 ##extract detection histories
 y.raw <- getData(mod)@y

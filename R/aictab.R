@@ -72,7 +72,7 @@ aictab <-
 
 
     ##determine if coxph
-    if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph"))) {
+    if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph")) || identical(check.class, c("clogit", "coxph"))) {
       results <- aictab.coxph(cand.set = cand.set, modnames = modnames, sort = sort,
                               second.ord = second.ord, nobs = nobs)
       known <- 1

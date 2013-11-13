@@ -11,7 +11,7 @@ N-mixture models for count data based on the zero-inflated Poisson of
 }
 \usage{
 predictSE.zip(mod, newdata, se.fit = TRUE, parm.type = "lambda",
-              type = "response", print.matrix = FALSE)
+              type = "response", c.hat = 1, print.matrix = FALSE)
 }
 \arguments{
   \item{mod}{
@@ -34,7 +34,15 @@ predictSE.zip(mod, newdata, se.fit = TRUE, parm.type = "lambda",
   \item{type}{
     the scale of predicted values (response or link). Currently, only
     type = "response" is supported.
-}
+  }
+  \item{c.hat}{
+    value of overdispersion parameter (i.e., variance inflation factor)
+    such as that obtained from 'Nmix.gof.test'.  If c.hat > 1, 
+    'predictSE.zip' will multiply the variance-covariance matrix of the
+    predictions by this value (i.e., SE's are multiplied by
+    sqrt(c.hat)).  High values of c.hat (e.g., c.hat > 4) may indicate
+    that model structure is inappropriate.
+  }
   
   \item{print.matrix}{
     logical.  If TRUE, the output is returned as a matrix, with
@@ -44,9 +52,10 @@ predictSE.zip(mod, newdata, se.fit = TRUE, parm.type = "lambda",
 }
 \details{
   'predictSE.zip' computes predicted values on abundance based on the
-    estimates from an 'unmarkedFitPCount' or 'unmarkedFitPCO' object as
-    well as the associated standard errors.  Standard errors are
-    approximated using the delta method (Oehlert 1992).
+  estimates from an 'unmarkedFitPCount' or 'unmarkedFitPCO' object as
+  well as the associated standard errors.  Standard errors are
+  approximated using the delta method (Oehlert 1992).  If c.hat > 1,
+  standard errors are adjusted by sqrt(c.hat). 
 }
 \value{
   'predictSE.zip' returns requested values either as a matrix
@@ -95,6 +104,16 @@ predictSE.zip(fm.mall.one, type = "response", parm.type = "lambda",
 ##compare against predict
 predict(fm.mall.one, type = "state", backTransform = TRUE,
         newdata = data.frame(length = 0, forest = 0, elev = 0))
+
+##add offset in model to scale abundance per transect length
+fm.mall.off <- pcount(~ ivel + date  ~ forest + offset(length), mallardUMF, K=30,
+                      mixture = "ZIP")
+##make prediction
+predictSE.zip(fm.mall.off, type = "response", parm.type = "lambda",
+              newdata = data.frame(length = 10, forest = 0, elev = 0))
+##compare against predict
+predict(fm.mall.off, type = "state", backTransform = TRUE,
+        newdata = data.frame(length = 10, forest = 0, elev = 0))
 detach(package:unmarked)
 }
 }

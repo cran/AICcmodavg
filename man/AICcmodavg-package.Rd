@@ -39,8 +39,8 @@ classes.
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.33\cr
-Date: \tab 2013-09-12\cr
+Version: \tab 1.34\cr
+Date: \tab 2013-11-13\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -90,7 +90,9 @@ multimodel inference:
 \item{\code{\link{modavgpred}}}  {Computes model-average predictions and 
   unconditional SE's among entire set of candidate models.}
 \item{\code{\link{mult.comp}}}  {Performs multiple comparisons in a
-  model selection framework.} 
+  model selection framework.}
+\item{\code{\link{Nmix.gof.test}}}  {Computes goodness-of-fit test for
+  N-mixture models based on the Pearson chi-square statistic.}
 \item{\code{\link{predictSE.gls}}}  {Computes predictions and associated 
   standard errors for 'gls' object based on linear predictor.}
 \item{\code{\link{predictSE.lme}}}  {Computes predictions and associated 

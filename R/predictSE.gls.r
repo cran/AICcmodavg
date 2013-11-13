@@ -10,7 +10,7 @@ predictSE.gls <- function(mod, newdata, se.fit = TRUE, print.matrix = FALSE){
   newdata <- as.data.frame(newdata)
 
 #################################################################################################################
-########################### This following clever piece of code is modified from predict.lme( ) from nlme package
+########################### This following piece of code is modified from predict.lme( ) from nlme package
 #################################################################################################################  
   mfArgs <- list(formula = fixed, data = newdata)
   dataMix <- do.call("model.frame", mfArgs)
@@ -29,7 +29,7 @@ predictSE.gls <- function(mod, newdata, se.fit = TRUE, print.matrix = FALSE){
     }
   }
 #################################################################################################################
-########################### The previous clever piece of code is modified from predict.lme( ) from nlme package
+########################### The previous piece of code is modified from predict.lme( ) from nlme package
 #################################################################################################################
 
   m <- model.frame(TT, data=dataMix)

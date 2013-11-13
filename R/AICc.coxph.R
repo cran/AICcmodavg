@@ -1,6 +1,6 @@
 AICc.coxph <- function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL){
   ##check if correct class
-  if(identical(class(mod), "coxph") || identical(class(mod), c("coxph.null", "coxph"))) {
+  if(identical(class(mod), "coxph") || identical(class(mod), c("coxph.null", "coxph")) || identical(class(mod), c("clogit", "coxph"))) {
     
     if(identical(nobs, NULL)) {n <- length(residuals(mod))} else {n <- nobs}
     LL <- extract.LL.coxph(mod)[1]
