@@ -246,7 +246,7 @@ importance <-
     }
 
 
-    if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph"))) {
+    if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph")) || identical(check.class, c("clogit", "coxph"))) {
       mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients))
       known <- 1
     }

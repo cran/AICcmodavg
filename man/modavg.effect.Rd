@@ -90,8 +90,9 @@ value "terms" is not defined for 'modavgpred').
 value of overdispersion parameter (i.e., variance inflation factor) such 
 as that obtained from 'c_hat'.  Note that values of c.hat different from 
 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
-success/trial or cbind(success, failure) syntax), with Poisson GLM's, or 
-single-season occupancy models (MacKenzie et al. 2002).  If c.hat > 1,
+success/trial or cbind(success, failure) syntax), with Poisson GLM's,  
+single-season occupancy models (MacKenzie et al. 2002), or \emph{N}-mixture
+models (Royle 2004, Dail and Madsen 2011).  If c.hat > 1,
 'modavg.effect' will return the quasi-likelihood analogue of the
 information criteria requested and multiply the variance-covariance
 matrix of the estimates by this value (i.e., SE's are multiplied by
@@ -230,6 +231,10 @@ selection and multimodel inference in behaviorial ecology: some
 background, observations and comparisons. \emph{Behavioral Ecology and
 Sociobiology} \bold{65}, 23--25. 
 
+Dail, D., Madsen, L. (2011) Models for estimating abundance from 
+repeated counts of an open population. \emph{Biometrics} \bold{67},
+577--587.
+
 MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
 J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
 detection probabilities are less than one. \emph{Ecology} \bold{83},
@@ -239,6 +244,9 @@ Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
 Akaike's Information Criterion (AIC) to assess the strength of
 biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
 
+Royle, J. A. (2004) \emph{N}-mixture models for estimating population
+size from spatially replicated counts. \emph{Biometrics} \bold{60},
+108--115.
 }
 \author{
 Marc J. Mazerolle

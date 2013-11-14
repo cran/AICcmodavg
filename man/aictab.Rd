@@ -96,7 +96,8 @@ value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from 'c_hat'.  Note that values of c.hat different from
 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
 success/trial or cbind(success, failure) syntax), with Poisson
-GLM's, or single-season occupancy models (MacKenzie et al. 2002).  If
+GLM's, single-season occupancy models (MacKenzie et al. 2002), or
+\emph{N}-mixture models (Royle 2004, Dail and Madsen 2011).  If
 c.hat > 1, 'AICc' will return the quasi-likelihood analogue of the
 information criterion requested.  This option is not supported for
 generalized linear mixed models of the 'mer' class. 
@@ -232,6 +233,10 @@ Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
 understanding AIC and BIC in model selection. \emph{Sociological Methods
 and Research} \bold{33}, 261--304.
 
+Dail, D., Madsen, L. (2011) Models for estimating abundance from 
+repeated counts of an open population. \emph{Biometrics} \bold{67},
+577--587. 
+
 MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
 J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
 detection probabilities are less than one. \emph{Ecology} \bold{83},
@@ -240,6 +245,10 @@ detection probabilities are less than one. \emph{Ecology} \bold{83},
 Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
 Akaike's Information Criterion (AIC) to assess the strength of
 biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180.
+
+Royle, J. A. (2004) \emph{N}-mixture models for estimating population
+size from spatially replicated counts. \emph{Biometrics} \bold{60},
+108--115.
 }
 \author{
 Marc J. Mazerolle
@@ -311,6 +320,23 @@ print(res.table, digits = 4, LL = FALSE) #print table with 4 digits and
 
 
 
+##two-way ANOVA with interaction
+data(iron)
+##full model
+m1 <- lm(Iron ~ Pot + Food + Pot:Food, data = iron)
+##additive model
+m2 <- lm(Iron ~ Pot + Food, data = iron)
+##null model
+m3 <- lm(Iron ~ 1, data = iron)
+
+##candidate models
+Cand.aov <- list(m1, m2, m3)
+Cand.names <- c("full", "additive", "null")
+aictab(Cand.aov, Cand.names)
+
+
+
+\dontrun{
 ##modified example of Cox regression from ?coxph
 require(survival)
 ##Create a simple data set for a time-dependent model
@@ -325,11 +351,11 @@ m.cox2 <- coxph(Surv(start, stop, event) ~ x + height, test2)
 Cands <- list(m.cox, m.cox2)
 Mods <- c("x", "additive")
 aictab(Cands, Mods)
-
+}
 
 
 ##mer class example modified from ?glmer
-require(lme4)
+if(require(lme4)) {
 ##create proportion of incidence
 cbpp$prop <- cbpp$incidence/cbpp$size
 gm1 <- glmer(prop ~ period + (1 | herd), family = binomial, weights =
@@ -341,7 +367,7 @@ Cands <- list(gm1, gm2)
 Model.names <- c("effect of period", "no effect of period")
 aictab(cand.set = Cands, modnames = Model.names, sort = TRUE)
 detach(package:lme4)
-
+}
 
 
 ##single-season occupancy model example modified from ?occu

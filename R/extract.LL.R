@@ -1,6 +1,7 @@
 ##extract log-likelihood of model
 extract.LL <- function(mod) {
-  if(identical(class(mod), "coxph") || identical(class(mod), c("coxph.null", "coxph"))) {
+  if(identical(class(mod), "coxph") || identical(class(mod), c("coxph.null", "coxph")) || identical(class(mod), c("clogit", "coxph"))) {
+
     LL <- extract.LL.coxph(mod)
   } else {
   if(attr(regexpr(pattern = "unmarked", text = class(mod)), "match.length") == -1) {
@@ -13,7 +14,7 @@ extract.LL <- function(mod) {
   
     
 extract.LL.coxph <- function(mod) {
-  if(identical(class(mod), "coxph") || identical(class(mod), c("coxph.null", "coxph"))) {
+  if(identical(class(mod), "coxph") || identical(class(mod), c("coxph.null", "coxph")) || identical(class(mod), c("clogit", "coxph")))  {
     coefs <- coef(mod)
     if(is.null(coefs)) {
       ncoefs <- 0

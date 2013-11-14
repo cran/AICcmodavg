@@ -1,15 +1,15 @@
 ##compute predicted values and SE
-predictSE.zip <- function(mod, newdata, se.fit = TRUE, parm.type = "lambda", type = "response", print.matrix = FALSE) {
+predictSE.zip <- function(mod, newdata, se.fit = TRUE, parm.type = "lambda", type = "response", c.hat = 1, print.matrix = FALSE) {
 
   ##only response scale is supported for ZIP models
   if(identical(type, "link")) stop("\nLink scale not supported for predictions of this model type\n")
   
   ##extract data from model object
   if(!is.data.frame(newdata)) stop("\n'newdata' must be a data frame\n")
-  data.set <- newdata
+  new.data.set <- newdata
 
   ##nobs
-  nvals <- nrow(data.set)
+  nvals <- nrow(new.data.set)
 
   ##extract variables on lambda for pcount( ) model
   if(identical(class(mod)[1], "unmarkedFitPCount")) {
@@ -38,85 +38,39 @@ predictSE.zip <- function(mod, newdata, se.fit = TRUE, parm.type = "lambda", typ
   psi.lab <- labels(psi.est)
 
   ##extract formula from model
-  formula <- as.character(mod@formula)
+  formula <- mod@formula
 
   ##if lambda
   if(identical(parm.type, "lambda")) {
-    if(identical(class(mod)[1], "unmarkedFitPCount")) {form <- formula[3]}
+    if(identical(class(mod)[1], "unmarkedFitPCount")) {
+      form <- as.formula(paste("~", formula[3], sep="")) #state
+    }
     if(identical(class(mod)[1], "unmarkedFitPCO")) {
-      form.list <- formula[2]
-      form <- unlist(strsplit(form.list, split = "~"))[2]
+      form <- mod@formlist$lambdaformula
     }
   } else {
     stop("\nThis function only supports predictions on lamba\n")
   }
 
-  ##check for factors in siteCovs
-  site.cov.data <- mod@data@siteCovs
-
   
-  ##create a dummy response column
-  y.dummy <- 1:nrow(data.set)
-  formula.new <- as.formula(paste("y.dummy", "~", form))
+  ##extract model frame matrix
+  Mat <- model.frame(formula = form, data = new.data.set)      
+  des.mat <- model.matrix(form, Mat)
 
-  ##set data set
-  new.data.set <- data.set  
-
-  ##check if intercept only in model
-  if(n.est.lam > 1) {
-
-    ##extract variable names
-    var.names.list <- strsplit(form, split = "\\+")
-        
-    ##remove white spaces
-    var.names <- unlist(lapply(var.names.list, FUN = function(i) gsub("[[:space:]]+", "", i)))
-
-    ##for each variable in formula, check its class
-    site.vars <- site.cov.data[, var.names]
-
-    ##case where a single variable occurs and is a factor
-    if(length(var.names) == 1 && is.factor(site.vars)) {
-      factor.levels <- levels(site.cov.data[, var.names])
-      ##assign factor levels to data.set
-      new.data.set[, var.names] <- factor(x = data.set[, var.names], levels = factor.levels)    
-    }
-
-    if(length(var.names) > 1) {         
-      classes <- list( )
-      for(j in 1:length(var.names)) {
-        classes[[j]] <- is.factor(site.vars[, j])
-      }
-      factor.id <- which(unlist(classes))
-      var.id <- names(site.vars)[factor.id]
-
-      ##extract factor levels
-      if(length(factor.id) > 0) {
-        factor.levels <- list( )
-        for(k in 1:length(factor.id)) {
-          factor.levels[[k]] <- levels(site.vars[, factor.id[k]])
-        }
-        
-        ##assign factor levels to data.set
-        for(m in 1:length(factor.id)) {
-          new.data.set[, var.id[m]] <- factor(x = data.set[, var.id[m]], levels = factor.levels[[m]])
-        }
-      }
-    }
-  } else {
-    ##if no explanatory variables
-    var.names <- NULL
+##########################################    
+##########################################
+  ##check for offset
+  X.offset <- model.offset(Mat)
+  if(is.null(X.offset)) {
+    X.offset <- rep(0, nrow(Mat))
   }
-  
-  ##extract design matrix   
-  design <- model.matrix(formula.new, data = new.data.set)
-
     
   ##check for intercept
   if(identical(parm.type, "lambda")) {int.yes <- any(lam.lab == "lam(Int)")}
   
   ##if no intercept term, return error
   if(!int.yes) stop("\nThis function does not work with models excluding the intercept terms: change model parameterization\n")
-
+  
   ##number of estimates (not counting intercept)
   n.est <- n.est.lam - 1
 
@@ -129,19 +83,19 @@ predictSE.zip <- function(mod, newdata, se.fit = TRUE, parm.type = "lambda", typ
 
     ##covariate labels
     cov.labels <- unlist(covs)
-
+    
     ##change names of columns in design matrix
-    colnames(design) <- c("(Int)", unlist(covs))
+    colnames(des.mat) <- c("(Int)", unlist(covs))
 
-  } else {colnames(design) <- "(Int)"}
+  } else {colnames(des.mat) <- "(Int)"}
 
   ##names of columns in design matrix
-  design.names <- colnames(design)
+  design.names <- colnames(des.mat)
 
   ##extract values from new.data.set
   cov.values <- list( )
   for(i in 1:n.est.lam) {
-    cov.values[[i]] <- design[, design.names[i]]
+    cov.values[[i]] <- des.mat[, design.names[i]]
   }
   
   names(cov.values) <- design.names
@@ -166,7 +120,7 @@ predictSE.zip <- function(mod, newdata, se.fit = TRUE, parm.type = "lambda", typ
   }
 
   ##linear predictor log scale
-  lam.eq.resp <- paste("exp(", lam.eq.log, ")")
+  lam.eq.resp <- paste("exp(", lam.eq.log, "+ Val.offset", ")")
   
   ##logit scale for psi0 (zero-inflation intercept)
   psi.eq <- paste("(1 - (exp(psi0)/(1 + exp(psi0))))")
@@ -183,7 +137,8 @@ predictSE.zip <- function(mod, newdata, se.fit = TRUE, parm.type = "lambda", typ
   }
   
   ##extract vcov matrix
-  vcmat <- vcov(mod)[c(lam.lab, psi.lab), c(lam.lab, psi.lab)]
+  ##multiply by c.hat
+  vcmat <- vcov(mod)[c(lam.lab, psi.lab), c(lam.lab, psi.lab)] * c.hat
 
 
 ##################################
@@ -218,15 +173,18 @@ predictSE.zip <- function(mod, newdata, se.fit = TRUE, parm.type = "lambda", typ
     for (w in 1:nvals) {
       if (int.yes) {
         for (p in 1:n.est.lam) {
-          pred.eq[[p]] <- design[w, design.names[p]]
+          pred.eq[[p]] <- des.mat[w, design.names[p]]
         }
       }
       ##values from design matrix
       design.vals <- unlist(pred.eq)
-    
+
+      ##add value of offset for w
+      Val.offset <- X.offset[w]
+      
       ##compute values for betas
-      exp.beta.pred <- exp(lam.est %*% design.vals)
-    
+      exp.beta.pred <- exp(lam.est %*% design.vals + Val.offset)
+ 
       ##compute predictions including psi
       predicted.vals <- exp.beta.pred * (1 - (exp(psi.est)/(1 + exp(psi.est))))
       
@@ -265,7 +223,7 @@ predictSE.zip <- function(mod, newdata, se.fit = TRUE, parm.type = "lambda", typ
     for (w in 1:nvals) {
       if (int.yes) {
         for (p in 1:n.est.lam) {
-          pred.eq[[p]] <- design[w, design.names[p]]
+          pred.eq[[p]] <- des.mat[w, design.names[p]]
         }
       }
       ##values from design matrix

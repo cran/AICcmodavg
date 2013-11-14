@@ -144,7 +144,7 @@ Modnames <- paste("mod", 1:length(Cand.models), sep = " ")
 boot.wt(cand.set = Cand.models, modnames = Modnames, sort = TRUE)
 
 
-
+\dontrun{
 ##Burnham and Anderson (2002) flour beetle data
 data(beetle)
 ##models as suggested by Burnham and Anderson p. 198          
@@ -165,6 +165,7 @@ Modnames <- paste("Mod", 1:length(Cand.set), sep = " ")
 ##model selection table with bootstrapped
 ##relative frequencies
 boot.wt(cand.set = Cand.set, modnames = Modnames)
+}
 }
 
 \keyword{models}

@@ -77,7 +77,8 @@ value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from 'c_hat'.  Note that values of c.hat different from
 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
 success/trial or cbind(success, failure) syntax), with Poisson
-GLM's, or single-season occupancy models (MacKenzie et al. 2002).  If
+GLM's, single-season occupancy models (MacKenzie et al. 2002), or
+\emph{N}-mixture models (Royle 2004, Dail and Madsen 2011).  If
 c.hat > 1, 'AICc' will return the quasi-likelihood analogue of the
 information criterion requested.  This option is not supported for
 generalized linear mixed models of the 'mer' class. 
@@ -187,6 +188,10 @@ Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
 understanding AIC and BIC in model selection. \emph{Sociological Methods and Research} \bold{33},
 261--304.
 
+Dail, D., Madsen, L. (2011) Models for estimating abundance from 
+repeated counts of an open population. \emph{Biometrics} \bold{67},
+577--587. 
+
 Hurvich, C. M., Tsai, C.-L. (1991) Bias of the corrected AIC
 criterion for underfitted regression and time series
 models. \emph{Biometrika} \bold{78}, 499--509. 
@@ -198,6 +203,10 @@ detection probabilities are less than one. \emph{Ecology} \bold{83},
 
 Pinheiro, J. C., Bates, D. M. (2000) \emph{Mixed-effect models in S and
 S-PLUS}. Springer Verlag: New York.  
+
+Royle, J. A. (2004) \emph{N}-mixture models for estimating population
+size from spatially replicated counts. \emph{Biometrics} \bold{60},
+108--115.
 
 Sugiura, N. (1978) Further analysis of the data by Akaike's information 
 criterion and the finite corrections. \emph{Communications in

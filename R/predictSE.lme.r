@@ -9,7 +9,7 @@ predictSE.lme <- function(mod, newdata, se.fit = TRUE, level = 0, print.matrix =
   newdata <- as.data.frame(newdata)
 
 #################################################################################################################
-########################### This following clever piece of code is modified from predict.lme( ) from nlme package
+########################### This following piece of code is modified from predict.lme( ) from nlme package
 #################################################################################################################  
   mfArgs <- list(formula = fixed, data = newdata)
   dataMix <- do.call("model.frame", mfArgs)
@@ -28,7 +28,7 @@ predictSE.lme <- function(mod, newdata, se.fit = TRUE, level = 0, print.matrix =
     }
   }
 #################################################################################################################
-########################### The previous clever piece of code is modified from predict.lme( ) from nlme package
+########################### The previous piece of code is modified from predict.lme( ) from nlme package
 #################################################################################################################
 
   m <- model.frame(TT, data=dataMix)

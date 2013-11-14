@@ -68,9 +68,9 @@ modavg.shrink <-
     
 
     ##determine if coxph
-    if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph"))) {
+    if(identical(check.class, "coxph") || identical(check.class, c("coxph.null", "coxph")) || identical(check.class, c("clogit", "coxph"))) {
       mod.avg.shrink <- modavg.shrink.coxph(cand.set = cand.set, parm = parm, modnames = modnames, conf.level = conf.level,
-                              second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
+                                            second.ord = second.ord, nobs = nobs, uncond.se = uncond.se)
       known <- 1
     }
 

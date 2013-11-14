@@ -60,7 +60,7 @@ AICc <-
     }
     
     ##determine if coxph
-    if(identical(class(mod)[1], "coxph") || identical(class(mod)[1], "coxph.null")) {
+    if(identical(class(mod), "coxph") || identical(class(mod), c("coxph.null", "coxph")) || identical(class(mod), c("clogit", "coxph"))) {
       aicc <- AICc.coxph(mod = mod, return.K = return.K, second.ord = second.ord,
                          nobs = nobs)}
 

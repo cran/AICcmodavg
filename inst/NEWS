@@ -4,6 +4,22 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+#revision 1.34 (13 November 2013)
+#- added functionality to compute model-averaged estimates (means)
+#  with 'mult.comp'
+#- added functionality for clogit models
+#- added one-way ANOVA turkey data set
+#- added two-way ANOVA iron data set
+#- modified 'predictSE.zip' to handle offsets and added c.hat argument
+#- added functionality of overdispersion correction for N-mixture models
+#  in 'aictab', 'modavg', 'modavgpred', 'modavg.effect'
+#  'modavg.shrink', 'predictSE.zip'
+#- added functions 'Nmix.gof.test' and 'Nmix.chisq' to assess GOF of 
+#  N-mixture models
+
+
+
+####################################################################
 #revision 1.33 (12 September 2013)
 #- added 'mult.comp' function to compute multiple comparisons on factors
 #- added 'boot.wt' function to compute bootstrapped relative frequencies

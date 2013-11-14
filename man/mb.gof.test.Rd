@@ -139,8 +139,8 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{c_hat}}, \code{\link{evidence}},
 \code{\link{modavg}}, \code{\link{importance}},
-\code{\link{modavgpred}}, \code{\link[unmarked]{occu}},
-\code{\link[unmarked]{parboot}} 
+\code{\link{modavgpred}}, \code{\link{Nmix.gof.test}},
+\code{\link[unmarked]{occu}}, \code{\link[unmarked]{parboot}} 
 }
 
 \examples{
@@ -157,7 +157,7 @@ siteCovs(pferUMF) <- data.frame(sitevar1 = rnorm(numSites(pferUMF)),
 obsCovs(pferUMF) <- data.frame(obsvar1 = rnorm(numSites(pferUMF) *
                                  obsNum(pferUMF))) 
 
-##run model set
+##run model
 fm1 <- occu(~ obsvar1 ~ sitevar1, pferUMF)
 
 ##compute observed chi-square
