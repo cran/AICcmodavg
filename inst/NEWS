@@ -4,6 +4,13 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+#revision 1.35 (17 November 2013)
+#- corrected minor bug in chi-square for N-mixture models in 'Nmix.chisq'
+#- corrected minor bug in title display, now uses as.expression(substitute( ))
+
+
+
+####################################################################
 #revision 1.34 (13 November 2013)
 #- added functionality to compute model-averaged estimates (means)
 #  with 'mult.comp'

@@ -1,4 +1,4 @@
-20c74207b2549a966ba2ae21a24077cb *DESCRIPTION
+d0eb70ea81e6590fe4a9104d7a23b50d *DESCRIPTION
 89b5b267b90f181402baeaa1487a8723 *NAMESPACE
 1ade9f663438d32d8b3eda3745523b1b *R/AICc.R
 d6cd719805f32b5cae4a112f322df8f9 *R/AICc.clm.R
@@ -15,7 +15,7 @@ f8d31204373abce2caf7b917b0561869 *R/AICc.mult.R
 d8ef96b07b9c031451e42986819e7b15 *R/AICc.rlm.R
 69b1f0838e238416a878c7214f6b119a *R/AICc.unmarked.R
 f728c0bfb9564e23fb0d49dcf0eebb1e *R/DIC.R
-5647515bc23f511b4f942e0f17265d66 *R/Nmix.gof.test.r
+08213c563bb2a52ec7e28a668fd920a7 *R/Nmix.gof.test.r
 ae3089dd66d19f9ebf8aa4b4c0311ef1 *R/aictab.R
 73823d98b7962829cd9381ab111adfd1 *R/aictab.clm.R
 2a00c4ed89a92e8665d085ee0266c4ae *R/aictab.clmm.R
@@ -88,9 +88,9 @@ b52a1a6c0847b5710711cf42ff5a0949 *data/dry.frog.rda
 1b9161545a16e37ddaf47ce39f791bbf *data/pine.rda
 56344e3d3806e7e07aa601b93be9c72d *data/turkey.rda
 f8be06a8ba89b1226670f98890f8dbe5 *inst/CITATION
-475ee095dcca801d3dca1fb1894ed899 *inst/NEWS
+b5c997f60a6c18d41ab82297a9d729cf *inst/NEWS
 7919548498d3eb104893e53b971c0225 *man/AICc.Rd
-144778690fc1bd42bd951e660800f2a7 *man/AICcmodavg-package.Rd
+e628556972c248b05f444e881a2e0acc *man/AICcmodavg-package.Rd
 883112d65cfe64a6ce0f0ac581c09097 *man/DIC.Rd
 734a5df11e34f5000e0192dba1fddc2f *man/Nmix.gof.test.Rd
 0959cbcfffcd58a06e069ac7910ec427 *man/aictab.Rd
