@@ -12,7 +12,7 @@ Nmix.chisq <- function(mod) {
   if(length(sr) > 0) {    obs <- obs[-sr, , drop = FALSE] }
   fits <- fitted(mod)
   obs[is.na(fits)] <- NA
-  chi.sq <- sum((obs - fits)^2/(fits * (1 - fits)), na.rm = TRUE) #added argument na.rm = TRUE when NA's occur
+  chi.sq <- sum((obs - fits)^2/fits, na.rm = TRUE) #added argument na.rm = TRUE when NA's occur
   return(chi.sq)
 }
 
@@ -33,8 +33,9 @@ Nmix.gof.test <- function(mod, nsim = 5, plot.hist = TRUE){#more bootstrap sampl
 
   ##create plot
   if(plot.hist) {
-    hist(out@t.star, main = expression(paste("Bootstrapped ", chi^2, " fit statistic (", nsim, " samples)", sep = "")),
-       xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
+    hist(out@t.star, main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
+        list(nsim = nsim))),
+         xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
     title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
     abline(v = out@t0, lty = "dashed", col = "red")
   }
