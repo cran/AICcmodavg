@@ -163,10 +163,10 @@ if(na.vals) {
     select.preds.p.na <- preds.p.na[which(out.hist.na$coh == names(freqs.missing.cohorts)[m]), ]
     ##replace NA's with 1 to remove from likelihood
     if(!is.matrix(select.preds.p.na)) {select.preds.p.na <- matrix(data = select.preds.p.na, nrow = 1)}
-    select.preds.p.na[, gregexpr(pattern = "N", text = gsub(pattern = "NA", replacement = "N", x = select.cohort$det[1]))[[1]]] <- 1
+    select.preds.p.na[, gregexpr(pattern = "N", text = gsub(pattern = "NA", replacement = "N", x = select.cohort$det.hist[1]))[[1]]] <- 1
     n.total.sites <- nrow(select.cohort)
     freqs.na <- table(droplevels(select.cohort$det.hist))
-    cohort.na.un <- sort(unique(select.cohort$det))
+    cohort.na.un <- sort(unique(select.cohort$det.hist))
     n.hist.na <- length(freqs.na)
     exp.na <- rep(NA, n.hist.na)
     names(exp.na) <- cohort.na.un  
@@ -287,7 +287,7 @@ mb.gof.test <- function(mod, nsim = 5, plot.hist = TRUE){#more bootstrap samples
   if(plot.hist) {
   hist(out@t.star, main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples)", sep = ""),
        xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-  title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
+  title(main = bquote(paste(italic(P), " ", .(p.display))), line = 0.5)
   abline(v = out@t0, lty = "dashed", col = "red")
 }
   ##estimate c-hat

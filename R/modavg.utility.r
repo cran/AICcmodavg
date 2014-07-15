@@ -1,6 +1,41 @@
+##utility function to format candidate list of models to new class
+##extract class from models in list and create new class
+formatCands <- function(cand.set) {
+
+  ##extract model class
+  if(!is.list(cand.set)) stop("\n\'cand.set\' needs to be a list of candidate models\n")
+  n.mods <- length(cand.set)
+  all.mods <- lapply(cand.set, class)
+  check.class <- unique(all.mods)
+  out.class <- NULL
+  ##for "coxph", c("coxph.null", "coxph"), c("clogit", "coxph")
+  if(all(regexpr("coxph", check.class) != -1)) {
+    out.class <- "coxph"
+  }
+
+  ##if NULL
+  if(is.null(out.class)) {
+    if(length(check.class) > 1) stop("\nFunctions do not support mixture of model classes\n")
+    out.class <- unlist(check.class)
+  }
+
+  ##rename class
+  mod.class.new <- c(paste("AIC", paste(out.class, collapse = "."), sep =""))
+  
+  ##add to list
+  new.cand.set <- cand.set
+
+  ##new S3 class
+  class(new.cand.set) <- mod.class.new
+  return(new.cand.set)
+}
+
+
+
+
+
 ##utility functions used with modavg( ) to accomodate different specifications of interaction terms (e.g., A:B, B:A, A*B, B*A)
 ##in models of same set
-
 
 ####################################################
 ##function to reverse terms in interaction

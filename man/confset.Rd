@@ -8,13 +8,13 @@ Computing Confidence Set for the Kullback-Leibler Best Model
 }
 \description{
 This function computes the confidence set on the best model given
-the data and model set.  'confset' implements three different methods
-proposed by Burnham and Anderson (2002).
+the data and model set.  \code{confset} implements three different
+methods proposed by Burnham and Anderson (2002).
 
 }
 \usage{
-confset(cand.set, modnames, c.hat = 1, second.ord = TRUE, nobs = NULL,
-        method = "raw", level = 0.95, delta = 6) 
+confset(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+        method = "raw", level = 0.95, delta = 6, c.hat = 1)  
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,17 +23,11 @@ a list storing each of the models in the candidate model set.
 }
   \item{modnames}{
 a character vector of model names to facilitate the identification of
-each model in the model selection table.
-}
-  \item{c.hat}{
-value of overdispersion parameter (i.e., variance inflation factor) such
-as that obtained from 'c_hat'.  Note that values of c.hat different from
-1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
-success/trial or cbind(success, failure) syntax), with Poisson
-GLM's, or single-season occupancy models (MacKenzie et al. 2002).  If
-c.hat > 1, 'AICc' will return the quasi-likelihood analogue of the
-information criterion requested.  This option is not supported for
-generalized linear mixed models of the 'mer' class. 
+each model in the model selection table. If \code{NULL}, the function
+uses the names in the cand.set list of candidate models. If no names
+appear in the list, generic names (e.g., \code{Mod1}, \code{Mod2}) are
+supplied in the table in the same order as in the list of candidate
+models.
 }
   \item{second.ord}{
 logical.  If TRUE, the function returns the second-order
@@ -63,13 +57,24 @@ the delta (Q)AIC(c) value associated with the cutoff point to determine
 the confidence set for the best model.  Note that the argument is only
 used when method = 'ratio'.
 }
+  \item{c.hat}{
+value of overdispersion parameter (i.e., variance inflation factor) such
+as that obtained from \code{c_hat}.  Note that values of c.hat different
+from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
+success/trial or cbind(success, failure) syntax), with Poisson
+GLM's, or single-season occupancy models (MacKenzie et al. 2002).  If
+c.hat > 1, \code{AICc} will return the quasi-likelihood analogue of the
+information criterion requested.  This option is not supported for
+generalized linear mixed models of the \code{mer} or \code{merMod}
+classes.
+}
 }
 \details{
-The first and simplest (method = 'raw'), relies on summing the Akaike
-weights (i.e., model probabilities) of the ranked models until we reach
-a given cutpoint (e.g., 0.95 for a 95 percent set).
+The first and simplest (\code{method = 'raw'}), relies on summing the
+Akaike weights (i.e., model probabilities) of the ranked models until we
+reach a given cutpoint (e.g., 0.95 for a 95 percent set).
 
-The second method (method = 'ordinal') suggested is based on the
+The second method (\code{method = 'ordinal'}) suggested is based on the
 classification of the models on an ordinal scale based on the delta
 (Q)AIC(c).  The models are grouped in different classes based on their
 weight of support as determined by the delta (Q)AIC(c) values:
@@ -77,9 +82,9 @@ substantial support (delta (Q)AIC(c) <= 2), some support (2 < delta
 (Q)AIC(c) <= 7), little support (7 < delta (Q)AIC(c) <= 10), no support
 (delta (Q)AIC(c) > 10).
 
-The third method (method = 'ratio') is based on identifying the ratios
-of model likelihoods (i.e., exp(-delta_(Q)AIC(c)/2) ) that exceed a
-cutpoint, similar to the building of profile likelihood intervals.  An
+The third method (\code{method = 'ratio'}) is based on identifying the
+ratios of model likelihoods (i.e., exp(-delta_(Q)AIC(c)/2) ) that exceed
+a cutpoint, similar to the building of profile likelihood intervals.  An
 evidence ratio of each model relative to the top-ranked model is
 computed and the ratios exceeding the cutpoint determine which models
 are included in the confidence set.  Note here that small cutoff points 
@@ -90,10 +95,10 @@ exp(-1*delta_(Q)AIC(c)/2).
   
 }
 \value{
-'confset' returns an object of class 'confset' as a list with the
-following components, depending on which method is used:
+\code{confset} returns an object of class \code{confset} as a list with
+the following components, depending on which method is used:
 
-when method = 'raw':
+when \code{method = 'raw'}:
 \item{method}{identifies the method of determining the confidence set on
 the best model.}
 \item{level}{the confidence level used to determine the confidence set
@@ -101,7 +106,7 @@ the best model.}
 \item{table}{a reduced table with the models included in the confidence
   set.}
 
-when method = 'ordinal':
+when \code{method = 'ordinal'}:
 \item{method}{identifies the method of determining the confidence set on
 the best model.}
 \item{substantial}{a reduced table with the models included in the
@@ -113,7 +118,7 @@ the best model.}
 \item{none}{a reduced table with the models included in the confidence
   set for which delta (Q)AIC(c) > 10.}
 
-when method = 'ratio':
+when \code{method = 'ratio'}:
 \item{method}{identifies the method of determining the confidence set on
   the best model.}
 \item{cutoff}{the cutoff value for the ratios used to determine the
@@ -141,7 +146,7 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{c_hat}},
 \code{\link{evidence}}, \code{\link{importance}}, \code{\link{modavg}},
-\code{\link{modavg.shrink}}, \code{\link{modavgpred}}
+\code{\link{modavgShrink}}, \code{\link{modavgPred}}
 }
 \examples{
 ##anuran larvae example from Mazerolle (2006)

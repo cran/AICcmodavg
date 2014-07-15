@@ -1,7 +1,7 @@
 evidence <-
   function(aic.table, model.high = "top", model.low = "second.ranked") {
-    ##if mult.comp object, extract relevant table
-    if(identical(class(aic.table)[1], "mult.comp")) {
+    ##if multComp object, extract relevant table
+    if(identical(class(aic.table)[1], "multComp")) {
       if(!is.data.frame(aic.table)) {
         aic.table <- aic.table$model.table
       }  

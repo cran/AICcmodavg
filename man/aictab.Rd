@@ -1,20 +1,40 @@
 \name{aictab}
 \Rdversion{1.1}
 \alias{aictab}
-\alias{aictab.clm}
-\alias{aictab.clmm}
-\alias{aictab.coxph}
-\alias{aictab.glm}
-\alias{aictab.gls}
-\alias{aictab.lme}
-\alias{aictab.mer}
-\alias{aictab.merMod}
-\alias{aictab.mult}
-\alias{aictab.nlme}
-\alias{aictab.nls}
-\alias{aictab.polr}
-\alias{aictab.rlm}
-\alias{aictab.unmarked}
+\alias{aictab.default}
+\alias{aictab.AICaov.lm}
+\alias{aictab.AICsclm.clm}
+\alias{aictab.AICclmm}
+\alias{aictab.AICcoxme}
+\alias{aictab.AICcoxph}
+\alias{aictab.AICglm.lm}
+\alias{aictab.AICgls}
+\alias{aictab.AIClm}
+\alias{aictab.AIClme}
+\alias{aictab.AIClmekin}
+\alias{aictab.AICmaxlikeFit.list}
+\alias{aictab.AICmer}
+\alias{aictab.AIClmerMod}
+\alias{aictab.AICglmerMod}
+\alias{aictab.AICnlmerMod}
+\alias{aictab.AICmultinom.nnet}
+\alias{aictab.AICnlme}
+\alias{aictab.AICnls}
+\alias{aictab.AICpolr}
+\alias{aictab.AICrlm.lm}
+\alias{aictab.AICunmarkedFitOccu}
+\alias{aictab.AICunmarkedFitColExt}
+\alias{aictab.AICunmarkedFitOccuRN}
+\alias{aictab.AICunmarkedFitPCount}
+\alias{aictab.AICunmarkedFitPCO}
+\alias{aictab.AICunmarkedFitDS}
+\alias{aictab.AICunmarkedFitGDS}
+\alias{aictab.AICunmarkedFitOccuFP}
+\alias{aictab.AICunmarkedFitMPois}
+\alias{aictab.AICunmarkedFitGMM}
+\alias{aictab.AICunmarkedFitGPC}
+\alias{aictab.AICvglm}
+\alias{aictab.AICzeroinfl}
 \alias{print.aictab}
 \title{
 Create Model Selection Tables
@@ -23,59 +43,118 @@ Create Model Selection Tables
 This function creates a model selection table based on one of the
 following information criteria:  AIC, AICc, QAIC, QAICc.  The table
 ranks the models based on the selected information criteria and also
-provides delta AIC and Akaike weights.  'aictab' selects the
+provides delta AIC and Akaike weights.  \code{aictab} selects the
 appropriate function to create the model selection table based on the 
-object class.  The current version works with objects of 'clm', 'clmm',
-'coxph', 'glm', 'gls', 'lm', 'lme', 'mer', 'merMod', 'multinom', 'nlme',
-'nls', 'polr', 'rlm' classes as well as various models of 'unmarkedFit'
+object class.  The current version works with lists containing objects
+of \code{clm}, \code{clmm}, \code{clogit}, \code{coxme}, \code{coxph},
+\code{glm}, \code{gls}, \code{lm}, \code{lme}, \code{lmekin},
+\code{maxlikeFit}, \code{mer}, \code{merMod}, \code{multinom},
+\code{nlme}, \code{nls}, \code{polr}, \code{rlm}, \code{vglm}, and
+\code{zeroinfl} classes as well as various models of \code{unmarkedFit}
 classes but does not yet allow mixing of different classes.
 }
 \usage{
-aictab(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE,
-       nobs = NULL)
+aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, \dots)
 
-aictab.clm(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-           nobs = NULL)
+\method{aictab}{AICaov.lm}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
-aictab.clmm(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-           nobs = NULL) 
+\method{aictab}{AICsclm.clm}(cand.set, modnames = NULL,
+       second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
-aictab.coxph(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-             nobs = NULL) 
+\method{aictab}{AICclmm}(cand.set, modnames = NULL,
+       second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
-aictab.glm(cand.set, modnames, sort = TRUE, c.hat = 1,
-           second.ord = TRUE, nobs = NULL)
+\method{aictab}{AICcoxme}(cand.set, modnames = NULL,
+       second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
-aictab.gls(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-           nobs = NULL) 
+\method{aictab}{AICcoxph}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
-aictab.lme(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-           nobs = NULL) 
+\method{aictab}{AICglm.lm}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)  
 
-aictab.mer(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-           nobs = NULL) 
+\method{aictab}{AICgls}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
-aictab.merMod(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-           nobs = NULL) 
+\method{aictab}{AIClm}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
-aictab.mult(cand.set, modnames, sort = TRUE, c.hat = 1,
-            second.ord = TRUE, nobs = NULL)
+\method{aictab}{AIClme}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
-aictab.nlme(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-            nobs = NULL) 
+\method{aictab}{AIClmekin}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
-aictab.nls(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-           nobs = NULL) 
+\method{aictab}{AICmaxlikeFit.list}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots) 
 
-aictab.polr(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-            nobs = NULL) 
+\method{aictab}{AICmer}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
-aictab.rlm(cand.set, modnames, sort = TRUE, second.ord = TRUE,
-            nobs = NULL) 
+\method{aictab}{AIClmerMod}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
-aictab.unmarked(cand.set, modnames, sort = TRUE, c.hat = 1,
-                second.ord = TRUE, nobs = NULL) 
+\method{aictab}{AICglmerMod}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots) 
 
+\method{aictab}{AICnlmerMod}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
+\method{aictab}{AICmultinom.nnet}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICnlme}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots) 
+
+\method{aictab}{AICnls}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
+\method{aictab}{AICpolr}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
+\method{aictab}{AICrlm.lm}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
+\method{aictab}{AICunmarkedFitOccu}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitColExt}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitOccuRN}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitPCount}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitPCO}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitDS}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitGDS}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitOccuFP}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitMPois}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitGMM}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitGPC}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICvglm}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICzeroinfl}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -85,48 +164,55 @@ a list storing each of the models in the candidate model set.
 }
   \item{modnames}{
 a character vector of model names to facilitate the identification of
-each model in the model selection table.
-}
-  \item{sort}{
-logical.  If true, the model selection table is ranked according to the
-(Q)AIC(c) values.
-}
-  \item{c.hat}{
-value of overdispersion parameter (i.e., variance inflation factor) such
-as that obtained from 'c_hat'.  Note that values of c.hat different from
-1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
-success/trial or cbind(success, failure) syntax), with Poisson
-GLM's, single-season occupancy models (MacKenzie et al. 2002), or
-\emph{N}-mixture models (Royle 2004, Dail and Madsen 2011).  If
-c.hat > 1, 'AICc' will return the quasi-likelihood analogue of the
-information criterion requested.  This option is not supported for
-generalized linear mixed models of the 'mer' class. 
+each model in the model selection table. If \code{NULL}, the function
+uses the names in the cand.set list of candidate models (i.e., a named
+list).  If no names appear in the list and no character vector is
+provided, generic names (e.g., \code{Mod1}, \code{Mod2}) are supplied in
+the table in the same order as in the list of candidate models.
 }
   \item{second.ord}{
-logical.  If TRUE, the function returns the second-order
+logical.  If \code{TRUE}, the function returns the second-order
 Akaike information criterion (i.e., AICc).
 }
   \item{nobs}{
 this argument allows to specify a numeric value other than total sample
-size to compute the AICc (i.e., 'nobs' defaults to total number of
+size to compute the AICc (i.e., \code{nobs} defaults to total number of
 observations).  This is relevant only for mixed models or various models
-of 'unmarkedFit' classes where sample size is not straightforward.  In
-such cases, one might use total number of observations or number of
-independent clusters (e.g., sites) as the value of 'nobs'.
+of \code{unmarkedFit} classes where sample size is not straightforward.
+In such cases, one might use total number of observations or number of
+independent clusters (e.g., sites) as the value of \code{nobs}.
+}
+\item{sort}{
+logical.  If \code{TRUE}, the model selection table is ranked according
+to the (Q)AIC(c) values.
+}
+\item{c.hat}{
+value of overdispersion parameter (i.e., variance inflation factor) such
+as that obtained from \code{c_hat}.  Note that values of c.hat different
+from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
+success/trial or cbind(success, failure) syntax), with Poisson
+GLM's, single-season occupancy models (MacKenzie et al. 2002), or
+\emph{N}-mixture models (Royle 2004, Dail and Madsen 2011).  If
+c.hat > 1, \code{AICc} will return the quasi-likelihood analogue of the
+information criterion requested.  This option is not supported for
+generalized linear mixed models of the \code{mer} and \code{merMod}
+classes.
+}
+\item{\dots}{
+  additional arguments passed to the function.
 }
 }
 \details{
-'aictab' is a function that calls either 'aictab.clm', 'aictab.clmm',
-'aictab.coxph', 'aictab.glm', 'aictab.gls', 'aictab.lme', 'aictab.mer',
-'aictab.merMod', 'aictab.mult', 'aictab.nlme', 'aictab.nls',
-'aictab.polr', or 'aictab.unmarked' depending on the class of the
-object.  The current function is implemented for 'coxph', 'glm',
-'gls','lm', 'lme', 'mer', 'merMod', 'multinom', 'nlme', 'nls', 'polr',
-and 'rlm' classes as well as 'unmarkedFitDS' 'unmarkedFitGDS',
-'unmarkedFitOccu', 'unmarkedFitColExt', 'unmarkedFitOccuRN',
-'unmarkedFitPCount', and 'unmarkedFitPCO' classes.  The function
-constructs a model selection table based on one of the four information
-criteria: AIC, AICc, QAIC, and QAICc.
+\code{aictab} internally creates a new class for the \code{cand.set}
+list of candidate models, according to the contents of the list. The
+current function is implemented for \code{clogit}, \code{coxme},
+\code{coxph}, \code{glm}, \code{gls}, \code{lm}, \code{lme},
+\code{lmekin}, \code{maxlikeFit}, \code{mer}, \code{merMod},
+\code{multinom}, \code{nlme}, \code{nls}, \code{polr}, \code{rlm},
+\code{vglm}, and \code{zeroinfl} classes as well as various
+\code{unmarkedFit} classes. The function constructs a model selection
+table based on one of the four information criteria: AIC, AICc, QAIC,
+and QAICc. 
 
 Ten guidelines for model selection:
 
@@ -188,11 +274,8 @@ conclusions on a single 'best' model.  It is an elegant way of making
 inference based on the information contained in the entire model set.
 }
 \value{
-'aictab', 'aictab.clm', 'aictab.clmm', 'aictab.coxph', 'aictab.glm',
-'aictab.lme', 'aictab.mer', 'aictab.merMod', 'aictab.mult',
-'aictab.nlme', 'aictab.nls', 'aictab.polr', 'aictab.rlm', and
-'aictab.unmarked' create an object of class 'aictab' with the following
-components: 
+\code{aictab} creates an object of class \code{aictab} with the
+following components:
 
 \item{Modname}{the names of each model of the candidate model set.}
 \item{K }{the number of estimated parameters for each model.}
@@ -256,7 +339,7 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{confset}}, \code{\link{c_hat}},
 \code{\link{evidence}}, \code{\link{importance}}, \code{\link{modavg}}, 
-\code{\link{modavg.shrink}}, \code{\link{modavgpred}} 
+\code{\link{modavgShrink}}, \code{\link{modavgPred}} 
 }
 \examples{
 ##Mazerolle (2006) frog water loss example
@@ -288,6 +371,7 @@ print(aictab(cand.set = Cand.models, modnames = Modnames, sort = TRUE),
 
 
 
+\dontrun{
 ##Burnham and Anderson (2002) flour beetle data
 data(beetle)
 ##models as suggested by Burnham and Anderson p. 198          
@@ -309,15 +393,18 @@ c_hat(Cand.set[[3]])
 ##lowest value of c-hat < 1 for these non-nested models, thus use
 ##c.hat = 1 
        
-Modnames <- paste("Mod", 1:length(Cand.set), sep = " ")
-res.table <- aictab(cand.set = Cand.set, modnames = Modnames,
-                    second.ord = FALSE)
+##set up named list
+names(Cand.set) <- c("logit", "probit", "cloglog")
+
+##compare models
+##model names will be taken from the list if modnames is not specified
+res.table <- aictab(cand.set = Cand.set, second.ord = FALSE)
 ##note that delta AIC and Akaike weights are identical to Table 4.7
 print(res.table, digits = 2, LL = TRUE) #print table with 2 digits and
 ##print log-likelihood in table
 print(res.table, digits = 4, LL = FALSE) #print table with 4 digits and
 ##do not print log-likelihood
-
+}
 
 
 ##two-way ANOVA with interaction

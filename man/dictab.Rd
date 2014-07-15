@@ -1,8 +1,9 @@
 \name{dictab}
 \Rdversion{1.1}
 \alias{dictab}
-\alias{dictab.bugs}
-\alias{dictab.rjags}
+\alias{dictab.default}
+\alias{dictab.AICbugs}
+\alias{dictab.AICrjags}
 \alias{print.dictab}
 \title{
 Create Model Selection Tables from Bayesian Analyses
@@ -10,17 +11,17 @@ Create Model Selection Tables from Bayesian Analyses
 \description{
 This function creates a model selection table based on the deviance
 information criterion (DIC).  The table ranks the models based on the
-DIC and also provides delta DIC and DIC weights.  'dictab' selects the
-appropriate function to create the model selection table based on the 
-object class.  The current version works with objects of 'bugs' and
-'rjags' classes.
+DIC and also provides delta DIC and DIC weights.  \code{dictab} selects
+the appropriate function to create the model selection table based on
+the object class.  The current version works with objects of \code{bugs}
+and \code{rjags} classes.
 }
 \usage{
-dictab(cand.set, modnames, sort = TRUE)
+dictab(cand.set, modnames = NULL, sort = TRUE, \dots)
 
-dictab.bugs(cand.set, modnames, sort = TRUE)
+\method{dictab}{AICbugs}(cand.set, modnames = NULL, sort = TRUE, \dots)
 
-dictab.rjags(cand.set, modnames, sort = TRUE)
+\method{dictab}{AICrjags}(cand.set, modnames = NULL, sort = TRUE, \dots)
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -30,25 +31,32 @@ a list storing each of the models in the candidate model set.
 }
   \item{modnames}{
 a character vector of model names to facilitate the identification of
-each model in the model selection table.
+each model in the model selection table. If \code{NULL}, the function
+uses the names in the cand.set list of candidate models. If no names
+appear in the list, generic names (e.g., \code{Mod1}, \code{Mod2}) are
+supplied in the table in the same order as in the list of candidate
+models.
 }
   \item{sort}{
-logical.  If true, the model selection table is ranked according to the
-DIC values.
+logical.  If \code{TRUE}, the model selection table is ranked according
+to the DIC values.
 }
-
+\item{\dots}{
+  additional arguments passed to the function.
+}
 }
 \details{
-'dictab' is a function that calls 'dictab.bugs' and 'dictab.rjags'.  The
-current function is implemented for 'bugs' classes. The function
-constructs a model selection table based on the DIC (Spiegelhalter et
-al. 2002).  Note that DIC might not be appropriate to select among a set
-of hierarchical models and that modifications to the information
-criterion have been proposed (Millar 2009).
+\code{dictab} internally creates a new class for the \code{cand.set}
+list of candidate models, according to the contents of the list.  The
+current function is implemented for \code{bugs} and \code{jags}
+classes. The function constructs a model selection table based on the
+DIC (Spiegelhalter et al. 2002).  Note that DIC might not be appropriate
+to select among a set of hierarchical models and that modifications to
+the information criterion have been proposed (Millar 2009). 
 }
 \value{
-'dictab', 'dictab.bugs', and 'dictab.rjags' create an object of class
-'dictab' with the following components: 
+\code{dictab} creates an object of class \code{dictab} with the
+following components:
 
 \item{Modname}{the names of each model of the candidate model set.}
 \item{pD}{the effective number of estimated parameters for each
@@ -66,7 +74,7 @@ criterion have been proposed (Millar 2009).
   parsimonious among the candidate model set.}
 \item{Cum.Wt}{the cumulative DIC weights.  These are only meaningful
 if results in table are sorted in decreasing order of DIC weights
-(i.e., sort = TRUE).}
+(i.e., \code{sort = TRUE}).}
 \item{Deviance}{the deviance of each model.}
 }
 \references{

@@ -10,37 +10,33 @@ Model Selection and Multimodel Inference Based on (Q)AIC(c)
 Description:  This package includes functions to create model selection
 tables based on Akaike's information criterion (AIC) and the
 second-order AIC (AICc), as well as their quasi-likelihood counterparts
-(QAIC, QAICc).  Tables are printed with delta AIC and Akaike weights.
-The package also features functions to conduct classic model averaging
-(multimodel inference) for a given parameter of interest or predicted
-values, as well as a shrinkage version of model averaging parameter
-estimates.  Other handy functions enable the computation of relative
-variable importance, evidence ratios, and confidence sets for the best
-model.  The present version works with Cox proportional hazards models
-('coxph' class), linear models ('lm' class), generalized linear models
-('glm' class), linear models fit by generalized least squares ('gls'
-class), linear mixed models ('lme' class), generalized linear mixed
-models ('mer' and 'merMod' classes), multinomial and ordinal logistic
-regressions ('multinom', 'polr', 'clm', and 'clmm' classes), robust
-regression models ('rlm' class), nonlinear models ('nls' class), and
-nonlinear mixed models ('nlme' class).  The package also supports
-various models incorporating detection probabilities such as
-single-season occupancy models ('unmarkedFitOccu' and
-'unmarkedFitOccuFP' classes), multiple-season occupancy models
-('unmarkedFitColExt' class), single-season heterogeneity models
-('unmarkedFitOccuRN' class), single-season and multiple-season N-mixture
-models for repeated counts ('unmarkedFitPCount' and 'unmarkedFitPCO'
-classes, respectively), and distance sampling models ('unmarkedFitDS'
-and 'unmarkedFitGDS' classes). Some functions also allow the creation of
-model selection tables for Bayesian models of the 'bugs' and 'rjags'
-classes.
+(QAIC, QAICc).  The package also features functions to conduct classic
+model averaging (multimodel inference) for a given parameter of interest
+or predicted values, as well as a shrinkage version of model averaging
+parameter estimates.  Other handy functions enable the computation of
+relative variable importance, evidence ratios, and confidence sets for
+the best model.  The present version works with Cox proportional hazards
+models and conditional logistic regression (\code{coxph} and
+\code{coxme} classes), linear models (\code{lm} class), generalized
+linear models (\code{glm}, \code{vglm}, and \code{zeroinfl} classes),
+linear models fit by generalized least squares (\code{gls} class),
+linear mixed models (\code{lme} class), generalized linear mixed models
+(\code{mer} and \code{merMod} classes), multinomial and ordinal logistic
+regressions (\code{multinom}, \code{polr}, \code{clm}, and \code{clmm}
+classes), robust regression models (\code{rlm} class), nonlinear models
+(\code{nls} class), and nonlinear mixed models (\code{nlme} and
+\code{nlmerMod} classes).  The package also supports various models of
+\code{unmarkedFit} and \code{maxLikeFit} classes estimating demographic
+parameters after accounting for imperfect detection probabilities.  Some
+functions also allow the creation of model selection tables for Bayesian
+models of the \code{bugs} and \code{rjags} classes.
 }
 \details{
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 1.35\cr
-Date: \tab 2013-11-17\cr
+Version: \tab 2.00\cr
+Date: \tab 2014-07-14\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -65,14 +61,13 @@ multimodel inference:
 \item{\code{\link{evidence}}}  {Computes the evidence ratio between the
   highest-ranked model based on the information criteria selected and a
   lower-ranked model.}
-\item{\code{\link{extract.LL}}}  {Extracts log-likelihood from
-  models of class 'coxph' and 'unmarkedFit'.}
-\item{\code{\link{extractSE.mer}}}  {Extracts standard errors of the
-  fixed effects of a generalized linear mixed model of classes 'mer' and
-  'merMod' and adds the labels.}
+\item{\code{\link{extractLL}}}  {Extracts log-likelihood from
+  models of certain classes.}
+\item{\code{\link{extractSE}}}  {Extracts standard errors from models of
+  certain classes and adds the labels.}
 \item{\code{\link{fam.link.mer}}}  {Extracts the distribution family and 
-  link function from a generalized linear mixed model of classes 'mer'
-  and 'merMod'.} 
+  link function from a generalized linear mixed model of classes \code{mer}
+  and \code{merMod}.} 
 \item{\code{\link{importance}}}  {Computes importance values (w+) for
   the support of a given parameter among set of candidate models.}
 \item{\code{\link{mb.gof.test}}}  {Computes the MacKenzie and Bailey
@@ -81,50 +76,40 @@ multimodel inference:
 \item{\code{\link{modavg}}}  {Computes model-averaged estimate,
   unconditional standard error, and unconditional confidence interval of
   a parameter of interest among a set of candidate models.}
-\item{\code{\link{modavg.effect}}}  {Computes model-averaged effect
+\item{\code{\link{modavgEffect}}}  {Computes model-averaged effect
   sizes between groups based on the entire candidate model set.}
-\item{\code{\link{modavg.shrink}}}  {Computes shrinkage version of
+\item{\code{\link{modavgShrink}}}  {Computes shrinkage version of
   model-averaged estimate, unconditional standard error, and
   unconditional confidence interval of a parameter of interest among a
   set of candidate models.} 
-\item{\code{\link{modavgpred}}}  {Computes model-average predictions and 
+\item{\code{\link{modavgPred}}}  {Computes model-average predictions and 
   unconditional SE's among entire set of candidate models.}
-\item{\code{\link{mult.comp}}}  {Performs multiple comparisons in a
+\item{\code{\link{multComp}}}  {Performs multiple comparisons in a
   model selection framework.}
 \item{\code{\link{Nmix.gof.test}}}  {Computes goodness-of-fit test for
-  N-mixture models based on the Pearson chi-square statistic.}
-\item{\code{\link{predictSE.gls}}}  {Computes predictions and associated 
-  standard errors for 'gls' object based on linear predictor.}
-\item{\code{\link{predictSE.lme}}}  {Computes predictions and associated 
-  standard errors for 'lme' object based on fixed effects (i.e., 
-  population predictions).}
-\item{\code{\link{predictSE.mer}}}  {Computes predictions and associated 
-  standard errors for 'mer' and 'merMod' objects based on fixed effects
-  (i.e., population predictions).}
-\item{\code{\link{predictSE.zip}}}  {Computes predictions and associated 
-  standard errors for 'unmarkedFitPCount' and 'unmarkedFitPCO' objects
-  that use zero-inflated Poisson distributions on abundance.} 
+  \emph{N}-mixture models based on the Pearson chi-square statistic.}
+\item{\code{\link{predictSE}}}  {Computes predictions and associated 
+  standard errors models of certain classes.}
 }
 }
 \author{
-  Marc J. Mazerolle <marc.mazerolle@uqat.ca>.  Special thanks to
-  T. Ergon for the original idea of storing candidate models in a list.  
+  Marc J. Mazerolle <marc.mazerolle@uqat.ca>.
 }
 \references{
-Anderson, D. R. (2008) \emph{Model-based inference in the life sciences:
-  a primer on evidence}. Springer: New York.
+  Anderson, D. R. (2008) \emph{Model-based inference in the life sciences:
+    a primer on evidence}. Springer: New York.
 
-Burnham, K. P., and Anderson, D. R. (2002) \emph{Model selection and
-  multimodel inference: a practical information-theoretic approach}. Second
+  Burnham, K. P., and Anderson, D. R. (2002) \emph{Model selection and
+    multimodel inference: a practical information-theoretic approach}. Second
   edition. Springer: New York. 
 
-Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
+  Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
   understanding AIC and BIC in model selection. \emph{Sociological
-  Methods and Research} \bold{33}, 261--304.
+    Methods and Research} \bold{33}, 261--304.
 
-Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
-Akaike's Information Criterion (AIC) to assess the strength of
-biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
+  Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
+  Akaike's Information Criterion (AIC) to assess the strength of
+  biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
 }
 
 \examples{
@@ -185,8 +170,8 @@ modavg(cand.set = Cand.mod, modnames = Modnames, parm = "TypeBOG")
 
 ##compute model-averaged estimate of "TypeBOG" with shrinkage
 ##same number of models with vs without variable
-modavg.shrink(cand.set = Cand.mod, modnames = Modnames,
-              parm = "TypeBOG")
+modavgShrink(cand.set = Cand.mod, modnames = Modnames,
+             parm = "TypeBOG")
 
 ##compute model-average predictions for two types of ponds
 ##create a data set for predictions
@@ -196,11 +181,11 @@ dat.pred <- data.frame(Type = factor(c("BOG", "UPLAND")),
                        Effort = mean(min.trap$Effort))
 
 ##model-averaged predictions across entire model set
-modavgpred(cand.set = Cand.mod, modnames = Modnames,
+modavgPred(cand.set = Cand.mod, modnames = Modnames,
            newdata = dat.pred)
 
 
-
+\dontrun{
 ##single-season occupancy model example modified from ?occu
 if(require(unmarked)) {
 ##single season
@@ -246,8 +231,8 @@ modavg(cand.set = Cand.models, modnames = Modnames, parm = "sitevar1",
 
 ##compute model-averaged estimate of "sitevar1" with shrinkage
 ##same number of models with vs without variable
-modavg.shrink(cand.set = Cand.models, modnames = Modnames,
-              parm = "sitevar1", parm.type = "psi")
+modavgShrink(cand.set = Cand.models, modnames = Modnames,
+             parm = "sitevar1", parm.type = "psi")
 
 ##compute model-average predictions for two types of ponds
 ##create a data set for predictions
@@ -257,9 +242,10 @@ dat.pred <- data.frame(sitevar1 = seq(from = min(siteCovs(pferUMF)$sitevar1),
 
 ##model-averaged predictions of psi across range of values
 ##of sitevar1 and entire model set
-modavgpred(cand.set = Cand.models, modnames = Modnames,
+modavgPred(cand.set = Cand.models, modnames = Modnames,
            newdata = dat.pred, parm.type = "psi")
 detach(package:unmarked)
+}
 }
 }
 

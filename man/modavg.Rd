@@ -1,18 +1,37 @@
 \name{modavg}
 \Rdversion{1.1}
 \alias{modavg}
-\alias{modavg.clm}
-\alias{modavg.clmm}
-\alias{modavg.coxph}
-\alias{modavg.glm}
-\alias{modavg.gls}
-\alias{modavg.lme}
-\alias{modavg.mer}
-\alias{modavg.merMod}
-\alias{modavg.mult}
-\alias{modavg.polr}
-\alias{modavg.rlm}
-\alias{modavg.unmarked}
+\alias{modavg.default}
+\alias{modavg.AICaov.lm}
+\alias{modavg.AICsclm.clm}
+\alias{modavg.AICclmm}
+\alias{modavg.AICcoxme}
+\alias{modavg.AICcoxph}
+\alias{modavg.AICglm.lm}
+\alias{modavg.AICgls}
+\alias{modavg.AIClm}
+\alias{modavg.AIClme}
+\alias{modavg.AIClmekin}
+\alias{modavg.AICmaxlikeFit.list}
+\alias{modavg.AICmer}
+\alias{modavg.AIClmerMod}
+\alias{modavg.AICglmerMod}
+\alias{modavg.AICmultinom.nnet}
+\alias{modavg.AICpolr}
+\alias{modavg.AICrlm.lm}
+\alias{modavg.AICvglm}
+\alias{modavg.AICzeroinfl}
+\alias{modavg.AICunmarkedFitOccu}
+\alias{modavg.AICunmarkedFitColExt}
+\alias{modavg.AICunmarkedFitOccuRN}
+\alias{modavg.AICunmarkedFitPCount}
+\alias{modavg.AICunmarkedFitPCO}
+\alias{modavg.AICunmarkedFitDS}
+\alias{modavg.AICunmarkedFitGDS}
+\alias{modavg.AICunmarkedFitOccuFP}
+\alias{modavg.AICunmarkedFitMPois}
+\alias{modavg.AICunmarkedFitFitGMM}
+\alias{modavg.AICunmarkedFitFitGPC}
 \alias{print.modavg}
 
 \title{
@@ -27,60 +46,143 @@ is also referred to as a natural average of the estimate by Burnham and
 Anderson (2002, p. 152).
 }
 \usage{
-modavg(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL, 
-       conf.level = 0.95, second.ord = TRUE, nobs = NULL,
-       exclude = NULL, warn = TRUE, uncond.se = "revised",
-       parm.type = NULL)
+modavg(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, 
+       uncond.se = "revised", conf.level = 0.95, exclude = NULL, warn =
+       TRUE, \dots) 
 
-modavg.clm(cand.set, parm, modnames, conf.level = 0.95,
-           second.ord = TRUE, nobs = NULL, exclude = NULL,
-           warn = TRUE, uncond.se = "revised")
+\method{modavg}{AICaov.lm}(cand.set, parm, modnames = NULL, second.ord =
+        TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+        exclude = NULL, warn = TRUE, \dots)
 
-modavg.clmm(cand.set, parm, modnames, conf.level = 0.95,
-            second.ord = TRUE, nobs = NULL, exclude = NULL,
-            warn = TRUE, uncond.se = "revised")
+\method{modavg}{AICsclm.clm}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, \dots)
 
-modavg.coxph(cand.set, parm, modnames, conf.level = 0.95,
-             second.ord = TRUE, nobs = NULL, exclude = NULL,
-             warn = TRUE, uncond.se = "revised")
+\method{modavg}{AICclmm}(cand.set, parm, modnames = NULL, second.ord 
+        = TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+        exclude = NULL, warn = TRUE, \dots)
 
-modavg.glm(cand.set, parm, modnames, c.hat = 1, gamdisp = NULL,
-           conf.level = 0.95, second.ord = TRUE, nobs = NULL,
-           exclude = NULL, warn = TRUE, uncond.se = "revised")
+\method{modavg}{AICcoxme}(cand.set, parm, modnames = NULL, second.ord
+        = TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+        exclude = NULL, warn = TRUE, \dots)
 
-modavg.gls(cand.set, parm, modnames, conf.level = 0.95,
-           second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
-           uncond.se = "revised")
+\method{modavg}{AICcoxph}(cand.set, parm, modnames = NULL, second.ord
+        = TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+        exclude = NULL, warn = TRUE, \dots)
 
-modavg.lme(cand.set, parm, modnames, conf.level = 0.95,
-           second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
-           uncond.se = "revised")
+\method{modavg}{AICglm.lm}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        gamdisp = NULL, \dots)
 
-modavg.mer(cand.set, parm, modnames, conf.level = 0.95,
-           second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
-           uncond.se = "revised")
+\method{modavg}{AICgls}(cand.set, parm, modnames = NULL, second.ord =
+           TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+           exclude = NULL, warn = TRUE, \dots)
 
-modavg.merMod(cand.set, parm, modnames, conf.level = 0.95,
-              second.ord = TRUE, nobs = NULL, exclude = NULL,
-              warn = TRUE, uncond.se = "revised")
+\method{modavg}{AIClm}(cand.set, parm, modnames = NULL, second.ord =
+        TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+        exclude = NULL, warn = TRUE, \dots)
 
-modavg.mult(cand.set, parm, modnames, c.hat = 1, conf.level = 0.95,
-            second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
-            uncond.se = "revised")
+\method{modavg}{AIClme}(cand.set, parm, modnames = NULL, second.ord =
+        TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+        exclude = NULL, warn = TRUE, \dots)
 
-modavg.polr(cand.set, parm, modnames, conf.level = 0.95,
-            second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
-            uncond.se = "revised")
+\method{modavg}{AIClmekin}(cand.set, parm, modnames = NULL,
+         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+         conf.level = 0.95, exclude = NULL, warn = TRUE, \dots)
 
-modavg.rlm(cand.set, parm, modnames, conf.level = 0.95,
-           second.ord = TRUE, nobs = NULL, exclude = NULL, warn = TRUE,
-           uncond.se = "revised")
+\method{modavg}{AICmaxlikeFit.list}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        \dots)
 
-modavg.unmarked(cand.set, parm, modnames, c.hat = 1,
-                conf.level = 0.95, second.ord = TRUE, nobs = NULL,
-                exclude = NULL, warn = TRUE, uncond.se = "revised",
-                parm.type = NULL) 
+\method{modavg}{AICmer}(cand.set, parm, modnames = NULL, second.ord =
+        TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+        exclude = NULL, warn = TRUE, \dots)
 
+\method{modavg}{AIClmerMod}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, \dots)
+
+\method{modavg}{AICglmerMod}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, \dots)
+
+\method{modavg}{AICmultinom.nnet}(cand.set, parm, modnames = NULL, 
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        \dots)
+
+\method{modavg}{AICpolr}(cand.set, parm, modnames = NULL, second.ord
+        = TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+        exclude = NULL, warn = TRUE, \dots)
+
+\method{modavg}{AICrlm.lm}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, \dots)
+
+\method{modavg}{AICvglm}(cand.set, parm, modnames = NULL, second.ord
+         = TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+         exclude = NULL, warn = TRUE, c.hat = 1, \dots)
+
+\method{modavg}{AICzeroinfl}(cand.set, parm, modnames = NULL,
+         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+         conf.level = 0.95, exclude = NULL, warn = TRUE, \dots)
+
+\method{modavg}{AICunmarkedFitOccu}(cand.set, parm, modnames = NULL, 
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitColExt}(cand.set, parm, modnames =
+        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitOccuRN}(cand.set, parm, modnames =
+        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitPCount}(cand.set, parm, modnames =
+        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitPCO}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitDS}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitGDS}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitOccuFP}(cand.set, parm, modnames =
+        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitMPois}(cand.set, parm, modnames =
+        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitFitGMM}(cand.set, parm, modnames =
+       NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+       conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+       parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitFitGPC}(cand.set, parm, modnames =
+        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -96,142 +198,159 @@ the label of the estimate must be included as it appears in the output
 }
   \item{modnames}{
 a character vector of model names to facilitate the identification of
-each model in the model selection table.
+each model in the model selection table. If \code{NULL}, the function
+uses the names in the cand.set list of candidate models. If no names
+appear in the list, generic names (e.g., \code{Mod1}, \code{Mod2}) are
+supplied in the table in the same order as in the list of candidate
+models.
+}
+\item{second.ord}{
+logical.  If \code{TRUE}, the function returns the second-order
+Akaike information criterion (i.e., AICc).
+}
+  \item{nobs}{
+this argument allows to specify a numeric value other than total sample
+size to compute the AICc (i.e., \code{nobs} defaults to total number of 
+observations).  This is relevant only for mixed models or various models
+of \code{unmarkedFit} classes where sample size is not straightforward.
+In such cases, one might use total number of observations or number of
+independent clusters (e.g., sites) as the value of \code{nobs}.
+}
+\item{uncond.se}{
+  either, \code{"old"}, or \code{"revised"}, specifying the equation
+  used to compute the unconditional standard error of a model-averaged
+  estimate.  With \code{uncond.se = "old"}, computations are based on
+  equation 4.9 of Burnham and Anderson (2002), which was the former way
+  to compute unconditional standard errors.  With \code{uncond.se =
+  "revised"}, equation 6.12 of Burnham and Anderson (2002) is used.
+  Anderson (2008, p. 111) recommends use of the revised version for the
+  computation of unconditional standard errors and it is now the
+  default.  Note that versions of package AICcmodavg < 1.04 used the old
+  method to compute unconditional standard errors.
+}
+\item{conf.level}{
+the confidence level requested for the computation of unconditional
+confidence intervals.
+}
+\item{exclude}{
+this argument excludes models based on the terms specified for the 
+computation of a model-averaged estimate of \code{parm}.  The
+\code{exclude} argument is set to \code{NULL} by default and does not
+exclude any models other than those without the \code{parm}.  When
+\code{parm} is a main effect but is also involved in
+interactions/polynomial terms in some models, one should specify the
+interaction/polynomial terms as a list to exclude models with these
+terms from the computation of model-averaged estimate of the main effect
+(e.g., \code{exclude = list("sex:mass", "mass2")}).  See 'Details' 
+and 'Examples' below.
+}
+  \item{warn}{
+logical.  If \code{TRUE}, \code{modavg} performs a check and isssues a
+warning when the value in \code{parm} occurs more than once in any given
+model.  This is a check for potential interaction/polynomial terms in
+the model when such terms are constructed with the usual operators
+(e.g., \code{I( )} for polynomial terms, \code{:} for interaction
+terms).
 }
   \item{c.hat}{
 value of overdispersion parameter (i.e., variance inflation factor) such
-as that obtained from 'c_hat'.  Note that values of c.hat different from
-1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
+as that obtained from \code{c_hat}.  Note that values of c.hat different
+from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
 success/trial or cbind(success, failure) syntax), with Poisson GLM's, 
 single-season occupancy models (MacKenzie et al. 2002), or
 \emph{N}-mixture models (Royle 2004, Dail and Madsen 2011).  If
-c.hat > 1, 'modavg' will return the quasi-likelihood analogue of the
-information criteria requested and multiply the variance-covariance
+c.hat > 1, \code{modavg} will return the quasi-likelihood analogue of
+the information criteria requested and multiply the variance-covariance
 matrix of the estimates by this value (i.e., SE's are multiplied by
 sqrt(c.hat)). This option is not supported for generalized linear mixed
-models of the 'mer' class.
+models of the \code{mer} or \code{merMod} classes.
 }
   \item{gamdisp}{
 if gamma GLM is used, the dispersion parameter should be specified here
 to apply the same value to each model.
 }
-  \item{conf.level}{
-the confidence level requested for the computation of unconditional
-confidence intervals.
+\item{parm.type}{  this argument specifies the parameter type on which the effect size 
+  will be computed and is only relevant for models of
+  \code{unmarkedFitOccu}, \code{unmarkedFitColExt},
+  \code{unmarkedFitOccuFP}, \code{unmarkedFitOccuRN}, 
+  \code{unmarkedFitMPois}, \code{unmarkedFitPCount},
+  \code{unmarkedFitPCO}, \code{unmarkedFitDS}, \code{unmarkedFitGDS}, 
+  \code{unmarkedFitGMM}, and \code{unmarkedFitGPC} classes.  The
+  character strings supported vary with the type of model fitted. 
+  For \code{unmarkedFitOccu} objects, either \code{psi} or \code{detect}
+  can be supplied to indicate whether the parameter is on occupancy or
+  detectability, respectively.  For \code{unmarkedFitColExt}, possible
+  values  are \code{psi}, \code{gamma}, \code{epsilon}, and
+  \code{detect}, for parameters on occupancy in the inital year,
+  colonization, extinction, and detectability, respectively.  For
+  \code{unmarkedFitOccuFP} objects, one can specify \code{psi},
+  \code{detect}, or \code{fp}, for occupancy, detectability, and
+  probability of assigning false-positives, respectively.  For
+  \code{unmarkedFitOccuRN} objects, either \code{lambda} or
+  \code{detect} can be entered for abundance and detectability
+  parameters, respectively.  For \code{unmarkedFitPCount} and
+  \code{unmarkedFitMPois} objects, \code{lambda} or \code{detect} denote
+  parameters on abundance and detectability, respectively.  For
+  \code{unmarkedFitPCO} objects, one can enter \code{lambda},
+  \code{gamma}, \code{omega}, or \code{detect}, to specify parameters on
+  abundance, recruitment, apparent survival, and detectability,
+  respectively.  For \code{unmarkedFitDS} objects, only \code{lambda} is
+  supported for the moment.  For \code{unmarkedFitGDS}, \code{lambda}
+  and \code{phi} denote abundance and availability, respectively.  For  
+  \code{unmarkedFitGMM} and \code{unmarkedFitGPC} objects,
+  \code{lambda}, \code{phi}, and \code{detect} denote abundance, 
+  availability, and detectability, respectively. 
 }
-  \item{second.ord}{
-logical.  If TRUE, the function returns the second-order
-Akaike information criterion (i.e., AICc).
-}
-  \item{nobs}{
-this argument allows to specify a numeric value other than total sample
-size to compute the AICc (i.e., 'nobs' defaults to total number of
-observations).  This is relevant only for mixed models or various models
-of 'unmarkedFit' classes where sample size is not straightforward.  In
-such cases, one might use total number of observations or number of
-independent clusters (e.g., sites) as the value of 'nobs'.
-}
-  \item{exclude}{
-this argument excludes models based on the terms specified for the 
-computation of a model-averaged estimate of 'parm'.  The 'exclude'
-argument is set to NULL by default and does not exclude any models other
-than those without the 'parm'.  When 'parm' is a main effect but is also
-involved in interactions/polynomial terms in some models, one should
-specify the interaction/polynomial terms as a list to exclude models
-with these terms from the computation of model-averaged estimate of the
-main effect (e.g., exclude = list("sex:mass", "mass2")).  See 'Details'
-and 'Examples' below.
-}
-  \item{warn}{
-logical.  If TRUE, modavg( ) performs a check and isssues a warning when
-the value in 'parm' occurs more than once in any given model.  This is a
-check for potential interaction/polynomial terms in the model when such
-terms are constructed with the usual operators (e.g., I( ) for
-polynomial terms, ':' for interaction terms). 
-}
-
-\item{uncond.se}{
-  either, "old", or "revised", specifying the equation used to compute
-  the unconditional standard error of a model-averaged estimate.  With
-  uncond.se = "old", computations are based on equation 4.9 of Burnham
-  and Anderson (2002), which was the former way to compute unconditional
-  standard errors.  With uncond.se = "revised", equation 6.12 of Burnham
-  and Anderson (2002) is used.  Anderson (2008, p. 111) recommends use
-  of the revised version for the computation of unconditional standard
-  errors and it is now the default.  Note that versions of package
-  AICcmodavg < 1.04 used the old method to compute unconditional
-  standard errors.
-}
-\item{parm.type}{
-  this argument specifies the parameter type of the estimate specified
-  in 'parm' and is only relevant for models of 'unmarkedFitOccu',
-  'unmarkedFitColExt', 'unmarkedFitOccuRN', 'unmarkedFitPCount',
-  'unmarkedFitPCO', 'unmarkedFitDS' and 'unmarkedFitGDS' classes.  The
-  character strings supported vary with the type of model fitted.  For
-  'unmarkedFitOccu' objects, either 'psi' or 'detect' can be supplied to
-  indicate whether the parameter is on occupancy or detectability,
-  respectively.  For 'unmarkedFitColExt', possible values are 'psi',
-  'gamma', 'epsilon', and 'detect', for parameters on occupancy in the
-  inital year, colonization, extinction, and detectability,
-  respectively.  For 'unmarkedFitOccuRN' objects, either 'lambda or
-  'detect' can be entered for abundance and detectability parameters,
-  respectively.  For 'unmarkedFitPCount' objects, 'lambda' or 'detect'
-  denote parameters on abundance and detectability, respectively.  For
-  'unmarkedFitPCO' objects, one can enter 'lambda', 'gamma', 'omega', or
-  'detect', to specify parameters on abundance, recruitment, apparent
-  survival, and detectability, respectively. For 'unmarkedFitDS' and
-  'unmarkedFitGDS' objects, only 'lambda' is supported for the moment.
+\item{\dots}{
+  additional arguments passed to the function.
 }
 }
 
 \details{
 The parameter for which a model-averaged estimate is requested must be
-specified with the 'parm' argument and must be identical to its label in
-the model output (e.g., from 'summary').  For factors, one must specify
-the name of the variable and the level of interest.  'modavg' includes
-checks to find variations of interaction terms specified in the 'parm'
-and 'exclude' arguments.  However, to avoid problems, one should specify
-interaction terms consistently for all models: e.g., either a:b or b:a
-for all models, but not a mixture of both. 
+specified with the \code{parm} argument and must be identical to its
+label in the model output (e.g., from \code{summary}).  For factors, one
+must specify the name of the variable and the level of interest.
+\code{modavg} includes checks to find variations of interaction terms
+specified in the \code{parm} and \code{exclude} arguments.  However, to
+avoid problems, one should specify interaction terms consistently for
+all models: e.g., either \code{a:b} or \code{b:a} for all models, but
+not a mixture of both. 
 
 You must exercise caution when some models include interaction or
 polynomial terms, because main effect terms do not have the same
 interpretation when they also appear in an interaction/polynomial term
-in the same model.  In such cases, one should exclude models containing
-interaction terms where the main effect is involved with the 'exclude'
-argument of 'modavg'.  Note that 'modavg' checks for potential cases of
-multiple instances of a variable appearing more than once in a given model
-(presumably in an interaction) and issues a warning.  To correctly
-compute the model-averaged estimate of a main effect involved in
-interaction/polynomial terms, specify the interaction terms(s) that
-should not appear in the same model with the 'exclude' argument.  This
-will effectively exclude models from the computation of the
-model-averaged estimate.  
+in the same model.  In such cases, one should exclude models containing 
+interaction terms where the main effect is involved with the
+\code{exclude} argument of \code{modavg}.  Note that \code{modavg}
+checks for potential cases of multiple instances of a variable appearing
+more than once in a given model (presumably in an interaction) and
+issues a warning.  To correctly compute the model-averaged estimate of a
+main effect involved in interaction/polynomial terms, specify the
+interaction terms(s) that should not appear in the same model with the
+\code{exclude} argument.  This will effectively exclude models from the
+computation of the model-averaged estimate.  
 
-When 'warn' = TRUE, 'modavg' looks for matches among the labels of the
-estimates with 'identical'.  It then compares the results to partial
-matches with 'regexpr', and issues a warning whenever they are
-different.  As a result, 'modavg' may issue a warning when some
-variables or levels of categorical variables have nested names (e.g.,
-treat, treat10; L, TL).  When this warning is only due to the presence
-of similarly named variables in the models (and NOT due to interaction
-terms), you can suppress this warning by setting 'warn = FALSE'.    
+When \code{warn = TRUE}, \code{modavg} looks for matches among the
+labels of the estimates with \code{identical}.  It then compares the
+results to partial matches with \code{regexpr}, and issues a warning
+whenever they are different.  As a result, \code{modavg} may issue a
+warning when some variables or levels of categorical variables have
+nested names (e.g., \code{treat}, \code{treat10}; \code{L}, \code{TL}).
+When this warning is only due to the presence of similarly named
+variables in the models (and NOT due to interaction terms), you can
+suppress this warning by setting \code{warn = FALSE}.
 
-'modavg' is a function that calls 'modavg.clm', 'modavg.clmm',
-'modavg.coxph', 'modavg.glm', 'modavg.gls', 'modavg.lme', 'modavg.mer',
-'modavg.merMod', 'modavg.mult', 'modavg.polr', 'modavg.rlm', or
-'modavg.unmarked' depending on the class of the object.  The current
-function is implemented for a list containing objects of 'clm', 'clmm',
-'coxph', 'glm', 'gls', 'lm', 'lme', 'mer', 'merMod', 'multinom', 'polr',
-and 'rlm' classes as well as 'unmarkedFitOccu', 'unmarkedFitColExt',
-'unmarkedFitOccuRN', 'unmarkedFitPCount', 'unmarkedFitPCO',
-'unmarkedFitDS', and 'unmarkedFitGDS' classes.
+\code{modavg} is implemented for a list containing objects of
+\code{clm}, \code{clmm}, \code{clogit}, \code{coxme}, \code{coxph},
+\code{glm}, \code{gls}, \code{lm}, \code{lme}, \code{lmekin},
+\code{maxlikeFit}, \code{mer}, \code{glmerMod}, \code{lmerMod},
+\code{multinom}, \code{polr}, \code{rlm}, \code{vglm}, \code{zeroinfl}
+classes as well as various models of \code{unmarkedFit} classes.
 }
 \value{
-'modavg', 'modavg.clm', 'modavg.clmm', 'modavg.coxph', 'modavg.glm',
-'modavg.gls', 'modavg.lme', 'modavg.mer', 'modavg.merMod',
-'modavg.mult', 'modavg.polr', 'modavg.rlm', and 'modavg.unmarked' create 
-an object of class 'modavg' with the following components:
+\code{modavg} creates an object of class \code{modavg} with the following
+components: 
 
 \item{Parameter}{the parameter for which a model-averaged estimate was
   obtained} 
@@ -288,8 +407,8 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{c_hat}},
 \code{\link{confset}}, \code{\link{evidence}}, \code{\link{importance}},
-\code{\link{modavg.effect}}, \code{\link{modavg.shrink}},
-\code{\link{modavgpred}} 
+\code{\link{modavgEffect}}, \code{\link{modavgShrink}},
+\code{\link{modavgPred}} 
 }
 \examples{
 ##anuran larvae example from Mazerolle (2006)

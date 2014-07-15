@@ -4,6 +4,34 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+#revision 2.00 (14 July 2014)
+#- modified predictSE.lme( ) to handle the use of formulas specified externally from model call
+#  suggested by Clark Andersen
+#- added support for named lists of candidate models and add generic model names when modnames vector is NULL
+#  in model selection and model averaging functions
+#- replaced functions 'extract.LL', 'modavg.effect', 'modavgpred', 'modavg.shrink', 'mult.comp',  with 'extractLL',
+#  'modavgEffect', 'modavgPred', 'modavgShrink', and 'multComp' respectively, to avoid problems with generic functions
+#- 'extractLL', 'extractSE', 'AICc', 'aictab', 'modavg', 'modavgEffect', 'modavgShrink', 'modavgPred',
+#  'multComp', and predictSE made generic
+#- changed order of some arguments to present the most often used first
+#- added a check in 'multComp' for missing values in data set, and added options to correct confidence intervals for multiple comparisons
+#- added support for presence-only models of maxlikeFit class
+#- added support for models of classes 'coxme' and 'lmekin'
+#- added support for models of classes 'vglm' (package VGAM) and 'zeroinfl' (package pscl)
+#- added support for models of 'unmarkedFitGMM', 'unmarkedFitMPois', and unmarkedFitGPC classes
+#- added support for model averaging availability parameter (phi) for models of 'unmarkedFitGMM',
+#  'unmarkedFitMPois', and unmarkedFitGPC classes
+#- corrected minor bug in some cases of missing values in 'Nmix.chisq'
+#- corrected minor bug in 'mb.gof.test' that produced warning( )
+#- added aov method for all generic functions of the package
+#- simplified Rd files AICc.rd, aictab.Rd, boot.wt.Rd, DIC.Rd, dictab.Rd, importance.Rd, modavg.Rd, modavg.effect.Rd
+#- added Bullfrog occupancy data set
+#- added Spotted salamander capture-mark-recapture data set
+#- added Gopher Tortoise distance sampling data set
+
+
+
+####################################################################
 #revision 1.35 (17 November 2013)
 #- corrected minor bug in chi-square for N-mixture models in 'Nmix.chisq'
 #- corrected minor bug in title display, now uses as.expression(substitute( ))

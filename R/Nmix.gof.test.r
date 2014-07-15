@@ -6,12 +6,20 @@ Nmix.chisq <- function(mod) {
   if(!identical(class(mod)[1], "unmarkedFitPCount") && !identical(class(mod)[1], "unmarkedFitPCO")) {
     stop("\nThis function is only appropriate for N-mixture models\n")
   }
+  ##extract original data from model object
   obs <- getData(mod)@y
+  ##extract fitted values
+  fits <- fitted(mod)
   ##check if sites were removed from analysis
   sr <- mod@sitesRemoved
-  if(length(sr) > 0) {    obs <- obs[-sr, , drop = FALSE] }
-  fits <- fitted(mod)
-  obs[is.na(fits)] <- NA
+  if(length(sr) > 0) {
+    obs <- obs[-sr, ]
+    fits <- fits[-sr, ]
+  }
+  
+  ##add NA's where fitted values are NA
+  #obs[is.na(fits)] <- NA
+  ##compute chi-square
   chi.sq <- sum((obs - fits)^2/fits, na.rm = TRUE) #added argument na.rm = TRUE when NA's occur
   return(chi.sq)
 }
@@ -61,4 +69,3 @@ print.Nmix.chisq <- function(x, digits.vals = 2, digits.chisq = 4, ...) {
     cat("\nEstimate of c-hat =", round(x$c.hat.est, digits = digits.vals), "\n\n")
   }
 }
-

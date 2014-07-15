@@ -1,5 +1,16 @@
 confset <-
-  function(cand.set, modnames, c.hat = 1, second.ord = TRUE, nobs = NULL, method = "raw", level = 0.95, delta = 6) {
+  function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL, method = "raw", level = 0.95, delta = 6, c.hat = 1) {
+
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+      if(is.null(names(cand.set))) {
+        modnames <- paste("Mod", 1:length(cand.set), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+      } else {
+        modnames <- names(cand.set)
+      }
+    }
+    
     aic.table <- aictab(cand.set = cand.set, modnames = modnames, sort = TRUE, c.hat = c.hat,
                         second.ord = second.ord, nobs = nobs)
 

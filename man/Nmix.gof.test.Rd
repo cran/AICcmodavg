@@ -26,7 +26,7 @@ for which a goodness-of-fit test is required.
 }
 }
 \details{
-The Pearson chi-square can be used to assess the the fit of N-mixture
+The Pearson chi-square can be used to assess the fit of N-mixture
 models.  Instead of relying on the theoretical distribution of the
 chi-square, a parametric bootstrap approach is implemented to obtain
 P-values with the 'parboot' function of the unmarked package.
@@ -131,7 +131,7 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{c_hat}}, \code{\link{evidence}},
 \code{\link{modavg}}, \code{\link{importance}},
-\code{\link{mb.gof.test}}, \code{\link{modavgpred}},
+\code{\link{mb.gof.test}}, \code{\link{modavgPred}},
 \code{\link[unmarked]{pcount}}, \code{\link[unmarked]{pcountOpen}},
 \code{\link[unmarked]{parboot}}
 }

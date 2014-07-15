@@ -1,6 +1,7 @@
 \name{DIC}
 \Rdversion{1.1}
 \alias{DIC}
+\alias{DIC.default}
 \alias{DIC.bugs}
 \alias{DIC.rjags}
 \title{
@@ -10,40 +11,36 @@ Computing DIC
 Functions to extract deviance information criterion (DIC).
 }
 \usage{
-DIC(mod, return.pD = FALSE) 
+DIC(mod, return.pD = FALSE, \dots) 
 
-DIC.bugs(mod, return.pD = FALSE)
+\method{DIC}{bugs}(mod, return.pD = FALSE, \dots)
 
-DIC.rjags(mod, return.pD = FALSE)
+\method{DIC}{rjags}(mod, return.pD = FALSE, \dots)
 }
 
 \arguments{
   \item{mod}{
-    an object of class 'bugs' or 'rjags' containing the output of a
-  model.
+    an object of class \code{bugs} or \code{rjags} containing the output
+    of a model.
   }
   
   \item{return.pD}{
-    logical.  If FALSE, the function returns the DIC.  If TRUE, the
-    function returns the effective number of estimated parameters (pD)
-    for a given model.
-  }  
+    logical.  If \code{FALSE}, the function returns the DIC.  If
+    \code{TRUE}, the function returns the effective number of estimated
+    parameters (pD) for a given model.
+  }
+  \item{\dots}{
+  additional arguments passed to the function.
+  }
 }
 \details{
-'DIC' is a function that calls 'DIC.bugs' or 'DIC.rjags'. The current
-    function is implemented for 'bugs' and 'rjags' classes.  The
+\code{DIC} is implemented for \code{bugs} and \code{rjags} classes.  The 
     function extracts the deviance information criterion (DIC,
-    Spiegelhalter et al. 2002). 
+    Spiegelhalter et al. 2002) or the effective number of parameters
+    (pD).
 }
 \value{
-%'AICc' selects one of the functions below based on the class of the 
-%object:
-
-%'AICc.clm' returns the AIC or AICc depending on the values of the
-%arguments.
-
-'DIC', 'DIC.bugs', and 'DIC.rjags' return the DIC or pD depending on the
-values of the arguments.
+\code{DIC} the DIC or pD depending on the values of the arguments.
 }
 
 \note{

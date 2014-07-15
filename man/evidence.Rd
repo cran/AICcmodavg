@@ -17,8 +17,8 @@ evidence(aic.table, model.high = "top", model.low = "second.ranked")
 }
 \arguments{
   \item{aic.table}{
-a model selection table of class 'aictab' such as that produced by
-'aictab'.  The table may be sorted or not, as the function sorts
+a model selection table of class \code{aictab} such as that produced by 
+\code{aictab}.  The table may be sorted or not, as the function sorts
 the table internally.
 }
   \item{model.high}{
@@ -36,17 +36,17 @@ the second-ranked model in the candidate model set.  The evidence ratio
 can be interpreted as the number of times a given model is more
 parsimonious than a lower-ranked model.  If one desires an evidence
 ratio that does not involve a comparison with the top-ranking model, the 
-name of the required model must be specified in the 'model.high'
+name of the required model must be specified in the \code{model.high}
 argument.
 }
 \value{
-'evidence' produces an object of class 'evidence' with the following
-components:
+\code{evidence} produces an object of class \code{evidence} with the
+following components:
 \item{Model.high}{  
-  the model specified in 'model.high'.
+  the model specified in \code{model.high}.
 }
 \item{Model.low}{
-  the model specified in 'model.low'.
+  the model specified in \code{model.low}.
   }
 \item{Ev.ratio}{
   the evidence ratio between the two models compared.    
@@ -64,7 +64,7 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{c_hat}},
 \code{\link{confset}}, \code{\link{importance}}, \code{\link{modavg}},
-\code{\link{modavg.shrink}}, \code{\link{modavgpred}} 
+\code{\link{modavgShrink}}, \code{\link{modavgPred}} 
 }
 \examples{
 ##run example from Burnham and Anderson (2002, p. 183) with two

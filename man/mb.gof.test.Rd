@@ -32,13 +32,14 @@ MacKenzie and Bailey (2004) and MacKenzie et al. (2006) suggest using
 the Pearson chi-square to assess the fit of single season occupancy
 models.  Given low expected frequencies, the chi-square statistic will
 deviate from the theoretical distribution and it is recommended to use a
-parametric bootstrap approach to obtain P-values with the 'parboot'
-function of the unmarked package. 'mb.chisq' computes the table of
-observed and expected values based on the detection histories and single
-season occupancy model used. 'mb.gof.test' calls internally 'mb.chisq'
-and 'parboot' to generate simulated data sets based on the model and
-compute the MacKenzie and Bailey test statistic. Missing values are
-accomodated by creating cohorts for each pattern of missing values.
+parametric bootstrap approach to obtain P-values with the \code{parboot}
+function of the \code{unmarked} package.  \code{mb.chisq} computes the
+table of observed and expected values based on the detection histories
+and single season occupancy model used. \code{mb.gof.test} calls
+internally \code{mb.chisq} and \code{parboot} to generate simulated data
+sets based on the model and compute the MacKenzie and Bailey test
+statistic.  Missing values are accomodated by creating cohorts for each
+pattern of missing values.
 
 It is also possible to obtain an estimate of the overdispersion
 parameter (c-hat) for the model at hand by dividing the observed
@@ -64,17 +65,18 @@ can use the smallest value of c-hat for model selection (Burnham and
 Anderson 2002).
 
 Note that c-hat counts as an additional parameter estimated and should
-be added to K.  All functions in package 'AICcmodavg' automatically add 1
-when the 'c.hat' argument > 1 and apply the same value of c-hat for the
-entire model set.  When c-hat > 1, functions compute quasi-likelihood
-information criteria (either QAICc or QAIC, depending on the value of
-the 'second.ord' argument) by scaling the log-likelihood of the model by
-c-hat.  The value of c-hat can influence the ranking of the models:  as
-c-hat increases, QAIC or QAICc will favor models with fewer parameters.
-As an additional check against this potential problem, one can generate
-several model selection tables by incrementing values of c-hat to assess
-the model selection uncertainty.  If ranking changes little up to the
-c-hat value observed, one can be confident in making inference. 
+be added to K.  All functions in package \code{AICcmodavg} automatically
+add 1 when the \code{c.hat} argument > 1 and apply the same value of
+c-hat for the entire model set.  When c-hat > 1, functions compute
+quasi-likelihood information criteria (either QAICc or QAIC, depending
+on the value of the \code{second.ord} argument) by scaling the
+log-likelihood of the model by c-hat.  The value of c-hat can influence
+the ranking of the models:  as c-hat increases, QAIC or QAICc will favor
+models with fewer parameters.  As an additional check against this
+potential problem, one can generate several model selection tables by
+incrementing values of c-hat to assess the model selection uncertainty.
+If ranking changes little up to the c-hat value observed, one can be
+confident in making inference.
 
 In cases of underdispersion (c-hat < 1), it is recommended to keep the
 value of c-hat to 1.  However, note that values of c-hat << 1 can also
@@ -82,21 +84,19 @@ indicate lack-of-fit and that an alternative model should be investigated.
 
 }
 \value{
-  'mb.chisq' returns the following components:
+  \code{mb.chisq} returns the following components:
   
   \item{chisq.table}{the table of observed and expected values for each
-  detection history and its chi-square component (if 'print.table =
-  TRUE').
+  detection history and its chi-square component (if \code{print.table = TRUE}).
 }
 \item{chi.square}{the Pearson chi-square statistic.
 }
 
 
-  'mb.gof.test' returns the following components:
+  \code{mb.gof.test} returns the following components:
 
   \item{chisq.table}{the table of observed and expected values for each
-  detection history and its chi-square component (if 'print.table =
-  TRUE').
+  detection history and its chi-square component (if \code{print.table = TRUE}).
 }
 \item{chi.square}{the Pearson chi-square statistic.
 }
@@ -139,11 +139,12 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{c_hat}}, \code{\link{evidence}},
 \code{\link{modavg}}, \code{\link{importance}},
-\code{\link{modavgpred}}, \code{\link{Nmix.gof.test}},
+\code{\link{modavgPred}}, \code{\link{Nmix.gof.test}},
 \code{\link[unmarked]{occu}}, \code{\link[unmarked]{parboot}} 
 }
 
 \examples{
+\dontrun{
 ##single-season occupancy model example modified from ?occu
 if(require(unmarked)) {
 ##single season
@@ -165,6 +166,7 @@ obs <- mb.chisq(fm1)
 obs
 ##round to 4 digits after decimal point
 print(obs, digits.vals = 4)
+}
 
 \dontrun{
 ##compute observed chi-square, assess significance, and estimate c-hat
@@ -174,6 +176,7 @@ obs.boot <- mb.gof.test(fm1, nsim = 3)
 obs.boot
 print(obs.boot, digits.vals = 4, digits.chisq = 4)
 }
+
 
 \dontrun{
 ##data with missing values

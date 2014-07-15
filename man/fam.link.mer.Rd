@@ -6,7 +6,7 @@ Extract Distribution Family and Link Function
 }
 \description{
 This function extracts the distribution family and link function of a
-generalized linear mixed model fit with 'glmer' or 'lmer'.
+generalized linear mixed model fit with \code{glmer} or \code{lmer}.
 }
 \usage{
 fam.link.mer(mod)
@@ -14,25 +14,25 @@ fam.link.mer(mod)
 
 \arguments{
   \item{mod}{
-an object of 'mer' or 'merMod' class resulting from the fit of 'glmer'
-or 'lmer'.
-}
+    an object of \code{mer} or \code{merMod} class resulting from the
+    fit of \code{glmer} or \code{lmer}.
+  }
 }
 \details{
-This utility function extracts the information from an 'mer' or 'merMod'
-  object resulting from 'glmer' or 'lmer'.  The function is called by
-  'modavg.mer', 'modavg.merMod', 'modavg.effect.mer',
-  'modavg.effect.merMod', 'modavgpred.mer', 'modavgpred.merMod',
-  'predictSE.mer', and 'predictSE.merMod'.
+  This utility function extracts the information from an \code{mer} or
+  \code{merMod} object resulting from \code{glmer} or \code{lmer}.  The
+  function is called by \code{modavg},  \code{modavgEffect},
+  \code{modavgPred}, and \code{predictSE}.
 }
 \value{
-  'fam.link.mer' returns a list with the following components:
+  \code{fam.link.mer} returns a list with the following components:
   
   \item{family}{the family of the distribution of the model.}
   \item{link}{the link function of the model.}
   \item{supp.link}{a character value indicating whether the link
-    function used is supported by 'predictSE.mer', 'predictSE.merMod',
-    'modavgpred.mer', and 'modavgpred.merMod'.}
+    function used is supported by \code{predictSE} and
+    \code{modavgPred}. 
+  }
 }
 
 \author{
@@ -40,7 +40,7 @@ Marc J. Mazerolle
 }
 
 \seealso{
-\code{\link{modavg}}, \code{\link{modavgpred}},
+\code{\link{modavg}}, \code{\link{modavgPred}},
 \code{\link{predictSE.mer}}, \code{\link[lme4]{glmer}}, \code{\link[lme4]{lmer}}
 }
 \examples{

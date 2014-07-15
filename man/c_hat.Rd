@@ -24,7 +24,7 @@ overdispersion parameter (c-hat).  Though one can obtain an estimate of
 c-hat by dividing the residual deviance by the residual degrees of
 freedom, McCullagh and Nelder (1989) recommend using Pearson's
 chi-square divided by the residual degrees of freedom, which performs
-better.  The latter is the method implemented by 'c_hat'.
+better.  The latter is the method implemented by \code{c_hat}.
 
 Note that values of c-hat > 1 indicate overdispersion (variance > mean),
 but that values much higher than 1 (i.e., > 4) probably indicate
@@ -45,22 +45,22 @@ set can be derived.  In such cases, one can use the smallest value of
 c-hat for model selection (Burnham and Anderson 2002).
 
 Note that c-hat counts as an additional parameter estimated and should
-be added to K.  All functions in package 'AICcmodavg' automatically add 1
-when the 'c.hat' argument > 1 and apply the same value of c-hat for the
-entire model set.  When c-hat > 1, functions compute quasi-likelihood
-information criteria (either QAICc or QAIC, depending on the value of
-the 'second.ord' argument) by scaling the log-likelihood of the model by
-c-hat.  The value of c-hat can influence the ranking of the models:  as
-c-hat increases, QAIC or QAICc will favor models with fewer
-parameters.  As an additional check against this potential problem, one
-can create several model selection tables by incrementing values of
-c-hat to assess the model selection uncertainty.  If ranking changes
-little up to the c-hat value observed, one can be confident in making
-inference. 
+be added to K.  All functions in package \code{AICcmodavg} automatically
+add 1 when the \code{c.hat} argument > 1 and apply the same value of
+c-hat for the entire model set.  When \code{c.hat > 1}, functions
+compute quasi-likelihood information criteria (either QAICc or QAIC,
+depending on the value of the \code{second.ord} argument) by scaling the
+log-likelihood of the model by \code{c.hat}.  The value of \code{c.hat}
+can influence the ranking of the models:  as c-hat increases, QAIC or
+QAICc will favor models with fewer parameters.  As an additional check
+against this potential problem, one can create several model selection
+tables by incrementing values of c-hat to assess the model selection
+uncertainty.  If ranking changes little up to the c-hat value observed,
+one can be confident in making inference. 
 
 In cases of underdispersion (c-hat < 1), it is recommended to keep the
-value of c-hat to 1.  However, note that values of c-hat << 1 can also
-indicate lack-of-fit and that an alternative model (and distribution)
+value of \code{c.hat} to 1.  However, note that values of c-hat << 1 can
+also indicate lack-of-fit and that an alternative model (and distribution)
 should be investigated. 
 
 Note that it is only possible to estimate c-hat for binomial models with
@@ -68,7 +68,7 @@ trials > 1 (i.e., success/trial or cbind(success, failure) syntax) or
 with Poisson GLM's.
 }
 \value{
-'c_hat' returns the estimated c-hat value
+\code{c_hat} returns the estimated c-hat value
 }
 \references{
 Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:
@@ -96,7 +96,7 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{confset}}, \code{\link{evidence}}, 
 \code{\link{modavg}}, \code{\link{importance}},
-\code{\link{modavgpred}}, \code{\link{mb.gof.test}}
+\code{\link{modavgPred}}, \code{\link{mb.gof.test}}, \code{\link{Nmix.gof.test}}
 }
 
 \examples{

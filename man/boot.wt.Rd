@@ -1,6 +1,16 @@
 \name{boot.wt}
 \Rdversion{1.1}
 \alias{boot.wt}
+\alias{boot.wt.default}
+\alias{boot.wt.AICaov.lm}
+\alias{boot.wt.AICsclm.clm}
+\alias{boot.wt.AICglm.lm}
+\alias{boot.wt.AIClm}
+\alias{boot.wt.AICmultinom.nnet}
+\alias{boot.wt.AICpolr}
+\alias{boot.wt.AICrlm.lm}
+\alias{boot.wt.AICvglm}
+\alias{boot.wt.AICzeroinfl}
 \title{
 Compute Model Selection Relative Frequencies
 }
@@ -8,11 +18,39 @@ Compute Model Selection Relative Frequencies
 This function computes the model selection relative frequencies based on
 the nonparametric bootstrap (Burnham and Anderson 2002).  Models are
 ranked based on the AIC, AICc, QAIC, or QAICc.  The function currently
-supports objects of 'glm', 'lm', 'multinom', 'polr', and 'rlm' classes.
+supports objects of \code{clm}, \code{glm}, \code{lm}, \code{multinom},
+\code{polr}, \code{rlm}, \code{vglm}, and \code{zeroinfl} classes.
 }
 \usage{
-boot.wt(cand.set, modnames, sort = TRUE, c.hat = 1, second.ord = TRUE,
-       nobs = NULL, nsim = 100)
+boot.wt(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+        sort = TRUE, nsim = 100, \dots)
+
+\method{boot.wt}{AICaov.lm}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, nsim = 100, \dots)
+
+\method{boot.wt}{AICsclm.clm}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, nsim = 100, \dots)
+
+\method{boot.wt}{AICglm.lm}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, nsim = 100, c.hat = 1, \dots)
+       
+\method{boot.wt}{AIClm}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, nsim = 100, \dots)
+
+\method{boot.wt}{AICmultinom.nnet}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, nsim = 100, c.hat = 1, \dots)
+
+\method{boot.wt}{AICpolr}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, nsim = 100, \dots)
+
+\method{boot.wt}{AICrlm.lm}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, nsim = 100, \dots)
+
+\method{boot.wt}{AICvglm}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, nsim = 100, c.hat = 1, \dots)
+
+\method{boot.wt}{AICzeroinfl}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, nsim = 100, \dots)
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -22,48 +60,59 @@ a list storing each of the models in the candidate model set.
 }
   \item{modnames}{
 a character vector of model names to facilitate the identification of
-each model in the model selection table.
-}
-  \item{sort}{
-logical.  If true, the model selection table is ranked according to the
-(Q)AIC(c) values.
-}
-  \item{c.hat}{
-value of overdispersion parameter (i.e., variance inflation factor) such
-as that obtained from 'c_hat'.  Note that values of c.hat different from
-1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
-success/trial or cbind(success, failure) syntax) or with Poisson
-GLM's.  If c.hat > 1, 'AICc' will return the quasi-likelihood analogue
-of the information criterion requested.
+each model in the model selection table. If \code{NULL}, the function
+uses the names in the cand.set list of candidate models. If no names
+appear in the list, generic names (e.g., \code{Mod1}, \code{Mod2}) are
+supplied in the table in the same order as in the list of candidate
+models.
 }
   \item{second.ord}{
-logical.  If TRUE, the function returns the second-order
+logical.  If \code{TRUE}, the function returns the second-order
 Akaike information criterion (i.e., AICc).
 }
   \item{nobs}{
 this argument allows to specify a numeric value other than total sample
-size to compute the AICc (i.e., 'nobs' defaults to total number of
+size to compute the AICc (i.e., \code{nobs} defaults to total number of
 observations).  This is relevant only for certain types of models such 
 as mixed models where sample size is not straightforward.  In 
 such cases, one might use total number of observations or number of 
-independent clusters (e.g., sites) as the value of 'nobs'.
+independent clusters (e.g., sites) as the value of \code{nobs}.
 }
+\item{sort}{
+logical.  If \code{TRUE}, the model selection table is ranked according
+to the (Q)AIC(c) values.
+}
+  \item{c.hat}{
+value of overdispersion parameter (i.e., variance inflation factor) such
+as that obtained from \code{c_hat}.  Note that values of c.hat different
+from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
+success/trial or cbind(success, failure) syntax) or with Poisson
+GLM's.  If c.hat > 1, \code{AICc} will return the quasi-likelihood
+analogue of the information criterion requested.
+}
+
 \item{nsim}{the number of bootstrap iterations. Burnham and Anderson
-  (2002) recommend at least 1000 and up to 10 000 iterations for certain problems.
+  (2002) recommend at least 1000 and up to 10 000 iterations for certain
+  problems.
 }
+\item{\dots}{
+  additional arguments passed to the function.
+  }
 }
 \details{
-'boot.wt' is implemented for 'glm', 'lm', 'multinom', 'polr', and 'rlm'
-classes.  During each bootstrap iteration, the data are resampled with
-replacement, all the models specified in 'cand.set' are updated with the
-new data set, and the top-ranked model is saved. When all iterations are
-completed, the relative frequency of selection is computed for each
-model appearing in the candidate model set.
+\code{boot.wt} is implemented for \code{glm}, \code{lm},
+  \code{multinom}, \code{polr}, \code{rlm}, \code{vglm}, and
+  \code{zeroinfl} classes.  During each bootstrap iteration, the data
+  are resampled with replacement, all the models specified in
+  \code{cand.set} are updated with the new data set, and the top-ranked
+  model is saved. When all iterations are completed, the relative
+  frequency of selection is computed for each model appearing in the
+  candidate model set.
 
 Relative frequencies of the models are often similar to Akaike
 weights, and the latter are often preferred due to their link with
-a Bayesian perspective (Burnham and Anderson 2002).  'boot.wt' is most
-useful for teaching purposes of sampling-theory based relative
+a Bayesian perspective (Burnham and Anderson 2002).  \code{boot.wt} is
+most useful for teaching purposes of sampling-theory based relative
 frequencies of model selection. The current implementation is only
 appropriate with completely randomized designs. For more complex data
 structures (e.g., blocks or random effects), the bootstrap should be
@@ -71,8 +120,8 @@ modified accordingly.
 }
 
 \value{
-'boot.wt' creates an object of class 'aictab' with the following
-components: 
+\code{boot.wt} creates an object of class \code{aictab} with the
+following components: 
 
 \item{Modname}{the names of each model of the candidate model set.}
 \item{K }{the number of estimated parameters for each model.}
@@ -115,7 +164,7 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{confset}}, \code{\link{c_hat}},
 \code{\link{evidence}}, \code{\link{importance}}, \code{\link{modavg}}, 
-\code{\link{modavg.shrink}}, \code{\link{modavgpred}} 
+\code{\link{modavgShrink}}, \code{\link{modavgPred}} 
 }
 \examples{
 ##Mazerolle (2006) frog water loss example
