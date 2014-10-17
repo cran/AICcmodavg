@@ -3,7 +3,7 @@
 \alias{tortoise}
 \docType{data}
 \title{
-Gopher Tortoise distance sampling data
+Gopher Tortoise Distance Sampling Data
 }
 \description{
 This simulated data set is based on the biological parameters for the

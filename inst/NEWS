@@ -4,6 +4,26 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+#revision 2.01 (9 October 2014)
+#- corrected bugs in 'modavg' and 'modavgShrink' for models of class 'unmarkedFitGMM' and 'unmarkedFitGPC'
+#- corrected bugs in 'dictab' to return deviance of all models in model selection table
+#- added logical test to identify cases with only a single cohort without missing values for
+#  'mb.chisq'
+#- added custom versions of 'AICc', 'aictabCustom', and 'modavgCustom' when user manually supplies log-Likelihood,
+#  K, estimates, and SE for model selection and multimodel inference when model type is not supported or
+#  SE's are not available from predict methods (convenient for importing output from other software such as PRESENCE)
+#- added support for hurdle models for count data for model selection and model averaging parameter estimates
+#- added support for model selection of models of the 'gnls' class 
+#- added support for model selection and multimodel inference of models of the 'betareg' class
+#- added support for model selection and multimodel inference of models of the 'survreg' class
+#- modified 'multComp' for computation of critical values with z value instead of t for certain model types
+#- corrected minor bug of 'multComp' for some models with a factor consisting of two levels
+#- added 'extractCN' function for models of 'unmarkedFit' classes
+#- modified namespace
+
+
+
+####################################################################
 #revision 2.00 (14 July 2014)
 #- modified predictSE.lme( ) to handle the use of formulas specified externally from model call
 #  suggested by Clark Andersen

@@ -3,12 +3,14 @@
 \alias{modavgShrink}
 \alias{modavgShrink.default}
 \alias{modavgShrink.AICaov.lm}
+\alias{modavgShrink.AICbetareg}
 \alias{modavgShrink.AICsclm.clm}
 \alias{modavgShrink.AICclmm}
 \alias{modavgShrink.AICcoxme}
 \alias{modavgShrink.AICcoxph}
 \alias{modavgShrink.AICglm.lm}
 \alias{modavgShrink.AICgls}
+\alias{modavgShrink.AIChurdle}
 \alias{modavgShrink.AIClm}
 \alias{modavgShrink.AIClme}
 \alias{modavgShrink.AIClmekin}
@@ -19,6 +21,7 @@
 \alias{modavgShrink.AICmultinom.nnet}
 \alias{modavgShrink.AICpolr}
 \alias{modavgShrink.AICrlm.lm}
+\alias{modavgShrink.AICsurvreg}
 \alias{modavgShrink.AICvglm}
 \alias{modavgShrink.AICzeroinfl}
 \alias{modavgShrink.AICunmarkedFitOccu}
@@ -30,8 +33,8 @@
 \alias{modavgShrink.AICunmarkedFitGDS}
 \alias{modavgShrink.AICunmarkedFitOccuFP}
 \alias{modavgShrink.AICunmarkedFitMPois}
-\alias{modavgShrink.AICunmarkedFitFitGMM}
-\alias{modavgShrink.AICunmarkedFitFitGPC}
+\alias{modavgShrink.AICunmarkedFitGMM}
+\alias{modavgShrink.AICunmarkedFitGPC}
 \alias{print.modavgShrink}
 
 \title{
@@ -55,6 +58,10 @@ modavgShrink(cand.set, parm, modnames = NULL, second.ord = TRUE,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
 
+\method{modavgShrink}{AICbetareg}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots)
+
 \method{modavgShrink}{AICsclm.clm}(cand.set, parm, modnames = NULL,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
@@ -72,6 +79,10 @@ modavgShrink(cand.set, parm, modnames = NULL, second.ord = TRUE,
         conf.level = 0.95, c.hat = 1, gamdisp = NULL, \dots)
 
 \method{modavgShrink}{AICgls}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots)
+
+\method{modavgShrink}{AIChurdle}(cand.set, parm, modnames = NULL,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
 
@@ -112,6 +123,10 @@ modavgShrink(cand.set, parm, modnames = NULL, second.ord = TRUE,
         conf.level = 0.95, \dots)
 
 \method{modavgShrink}{AICrlm.lm}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots)
+
+\method{modavgShrink}{AICsurvreg}(cand.set, parm, modnames = NULL,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
 
@@ -160,11 +175,11 @@ modavgShrink(cand.set, parm, modnames = NULL, second.ord = TRUE,
         = NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, c.hat = 1, parm.type = NULL, \dots)
 
-\method{modavgShrink}{AICunmarkedFitFitGMM}(cand.set, parm, modnames
+\method{modavgShrink}{AICunmarkedFitGMM}(cand.set, parm, modnames
         = NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, c.hat = 1, parm.type = NULL, \dots)
 
-\method{modavgShrink}{AICunmarkedFitFitGPC}(cand.set, parm, modnames
+\method{modavgShrink}{AICunmarkedFitGPC}(cand.set, parm, modnames
         = NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, c.hat = 1, parm.type = NULL, \dots)
 }
@@ -215,8 +230,8 @@ models.
   method to compute unconditional standard errors.  
 }
   \item{conf.level}{
-the confidence level requested for the computation of unconditional
-confidence intervals.
+the confidence level (\eqn{1 - \alpha}) requested for the computation of
+unconditional confidence intervals.
 }
   \item{c.hat}{
 value of overdispersion parameter (i.e., variance inflation factor) such
@@ -287,11 +302,12 @@ interaction terms or polynomial terms are not supported by
 \code{modavgShrink}. 
 
 \code{modavgShrink} is implemented for a list containing objects of
-\code{clm}, \code{clmm}, \code{clogit}, \code{coxme}, \code{coxph},
-\code{glm}, \code{gls}, \code{lm}, \code{lme}, \code{lmekin},
-\code{maxlikeFit}, \code{mer}, \code{glmerMod}, \code{lmerMod},
-\code{multinom}, \code{polr}, \code{rlm}, \code{vglm}, \code{zeroinfl}
-classes as well as various models of \code{unmarkedFit} classes.
+\code{aov}, \code{betareg}, \code{clm}, \code{clmm}, \code{clogit},
+\code{coxme}, \code{coxph}, \code{glm}, \code{gls}, \code{hurdle},
+\code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
+\code{glmerMod}, \code{lmerMod}, \code{multinom}, \code{polr},
+\code{rlm}, \code{survreg}, \code{vglm}, \code{zeroinfl} classes as well
+as various models of \code{unmarkedFit} classes.
 }
 \value{
 \code{modavgShrink} creates an object of class \code{modavgShrink}
@@ -353,7 +369,8 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{c_hat}},
 \code{\link{importance}}, \code{\link{confset}}, \code{\link{evidence}},
-\code{\link{modavg}}, \code{\link{modavgPred}}
+\code{\link{modavg}}, \code{\link{modavgCustom}},
+\code{\link{modavgPred}}
 }
 \examples{
 ##cement example in Burnham and Anderson 2002
@@ -404,6 +421,7 @@ Modnames <- paste("mod", 1:length(Cand.unbalanced), sep="")
 
 
 ##example on Orthodont data set in nlme
+\dontrun{
 require(nlme)
 
 ##set up candidate model list
@@ -442,12 +460,12 @@ mod.avg.age.classic <- modavg(cand.set = Cand.models, parm = "age",
 mod.avg.age.shrink$Mod.avg.beta/imp.age$w.plus
 mod.avg.age.classic$Mod.avg.beta
 detach(package:nlme)
+}
 
 
-
-\dontrun{
 ##example of N-mixture model modified from ?pcount
-if(require(unmarked)) {
+\dontrun{
+require(unmarked)
 data(mallard)
 mallardUMF <- unmarkedFramePCount(mallard.y, siteCovs = mallard.site,
                                   obsCovs = mallard.obs)
@@ -470,5 +488,4 @@ detach(package:unmarked)
 }
 }
 
-}
 \keyword{models}

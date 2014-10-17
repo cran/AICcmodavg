@@ -8,7 +8,7 @@ mb.chisq <- function(mod, print.table = TRUE) {
   
 ##step 1:
 ##extract detection histories
-y.raw <- getData(mod)@y
+y.raw <- mod@data@y
 
 ##if some rows are all NA and sites are discarded, adjust sample size accordingly
 N.raw <- nrow(y.raw)
@@ -114,9 +114,17 @@ if(n.cohort.not.na > 0) {  ##expected frequencies for non-missing data
     ##iterate over sites
     for(j in 1:n.sites.not.na) {
 
-      hist.mat[j, ] <- ifelse(strip.hist == "1", preds.p.not.na[j, ],
-                              ifelse(strip.hist == "0", 1 - preds.p.not.na[j, ],
-                                     0))
+      ##in extreme cases where only a single cohort occurs without missing values
+      if(n.sites.not.na == 1) {
+        hist.mat[j, ] <- ifelse(strip.hist == "1", preds.p.not.na[j],
+                                ifelse(strip.hist == "0", 1 - preds.p.not.na[j],
+                                       0))
+      } else {
+        hist.mat[j, ] <- ifelse(strip.hist == "1", preds.p.not.na[j, ],
+                                ifelse(strip.hist == "0", 1 - preds.p.not.na[j, ],
+                                       0))
+      }
+        
       
       ##combine into equation
       combo.p <- paste(hist.mat[j, ], collapse = "*")

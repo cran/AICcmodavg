@@ -114,6 +114,130 @@ modavgShrink.AICaov.lm <- function(cand.set, parm, modnames = NULL, second.ord =
 
 
 
+##betareg
+modavgShrink.AICbetareg <- function(cand.set, parm, modnames = NULL, second.ord = TRUE,
+                                    nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                    ...){
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+
+
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+
+
+  ##check for frequency of each terms 
+  ##extract labels
+    ##determine if parameter is on mean or phi
+    if(regexpr(pattern = "\\(phi\\)_", parm) == "-1") {
+      parm.phi <- NULL
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients$mean))
+    } else {
+      ##replace parm
+      parm.phi <- gsub(pattern = "\\(phi\\)_", "", parm)
+      if(regexpr(pattern = ":", parm) != "-1") {
+        warning(cat("\nthis function does not yet support interaction terms on phi:\n",
+                    "use 'modavgCustom' instead\n"))
+      }
+      mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients$precision))
+    }
+  
+  
+  ##determine frequency of each term across models (except (Intercept) ) 
+  pooled.terms <- unlist(mod_formula)
+  ##remove intercept from vector
+  no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
+  terms.freq <- table(no.int)
+  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+
+
+  ##check whether parm is involved in interaction
+  ##if parameters on mean
+  if(is.null(parm.phi)) {
+    parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
+    inter.check <- ifelse(attr(regexpr(parm.inter[1], pooled.terms, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
+                                                                      pooled.terms, fixed = TRUE), "match.length") == "-1", 0, 1)
+  }
+  
+
+  ##if parameters on phi
+  if(!is.null(parm.phi)) {
+    parm.inter <- c(paste(parm.phi, ":", sep = ""), paste(":", parm.phi, sep = ""))
+    inter.check <- ifelse(attr(regexpr(parm.inter[1], pooled.terms, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
+                                                                      pooled.terms, fixed = TRUE), "match.length") == "-1", 0, 1)
+  }
+
+  
+  if(sum(inter.check) > 0) stop("\nParameter of interest should not be involved in interaction for shrinkage version of model-averaging to be appropriate\n")
+
+
+  ##compute table
+  new_table <- aictab(cand.set = cand.set, modnames = modnames, 
+                      second.ord = second.ord, nobs = nobs, sort = FALSE)  #recompute AIC table and associated measures
+  new_table$Beta_est <- unlist(lapply(cand.set, FUN = function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
+  new_table$SE <- unlist(lapply(cand.set, FUN = function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+
+  ##replace NA's with 0
+  new_table$Beta_est[is.na(new_table$Beta_est)] <- 0
+  new_table$SE[is.na(new_table$SE)] <- 0
+
+  ##add a check to determine if parameter occurs in any model
+  if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("\nParameter not found in any of the candidate models\n") }
+
+  
+  ##compute model-averaged estimates, unconditional SE, and 95% CL
+  if(second.ord == TRUE) {
+    Modavg_beta <- sum(new_table$AICcWt*new_table$Beta_est)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    } 
+
+
+  } else {
+    Modavg_beta <- sum(new_table$AICWt*new_table$Beta_est)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+
+                      
+  }
+  
+  zcrit <- qnorm(p = (1-conf.level)/2, lower.tail = FALSE)
+  Lower_CL <- Modavg_beta - zcrit*Uncond_SE
+  Upper_CL <- Modavg_beta + zcrit*Uncond_SE
+  out.modavg <- list("Parameter" = paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta,
+                     "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level, "Lower.CL" = Lower_CL,
+                     "Upper.CL" = Upper_CL)
+  
+  class(out.modavg) <- c("modavgShrink", "list")
+  return(out.modavg)
+}
+
+
+
 ##clm
 modavgShrink.AICsclm.clm <-
   function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
@@ -767,6 +891,113 @@ modavgShrink.AICgls <-
     class(out.modavg) <- c("modavgShrink", "list")
     return(out.modavg)
   }
+
+
+
+##hurdle
+modavgShrink.AIChurdle <-
+function(cand.set, parm, modnames = NULL, second.ord = TRUE,
+         nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+         ...){
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+  
+  ##check that link function is the same for all models
+  check.link <- unlist(lapply(X = cand.set, FUN=function(i) i$link))
+  unique.link <- unique(x=check.link)
+  if(length(unique.link) > 1) stop("\nIt is not appropriate to compute a model-averaged beta estimate\n",
+                                   "from models using different link functions\n")
+  
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+    
+    
+  ##check for frequency of each terms    
+  ##extract model formula for each model in cand.set
+  mod_formula <- lapply(cand.set, FUN=function(i) labels(coefficients(i))) #extract model formula for each model in cand.set
+
+  ##determine frequency of each term across models (except (Intercept) ) 
+  pooled.terms <- unlist(mod_formula)
+  ##remove intercept from vector
+  no.int <- pooled.terms[which(pooled.terms != "count_(Intercept)" & pooled.terms != "zero_(Intercept)")]
+  terms.freq <- table(no.int)
+  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+
+
+  ##check whether parm is involved in interaction
+  parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
+  inter.check <- ifelse(attr(regexpr(parm.inter[1], mod_formula, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
+                                                                   mod_formula, fixed = TRUE), "match.length") == "-1", 0, 1)
+  if(sum(inter.check) > 0) stop("\nParameter of interest should not be involved in interaction for shrinkage version of model-averaging to be appropriate\n")
+
+
+  ##compute table
+  new_table <- aictab(cand.set = cand.set, modnames = modnames, 
+                      second.ord = second.ord, nobs = nobs, sort = FALSE)  #recompute AIC table and associated measures
+  new_table$Beta_est <- unlist(lapply(cand.set, FUN=function(i) coefficients(i)[paste(parm)])) #extract beta estimate for parm
+  new_table$SE <- unlist(lapply(cand.set, FUN=function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+
+  ##replace NA's with 0
+  new_table$Beta_est[is.na(new_table$Beta_est)] <- 0
+  new_table$SE[is.na(new_table$SE)] <- 0
+
+  ##add a check to determine if parameter occurs in any model
+  if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("\nParameter not found in any of the candidate models\n") }
+
+    
+  ##AICc
+  ##compute model-averaged estimates, unconditional SE, and 95% CL
+  if(second.ord == TRUE) {
+    Modavg_beta <- sum(new_table$AICcWt*new_table$Beta_est)
+    
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }
+
+
+  ##AIC
+  if(second.ord == FALSE) {
+    Modavg_beta <- sum(new_table$AICWt*new_table$Beta_est)
+      
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }
+
+
+
+  zcrit <- qnorm(p = (1-conf.level)/2, lower.tail = FALSE)
+  Lower_CL <- Modavg_beta - zcrit*Uncond_SE
+  Upper_CL <- Modavg_beta + zcrit*Uncond_SE
+  out.modavg <- list("Parameter" = paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta, "Uncond.SE" = Uncond_SE,
+                     "Conf.level" = conf.level, "Lower.CL"= Lower_CL, "Upper.CL" = Upper_CL)
+
+  class(out.modavg) <- c("modavgShrink", "list")
+  return(out.modavg)
+  
+}
 
 
 
@@ -1813,6 +2044,109 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE,
 
   ##compute table
   new_table <- aictab(cand.set = cand.set, modnames = modnames,
+                      second.ord = second.ord, nobs = nobs, sort = FALSE)  #recompute AIC table and associated measures
+  new_table$Beta_est <- unlist(lapply(cand.set, FUN = function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
+  new_table$SE <- unlist(lapply(cand.set, FUN = function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+
+  ##replace NA's with 0
+  new_table$Beta_est[is.na(new_table$Beta_est)] <- 0
+  new_table$SE[is.na(new_table$SE)] <- 0
+
+  ##add a check to determine if parameter occurs in any model
+  if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("\nParameter not found in any of the candidate models\n") }
+
+  
+  ##compute model-averaged estimates, unconditional SE, and 95% CL
+  if(second.ord == TRUE) {
+    Modavg_beta <- sum(new_table$AICcWt*new_table$Beta_est)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    } 
+
+
+  } else {
+    Modavg_beta <- sum(new_table$AICWt*new_table$Beta_est)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+
+                      
+  }
+  
+  zcrit <- qnorm(p = (1-conf.level)/2, lower.tail = FALSE)
+  Lower_CL <- Modavg_beta - zcrit*Uncond_SE
+  Upper_CL <- Modavg_beta + zcrit*Uncond_SE
+  out.modavg <- list("Parameter" = paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta,
+                     "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level, "Lower.CL" = Lower_CL,
+                     "Upper.CL" = Upper_CL)
+  
+  class(out.modavg) <- c("modavgShrink", "list")
+  return(out.modavg)
+}
+
+
+
+##survreg
+modavgShrink.AICsurvreg <- function(cand.set, parm, modnames = NULL, second.ord = TRUE,
+                                    nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                    ...){
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+
+  
+  ##check that distribution is the same for all models
+  check.dist <- sapply(X = cand.set, FUN = function(i) i$dist)
+  unique.dist <- unique(x = check.dist)
+  if(length(unique.dist) > 1) stop("\nFunction does not support model-averaging estimates from different distributions\n")
+
+  
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+
+
+  ##check for frequency of each terms 
+  ##extract model formula for each model in cand.set
+  mod_formula <- lapply(cand.set, FUN=function(i) names(summary(i)$coefficients))
+
+  ##determine frequency of each term across models (except (Intercept) ) 
+  pooled.terms <- unlist(mod_formula)
+  ##remove intercept from vector
+  no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
+  terms.freq <- table(no.int)
+  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+
+
+  ##check whether parm is involved in interaction
+  parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
+  inter.check <- ifelse(attr(regexpr(parm.inter[1], pooled.terms, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
+                                                                    pooled.terms, fixed = TRUE), "match.length") == "-1", 0, 1)
+  if(sum(inter.check) > 0) stop("\nParameter of interest should not be involved in interaction for shrinkage version of model-averaging to be appropriate\n")
+
+
+  ##compute table
+  new_table <- aictab(cand.set = cand.set, modnames = modnames, 
                       second.ord = second.ord, nobs = nobs, sort = FALSE)  #recompute AIC table and associated measures
   new_table$Beta_est <- unlist(lapply(cand.set, FUN = function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
   new_table$SE <- unlist(lapply(cand.set, FUN = function(i) sqrt(diag(vcov(i)))[paste(parm)]))
@@ -3661,7 +3995,7 @@ modavgShrink.AICunmarkedFitMPois <-
 
 
 ##gmultmix
-modavgShrink.AICunmarkedFitFitGMM <- 
+modavgShrink.AICunmarkedFitGMM <- 
   function(cand.set, parm, modnames = NULL, second.ord = TRUE,
            nobs = NULL, uncond.se = "revised", conf.level = 0.95,
            c.hat = 1, parm.type = NULL, ...){
@@ -3828,7 +4162,7 @@ modavgShrink.AICunmarkedFitFitGMM <-
 
 
 ##gpcount
-modavgShrink.AICunmarkedFitFitGPC <- 
+modavgShrink.AICunmarkedFitGPC <- 
   function(cand.set, parm, modnames = NULL, second.ord = TRUE,
            nobs = NULL, uncond.se = "revised", conf.level = 0.95,
            c.hat = 1, parm.type = NULL, ...){

@@ -3,7 +3,13 @@
 extractLL <- function(mod, ...) {
   UseMethod("extractLL", mod)
 }
-  
+
+
+##generic
+extractLL.default <- function(mod, ...) {
+stop("\nFunction not yet defined for this object class\n")
+}
+
   
 ##methods
 ##coxme objects

@@ -18,25 +18,28 @@ relative variable importance, evidence ratios, and confidence sets for
 the best model.  The present version works with Cox proportional hazards
 models and conditional logistic regression (\code{coxph} and
 \code{coxme} classes), linear models (\code{lm} class), generalized
-linear models (\code{glm}, \code{vglm}, and \code{zeroinfl} classes),
-linear models fit by generalized least squares (\code{gls} class),
-linear mixed models (\code{lme} class), generalized linear mixed models
-(\code{mer} and \code{merMod} classes), multinomial and ordinal logistic
-regressions (\code{multinom}, \code{polr}, \code{clm}, and \code{clmm}
-classes), robust regression models (\code{rlm} class), nonlinear models
-(\code{nls} class), and nonlinear mixed models (\code{nlme} and
-\code{nlmerMod} classes).  The package also supports various models of
-\code{unmarkedFit} and \code{maxLikeFit} classes estimating demographic
-parameters after accounting for imperfect detection probabilities.  Some
-functions also allow the creation of model selection tables for Bayesian
-models of the \code{bugs} and \code{rjags} classes.
+linear models (\code{glm}, \code{vglm}, \code{hurdle}, and
+\code{zeroinfl} classes), linear models fit by generalized least squares
+(\code{gls} class), linear mixed models (\code{lme} class), generalized
+linear mixed models (\code{mer} and \code{merMod} classes), multinomial
+and ordinal logistic regressions (\code{multinom}, \code{polr},
+\code{clm}, and \code{clmm} classes), robust regression models
+(\code{rlm} class), beta regression models (\code{betareg} class),
+parametric survival models (\code{survreg} class), nonlinear models
+(\code{nls} and \code{gnls} classes), and nonlinear mixed models
+(\code{nlme} and \code{nlmerMod} classes).  The package also supports
+various models of \code{unmarkedFit} and \code{maxLikeFit} classes
+estimating demographic parameters after accounting for imperfect
+detection probabilities.  Some functions also allow the creation of
+model selection tables for Bayesian models of the \code{bugs} and
+\code{rjags} classes.
 }
 \details{
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 2.00\cr
-Date: \tab 2014-07-14\cr
+Version: \tab 2.0-1\cr
+Date: \tab 2014-10-09\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -61,6 +64,8 @@ multimodel inference:
 \item{\code{\link{evidence}}}  {Computes the evidence ratio between the
   highest-ranked model based on the information criteria selected and a
   lower-ranked model.}
+\item{\code{\link{extractCN}}}  {Extracts condition number from models of
+  certain classes.}
 \item{\code{\link{extractLL}}}  {Extracts log-likelihood from
   models of certain classes.}
 \item{\code{\link{extractSE}}}  {Extracts standard errors from models of
@@ -185,9 +190,9 @@ modavgPred(cand.set = Cand.mod, modnames = Modnames,
            newdata = dat.pred)
 
 
-\dontrun{
 ##single-season occupancy model example modified from ?occu
-if(require(unmarked)) {
+\dontrun{
+require(unmarked)
 ##single season
 data(frogs)
 pferUMF <- unmarkedFrameOccu(pfer.bin)
@@ -245,7 +250,6 @@ dat.pred <- data.frame(sitevar1 = seq(from = min(siteCovs(pferUMF)$sitevar1),
 modavgPred(cand.set = Cand.models, modnames = Modnames,
            newdata = dat.pred, parm.type = "psi")
 detach(package:unmarked)
-}
 }
 }
 

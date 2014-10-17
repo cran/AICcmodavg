@@ -146,44 +146,27 @@ Marc J. Mazerolle
 }
 \examples{
 ##Orthodont data from Pinheiro and Bates (2000) revisited
+\dontrun{
 require(nlme)
 m1 <- gls(distance ~ age, correlation = corCompSymm(value = 0.5, form = ~ 1 | Subject),
           data = Orthodont, method= "ML")
-\dontrun{
+
 ##compare against lme fit
 logLik(m1)
 logLik(lme(distance ~ age, random = ~1 | Subject, data = Orthodont,
           method= "ML"))
 ##both are identical
-}
+
 
 ##compute predictions and SE's for different ages
 predictSE(m1, newdata = data.frame(age = c(8, 10, 12, 14)))
-
-\dontrun{
-##contagious bovine pleuropneumonia example modified from lme4
-require(lme4)
-data(cbpp)
-##create proportion of incidence
-cbpp$prop <- cbpp$incidence/cbpp$size
-gm1 <- glmer(prop ~ period + (1 | herd), family = binomial,
-             weights = size, data = cbpp)
-
-##create a data set to make predictions
-newherd<- data.frame(period = as.factor(c("1", "2", "3", "4")))
-
-##predictions on logit link scale
-predictSE(mod = gm1, newdata = newherd, se.fit = TRUE,
-              type = "link", level = 0, print.matrix = FALSE)
-
-##predictions on scale of original response variable
-predictSE(mod = gm1, newdata = newherd, se.fit = TRUE,
-          print.matrix = TRUE, level = 0, type = "response")
+detach(package:nlme)
 }
 
-\dontrun{
-if(require(unmarked)) {
+
 ##example with mallard data set from unmarked package
+\dontrun{
+require(unmarked)
 data(mallard)
 mallardUMF <- unmarkedFramePCount(mallard.y, siteCovs = mallard.site,
                                   obsCovs = mallard.obs)
@@ -208,7 +191,5 @@ predict(fm.mall.off, type = "state", backTransform = TRUE,
         newdata = data.frame(length = 10, forest = 0, elev = 0))
 detach(package:unmarked)
 }
-}
-
 }
 \keyword{models}

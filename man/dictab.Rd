@@ -93,12 +93,13 @@ A. (2002). Bayesian measures of complexity and fit. \emph{Journal of the
 Marc J. Mazerolle
 }
 \seealso{
-\code{\link{aictab}}, \code{\link{confset}}, \code{\link{DIC}},
-\code{\link{evidence}}
+\code{\link{aictabCustom}}, \code{\link{aictab}}, \code{\link{confset}},
+\code{\link{DIC}}, \code{\link{evidence}} 
 } 
 \examples{
 ##from ?jags example in R2jags package
-if(require(R2jags)) {
+\dontrun{
+require(R2jags)
 model.file <- system.file(package="R2jags", "model", "schools.txt")
 file.show(model.file)     
 

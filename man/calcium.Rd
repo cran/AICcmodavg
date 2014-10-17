@@ -3,7 +3,7 @@
 \alias{calcium}
 \docType{data}
 \title{
-Blood Calcium Concentration in Birds Data
+Blood Calcium Concentration in Birds
 }
 \description{
 This data set features calcium concentration in the plasma of birds

@@ -11,6 +11,7 @@
 \alias{modavgPred.AIClmerMod}
 \alias{modavgPred.AICmer}
 \alias{modavgPred.AICrlm.lm}
+\alias{modavgPred.AICsurvreg}
 \alias{modavgPred.AICunmarkedFitOccu}
 \alias{modavgPred.AICunmarkedFitColExt}
 \alias{modavgPred.AICunmarkedFitOccuRN}
@@ -30,9 +31,9 @@ Compute Model-averaged Predictions
 This function computes the model-averaged predictions and unconditional
 standard errors based on the entire candidate model set.  The function
 is currently implemented for \code{glm}, \code{gls}, \code{lm},
-\code{lme}, \code{mer}, \code{merMod}, \code{rlm} object classes that
-are stored in a list as well as various models of \code{unmarkedFit}
-classes.
+\code{lme}, \code{mer}, \code{merMod}, \code{rlm}, \code{survreg} object
+classes that are stored in a list as well as various models of
+\code{unmarkedFit} classes.
 }
 \usage{
 modavgPred(cand.set, modnames = NULL, newdata, second.ord = TRUE,
@@ -67,6 +68,10 @@ modavgPred(cand.set, modnames = NULL, newdata, second.ord = TRUE,
 
 \method{modavgPred}{AICrlm.lm}(cand.set, modnames = NULL, newdata,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised", \dots) 
+
+\method{modavgPred}{AICsurvreg}(cand.set, modnames = NULL, newdata,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        type = "response", \dots) 
 
 \method{modavgPred}{AICunmarkedFitOccu}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
@@ -277,7 +282,8 @@ Royle, J. A. (2004) \emph{N}-mixture models for estimating population
 size from spatially replicated counts. \emph{Biometrics} \bold{60},
 108--115.
 
-Williams, B. K., Nichols, J. D., Conroy, M. J. (2002) \emph{Analysis and management of animal populations}. Academic Press: New York.
+Williams, B. K., Nichols, J. D., Conroy, M. J. (2002) \emph{Analysis and
+  Management of Animal Populations}. Academic Press: New York. 
 }
 \author{
 Marc J. Mazerolle
@@ -286,10 +292,9 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{importance}},
 \code{\link{c_hat}}, \code{\link{confset}}, \code{\link{evidence}}, 
-\code{\link{modavg}}, \code{\link{modavgEffect}},
-\code{\link{modavgShrink}}, \code{\link{predict}},
-\code{\link{predict.glm}}, \code{\link{predictSE.gls}},
-\code{\link{predictSE.lme}}, \code{\link{predictSE.mer}} 
+\code{\link{modavg}}, \code{\link{modavgCustom}},
+\code{\link{modavgEffect}}, \code{\link{modavgShrink}},
+\code{\link{predict}}, \code{\link{predictSE}}
 }
 
 \examples{
@@ -337,6 +342,7 @@ print(modavgPred(cand.set = Cand.models, modnames = Modnames,
 
 
 ##Gamma glm
+\dontrun{
 ##clotting data example from 'gamma.shape' in MASS package of
 ##Venables and Ripley (2002, Modern applied statistics with
 ##S. Springer-Verlag: New York.)
@@ -345,7 +351,7 @@ clotting <- data.frame(u = c(5, 10, 15, 20, 30, 40, 60, 80, 100),
                        lot2 = c(69, 35, 26, 21, 18, 16, 13, 12, 12))
 clot1 <- glm(lot1 ~ log(u), data = clotting, family = Gamma)
 
-library(MASS)
+require(MASS)
 gamma.dispersion(clot1) #dispersion parameter
 gamma.shape(clot1) #reciprocal of dispersion parameter ==
 ##shape parameter 
@@ -369,12 +375,10 @@ modavgPred(cand.set = Cand, modnames = Modnames, newdata = clotting,
            gamdisp = gamma.dispersion(clot1), type = "link")
 
 ##compute model-averaged predictions on scale of linear predictor
-\dontrun{
 modavgPred(cand.set = Cand, modnames = Modnames, newdata = clotting,
            gamdisp = gamma.dispersion(clot1), type = "terms") #returns an error
 ##because type = "terms" is not defined for 'modavgPred'
-}
-\dontrun{
+
 modavgPred(cand.set = Cand, modnames = Modnames, newdata = clotting,
            type = "terms") #returns an error because
 ##no gamma dispersion parameter was specified (i.e., 'gamdisp' missing) 
@@ -384,7 +388,7 @@ modavgPred(cand.set = Cand, modnames = Modnames, newdata = clotting,
 ##example of model-averaged predictions from N-mixture model
 ##each variable appears twice in the models - this is a bit longer
 \dontrun{
-if(require(unmarked)) {
+require(unmarked)
 data(mallard)
 mallardUMF <- unmarkedFramePCount(mallard.y, siteCovs = mallard.site,
                                   obsCovs = mallard.obs)
@@ -413,20 +417,21 @@ modavgPred(cand.set = Cands, modnames = Modnames, newdata =
            data.frame(ivel = seq(from = -1.75, to = 5.9, by = 0.5),
                       date = 0), parm.type = "detect",
            type = "response")
+detach(package:unmarked)
 }
 
 
-
 ##example of model-averaged abundance from distance model
-##this is a bit longer
 \dontrun{
+##this is a bit longer
 data(linetran) #example from ?distsamp
      
 ltUMF <- with(linetran, {
   unmarkedFrameDS(y = cbind(dc1, dc2, dc3, dc4),
                   siteCovs = data.frame(Length, area, habitat),
                   dist.breaks = c(0, 5, 10, 15, 20),
-                  tlength = linetran$Length * 1000, survey = "line", unitsIn = "m")
+                  tlength = linetran$Length * 1000, survey = "line",
+                  unitsIn = "m")
 })
      
 ## Half-normal detection function. Density output (log scale). No covariates.
@@ -447,10 +452,11 @@ modavgPred(cand.set = Cands, modnames = Modnames, parm.type = "lambda", type = "
            newdata = data.frame(area = mean(linetran$area), habitat = c("A", "B")))
 detach(package:unmarked)
 }
-}
+
 
 
 ##example using Orthodont data set from Pinheiro and Bates (2000)
+\dontrun{
 require(nlme)
 
 ##set up candidate models
@@ -472,7 +478,7 @@ aictab(cand.set = Cand.models, modnames = Modnames)
 modavgPred(cand.set = Cand.models, modnames = Modnames, newdata =
 data.frame(age = c(8, 10, 12, 14)))
 detach(package:nlme)
-
+}
 }
 
 \keyword{models}

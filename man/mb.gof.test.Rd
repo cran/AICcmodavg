@@ -93,9 +93,9 @@ indicate lack-of-fit and that an alternative model should be investigated.
 }
 
 
-  \code{mb.gof.test} returns the following components:
+\code{mb.gof.test} returns the following components:
 
-  \item{chisq.table}{the table of observed and expected values for each
+\item{chisq.table}{the table of observed and expected values for each
   detection history and its chi-square component (if \code{print.table = TRUE}).
 }
 \item{chi.square}{the Pearson chi-square statistic.
@@ -144,9 +144,9 @@ Marc J. Mazerolle
 }
 
 \examples{
-\dontrun{
 ##single-season occupancy model example modified from ?occu
-if(require(unmarked)) {
+\dontrun{
+require(unmarked)
 ##single season
 data(frogs)
 pferUMF <- unmarkedFrameOccu(pfer.bin)
@@ -166,19 +166,16 @@ obs <- mb.chisq(fm1)
 obs
 ##round to 4 digits after decimal point
 print(obs, digits.vals = 4)
-}
 
-\dontrun{
+
 ##compute observed chi-square, assess significance, and estimate c-hat
 obs.boot <- mb.gof.test(fm1, nsim = 3)
 ##note that more bootstrap samples are recommended
 ##(e.g., 1000, 5000, or 10 000)
 obs.boot
 print(obs.boot, digits.vals = 4, digits.chisq = 4)
-}
 
 
-\dontrun{
 ##data with missing values
 mat1 <- matrix(c(0, 0, 0), nrow = 120, ncol = 3, byrow = TRUE)
 mat2 <- matrix(c(0, 0, 1), nrow = 23, ncol = 3, byrow = TRUE)
@@ -191,10 +188,9 @@ m1 <- occu(~ 1 ~ 1, data = y.sim.data)
 mb.gof.test(m1, nsim = 3)
 ##note that more bootstrap samples are recommended
 ##(e.g., 1000, 5000, or 10 000) 
-}
-
 detach(package:unmarked)
 }
 }
+
 
 \keyword{models}

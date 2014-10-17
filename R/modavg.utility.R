@@ -206,3 +206,45 @@ reverse.exclude <- function(exclude) {
   return(exclude.out)
 }
 
+
+
+##unexported functions
+##create function for fixef to avoid importing nlme and lme4
+#fixef <- function (mod){
+  ##if from lme4
+#  if(isS4(mod)) {
+#    lme4::fixef(mod)
+#  }
+  
+  ##if from coxme
+#  if(identical(class(mod), "coxme")) {
+#      mod$coefficients
+#    }
+  
+  ##if from lmekin
+#  if(identical(class(mod), "lmekin")) {
+#    mod$coefficients$fixef
+#  }
+
+#  if(identical(class(mod), "lme")) {
+#    nlme::fixef(mod)
+#  ##if from nlme, coxme, lmekin
+#  }
+#}
+
+
+##create function to identify REML models from lme4
+isREML <- function(mod){
+  as.logical(mod@devcomp$dims[["REML"]])
+}
+
+
+##extract ranef function
+#ranef <- function (mod){
+#  ##if from lme4
+#  if(isS4(mod)) {
+#    lme4::ranef(mod)
+#  } else  {
+#    mod$coefficients$random
+#  } ##if from nlme, coxme, lmekin
+#}

@@ -3,7 +3,7 @@
 \alias{min.trap}
 \docType{data}
 \title{
-Anuran larvae counts in minnow traps across pond type
+Anuran Larvae Counts in Minnow Traps Across Pond Type
 }
 \description{
 This data set consists of counts of anuran larvae as a function of pond

@@ -1,6 +1,7 @@
 \name{extractSE}
 \Rdversion{1.1}
 \alias{extractSE}
+\alias{extractSE.default}
 \alias{extractSE.coxme}
 \alias{extractSE.lmekin}
 \alias{extractSE.mer}
@@ -55,7 +56,8 @@ Marc J. Mazerolle
 }
 \examples{
 ##modified example from ?glmer
-require(lme4)
+\dontrun{
+if(require(lme4)) {
 ##create proportion of incidence
 cbpp$prop <- cbpp$incidence/cbpp$size
 gm1 <- glmer(prop ~ period + (1 | herd), family = binomial,
@@ -66,7 +68,10 @@ summary(gm1)
 vcov(gm1)
 ##extract SE's of fixed effects - no labels
 sqrt(diag(vcov(gm1))) #no labels
-extractSE.mer(gm1)  #with labels
+extractSE(gm1)  #with labels
 detach(package:lme4)
 }
+}
+}
+
 \keyword{models}

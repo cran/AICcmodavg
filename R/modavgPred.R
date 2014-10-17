@@ -169,7 +169,7 @@ modavgPred.AICglm.lm <-
   if(identical(type, "link")) {
     check.link <- unlist(lapply(X = cand.set, FUN = function(i) i$family$link))
     unique.link <- unique(x = check.link)
-    if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged beta estimate\n",
+    if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
                                           "with different link functions\n")}
   }
 
@@ -1119,6 +1119,132 @@ modavgPred.AICrlm.lm <-
     }
 
     Mod.pred.list <- list("mod.avg.pred" = Mod.avg.out[,1], "uncond.se" = Mod.avg.out[,2])
+    class(Mod.pred.list) <- c("modavgPred", "list")
+    return(Mod.pred.list)
+}
+
+
+
+##survreg
+modavgPred.AICsurvreg <-
+  function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
+           nobs = NULL, uncond.se = "revised", type = "response", ...) {
+
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+      if(is.null(names(cand.set))) {
+        modnames <- paste("Mod", 1:length(cand.set), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+      } else {
+        modnames <- names(cand.set)
+      }
+    }
+    
+    ##newdata is data frame with exact structure of the original data frame (same variable names and type)
+    if(type == "terms") {stop("\nThe terms argument is not defined for this function\n")}
+
+  
+###################CHANGES####
+##############################
+    ##type enables to specify either "response" (original scale = point estimate) or "link" (linear predictor)
+    
+
+    ##check that distribution is the same for all models
+    if(identical(type, "link")) {
+      check.dist <- sapply(X = cand.set, FUN = function(i) i$dist)
+      unique.dist <- unique(x = check.dist)
+      if(length(unique.dist) > 1) stop("\nFunction does not support model-averaging linear predictors using different distributions\n")
+    }
+  
+  
+    ##determine number of observations in new data set
+    nobserv <- dim(newdata)[1]
+
+    ##determine number of columns in new data set
+    ncolumns <- dim(newdata)[2]
+
+    ##if only 1 column, add an additional column to avoid problems in computation with predictSE.mer( )
+    if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
+ 
+    ##store AICc table
+    AICctab <- aictab(cand.set = cand.set, modnames = modnames,
+                      second.ord = second.ord, nobs = nobs, sort = FALSE)
+
+    ##create object to hold Model-averaged estimates and unconditional SE's
+    Mod.avg.out <- matrix(NA, nrow = nobserv, ncol = 2)
+    colnames(Mod.avg.out) <- c("Mod.avg.est", "Uncond.SE")
+
+
+    ##begin loop - AICc
+    if(second.ord == TRUE){
+      for (obs in 1:nobserv) {
+
+        ##extract fitted value for observation obs
+        fit <- unlist(lapply(X = cand.set, FUN = function(i) predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                             type = type)$fit))
+
+        ##extract SE for fitted value for observation obs
+        SE <- unlist(lapply(X = cand.set, FUN = function(i) predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                            type = type)$se.fit))
+
+
+        ##create temporary data.frame to store fitted values and SE 
+        AICctmp <- AICctab
+        AICctmp$fit <- fit
+        AICctmp$SE <- SE
+
+        ##compute model averaged prediction and store in output matrix
+        Mod.avg.out[obs, 1] <- sum(AICctmp$AICcWt*AICctmp$fit)
+        ##compute unconditional SE and store in output matrix
+
+        ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+        if(identical(uncond.se, "old")) {
+          Mod.avg.out[obs, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE^2 + (AICctmp$fit - Mod.avg.out[obs, 1])^2))
+        }
+
+        ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+        if(identical(uncond.se, "revised")) {
+          Mod.avg.out[obs, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE^2 + (AICctmp$fit - Mod.avg.out[obs, 1])^2)))
+        }
+      }
+    }
+
+
+
+    ##create temporary data.frame to store fitted values and SE - AIC
+    if(second.ord == FALSE) {
+      for (obs in 1:nobserv) {
+
+        ##extract fitted value for observation obs
+        fit <- unlist(lapply(X = cand.set, FUN = function(i) predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                             type = type)$fit))
+        ##extract SE for fitted value for observation obs
+        SE <- unlist(lapply(X = cand.set, FUN = function(i) predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                            type = type)$se.fit))
+
+        AICtmp <- AICctab
+        AICtmp$fit <- fit
+        AICtmp$SE <- SE
+
+        ##compute model averaged prediction and store in output matrix
+        Mod.avg.out[obs, 1] <- sum(AICtmp$AICWt*AICtmp$fit)
+
+        ##compute unconditional SE and store in output matrix
+        ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+        if(identical(uncond.se, "old")) {
+          Mod.avg.out[obs, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE^2 + (AICtmp$fit - Mod.avg.out[obs, 1])^2))
+        }
+
+        ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+        if(identical(uncond.se, "revised")) {
+          Mod.avg.out[obs, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE^2 + (AICtmp$fit - Mod.avg.out[obs, 1])^2)))
+        }  
+        
+      }
+    }
+
+
+    Mod.pred.list <- list("type" = type, "mod.avg.pred" = Mod.avg.out[,1], "uncond.se" = Mod.avg.out[,2])
     class(Mod.pred.list) <- c("modavgPred", "list")
     return(Mod.pred.list)
 }

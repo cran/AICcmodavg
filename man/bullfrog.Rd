@@ -3,7 +3,7 @@
 \alias{bullfrog}
 \docType{data}
 \title{
-Bullfrog occupancy data and common reed invasion
+Bullfrog Occupancy and Common Reed Invasion
 }
 \description{
 This is a data set from Mazerolle et al. (2014) on the occupancy of

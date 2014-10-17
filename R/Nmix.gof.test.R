@@ -7,7 +7,7 @@ Nmix.chisq <- function(mod) {
     stop("\nThis function is only appropriate for N-mixture models\n")
   }
   ##extract original data from model object
-  obs <- getData(mod)@y
+  obs <- mod@data@y
   ##extract fitted values
   fits <- fitted(mod)
   ##check if sites were removed from analysis
@@ -69,3 +69,5 @@ print.Nmix.chisq <- function(x, digits.vals = 2, digits.chisq = 4, ...) {
     cat("\nEstimate of c-hat =", round(x$c.hat.est, digits = digits.vals), "\n\n")
   }
 }
+
+

@@ -88,8 +88,8 @@ print(evidence(aic.table = aicctable.out, model.low = "raw density"),
       digits = 4)
 
 
-
-##run models for the Orthodont data set in nlme
+##run models for the Orthodont data set in nlme package
+\dontrun{
 require(nlme)
 
 ##set up candidate model list
@@ -119,5 +119,7 @@ evidence(aic.table = aictab(cand.set = Cand.models,
 ##model  
 evidence(aic.table = aic.table.1, model.high = "mod1",
          model.low = "mod3")
+detach(package:nlme)
+}
 }
 \keyword{models}

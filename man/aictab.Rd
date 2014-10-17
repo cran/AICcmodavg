@@ -3,12 +3,15 @@
 \alias{aictab}
 \alias{aictab.default}
 \alias{aictab.AICaov.lm}
+\alias{aictab.AICbetareg}
 \alias{aictab.AICsclm.clm}
 \alias{aictab.AICclmm}
 \alias{aictab.AICcoxme}
 \alias{aictab.AICcoxph}
 \alias{aictab.AICglm.lm}
 \alias{aictab.AICgls}
+\alias{aictab.AICgnls.gls}
+\alias{aictab.AIChurdle}
 \alias{aictab.AIClm}
 \alias{aictab.AIClme}
 \alias{aictab.AIClmekin}
@@ -18,10 +21,11 @@
 \alias{aictab.AICglmerMod}
 \alias{aictab.AICnlmerMod}
 \alias{aictab.AICmultinom.nnet}
-\alias{aictab.AICnlme}
+\alias{aictab.AICnlme.lme}
 \alias{aictab.AICnls}
 \alias{aictab.AICpolr}
 \alias{aictab.AICrlm.lm}
+\alias{aictab.AICsurvreg}
 \alias{aictab.AICunmarkedFitOccu}
 \alias{aictab.AICunmarkedFitColExt}
 \alias{aictab.AICunmarkedFitOccuRN}
@@ -46,18 +50,22 @@ ranks the models based on the selected information criteria and also
 provides delta AIC and Akaike weights.  \code{aictab} selects the
 appropriate function to create the model selection table based on the 
 object class.  The current version works with lists containing objects
-of \code{clm}, \code{clmm}, \code{clogit}, \code{coxme}, \code{coxph},
-\code{glm}, \code{gls}, \code{lm}, \code{lme}, \code{lmekin},
-\code{maxlikeFit}, \code{mer}, \code{merMod}, \code{multinom},
-\code{nlme}, \code{nls}, \code{polr}, \code{rlm}, \code{vglm}, and
+of \code{aov}, \code{betareg}, \code{clm}, \code{clmm}, \code{clogit},
+\code{coxme}, \code{coxph}, \code{glm}, \code{gls}, \code{gnls},
+\code{hurdle}, \code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit},
+\code{mer}, \code{merMod}, \code{multinom}, \code{nlme}, \code{nls},
+\code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, and
 \code{zeroinfl} classes as well as various models of \code{unmarkedFit}
-classes but does not yet allow mixing of different classes.
+classes but does not yet allow mixing of different classes. 
 }
 \usage{
 aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
        sort = TRUE, \dots)
 
 \method{aictab}{AICaov.lm}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
+\method{aictab}{AICbetareg}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
 \method{aictab}{AICsclm.clm}(cand.set, modnames = NULL,
@@ -76,6 +84,12 @@ aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)  
 
 \method{aictab}{AICgls}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
+\method{aictab}{AICgnls.gls}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
+\method{aictab}{AIChurdle}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
 \method{aictab}{AIClm}(cand.set, modnames = NULL,
@@ -105,7 +119,7 @@ aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
 \method{aictab}{AICmultinom.nnet}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
 
-\method{aictab}{AICnlme}(cand.set, modnames = NULL,
+\method{aictab}{AICnlme.lme}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, \dots) 
 
 \method{aictab}{AICnls}(cand.set, modnames = NULL,
@@ -115,6 +129,9 @@ aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
 \method{aictab}{AICrlm.lm}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
+\method{aictab}{AICsurvreg}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
 \method{aictab}{AICunmarkedFitOccu}(cand.set, modnames = NULL,
@@ -193,7 +210,7 @@ from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
 success/trial or cbind(success, failure) syntax), with Poisson
 GLM's, single-season occupancy models (MacKenzie et al. 2002), or
 \emph{N}-mixture models (Royle 2004, Dail and Madsen 2011).  If
-c.hat > 1, \code{AICc} will return the quasi-likelihood analogue of the
+\code{c.hat} > 1, \code{AICc} will return the quasi-likelihood analogue of the
 information criterion requested.  This option is not supported for
 generalized linear mixed models of the \code{mer} and \code{merMod}
 classes.
@@ -206,13 +223,13 @@ classes.
 \code{aictab} internally creates a new class for the \code{cand.set}
 list of candidate models, according to the contents of the list. The
 current function is implemented for \code{clogit}, \code{coxme},
-\code{coxph}, \code{glm}, \code{gls}, \code{lm}, \code{lme},
-\code{lmekin}, \code{maxlikeFit}, \code{mer}, \code{merMod},
-\code{multinom}, \code{nlme}, \code{nls}, \code{polr}, \code{rlm},
-\code{vglm}, and \code{zeroinfl} classes as well as various
-\code{unmarkedFit} classes. The function constructs a model selection
-table based on one of the four information criteria: AIC, AICc, QAIC,
-and QAICc. 
+\code{coxph}, \code{glm}, \code{gls}, \code{gnls}, \code{hurdle},
+\code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
+\code{merMod}, \code{multinom}, \code{nlme}, \code{nls}, \code{polr},
+\code{rlm}, \code{survreg}, \code{vglm}, and \code{zeroinfl} classes as
+well as various \code{unmarkedFit} classes. The function constructs a
+model selection table based on one of the four information criteria:
+AIC, AICc, QAIC, and QAICc. 
 
 Ten guidelines for model selection:
 
@@ -337,9 +354,10 @@ size from spatially replicated counts. \emph{Biometrics} \bold{60},
 Marc J. Mazerolle
 }
 \seealso{
-\code{\link{AICc}}, \code{\link{confset}}, \code{\link{c_hat}},
-\code{\link{evidence}}, \code{\link{importance}}, \code{\link{modavg}}, 
-\code{\link{modavgShrink}}, \code{\link{modavgPred}} 
+\code{\link{AICc}}, \code{\link{aictabCustom}}, \code{\link{confset}},
+\code{\link{c_hat}}, \code{\link{evidence}}, \code{\link{importance}},
+\code{\link{modavg}}, \code{\link{modavgShrink}},
+\code{\link{modavgPred}}
 }
 \examples{
 ##Mazerolle (2006) frog water loss example
@@ -423,42 +441,9 @@ aictab(Cand.aov, Cand.names)
 
 
 
-\dontrun{
-##modified example of Cox regression from ?coxph
-require(survival)
-##Create a simple data set for a time-dependent model
-test2 <- list(start=c(1, 2, 5, 2, 1, 7, 3, 4, 8, 8),
-              stop =c(2, 3, 6, 7, 8, 9, 9, 9,14,17),
-              event=c(1, 1, 1, 1, 1, 1, 1, 0, 0, 0),
-              x    =c(1, 0, 0, 1, 0, 1, 1, 1, 0, 0),
-              height = c(12.3, 10.5, 9.2, 5.6, 8.9,
-                11.0, 16.1, 10.2, 9.9, 14.8))
-m.cox <- coxph(Surv(start, stop, event) ~ x, test2)
-m.cox2 <- coxph(Surv(start, stop, event) ~ x + height, test2)
-Cands <- list(m.cox, m.cox2)
-Mods <- c("x", "additive")
-aictab(Cands, Mods)
-}
-
-
-##mer class example modified from ?glmer
-if(require(lme4)) {
-##create proportion of incidence
-cbpp$prop <- cbpp$incidence/cbpp$size
-gm1 <- glmer(prop ~ period + (1 | herd), family = binomial, weights =
-             size, data = cbpp)
-gm2 <- glmer(prop ~ 1 + (1 | herd), family = binomial, weights =
-             size, data = cbpp)
-
-Cands <- list(gm1, gm2)
-Model.names <- c("effect of period", "no effect of period")
-aictab(cand.set = Cands, modnames = Model.names, sort = TRUE)
-detach(package:lme4)
-}
-
-
 ##single-season occupancy model example modified from ?occu
-if(require(unmarked)) {
+\dontrun{
+require(unmarked)
 ##single season
 data(frogs)
 pferUMF <- unmarkedFrameOccu(pfer.bin)

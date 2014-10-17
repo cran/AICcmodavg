@@ -46,7 +46,8 @@ patchy habitats. \emph{Ecology} \bold{51}, 408--418.
 }
 \examples{
 data(lizards)
-##run log-linear model as in Burnham and Anderson 2002, p. 137
+\dontrun{
+##log-linear model as in Burnham and Anderson 2002, p. 137
 ##main effects
 m1 <- glm(Counts ~ Insolation + Diameter + Height + Time + Species, 
           family = poisson, data = lizards)
@@ -136,5 +137,6 @@ Modnames <- paste("m", 1:length(Cands), sep = "")
 ##model selection
 library(AICcmodavg)
 aictab(Cands, Modnames)
+}
 }
 \keyword{datasets}

@@ -11,6 +11,7 @@
 \alias{modavgEffect.AICglmerMod}
 \alias{modavgEffect.AIClmerMod}
 \alias{modavgEffect.AICrlm.lm}
+\alias{modavgEffect.AICsurvreg}
 \alias{modavgEffect.AICunmarkedFitOccu}
 \alias{modavgEffect.AICunmarkedFitColExt}
 \alias{modavgEffect.AICunmarkedFitOccuRN}
@@ -79,6 +80,10 @@ modavgEffect(cand.set, modnames = NULL, newdata, second.ord = TRUE,
 \method{modavgEffect}{AICrlm.lm}(cand.set, modnames = NULL, newdata,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
+
+\method{modavgEffect}{AICsurvreg}(cand.set, modnames = NULL, newdata,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, type = "response", \dots)
 
 \method{modavgEffect}{AICunmarkedFitOccu}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
@@ -189,11 +194,11 @@ value of \code{nobs}.
   method to compute unconditional standard errors.
 }
   \item{conf.level}{
-the confidence level (1 - alpha) requested for the computation of
+the confidence level (\eqn{1 - \alpha}) requested for the computation of 
 unconditional confidence intervals.  To obtain confidence intervals
 corrected for multiple comparisons between pairs of treatments, it is
-possible to adjust the alpha level according to various strategies such
-as the Bonferroni correction (Dunn 1961).
+possible to adjust the \eqn{\alpha} level according to various
+strategies such as the Bonferroni correction (Dunn 1961).
 }
   \item{type}{
 the scale of prediction requested, one of \code{"response"} or
@@ -278,8 +283,8 @@ set is used instead of being restricted to a single model.  See
 
 \code{modavgEffect} calls the appropriate method depending on the class
 of objects in the list.  The current classes supported include
-\code{glm}, \code{gls}, \code{lm}, \code{lme}, \code{mer},
-\code{glmerMod}, \code{lmerMod}, \code{rlm}, as well as
+\code{aov}, \code{glm}, \code{gls}, \code{lm}, \code{lme}, \code{mer},
+\code{glmerMod}, \code{lmerMod}, \code{rlm}, \code{survreg}, as well as
 \code{unmarkedFitOccu}, \code{unmarkedFitColExt},
 \code{unmarkedFitOccuFP}, \code{unmarkedFitOccuRN},
 \code{unmarkedFitPCount}, \code{unmarkedFitPCO}, \code{unmarkedFitDS},
@@ -358,7 +363,7 @@ Marc J. Mazerolle
 }
 \examples{
 ##heights (cm) of plants grown under two fertilizers, Ex. 9.5 from
-##Zar (1984)
+##Zar (1984): Biostatistical Analysis. Prentice Hall: New Jersey.
 heights <- data.frame(Height = c(48.2, 54.6, 58.3, 47.8, 51.4, 52.0,
                         55.2, 49.1, 49.9, 52.6, 52.3, 57.4, 55.6, 53.2,
                         61.3, 58.0, 59.8, 54.8),
@@ -396,6 +401,7 @@ modavgEffect(cand.set = Cands, modnames = Modnames,
 
 
 ##classical one-way ANOVA type-design
+\dontrun{
 ##generate data for two groups and control
 set.seed(seed = 15)
 y <- round(c(rnorm(n = 15, mean = 10, sd = 5),
@@ -429,12 +435,13 @@ modavgEffect(cand.set = Cands, modnames = Modnames,
 modavgEffect(cand.set = Cands, modnames = Modnames,
               newdata = data.frame(Group = c("trt2", "cont")))
 ##trt2 does not differ from cont
-
+}
 
 
 ##two-way ANOVA type design, Ex. 13.1 (Zar 1984) of plasma calcium
 ##concentration (mg/100 ml) in birds as a function of sex and hormone
 ##treatment
+\dontrun{
 birds <- data.frame(Ca = c(16.87, 16.18, 17.12, 16.83, 17.19, 15.86,
                       14.92, 15.63, 15.24, 14.8, 19.07, 18.77, 17.63,
                       16.99, 18.04, 17.2, 17.64, 17.89, 16.78, 16.92,
@@ -447,7 +454,6 @@ birds <- data.frame(Ca = c(16.87, 16.18, 17.12, 16.83, 17.19, 15.86,
                     Hormone = as.factor(c(1, 1, 1, 1, 1, 1, 1, 1, 1,
                       1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3,
                       3, 3, 3, 3, 3)))
-
 
 ##candidate models
 ##interactive effects
@@ -486,10 +492,11 @@ modavgEffect(Cands, Mods, newdata = horm1.data)
 ##hormone 2 - 3, but set Sex to a constant value
 horm2.data <- data.frame(Sex = c("M", "M"), Hormone = c("2", "3"))
 modavgEffect(Cands, Mods, newdata = horm2.data)
-
+}
 
 
 ##Poisson regression with anuran larvae example from Mazerolle (2006)
+\dontrun{
 data(min.trap)
 ##assign "UPLAND" as the reference level as in Mazerolle (2006)          
 min.trap$Type <- relevel(min.trap$Type, ref = "UPLAND") 
@@ -519,27 +526,37 @@ Modnames <- c("type + logperim", "type", "logperim", "intercept only")
 pred.data <- data.frame(Type = c("BOG", "UPLAND"),
                         log.Perimeter = mean(min.trap$log.Perimeter),
                         Effort = mean(min.trap$Effort))
-modavgEffect(Cand.mod, Modnames, newdata = pred.data, c.hat = vif.hat, type = "response")
-##little suport for an pond type effect
+modavgEffect(Cand.mod, Modnames, newdata = pred.data, c.hat = vif.hat,
+             type = "response")
+##little suport for a pond type effect
+}
 
 
 ##mixed linear model example from ?nlme
+\dontrun{
 library(nlme)
 Cand.models <- list( )
-Cand.models[[1]] <- lme(distance ~ age, data = Orthodont, method="ML") # random is ~ age
-Cand.models[[2]] <- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1, method="ML")
-Cand.models[[3]] <-lme(distance ~ 1, data = Orthodont, random = ~ 1, method="ML")
-Cand.models[[4]] <-lme(distance ~ Sex, data = Orthodont, random = ~ 1, method="ML")
+Cand.models[[1]] <- lme(distance ~ age, data = Orthodont, method="ML")
+Cand.models[[2]] <- lme(distance ~ age + Sex, data = Orthodont,
+                        random = ~ 1, method="ML")
+Cand.models[[3]] <-lme(distance ~ 1, data = Orthodont, random = ~ 1,
+                       method="ML")
+Cand.models[[4]] <-lme(distance ~ Sex, data = Orthodont, random = ~ 1,
+                       method="ML")
 
 Modnames <- c("age", "age + sex", "null", "sex")
 
-data.other <- data.frame(age = mean(Orthodont$age), Sex = factor(c("Male", "Female")))
-modavgEffect(cand.set = Cand.models, modnames = Modnames, newdata = data.other,
-              conf.level = 0.95, second.ord = TRUE, nobs = NULL, uncond.se = "revised")
+data.other <- data.frame(age = mean(Orthodont$age),
+                         Sex = factor(c("Male", "Female"))) 
+modavgEffect(cand.set = Cand.models, modnames = Modnames,
+             newdata = data.other, conf.level = 0.95, second.ord = TRUE,
+             nobs = NULL, uncond.se = "revised")
+detach(package:nlme)
+}
 
 
-\dontrun{
 ##site occupancy analysis example
+\dontrun{
 library(unmarked)
 ##single season model
 data(frogs)
@@ -553,7 +570,8 @@ siteCovs(pferUMF) <- data.frame(site.group, sitevar1 =
                                 sitevar2 = runif(numSites(pferUMF)))
      
 ## observation covariates are in site-major, observation-minor order
-obsCovs(pferUMF) <- data.frame(obsvar1 = rnorm(numSites(pferUMF) * obsNum(pferUMF)))
+obsCovs(pferUMF) <- data.frame(obsvar1 =
+                               rnorm(numSites(pferUMF) * obsNum(pferUMF)))
      
 fm1 <- occu(~ obsvar1 ~ site.group, pferUMF)
 fm2 <- occu(~ obsvar1 ~ 1, pferUMF)
@@ -569,13 +587,14 @@ newer.dat <- data.frame(site.group = c(0, 1))
 
 modavgEffect(cand.set = Cand.mods, modnames = Modnames, type = "response",
               second.ord = TRUE, newdata = newer.dat, parm.type = "psi")
-##no support for an effect of site group (not surprising given that we
-##created this bogus variable just for this example
+##no support for an effect of site group
+}
 
 
 ##single season N-mixture models
+\dontrun{
 data(mallard)
-##this variable was created to illustrate the use of modavgEffect( )
+##this variable was created to illustrate the use of modavgEffect
 ##with detection variables
 mallard.site$site.group <- c(rep(1, 119), rep(0, 120))
 mallardUMF <- unmarkedFramePCount(mallard.y, siteCovs = mallard.site,

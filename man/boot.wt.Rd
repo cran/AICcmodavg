@@ -3,12 +3,15 @@
 \alias{boot.wt}
 \alias{boot.wt.default}
 \alias{boot.wt.AICaov.lm}
+\alias{boot.wt.AICbetareg}
 \alias{boot.wt.AICsclm.clm}
 \alias{boot.wt.AICglm.lm}
+\alias{boot.wt.AIChurdle}
 \alias{boot.wt.AIClm}
 \alias{boot.wt.AICmultinom.nnet}
 \alias{boot.wt.AICpolr}
 \alias{boot.wt.AICrlm.lm}
+\alias{boot.wt.AICsurvreg}
 \alias{boot.wt.AICvglm}
 \alias{boot.wt.AICzeroinfl}
 \title{
@@ -18,8 +21,9 @@ Compute Model Selection Relative Frequencies
 This function computes the model selection relative frequencies based on
 the nonparametric bootstrap (Burnham and Anderson 2002).  Models are
 ranked based on the AIC, AICc, QAIC, or QAICc.  The function currently
-supports objects of \code{clm}, \code{glm}, \code{lm}, \code{multinom},
-\code{polr}, \code{rlm}, \code{vglm}, and \code{zeroinfl} classes.
+supports objects of \code{aov}, \code{betareg}, \code{clm}, \code{glm},
+\code{hurdle}, \code{lm}, \code{multinom}, \code{polr}, \code{rlm},
+\code{survreg}, \code{vglm}, and \code{zeroinfl} classes.
 }
 \usage{
 boot.wt(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
@@ -28,11 +32,17 @@ boot.wt(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
 \method{boot.wt}{AICaov.lm}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
        sort = TRUE, nsim = 100, \dots)
 
+\method{boot.wt}{AICsurvreg}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, nsim = 100, \dots)
+
 \method{boot.wt}{AICsclm.clm}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
        sort = TRUE, nsim = 100, \dots)
 
 \method{boot.wt}{AICglm.lm}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
        sort = TRUE, nsim = 100, c.hat = 1, \dots)
+
+\method{boot.wt}{AIChurdle}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, nsim = 100, \dots)
        
 \method{boot.wt}{AIClm}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
        sort = TRUE, nsim = 100, \dots)
@@ -44,6 +54,9 @@ boot.wt(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
        sort = TRUE, nsim = 100, \dots)
 
 \method{boot.wt}{AICrlm.lm}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
+       sort = TRUE, nsim = 100, \dots)
+
+\method{boot.wt}{AICsurvreg}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
        sort = TRUE, nsim = 100, \dots)
 
 \method{boot.wt}{AICvglm}(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
@@ -100,14 +113,14 @@ analogue of the information criterion requested.
   }
 }
 \details{
-\code{boot.wt} is implemented for \code{glm}, \code{lm},
-  \code{multinom}, \code{polr}, \code{rlm}, \code{vglm}, and
-  \code{zeroinfl} classes.  During each bootstrap iteration, the data
-  are resampled with replacement, all the models specified in
-  \code{cand.set} are updated with the new data set, and the top-ranked
-  model is saved. When all iterations are completed, the relative
-  frequency of selection is computed for each model appearing in the
-  candidate model set.
+\code{boot.wt} is implemented for \code{aov}, \code{betareg},
+  \code{glm}, \code{hurdle}, \code{lm}, \code{multinom}, \code{polr},
+  \code{rlm}, \code{survreg}, \code{vglm}, and \code{zeroinfl} classes.
+  During each bootstrap iteration, the data are resampled with
+  replacement, all the models specified in \code{cand.set} are updated
+  with the new data set, and the top-ranked model is saved. When all
+  iterations are completed, the relative frequency of selection is
+  computed for each model appearing in the candidate model set.
 
 Relative frequencies of the models are often similar to Akaike
 weights, and the latter are often preferred due to their link with
@@ -193,8 +206,8 @@ Modnames <- paste("mod", 1:length(Cand.models), sep = " ")
 boot.wt(cand.set = Cand.models, modnames = Modnames, sort = TRUE)
 
 
-\dontrun{
 ##Burnham and Anderson (2002) flour beetle data
+\dontrun{
 data(beetle)
 ##models as suggested by Burnham and Anderson p. 198          
 Cand.set <- list( )

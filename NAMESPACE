@@ -1,15 +1,531 @@
-exportPattern(".")
-import(methods)
-##import(lme4, MASS, nlme, nnet, stats, unmarked)
-##import(stats)
-##import(stats4)
+##old export - too general
+#exportPattern(".")
+
+##export methods
+export(AICc,
+       aictab,
+       boot.wt,
+       c_hat,
+       confset,
+       DIC,
+       dictab,
+       evidence,
+       importance,
+       mb.chisq,
+       mb.gof.test,
+       modavg,
+       modavgEffect,
+       modavgPred,
+       modavgShrink,
+       multComp,
+       Nmix.chisq,
+       Nmix.gof.test,
+       predictSE,
+       
+       ##utility functions
+       formatCands,
+       reverse.parm,
+       reverse.exclude,
+       extractCN,
+       extractLL,
+       extractSE,
+       fam.link.mer,
+       
+       ##custom functions
+       AICcCustom,
+       aictabCustom,
+       modavgCustom,
+
+       ##deprecated functions
+       extract.LL,
+       extract.LL.coxph,
+       extract.LL.unmarked,
+       AICc.mult,
+       AICc.unmarked,
+       aictab.clm,
+       aictab.clmm,
+       aictab.coxph,
+       aictab.glm,
+       aictab.gls,
+       aictab.lm,
+       aictab.lme,
+       aictab.mer,
+       aictab.merMod,
+       aictab.mult,
+       aictab.nlme,
+       aictab.nls,
+       aictab.polr,
+       aictab.rlm,
+       aictab.unmarked,
+       dictab.bugs,
+       dictab.rjags,
+       modavg.clm,
+       modavg.clmm,
+       modavg.coxph,
+       modavg.glm,
+       modavg.gls,
+       modavg.lme,
+       modavg.mer,
+       modavg.merMod,
+       modavg.mult,
+       modavg.polr,
+       modavg.rlm,
+       modavg.unmarked,
+       modavg.effect,
+       modavg.effect.glm,
+       modavg.effect.gls,
+       modavg.effect.lme,
+       modavg.effect.mer,
+       modavg.effect.merMod,
+       modavg.effect.rlm,
+       modavg.effect.unmarked,
+       modavg.shrink,
+       modavg.shrink.clm,
+       modavg.shrink.clmm,
+       modavg.shrink.coxph,
+       modavg.shrink.glm,
+       modavg.shrink.gls,
+       modavg.shrink.lme,
+       modavg.shrink.mer,
+       modavg.shrink.merMod,
+       modavg.shrink.mult,
+       modavg.shrink.polr,
+       modavg.shrink.rlm,
+       modavg.shrink.unmarked,
+       modavgpred,
+       modavgpred.glm,
+       modavgpred.gls,
+       modavgpred.lme,
+       modavgpred.mer,
+       modavgpred.merMod,
+       modavgpred.rlm,
+       modavgpred.unmarked,
+       predictSE.zip,
+       mult.comp)
+
+
+##export S3 methods
+S3method(print, aictab)
+S3method(print, confset)
+S3method(print, modavgCustom)
+S3method(print, dictab)
+S3method(print, extractCN)
+S3method(print, evidence)
+S3method(print, importance)
+S3method(print, mb.chisq)
+S3method(print, modavg)
+S3method(print, modavgEffect)
+S3method(print, modavgPred)
+S3method(print, modavgShrink)
+S3method(print, multComp)
+S3method(print, Nmix.chisq)
+S3method(print, Nmix.chisq)
+
+
+##AICc
+S3method(AICc, default)
+S3method(AICc, aov)
+S3method(AICc, betareg)
+S3method(AICc, clm)
+S3method(AICc, clmm)
+S3method(AICc, coxme)
+S3method(AICc, coxph)
+S3method(AICc, glm)
+S3method(AICc, gls)
+S3method(AICc, gnls)
+S3method(AICc, hurdle)
+S3method(AICc, lm)
+S3method(AICc, lme)
+S3method(AICc, lmekin)
+S3method(AICc, maxlikeFit)
+S3method(AICc, mer)
+S3method(AICc, merMod)
+S3method(AICc, multinom)
+S3method(AICc, nlme)
+S3method(AICc, nls)
+S3method(AICc, polr)
+S3method(AICc, rlm)
+S3method(AICc, survreg)
+S3method(AICc, unmarkedFit)
+S3method(AICc, vglm)
+S3method(AICc, zeroinfl)
+
+##export AICc.vglm explicitly
+#export(AICc.vglm)
+
+##aictab
+S3method(aictab, default)
+S3method(aictab, AICaov.lm)
+S3method(aictab, AICbetareg)
+S3method(aictab, AICsclm.clm)
+S3method(aictab, AICclmm)
+S3method(aictab, AICcoxme)
+S3method(aictab, AICcoxph)
+S3method(aictab, AICglm.lm)
+S3method(aictab, AICgls)
+S3method(aictab, AICgnls.gls)
+S3method(aictab, AIChurdle)
+S3method(aictab, AIClm)
+S3method(aictab, AIClme)
+S3method(aictab, AIClmekin)
+S3method(aictab, AICmaxlikeFit.list)
+S3method(aictab, AICmer)
+S3method(aictab, AIClmerMod)
+S3method(aictab, AICglmerMod)
+S3method(aictab, AICnlmerMod)
+S3method(aictab, AICmultinom.nnet)
+S3method(aictab, AICnlme.lme)
+S3method(aictab, AICnls)
+S3method(aictab, AICpolr)
+S3method(aictab, AICrlm.lm)
+S3method(aictab, AICsurvreg)
+S3method(aictab, AICunmarkedFitOccu)
+S3method(aictab, AICunmarkedFitColExt)
+S3method(aictab, AICunmarkedFitOccuRN)
+S3method(aictab, AICunmarkedFitPCount)
+S3method(aictab, AICunmarkedFitPCO)
+S3method(aictab, AICunmarkedFitDS)
+S3method(aictab, AICunmarkedFitGDS)
+S3method(aictab, AICunmarkedFitOccuFP)
+S3method(aictab, AICunmarkedFitMPois)
+S3method(aictab, AICunmarkedFitGMM)
+S3method(aictab, AICunmarkedFitGPC)
+S3method(aictab, AICvglm)
+S3method(aictab, AICzeroinfl)
+
+
+##boot.wt
+S3method(boot.wt, default)
+S3method(boot.wt, AICaov.lm)
+S3method(boot.wt, AICbetareg)
+S3method(boot.wt, AICsclm.clm)
+S3method(boot.wt, AICglm.lm)
+S3method(boot.wt, AIChurdle)
+S3method(boot.wt, AIClm)
+S3method(boot.wt, AICmultinom.nnet)
+S3method(boot.wt, AICpolr)
+S3method(boot.wt, AICrlm.lm)
+S3method(boot.wt, AICsurvreg)
+S3method(boot.wt, AICvglm)
+S3method(boot.wt, AICzeroinfl)
+
+
+##DIC
+S3method(DIC, default)
+S3method(DIC, bugs)
+S3method(DIC, rjags)
+
+
+##dictab
+S3method(dictab, default)
+S3method(dictab, AICbugs)
+S3method(dictab, AICrjags)
+
+
+##extractCN
+S3method(extractCN, default)
+S3method(extractCN, unmarkedFit)
+
+
+##extractLL
+S3method(extractLL, default)
+S3method(extractLL, coxph)
+S3method(extractLL, coxme)
+S3method(extractLL, lmekin)
+S3method(extractLL, maxlikeFit)
+S3method(extractLL, unmarkedFit)
+S3method(extractLL, vglm)
+
+
+##extractSE
+S3method(extractSE, default)
+S3method(extractSE, coxme)
+S3method(extractSE, lmekin)
+S3method(extractSE, mer)
+S3method(extractSE, merMod)
+
+
+##importance
+S3method(importance, default)
+S3method(importance, AICaov.lm)
+S3method(importance, AICbetareg)
+S3method(importance, AICsclm.clm)
+S3method(importance, AICclmm)
+S3method(importance, AICclogit.coxph)
+S3method(importance, AICcoxme)
+S3method(importance, AICcoxph)
+S3method(importance, AICglm.lm)
+S3method(importance, AICglmerMod)
+S3method(importance, AICgls)
+S3method(importance, AIChurdle)
+S3method(importance, AIClm)
+S3method(importance, AIClme)
+S3method(importance, AIClmekin)
+S3method(importance, AICmaxlikeFit.list)
+S3method(importance, AICmer)
+S3method(importance, AICmultinom.nnet)
+S3method(importance, AICnlmerMod)
+S3method(importance, AICpolr)
+S3method(importance, AICrlm.lm)
+S3method(importance, AICsurvreg)
+S3method(importance, AICunmarkedFitColExt)
+S3method(importance, AICunmarkedFitOccu)
+S3method(importance, AICunmarkedFitOccuFP)
+S3method(importance, AICunmarkedFitOccuRN)
+S3method(importance, AICunmarkedFitPCount)
+S3method(importance, AICunmarkedFitPCO)
+S3method(importance, AICunmarkedFitDS)
+S3method(importance, AICunmarkedFitGDS)
+S3method(importance, AICunmarkedFitMPois)
+S3method(importance, AICunmarkedFitGMM)
+S3method(importance, AICvglm)
+S3method(importance, AICzeroinfl)
+
+
+##modavg
+S3method(modavg, default)
+S3method(modavg, AICaov.lm)
+S3method(modavg, AICbetareg)
+S3method(modavg, AICsclm.clm)
+S3method(modavg, AICclmm)
+S3method(modavg, AICcoxme)
+S3method(modavg, AICcoxph)
+S3method(modavg, AICglm.lm)
+S3method(modavg, AICgls)
+S3method(modavg, AIChurdle)
+S3method(modavg, AIClm)
+S3method(modavg, AIClme)
+S3method(modavg, AIClmekin)
+S3method(modavg, AICmaxlikeFit.list)
+S3method(modavg, AICmer)
+S3method(modavg, AIClmerMod)
+S3method(modavg, AICglmerMod)
+S3method(modavg, AICmultinom.nnet)
+S3method(modavg, AICpolr)
+S3method(modavg, AICrlm.lm)
+S3method(modavg, AICsurvreg)
+S3method(modavg, AICvglm)
+S3method(modavg, AICzeroinfl)
+S3method(modavg, AICunmarkedFitOccu)
+S3method(modavg, AICunmarkedFitColExt)
+S3method(modavg, AICunmarkedFitOccuRN)
+S3method(modavg, AICunmarkedFitPCount)
+S3method(modavg, AICunmarkedFitPCO)
+S3method(modavg, AICunmarkedFitDS)
+S3method(modavg, AICunmarkedFitGDS)
+S3method(modavg, AICunmarkedFitOccuFP)
+S3method(modavg, AICunmarkedFitMPois)
+S3method(modavg, AICunmarkedFitGMM)
+S3method(modavg, AICunmarkedFitGPC)
+
+
+##modavgEffect
+S3method(modavgEffect, default)
+S3method(modavgEffect, AICaov.lm)
+S3method(modavgEffect, AICglm.lm)
+S3method(modavgEffect, AICgls)
+S3method(modavgEffect, AIClm)
+S3method(modavgEffect, AIClme)
+S3method(modavgEffect, AICmer)
+S3method(modavgEffect, AICglmerMod)
+S3method(modavgEffect, AIClmerMod)
+S3method(modavgEffect, AICrlm.lm)
+S3method(modavgEffect, AICsurvreg)
+S3method(modavgEffect, AICunmarkedFitOccu)
+S3method(modavgEffect, AICunmarkedFitColExt)
+S3method(modavgEffect, AICunmarkedFitOccuRN)
+S3method(modavgEffect, AICunmarkedFitPCount)
+S3method(modavgEffect, AICunmarkedFitPCO)
+S3method(modavgEffect, AICunmarkedFitDS)
+S3method(modavgEffect, AICunmarkedFitGDS)
+S3method(modavgEffect, AICunmarkedFitOccuFP)
+S3method(modavgEffect, AICunmarkedFitMPois)
+S3method(modavgEffect, AICunmarkedFitGMM)
+S3method(modavgEffect, AICunmarkedFitGPC)
+
+
+##modavgPred
+S3method(modavgPred, default)
+S3method(modavgPred, AICaov.lm)
+S3method(modavgPred, AICglm.lm)
+S3method(modavgPred, AICgls)
+S3method(modavgPred, AIClm)
+S3method(modavgPred, AIClme)
+S3method(modavgPred, AICglmerMod)
+S3method(modavgPred, AIClmerMod)
+S3method(modavgPred, AICmer)
+S3method(modavgPred, AICrlm.lm)
+S3method(modavgPred, AICsurvreg)
+S3method(modavgPred, AICunmarkedFitOccu)
+S3method(modavgPred, AICunmarkedFitColExt)
+S3method(modavgPred, AICunmarkedFitOccuRN)
+S3method(modavgPred, AICunmarkedFitPCount)
+S3method(modavgPred, AICunmarkedFitPCO)
+S3method(modavgPred, AICunmarkedFitDS)
+S3method(modavgPred, AICunmarkedFitGDS)
+S3method(modavgPred, AICunmarkedFitOccuFP)
+S3method(modavgPred, AICunmarkedFitMPois)
+S3method(modavgPred, AICunmarkedFitGMM)
+S3method(modavgPred, AICunmarkedFitGPC)
+
+
+##modavgShrink
+S3method(modavgShrink, default)
+S3method(modavgShrink, AICaov.lm)
+S3method(modavgShrink, AICbetareg)
+S3method(modavgShrink, AICsclm.clm)
+S3method(modavgShrink, AICclmm)
+S3method(modavgShrink, AICcoxme)
+S3method(modavgShrink, AICcoxph)
+S3method(modavgShrink, AICglm.lm)
+S3method(modavgShrink, AICgls)
+S3method(modavgShrink, AIChurdle)
+S3method(modavgShrink, AIClm)
+S3method(modavgShrink, AIClme)
+S3method(modavgShrink, AIClmekin)
+S3method(modavgShrink, AICmaxlikeFit.list)
+S3method(modavgShrink, AICmer)
+S3method(modavgShrink, AICglmerMod)
+S3method(modavgShrink, AIClmerMod)
+S3method(modavgShrink, AICmultinom.nnet)
+S3method(modavgShrink, AICpolr)
+S3method(modavgShrink, AICrlm.lm)
+S3method(modavgShrink, AICsurvreg)
+S3method(modavgShrink, AICvglm)
+S3method(modavgShrink, AICzeroinfl)
+S3method(modavgShrink, AICunmarkedFitOccu)
+S3method(modavgShrink, AICunmarkedFitColExt)
+S3method(modavgShrink, AICunmarkedFitOccuRN)
+S3method(modavgShrink, AICunmarkedFitPCount)
+S3method(modavgShrink, AICunmarkedFitPCO)
+S3method(modavgShrink, AICunmarkedFitDS)
+S3method(modavgShrink, AICunmarkedFitGDS)
+S3method(modavgShrink, AICunmarkedFitOccuFP)
+S3method(modavgShrink, AICunmarkedFitMPois)
+S3method(modavgShrink, AICunmarkedFitGMM)
+S3method(modavgShrink, AICunmarkedFitGPC)
+
+
+##multComp
+S3method(multComp, default)
+S3method(multComp, aov)
+S3method(multComp, gls)
+S3method(multComp, glm)
+S3method(multComp, lm)
+S3method(multComp, lme)
+S3method(multComp, mer)
+S3method(multComp, merMod)
+S3method(multComp, rlm)
+S3method(multComp, survreg)
+
+
+##predictSE
+S3method(predictSE, default)
+S3method(predictSE, gls)
+S3method(predictSE, lme)
+S3method(predictSE, mer)
+S3method(predictSE, merMod)
+S3method(predictSE, unmarkedFitPCount)
+S3method(predictSE, unmarkedFitPCO)
+
+import(methods, stats, lattice, MASS, Matrix, nlme, stats4)
+importFrom(unmarked,
+           predict,
+           coef,
+           fitted,
+           parboot)
+importFrom(VGAM,
+           formula,
+           logLik,
+           coefficients)
+importFrom(graphics,
+           hist,
+           title,
+           abline)
+
+
+##export deprecated functions
+export(extract.LL,
+       extract.LL.coxph,
+       extract.LL.unmarked,
+       AICc.mult, 
+       AICc.unmarked,
+       aictab.clm,
+       aictab.clmm,
+       aictab.coxph,
+       aictab.glm,
+       aictab.gls,
+       aictab.lm,
+       aictab.lme,
+       aictab.mer,
+       aictab.merMod,
+       aictab.mult,
+       aictab.nlme,
+       aictab.nls,
+       aictab.polr,
+       aictab.rlm,
+       aictab.unmarked,
+       dictab.bugs,
+       dictab.rjags,
+       modavg.clm,
+       modavg.clmm,
+       modavg.coxph,
+       modavg.glm,
+       modavg.gls,
+       modavg.lme,
+       modavg.mer,
+       modavg.merMod,
+       modavg.mult,
+       modavg.polr,
+       modavg.rlm,
+       modavg.unmarked,
+       modavg.effect,
+       modavg.effect.glm,
+       modavg.effect.gls,
+       modavg.effect.lme,
+       modavg.effect.mer,
+       modavg.effect.merMod,
+       modavg.effect.rlm,
+       modavg.effect.unmarked,
+       modavg.shrink,
+       modavg.shrink.clm,
+       modavg.shrink.clmm,
+       modavg.shrink.coxph,
+       modavg.shrink.glm,
+       modavg.shrink.gls,
+       modavg.shrink.lme,
+       modavg.shrink.mer,
+       modavg.shrink.merMod,
+       modavg.shrink.mult,
+       modavg.shrink.polr,
+       modavg.shrink.rlm,
+       modavg.shrink.unmarked,
+       modavgpred,
+       modavgpred.glm,
+       modavgpred.gls,
+       modavgpred.lme,
+       modavgpred.mer,
+       modavgpred.merMod,
+       modavgpred.rlm,
+       modavgpred.unmarked,
+       predictSE.zip,
+       mult.comp)
+
+##these functions are imported from other packages
+export(predictSE.lme,
+       predictSE.mer)
+
+##export functions predictSE
+export(predictSE.gls,
+       predictSE.merMod,
+       predictSE.unmarkedFitPCO,
+       predictSE.unmarkedFitPCount)
+
 ##importMethodsFrom(stats4,coef,logLik,summary)
 #importFrom(stats,
-#           anova,coef,deviance,family,fitted,residuals,
-#           formula,predict,update,vcov)
+#           anova, coef, logLik, deviance, family, fitted, residuals,
+#           formula, predict, update, vcov)
 #importFrom(stats4,
 #           anova,coef,deviance,family,fitted,residuals,
 #           formula,predict,update,vcov)
-#importFrom(Matrix, diag) 	
-
-
+#importFrom(Matrix, diag)

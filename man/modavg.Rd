@@ -3,12 +3,14 @@
 \alias{modavg}
 \alias{modavg.default}
 \alias{modavg.AICaov.lm}
+\alias{modavg.AICbetareg}
 \alias{modavg.AICsclm.clm}
 \alias{modavg.AICclmm}
 \alias{modavg.AICcoxme}
 \alias{modavg.AICcoxph}
 \alias{modavg.AICglm.lm}
 \alias{modavg.AICgls}
+\alias{modavg.AIChurdle}
 \alias{modavg.AIClm}
 \alias{modavg.AIClme}
 \alias{modavg.AIClmekin}
@@ -19,6 +21,7 @@
 \alias{modavg.AICmultinom.nnet}
 \alias{modavg.AICpolr}
 \alias{modavg.AICrlm.lm}
+\alias{modavg.AICsurvreg}
 \alias{modavg.AICvglm}
 \alias{modavg.AICzeroinfl}
 \alias{modavg.AICunmarkedFitOccu}
@@ -30,8 +33,8 @@
 \alias{modavg.AICunmarkedFitGDS}
 \alias{modavg.AICunmarkedFitOccuFP}
 \alias{modavg.AICunmarkedFitMPois}
-\alias{modavg.AICunmarkedFitFitGMM}
-\alias{modavg.AICunmarkedFitFitGPC}
+\alias{modavg.AICunmarkedFitGMM}
+\alias{modavg.AICunmarkedFitGPC}
 \alias{print.modavg}
 
 \title{
@@ -51,6 +54,10 @@ modavg(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
        TRUE, \dots) 
 
 \method{modavg}{AICaov.lm}(cand.set, parm, modnames = NULL, second.ord =
+        TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+        exclude = NULL, warn = TRUE, \dots)
+
+\method{modavg}{AICbetareg}(cand.set, parm, modnames = NULL, second.ord =
         TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
         exclude = NULL, warn = TRUE, \dots)
 
@@ -78,6 +85,10 @@ modavg(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
 \method{modavg}{AICgls}(cand.set, parm, modnames = NULL, second.ord =
            TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
            exclude = NULL, warn = TRUE, \dots)
+
+\method{modavg}{AIChurdle}(cand.set, parm, modnames = NULL,
+         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+         conf.level = 0.95, exclude = NULL, warn = TRUE, \dots)
 
 \method{modavg}{AIClm}(cand.set, parm, modnames = NULL, second.ord =
         TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
@@ -120,6 +131,10 @@ modavg(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
 \method{modavg}{AICrlm.lm}(cand.set, parm, modnames = NULL,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, exclude = NULL, warn = TRUE, \dots)
+
+\method{modavg}{AICsurvreg}(cand.set, parm, modnames = NULL, second.ord =
+        TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+        exclude = NULL, warn = TRUE, \dots)
 
 \method{modavg}{AICvglm}(cand.set, parm, modnames = NULL, second.ord
          = TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
@@ -174,12 +189,12 @@ modavg(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
         conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
         parm.type = NULL, \dots)
 
-\method{modavg}{AICunmarkedFitFitGMM}(cand.set, parm, modnames =
+\method{modavg}{AICunmarkedFitGMM}(cand.set, parm, modnames =
        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
        parm.type = NULL, \dots)
 
-\method{modavg}{AICunmarkedFitFitGPC}(cand.set, parm, modnames =
+\method{modavg}{AICunmarkedFitGPC}(cand.set, parm, modnames =
         NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
         parm.type = NULL, \dots)
@@ -229,8 +244,8 @@ independent clusters (e.g., sites) as the value of \code{nobs}.
   method to compute unconditional standard errors.
 }
 \item{conf.level}{
-the confidence level requested for the computation of unconditional
-confidence intervals.
+the confidence level (\eqn{1 - \alpha}) requested for the computation of
+unconditional confidence intervals.
 }
 \item{exclude}{
 this argument excludes models based on the terms specified for the 
@@ -254,16 +269,18 @@ terms).
 }
   \item{c.hat}{
 value of overdispersion parameter (i.e., variance inflation factor) such
-as that obtained from \code{c_hat}.  Note that values of c.hat different
-from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
-success/trial or cbind(success, failure) syntax), with Poisson GLM's, 
-single-season occupancy models (MacKenzie et al. 2002), or
-\emph{N}-mixture models (Royle 2004, Dail and Madsen 2011).  If
-c.hat > 1, \code{modavg} will return the quasi-likelihood analogue of
-the information criteria requested and multiply the variance-covariance
-matrix of the estimates by this value (i.e., SE's are multiplied by
-sqrt(c.hat)). This option is not supported for generalized linear mixed
-models of the \code{mer} or \code{merMod} classes.
+as that obtained from \code{c_hat}.  Note that values of \code{c.hat}
+different from 1 are only appropriate for binomial GLM's with trials > 1
+(i.e., success/trial or cbind(success, failure) syntax), with Poisson
+GLM's, single-season occupancy models (MacKenzie et al. 2002),
+\emph{N}-mixture models (Royle 2004, Dail and Madsen 2011), or
+capture-mark-recapture models (e.g., Lebreton et al. 1992).  If
+\code{c.hat} > 1, \code{modavg} will return the quasi-likelihood
+analogue of the information criteria requested and multiply the
+variance-covariance matrix of the estimates by this value (i.e., SE's
+are multiplied by \code{sqrt(c.hat)}). This option is not supported for
+generalized linear mixed models of the \code{mer} or \code{merMod}
+classes. 
 }
   \item{gamdisp}{
 if gamma GLM is used, the dispersion parameter should be specified here
@@ -342,11 +359,12 @@ variables in the models (and NOT due to interaction terms), you can
 suppress this warning by setting \code{warn = FALSE}.
 
 \code{modavg} is implemented for a list containing objects of
-\code{clm}, \code{clmm}, \code{clogit}, \code{coxme}, \code{coxph},
-\code{glm}, \code{gls}, \code{lm}, \code{lme}, \code{lmekin},
-\code{maxlikeFit}, \code{mer}, \code{glmerMod}, \code{lmerMod},
-\code{multinom}, \code{polr}, \code{rlm}, \code{vglm}, \code{zeroinfl}
-classes as well as various models of \code{unmarkedFit} classes.
+\code{aov}, \code{betareg}, \code{clm}, \code{clmm}, \code{clogit},
+\code{coxme}, \code{coxph}, \code{glm}, \code{gls}, \code{hurdle},
+\code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
+\code{glmerMod}, \code{lmerMod}, \code{multinom}, \code{polr},
+\code{rlm}, \code{survreg}, \code{vglm}, \code{zeroinfl} classes as well
+as various models of \code{unmarkedFit} classes.
 }
 \value{
 \code{modavg} creates an object of class \code{modavg} with the following
@@ -387,6 +405,11 @@ Dail, D., Madsen, L. (2011) Models for estimating abundance from
 repeated counts of an open population. \emph{Biometrics} \bold{67},
 577--587.
 
+Lebreton, J.-D., Burnham, K. P., Clobert, J., Anderson, D. R. (1992)
+Modeling survival and testing biological hypotheses using marked
+animals: a unified approach with case-studies. \emph{Ecological
+  Monographs} \bold{62}, 67--118. 
+
 MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
 J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
 detection probabilities are less than one. \emph{Ecology} \bold{83},
@@ -407,8 +430,8 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{aictab}}, \code{\link{c_hat}},
 \code{\link{confset}}, \code{\link{evidence}}, \code{\link{importance}},
-\code{\link{modavgEffect}}, \code{\link{modavgShrink}},
-\code{\link{modavgPred}} 
+\code{\link{modavgCustom}}, \code{\link{modavgEffect}},
+\code{\link{modavgShrink}}, \code{\link{modavgPred}} 
 }
 \examples{
 ##anuran larvae example from Mazerolle (2006)
@@ -528,50 +551,6 @@ modavg(cand.set = Cand, parm = "sizesmall", modnames = Modnames) #correct
 ##exclude models with "sizecat:mass" interaction - results are CORRECT
 modavg(cand.set = Cand, parm = "sizecatab", modnames = Modnames,
        exclude = list("sizecat:mass"))
-
-
-
-##example with generalized linear mixed model
-##modified example from ?glmer
-require(lme4)
-##create proportion of incidence
-cbpp$prop <- cbpp$incidence/cbpp$size
-##add bogus variable
-cbpp$randx <- rnorm(n = nrow(cbpp), mean = 12, sd = 3)
-
-##model with period
-gm1 <- glmer(prop ~ period + (1 | herd), family = binomial,
-             weights = size, data = cbpp)
-gm2 <- glmer(prop ~ period + randx + (1 | herd), family = binomial,
-             weights = size, data = cbpp)
-##model without period
-gm3 <- glmer(prop ~ 1 + (1 | herd), family = binomial,
-             weights = size, data = cbpp)
-Cands <- list(gm1, gm2, gm3)
-Modnames <- c("period", "period + randx", "null")
-
-##model selection
-aictab(cand.set = Cands, modnames = Modnames)
-##model average for difference between period 1 vs period 4
-modavg(cand.set = Cands, modnames = Modnames, parm = "period4")
-detach(package:lme4)
-
-
-##modified example of Cox regression from ?coxph
-require(survival)
-##Create a simple data set for a time-dependent model
-test2 <- list(start=c(1, 2, 5, 2, 1, 7, 3, 4, 8, 8),
-              stop =c(2, 3, 6, 7, 8, 9, 9, 9,14,17),
-              event=c(1, 1, 1, 1, 1, 1, 1, 0, 0, 0),
-              x    =c(1, 0, 0, 1, 0, 1, 1, 1, 0, 0),
-              height = c(12.3, 10.5, 9.2, 5.6, 8.9,
-                11.0, 16.1, 10.2, 9.9, 14.8))
-m.cox <- coxph(Surv(start, stop, event) ~ x, test2)
-m.cox2 <- coxph(Surv(start, stop, event) ~ x + height, test2)
-Cands <- list(m.cox, m.cox2)
-Mods <- c("x", "additive")
-aictab(Cands, Mods)
-modavg(Cands, Mods, parm = "x")
 
 
 

@@ -3,12 +3,15 @@
 \alias{AICc}
 \alias{AICc.default}
 \alias{AICc.aov}
+\alias{AICc.betareg}
 \alias{AICc.clm}
 \alias{AICc.clmm}
 \alias{AICc.coxme}
 \alias{AICc.coxph}
 \alias{AICc.glm}
 \alias{AICc.gls}
+\alias{AICc.gnls}
+\alias{AICc.hurdle}
 \alias{AICc.lm}
 \alias{AICc.lme}
 \alias{AICc.lmekin}
@@ -20,6 +23,7 @@
 \alias{AICc.nls}
 \alias{AICc.polr}
 \alias{AICc.rlm}
+\alias{AICc.survreg}
 \alias{AICc.unmarkedFit}
 \alias{AICc.vglm}
 \alias{AICc.zeroinfl}
@@ -35,6 +39,9 @@
 AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots) 
 
 \method{AICc}{aov}(mod, return.K = FALSE, second.ord = TRUE,
+     nobs = NULL, \dots)
+
+\method{AICc}{betareg}(mod, return.K = FALSE, second.ord = TRUE,
      nobs = NULL, \dots)
 
 \method{AICc}{clm}(mod, return.K = FALSE, second.ord = TRUE,
@@ -53,6 +60,12 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
      nobs = NULL, c.hat = 1, \dots)
 
 \method{AICc}{gls}(mod, return.K = FALSE, second.ord = TRUE,
+     nobs = NULL, \dots)
+
+\method{AICc}{gnls}(mod, return.K = FALSE, second.ord = TRUE,
+     nobs = NULL, \dots)
+
+\method{AICc}{hurdle}(mod, return.K = FALSE, second.ord = TRUE,
      nobs = NULL, \dots)
 
 \method{AICc}{lm}(mod, return.K = FALSE, second.ord = TRUE,
@@ -88,6 +101,9 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
 \method{AICc}{rlm}(mod, return.K = FALSE, second.ord = TRUE,
      nobs = NULL, \dots)
 
+\method{AICc}{survreg}(mod, return.K = FALSE, second.ord = TRUE,
+     nobs = NULL, \dots)
+
 \method{AICc}{unmarkedFit}(mod, return.K = FALSE, second.ord = TRUE,
      nobs = NULL, c.hat = 1, \dots)
 
@@ -100,17 +116,18 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
 
 \arguments{
   \item{mod}{
-    an object of class \code{clm}, \code{clmm}, \code{clogit},
-    \code{coxme}, \code{coxph}, \code{glm}, \code{gls}, \code{lm},
-    \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
-    \code{merMod}, \code{multinom}, \code{nlme}, \code{nls}, \code{polr},
-    \code{rlm}, \code{vglm}, \code{zeroinfl}, and various
+    an object of class \code{aov}, \code{betareg}, \code{clm},
+    \code{clmm}, \code{clogit}, \code{coxme}, \code{coxph}, \code{glm},
+    \code{gls}, \code{gnls}, \code{hurdle}, \code{lm}, \code{lme},
+    \code{lmekin}, \code{maxlikeFit}, \code{mer}, \code{merMod},
+    \code{multinom}, \code{nlme}, \code{nls}, \code{polr}, \code{rlm},
+    \code{survreg}, \code{vglm}, \code{zeroinfl}, and various
     \code{unmarkedFit} classes containing the output of a model.
 }
   
   \item{return.K}{
     logical.  If \code{FALSE}, the function returns the information
-    criteria specified.  If \code{TRUE}, the function returns K (number
+    criterion specified.  If \code{TRUE}, the function returns K (number
     of estimated parameters) for a given model.
 }
 \item{second.ord}{ 
@@ -213,9 +230,10 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
 }
 
 \seealso{
-\code{\link{aictab}}, \code{\link{confset}}, \code{\link{importance}},
-\code{\link{evidence}}, \code{\link{c_hat}}, \code{\link{modavg}},
-\code{\link{modavgShrink}}, \code{\link{modavgPred}}
+\code{\link{AICcCustom}}, \code{\link{aictab}}, \code{\link{confset}},
+\code{\link{importance}}, \code{\link{evidence}}, \code{\link{c_hat}},
+\code{\link{modavg}}, \code{\link{modavgShrink}},
+\code{\link{modavgPred}}
 }
 
 
@@ -235,14 +253,14 @@ AICc(glob.mod, return.K = FALSE, second.ord = FALSE)
 ##rounded to 2 digits after decimal point  
 
 
-
 ##compute AICc for mixed model on Orthodont data set in Pinheiro and
 ##Bates (2000)
+\dontrun{
 require(nlme)
 m1 <- lme(distance ~ age, random = ~1 | Subject, data = Orthodont,
           method= "ML")
 AICc(m1, return.K = FALSE)
-
+}
 
 }
 \keyword{models}

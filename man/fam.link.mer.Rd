@@ -45,7 +45,8 @@ Marc J. Mazerolle
 }
 \examples{
 ##modified example from ?glmer
-require(lme4)
+\dontrun{
+if(require(lme4)){
 ##create proportion of incidence
 cbpp$prop <- cbpp$incidence/cbpp$size
 gm1 <- glmer(prop ~ period + (1 | herd), family = binomial,
@@ -55,9 +56,13 @@ gm2 <- glmer(prop ~ period + (1 | herd),
              family = binomial(link = "cloglog"), weights = size,
              data = cbpp)
 fam.link.mer(gm2)
+}
+}
+
 
 ##example with linear mixed model with Orthodont data from
 ##Pinheiro and Bates (2000)
+\dontrun{
 data(Orthodont, package = "nlme")
 m1 <- lmer(distance ~ Sex + (1 | Subject), data = Orthodont,
            REML = FALSE)
@@ -66,7 +71,7 @@ m2 <- glmer(distance ~ Sex + (1 | Subject),
             family = gaussian(link = "log"), data = Orthodont,
             REML = FALSE)
 fam.link.mer(m2)
-
 detach(package:lme4)
+}
 }
 \keyword{models}

@@ -24,6 +24,20 @@ AICc.aov <-
 
 
 
+##betareg objects
+AICc.betareg <-
+  function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
+    
+    if(identical(nobs, NULL)) {n <- length(mod$fitted)} else {n <- nobs}
+    LL <- logLik(mod)[1]
+    K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model - this includes LM
+    if(second.ord == TRUE) {AICc <- -2*LL+2*K*(n/(n-K-1))}  else{AICc <- -2*LL+2*K}
+    if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
+    AICc
+  }
+
+
+
 ##clm objects
 AICc.clm <-
   function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
@@ -132,6 +146,35 @@ AICc.gls <-
     if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
     AICc
   }
+
+
+
+##gnls objects
+AICc.gnls <-
+  function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
+
+    if(identical(nobs, NULL)) {n <- length(fitted(mod))} else {n <- nobs}
+    LL <- logLik(mod)[1]
+    K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model
+    if(second.ord == TRUE) {AICc <- -2*LL+2*K*(n/(n-K-1))}  else{AICc <- -2*LL+2*K}
+    if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
+    AICc
+  }
+
+
+
+##hurdle objects
+AICc.hurdle <-
+  function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
+    
+    if(identical(nobs, NULL)) {n <- length(mod$fitted)} else {n <- nobs}
+    LL <- logLik(mod)[1]
+    K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model - this includes LM
+    if(second.ord == TRUE) {AICc <- -2*LL + 2*K*(n/(n-K-1))}  else{AICc <- -2*LL + 2*K}
+    if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
+    AICc
+  }
+
 
 
 ##lm objects
@@ -320,6 +363,21 @@ AICc.rlm <-
   }
 
 
+
+##survreg objects
+AICc.survreg <-
+  function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
+    
+    if(identical(nobs, NULL)) {n <- nrow(mod$y)} else {n <- nobs}
+    LL <- logLik(mod)[1]
+    K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model - this includes LM
+    if(second.ord == TRUE) {AICc <- -2*LL+2*K*(n/(n-K-1))}  else{AICc <- -2*LL+2*K}
+    if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
+    AICc
+  }
+
+
+
 ##unmarkedFit objects
 ##create function to extract AICc from 'unmarkedFit'
 AICc.unmarkedFit <- function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, c.hat = 1, ...) {
@@ -359,7 +417,7 @@ AICc.vglm <- function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, c.h
       n <- nrow(mod@fitted.values)
     } else {n <- nobs}
     
-    LL <- extractLL(mod)
+    LL <- extractLL(mod)[1]
 
     ##extract number of estimated parameters
     K <- attr(extractLL(mod), "df")
@@ -388,6 +446,7 @@ AICc.vglm <- function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, c.h
   }
 
 
+
 ##zeroinfl objects
 AICc.zeroinfl <-
   function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
@@ -399,3 +458,4 @@ AICc.zeroinfl <-
     if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
     AICc
   }
+

@@ -67,14 +67,16 @@ Marc J. Mazerolle
 }
 
 \seealso{
-  \code{\link{aictab}}, \code{\link{dictab}}, \code{\link{confset}}, \code{\link{evidence}}
+  \code{\link{AICcCustom}}, \code{\link{aictab}}, \code{\link{dictab}},
+  \code{\link{confset}}, \code{\link{evidence}}
 }
 
 
 
 \examples{
 ##from ?jags example in R2jags package
-if(require(R2jags)) {
+\dontrun{
+require(R2jags)
 ##example model file
 model.file <- system.file(package="R2jags", "model", "schools.txt")
 file.show(model.file)     
@@ -109,5 +111,5 @@ DIC(schools.sim)
 DIC(schools.sim, return.pD = TRUE)
 detach(package:R2jags)
 }
-}   
+}
 \keyword{models}

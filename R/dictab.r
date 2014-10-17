@@ -33,7 +33,7 @@ dictab.AICbugs <- function(cand.set, modnames = NULL, sort = TRUE, ...) {
   Results$Delta_DIC <- Results$DIC - min(Results$DIC)            #compute delta DIC
   Results$ModelLik <- exp(-0.5*Results$Delta_DIC)                #compute model likelihood required to compute Akaike weights
   Results$DICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights
-  Results$Deviance <- unlist(lapply(X = cand.set, FUN = function(i) i$mean$deviance)[1])
+  Results$Deviance <- unlist(lapply(X = cand.set, FUN = function(i) i$mean$deviance))
   
   ##check if some models are redundant
   if(length(unique(Results$DIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
@@ -68,7 +68,7 @@ dictab.AICrjags <- function(cand.set, modnames = NULL, sort = TRUE, ...) {
     Results$Delta_DIC <- Results$DIC - min(Results$DIC)            #compute delta DIC
     Results$ModelLik <- exp(-0.5*Results$Delta_DIC)                #compute model likelihood required to compute Akaike weights
     Results$DICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights
-    Results$Deviance <- unlist(lapply(X = cand.set, FUN = function(i) i$mean$deviance)[1])
+    Results$Deviance <- unlist(lapply(X = cand.set, FUN = function(i) i$mean$deviance))
     
     ##check if some models are redundant
     if(length(unique(Results$DIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")

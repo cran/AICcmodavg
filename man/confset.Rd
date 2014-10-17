@@ -30,32 +30,32 @@ supplied in the table in the same order as in the list of candidate
 models.
 }
   \item{second.ord}{
-logical.  If TRUE, the function returns the second-order
+logical.  If \code{TRUE}, the function returns the second-order
 Akaike information criterion (i.e., AICc).
 }
   \item{nobs}{
 this argument allows to specify a numeric value other than total sample
-size to compute the AICc (i.e., 'nobs' defaults to total number of
+size to compute the AICc (i.e., \code{nobs} defaults to total number of
 observations).  This is relevant only for mixed models or various models
-of 'unmarkedFit' classes where sample size is not straightforward.  In
-such cases, one might use total number of observations or number of
-independent clusters (e.g., sites) as the value of 'nobs'.
+of \code{unmarkedFit} classes where sample size is not straightforward.
+In such cases, one might use total number of observations or number of
+independent clusters (e.g., sites) as the value of \code{nobs}.
 }
   \item{method}{
-a character value, either as 'raw', 'ordinal', or 'ratio', indicating
-the method for determining the confidence set for the best model (see
-'description' above for details).
+a character value, either as \code{raw}, \code{ordinal}, or
+\code{ratio}, indicating the method for determining the confidence set
+for the best model (see 'Description' above for details).
 }
   \item{level}{
 the level of confidence (i.e., sum of model probabilities) used to
-determine the confidence set on the best model when using the 'raw'
+determine the confidence set on the best model when using the \code{raw}
 method.  Note that the argument is not used for the other methods of
 determining the confidence set on the best model. 
 }
   \item{delta}{
 the delta (Q)AIC(c) value associated with the cutoff point to determine
 the confidence set for the best model.  Note that the argument is only
-used when method = 'ratio'.
+used when \code{method = ratio}.
 }
   \item{c.hat}{
 value of overdispersion parameter (i.e., variance inflation factor) such
@@ -63,10 +63,10 @@ as that obtained from \code{c_hat}.  Note that values of c.hat different
 from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
 success/trial or cbind(success, failure) syntax), with Poisson
 GLM's, or single-season occupancy models (MacKenzie et al. 2002).  If
-c.hat > 1, \code{AICc} will return the quasi-likelihood analogue of the
-information criterion requested.  This option is not supported for
-generalized linear mixed models of the \code{mer} or \code{merMod}
-classes.
+\code{c.hat > 1}, \code{AICc} will return the quasi-likelihood analogue
+of the information criterion requested.  This option is not supported
+for generalized linear mixed models of the \code{mer} or \code{merMod}
+classes. 
 }
 }
 \details{
@@ -89,8 +89,8 @@ evidence ratio of each model relative to the top-ranked model is
 computed and the ratios exceeding the cutpoint determine which models
 are included in the confidence set.  Note here that small cutoff points 
 are suggested (e.g., 0.125, 0.050).  The cutoff point is linked to delta
-(Q)AIC(c) by the following relationship:  cutoff =
-exp(-1*delta_(Q)AIC(c)/2).  
+(Q)AIC(c) by the following relationship:  \eqn{cutoff =
+  exp(-1*\delta_{(Q)AIC(c)}/2)}.
 
   
 }
@@ -192,8 +192,8 @@ confset(cand.set = Cand.mod, modnames = Modnames, second.ord = TRUE,
         method = "raw")  
 
 
-
 ##example with linear mixed model
+\dontrun{
 require(nlme)
 
 ##set up candidate model list for Orthodont data set shown in Pinheiro
@@ -230,6 +230,8 @@ confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
 
 confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
         method = "ratio", delta = 8)
+detach(package:nlme)
+}
 }
 
 \keyword{models}

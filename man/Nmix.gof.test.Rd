@@ -29,11 +29,12 @@ for which a goodness-of-fit test is required.
 The Pearson chi-square can be used to assess the fit of N-mixture
 models.  Instead of relying on the theoretical distribution of the
 chi-square, a parametric bootstrap approach is implemented to obtain
-P-values with the 'parboot' function of the unmarked package.
-'Nmix.chisq' computes the observed chi-square statistic based on the
-observed and expected values from the model.  'Nmix.gof.test' calls
-internally 'Nmix.chisq' and 'parboot' to generate simulated data sets
-based on the model and compute the chi-square test statistic.
+P-values with the \code{parboot} function of the unmarked package.
+\code{Nmix.chisq} computes the observed chi-square statistic based on
+the observed and expected values from the model.  \code{Nmix.gof.test}
+calls internally \code{Nmix.chisq} and \code{parboot} to generate
+simulated data sets based on the model and compute the chi-square test
+statistic.
 
 It is also possible to obtain an estimate of the overdispersion
 parameter (c-hat) for the model at hand by dividing the observed
@@ -60,18 +61,19 @@ of the models of the candidate set can be derived.  In such cases, one
 can use the smallest value of c-hat for model selection (Burnham and
 Anderson 2002).
 
-Note that c-hat counts as an additional parameter estimated and should
-be added to K.  All functions in package 'AICcmodavg' automatically add 1
-when the 'c.hat' argument > 1 and apply the same value of c-hat for the
-entire model set.  When c-hat > 1, functions compute quasi-likelihood
-information criteria (either QAICc or QAIC, depending on the value of
-the 'second.ord' argument) by scaling the log-likelihood of the model by
-c-hat.  The value of c-hat can influence the ranking of the models:  as
-c-hat increases, QAIC or QAICc will favor models with fewer parameters.
-As an additional check against this potential problem, one can generate
-several model selection tables by incrementing values of c-hat to assess
-the model selection uncertainty.  If ranking changes little up to the
-c-hat value observed, one can be confident in making inference. 
+Note that c-hat counts as an additional parameter estimated and should 
+be added to K.  All functions in package 'AICcmodavg' automatically add
+1 when the \code{c.hat} argument > 1 and apply the same value of c-hat
+for the entire model set.  When c-hat > 1, functions compute
+quasi-likelihood information criteria (either QAICc or QAIC, depending
+on the value of the \code{second.ord} argument) by scaling the
+log-likelihood of the model by c-hat.  The value of c-hat can influence
+the ranking of the models:  as c-hat increases, QAIC or QAICc will favor
+models with fewer parameters.  As an additional check against this
+potential problem, one can generate several model selection tables by
+incrementing values of c-hat to assess the model selection uncertainty.
+If ranking changes little up to the c-hat value observed, one can be
+confident in making inference.
 
 In cases of underdispersion (c-hat < 1), it is recommended to keep the
 value of c-hat to 1.  However, note that values of c-hat << 1 can also
@@ -79,12 +81,12 @@ indicate lack-of-fit and that an alternative model should be investigated.
 
 }
 \value{
-  'Nmix.chisq' returns a single value:
+  \code{Nmix.chisq} returns a single value:
 \item{chi.square}{the Pearson chi-square statistic.
 }
 
 
-  'Nmix.gof.test' returns the following components:
+  \code{Nmix.gof.test} returns the following components:
 
   \item{chi.square}{the Pearson chi-square statistic.
   }
@@ -137,9 +139,9 @@ Marc J. Mazerolle
 }
 
 \examples{
-\dontrun{
 ##N-mixture model example modified from ?pcount
-if(require(unmarked)) {
+\dontrun{
+require(unmarked)
 ##single season
 data(mallard)
 mallardUMF <- unmarkedFramePCount(mallard.y, siteCovs = mallard.site,
@@ -161,7 +163,6 @@ obs.boot <- Nmix.gof.test(fm.mallard, nsim = 3)
 ##(e.g., 1000, 5000, or 10 000)
 obs.boot
 print(obs.boot, digits.vals = 4, digits.chisq = 4)
-}
 detach(package:unmarked)
 }
 }

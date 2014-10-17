@@ -5,6 +5,11 @@ extractSE <- function(mod, ...) {
 }
 
 
+extractSE.default <- function(mod, ...) {
+  stop("\nFunction not yet defined for this object class\n")
+}
+
+
 ##methods
 ##coxme objects
 extractSE.coxme <- function(mod, ...){

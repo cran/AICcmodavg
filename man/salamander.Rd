@@ -3,11 +3,11 @@
 \alias{salamander}
 \docType{data}
 \title{
-Salamander capture-mark-recapture data
+Salamander Capture-mark-recapture Data
 }
 \description{
 This is a capture-mark-recapture data set on male and female Spotted
-Salamanders (\emph{Ambystoma maculatum}) recorded by Husting (1965). A
+Salamanders (\emph{Ambystoma maculatum}) recorded by Husting (1965).  A
 total of 1244 unique individuals were captured in pitfall traps at a
 breeding site between 1959 and 1963.
 }
@@ -83,16 +83,5 @@ salam.full$ch <- as.character(salam.full$ch)
 
 ##delete rows with 0 freqs
 salam.full.orig <- salam.full[which(salam.full$freq != 0), ]
-
-\dontrun{
-if(require(unmarked)) {
-##process.data: format data, define time intervals and groups
-salam.process <- process.data(salam.full.orig, model = "CJS",
-                              begin.time = 1959, groups = "Sex",
-                              nocc = 5)
-##default dot model phi(.)p(.)
-mark(salam.process, model = "CJS")
-}
-}
 }
 \keyword{datasets}

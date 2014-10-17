@@ -3,6 +3,7 @@
 \alias{importance}
 \alias{importance.default}
 \alias{importance.AICaov.lm}
+\alias{importance.AICbetareg}
 \alias{importance.AICsclm.clm}
 \alias{importance.AICclmm}
 \alias{importance.AICclogit.coxph}
@@ -11,6 +12,7 @@
 \alias{importance.AICglm.lm}
 \alias{importance.AICglmerMod}
 \alias{importance.AICgls}
+\alias{importance.AIChurdle}
 \alias{importance.AIClm}
 \alias{importance.AIClme}
 \alias{importance.AIClmekin}
@@ -20,6 +22,7 @@
 \alias{importance.AICnlmerMod}
 \alias{importance.AICpolr}
 \alias{importance.AICrlm.lm}
+\alias{importance.AICsurvreg}
 \alias{importance.AICunmarkedFitColExt}
 \alias{importance.AICunmarkedFitOccu}
 \alias{importance.AICunmarkedFitOccuFP}
@@ -48,6 +51,9 @@ importance(cand.set, parm, modnames = NULL, second.ord = TRUE,
            nobs = NULL, \dots)
 
 \method{importance}{AICaov.lm}(cand.set, parm, modnames = NULL,
+           second.ord = TRUE, nobs = NULL, ...)
+
+\method{importance}{AICbetareg}(cand.set, parm, modnames = NULL,
            second.ord = TRUE, nobs = NULL, ...)
 
 \method{importance}{AICsclm.clm}(cand.set, parm, modnames = NULL,
@@ -99,6 +105,9 @@ importance(cand.set, parm, modnames = NULL, second.ord = TRUE,
            second.ord = TRUE, nobs = NULL, ...)
 
 \method{importance}{AICrlm.lm}(cand.set, parm, modnames = NULL,
+           second.ord = TRUE, nobs = NULL, ...)
+
+\method{importance}{AICsurvreg}(cand.set, parm, modnames = NULL,
            second.ord = TRUE, nobs = NULL, ...)
 
 \method{importance}{AICunmarkedFitColExt}(cand.set, parm, modnames = NULL,
@@ -171,10 +180,10 @@ independent clusters (e.g., sites) as the value of \code{nobs}.
   different from 1 are only appropriate for binomial GLM's with trials >
   1 (i.e., success/trial or cbind(success, failure) syntax), with
   Poisson GLM's, or single-season occupancy models (MacKenzie et
-  al. 2002).  If c.hat > 1, \code{AICc} will return the quasi-likelihood
-  analogue of the information criterion requested.  This option is not
-  supported for generalized linear mixed models of the \code{mer} and
-  \code{merMod} classes.
+  al. 2002).  If \code{c.hat} > 1, \code{AICc} will return the
+  quasi-likelihood analogue of the information criterion requested.
+  This option is not supported for generalized linear mixed models of
+  the \code{mer} and \code{merMod} classes.
 }
 \item{parm.type}{
   this argument specifies the parameter type on which the effect size 
@@ -243,6 +252,7 @@ Marc J. Mazerolle
 }
 \examples{
 ##example on Orthodont data set in nlme
+\dontrun{
 require(nlme)
 
 ##set up candidate model list
@@ -264,11 +274,13 @@ importance(cand.set = Cand.models, parm = "age", modnames = Modnames,
 ##round to 4 digits after decimal point
 print(importance(cand.set = Cand.models, parm = "age", modnames = Modnames,
                  second.ord = TRUE, nobs = NULL), digits = 4)
-
+detach(package:nlme)
+}
 
 
 ##single-season occupancy model example modified from ?occu
-if(require(unmarked)) {
+\dontrun{
+require(unmarked)
 ##single season
 data(frogs)
 pferUMF <- unmarkedFrameOccu(pfer.bin)
@@ -297,4 +309,5 @@ importance(cand.set = Cand.mods, modnames = Modnames, parm = "obsvar1",
 detach(package:unmarked)
 }
 }
+
 \keyword{models}

@@ -10,6 +10,7 @@
 \alias{multComp.mer}
 \alias{multComp.merMod}
 \alias{multComp.rlm}
+\alias{multComp.survreg}
 \alias{print.multComp}
 \title{
 Create Model Selection Tables based on Multiple Comparisons
@@ -19,8 +20,9 @@ This function is an alternative to traditional multiple comparison
 tests in designed experiments.  It creates a model selection table based
 on different grouping patterns of a factor and computes model-averaged
 predictions for each of the factor levels.  The current version works
-with objects of \code{glm}, \code{gls}, \code{lm}, \code{lme},
-\code{mer}, \code{merMod}, and \code{rlm} classes.
+with objects of \code{aov}, \code{glm}, \code{gls}, \code{lm},
+\code{lme}, \code{mer}, \code{merMod}, and \code{rlm}, \code{survreg}
+classes.
 }
 
 \usage{
@@ -52,6 +54,11 @@ multComp(mod, factor.id, letter.labels = TRUE, second.ord = TRUE, nobs =
 \method{multComp}{rlm}(mod, factor.id, letter.labels = TRUE, second.ord
         = TRUE, nobs = NULL, sort = TRUE, newdata = NULL, uncond.se =
         "revised", conf.level = 0.95, correction = "none", \dots)
+
+\method{multComp}{survreg}(mod, factor.id, letter.labels = TRUE, second.ord
+        = TRUE, nobs = NULL, sort = TRUE, newdata = NULL, uncond.se =
+        "revised", conf.level = 0.95, correction = "none", type =
+        "response", \dots)
 
 \method{multComp}{mer}(mod, factor.id, letter.labels = TRUE, second.ord
         = TRUE, nobs = NULL, sort = TRUE, newdata = NULL, uncond.se =
@@ -118,16 +125,16 @@ multComp(mod, factor.id, letter.labels = TRUE, second.ord = TRUE, nobs =
     now the default.  Note that versions of package \code{AICcmodavg} <
     1.04 used the old method to compute unconditional standard errors.
   }
-  \item{conf.level}{the confidence level (1 - alpha) requested for the
-    computation of unconditional confidence intervals around predicted
-    values for each level of \code{factor.id}.
+  \item{conf.level}{the confidence level (\eqn{1 - \alpha}) requested for
+    the computation of unconditional confidence intervals around
+    predicted values for each level of \code{factor.id}.
   }
   \item{correction}{the type of correction applied to obtain confidence
     intervals for simultaneous inference (i.e., corrected for multiple
     comparisons).  Current corrections include \code{"none"} for
-    uncorrected unconditional confidence intervals, \code{"Bonferroni"}
+    uncorrected unconditional confidence intervals, \code{"bonferroni"}
     for Bonferroni-adjusted confidence intervals (Dunn 1961), and
-    \code{"Sidak"} for Sidak-adjusted confidence intervals (Sidak 1967).
+    \code{"sidak"} for Sidak-adjusted confidence intervals (Sidak 1967).
   }  
   \item{type}{the scale of prediction requested, one of \code{"response"}
     or \code{"link"}.  The latter is only relevant for \code{glm} and
@@ -178,7 +185,7 @@ multComp(mod, factor.id, letter.labels = TRUE, second.ord = TRUE, nobs =
   the support in favor of each model (i.e., grouping pattern).
 
   The number of grouping patterns increases substantially with the number
-  of factor levels, as \eqn{2^{(k - 1)}}, where \eqn{k} is the number of
+  of factor levels, as \eqn{2^{k - 1}}, where \eqn{k} is the number of
   factor levels.  \code{multComp} supports factors with a maximum of 6
   levels.  Also note that \code{multComp} does not handle models where
   the \code{factor.id} variable is involved in an interaction.  In such
@@ -189,12 +196,13 @@ multComp(mod, factor.id, letter.labels = TRUE, second.ord = TRUE, nobs =
   confidence intervals.  The default unconditional confidence intervals
   do not account for multiple comparisons (\code{correction = "none"}).
   With a large number m of potential pairwise comparisons among levels of
-  \code{factor.id}, there is an increased risk of type I error.  For m pairwise
-  comparisons and a given alpha level, \code{correction = "Bonferroni"}
-  computes the unconditional confidence intervals based on \eqn{alpha.corr =
-  \frac{alpha}{m}} (Dunn 1961).  When \code{correction = "Sidak"},
-  \code{multComp} reports Sidak-adjusted confidence intervals, i.e.,
-  \eqn{alpha.corr = 1 - (1 - alpha)^{\frac{1}{m}}}.
+  \code{factor.id}, there is an increased risk of type I error.  For m
+  pairwise comparisons and a given \eqn{\alpha} level, \code{correction =
+  "bonferroni"} computes the unconditional confidence intervals based on
+  \eqn{\alpha_{corr} = \frac{\alpha}{m}} (Dunn 1961).  When
+  \code{correction = "sidak"}, \code{multComp} reports Sidak-adjusted
+  confidence intervals, i.e., \eqn{\alpha_{corr} = 1 - (1 -
+  \alpha)^{\frac{1}{m}}}. 
 }
 \value{
   \code{multComp} creates a list of class \code{multComp} with the
@@ -269,11 +277,11 @@ cbind(model.frame(out$models[[2]]), turkey$Diet)
 evidence(out$model.table)
 
 ##compute Bonferroni-adjusted confidence intervals
-multComp(m.aov, factor.id = "Diet", correction = "Bonferroni")
+multComp(m.aov, factor.id = "Diet", correction = "bonferroni")
 
 
-\dontrun{
 ##two-way ANOVA with interaction
+\dontrun{
 data(calcium)
 
 m.aov2 <- lm(Calcium ~ Hormone + Sex + Hormone:Sex, data = calcium)
@@ -299,21 +307,8 @@ multComp(m.aov.inter, factor.id = "inter")
 }
 
 
-\dontrun{
 ##Poisson regression
-##example from ?glm
-##Dobson (1990) Page 93: Randomized Controlled Trial :
-counts <- c(18,17,15,20,10,20,25,13,12)
-outcome <- gl(3,1,9)
-treatment <- gl(3,3)
-print(d.AD <- data.frame(treatment, outcome, counts))
-glm.D93 <- glm(counts ~ outcome + treatment, data = d.AD, family = poisson)
-
-multComp(mod = glm.D93, factor.id = "outcome")
-}
-
 \dontrun{
-##Poisson regression
 ##example from ?glm
 ##Dobson (1990) Page 93: Randomized Controlled Trial :
 counts <- c(18,17,15,20,10,20,25,13,12)
@@ -326,9 +321,8 @@ multComp(mod = glm.D93, factor.id = "outcome")
 }
 
 
-
-\dontrun{
 ##example specifying 'newdata'
+\dontrun{
 data(dry.frog)
 m1 <- lm(log_Mass_lost ~ Shade + Substrate +
       cent_Initial_mass + Initial_mass2,
@@ -340,9 +334,5 @@ multComp(m1, factor.id = "Substrate",
             Shade = 0, cent_Initial_mass = 0,
             Initial_mass2 = 0))
 }
-
-
-
-
 }
 \keyword{models}
