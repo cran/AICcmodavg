@@ -1,30 +1,45 @@
 \name{c_hat}
 \Rdversion{1.1}
 \alias{c_hat}
+\alias{c_hat.default}
+\alias{c_hat.glm}
+\alias{c_hat.merMod}
 \title{
-Compute Estimate of Dispersion for Poisson and Binomial GLM's
+Estimate Dispersion for Poisson and Binomial GLM's and GLMM's
 }
 \description{
-This function computes an estimate of c-hat for binomial or Poisson
-GLM's based on Pearson's chi-square divided by the residual degrees of freedom.
+Functions to compute an estimate of c-hat for binomial or Poisson GLM's
+and GLMM's based on Pearson's chi-square divided by the residual degrees
+of freedom.
 }
 \usage{
-c_hat(mod)
+c_hat(mod, \dots)
+
+\method{c_hat}{glm}(mod, \dots)
+
+\method{c_hat}{merMod}(mod, \dots)
 }
+
 \arguments{
   \item{mod}{
-the model for which a c-hat estimate is required.
+    an object of class \code{glm} or \code{merMod} for which a c-hat
+    estimate is required.
+  }
+  \item{\dots}{
+    additional arguments passed to the function.
+  }
 }
-}
+
 \details{
 Poisson and binomial GLM's do not have a parameter for the variance and
 it is usually held fixed to 1 (i.e., mean = variance).  However, one must
 check whether this assumption is appropriate by estimating the
 overdispersion parameter (c-hat).  Though one can obtain an estimate of
 c-hat by dividing the residual deviance by the residual degrees of
-freedom, McCullagh and Nelder (1989) recommend using Pearson's
-chi-square divided by the residual degrees of freedom, which performs
-better.  The latter is the method implemented by \code{c_hat}.
+freedom, McCullagh and Nelder (1989) and Venables and Ripley (2002)
+recommend using Pearson's chi-square divided by the residual degrees of
+freedom, which performs better.  The latter is the method implemented by
+\code{c_hat}.
 
 Note that values of c-hat > 1 indicate overdispersion (variance > mean),
 but that values much higher than 1 (i.e., > 4) probably indicate
@@ -36,27 +51,27 @@ a variance inflation factor).
 In model selection, c-hat should be estimated from the global model of
 the candidate model set and the same value of c-hat applied to the
 entire model set.  Specifically, a global model is the most complex model
-from which all the other models of the set are simpler versions
-(nested).  When no single global model exists in the set of models 
+which can be simplified to obtain all the other (nested) models of the
+set.  When no single global model exists in the set of models
 considered, such as when sample size does not allow a complex model, one
-can estimate c-hat from 'subglobal' models.  Here, 'subglobal' models
+can estimate c-hat from 'subglobal' models.  Here, 'subglobal' models 
 denote models from which only a subset of the models of the candidate
 set can be derived.  In such cases, one can use the smallest value of
 c-hat for model selection (Burnham and Anderson 2002).
 
 Note that c-hat counts as an additional parameter estimated and should
-be added to K.  All functions in package \code{AICcmodavg} automatically
-add 1 when the \code{c.hat} argument > 1 and apply the same value of
-c-hat for the entire model set.  When \code{c.hat > 1}, functions
-compute quasi-likelihood information criteria (either QAICc or QAIC,
-depending on the value of the \code{second.ord} argument) by scaling the
-log-likelihood of the model by \code{c.hat}.  The value of \code{c.hat}
-can influence the ranking of the models:  as c-hat increases, QAIC or
-QAICc will favor models with fewer parameters.  As an additional check
-against this potential problem, one can create several model selection
-tables by incrementing values of c-hat to assess the model selection
-uncertainty.  If ranking changes little up to the c-hat value observed,
-one can be confident in making inference. 
+be added to \emph{K}.  All functions in package \code{AICcmodavg}
+automatically add 1 when the \code{c.hat} argument > 1 and apply the
+same value of c-hat for the entire model set.  When \code{c.hat > 1},
+functions compute quasi-likelihood information criteria (either QAICc or
+QAIC, depending on the value of the \code{second.ord} argument) by
+scaling the log-likelihood of the model by \code{c.hat}.  The value of
+\code{c.hat} can influence the ranking of the models:  as c-hat
+increases, QAIC or QAICc will favor models with fewer parameters.  As an
+additional check against this potential problem, one can create several
+model selection tables by incrementing values of c-hat to assess the
+model selection uncertainty.  If ranking changes little up to the c-hat
+value observed, one can be confident in making inference. 
 
 In cases of underdispersion (c-hat < 1), it is recommended to keep the
 value of \code{c.hat} to 1.  However, note that values of c-hat << 1 can
@@ -65,7 +80,7 @@ should be investigated.
 
 Note that it is only possible to estimate c-hat for binomial models with
 trials > 1 (i.e., success/trial or cbind(success, failure) syntax) or
-with Poisson GLM's.
+with Poisson GLM's or GLMM's.
 }
 \value{
 \code{c_hat} returns the estimated c-hat value
@@ -87,8 +102,12 @@ Akaike's Information Criterion (AIC) to assess the strength of
 biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180.
 
 McCullagh, P., Nelder, J. A. (1989) \emph{Generalized Linear
-  Models}. Second edition. Chapman and Hall: New York. 
+  Models}. Second edition. Chapman and Hall: New York.
+
+Venables, W. N., Ripley, B. D. (2002) \emph{Modern Applied Statistics
+  with S}. Second edition. Springer: New York. 
 }
+
 \author{
 Marc J. Mazerolle
 }

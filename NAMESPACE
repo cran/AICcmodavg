@@ -106,6 +106,7 @@ export(AICc,
 
 ##export S3 methods
 S3method(print, aictab)
+S3method(print, boot.wt)
 S3method(print, confset)
 S3method(print, modavgCustom)
 S3method(print, dictab)
@@ -118,7 +119,6 @@ S3method(print, modavgEffect)
 S3method(print, modavgPred)
 S3method(print, modavgShrink)
 S3method(print, multComp)
-S3method(print, Nmix.chisq)
 S3method(print, Nmix.chisq)
 
 
@@ -210,6 +210,12 @@ S3method(boot.wt, AICvglm)
 S3method(boot.wt, AICzeroinfl)
 
 
+##c_hat
+S3method(c_hat, default)
+S3method(c_hat, glm)
+S3method(c_hat, merMod)
+
+
 ##DIC
 S3method(DIC, default)
 S3method(DIC, bugs)
@@ -280,6 +286,18 @@ S3method(importance, AICunmarkedFitMPois)
 S3method(importance, AICunmarkedFitGMM)
 S3method(importance, AICvglm)
 S3method(importance, AICzeroinfl)
+
+
+##mb.chisq
+S3method(mb.chisq, default)
+S3method(mb.chisq, unmarkedFitOccu)
+S3method(mb.chisq, unmarkedFitColExt)
+
+
+##mb.gof.test
+S3method(mb.gof.test, default)
+S3method(mb.gof.test, unmarkedFitOccu)
+S3method(mb.gof.test, unmarkedFitColExt)
 
 
 ##modavg
@@ -419,6 +437,28 @@ S3method(multComp, rlm)
 S3method(multComp, survreg)
 
 
+##Nmix.chisq
+S3method(Nmix.chisq, default)
+S3method(Nmix.chisq, unmarkedFitPCount)
+S3method(Nmix.chisq, unmarkedFitPCO)
+S3method(Nmix.chisq, unmarkedFitMPois)
+S3method(Nmix.chisq, unmarkedFitDS)
+S3method(Nmix.chisq, unmarkedFitGDS)
+S3method(Nmix.chisq, unmarkedFitGPC)
+S3method(Nmix.chisq, unmarkedFitGMM)
+
+
+##Nmix.gof.test
+S3method(Nmix.gof.test, default)
+S3method(Nmix.gof.test, unmarkedFitPCount)
+S3method(Nmix.gof.test, unmarkedFitPCO)
+S3method(Nmix.gof.test, unmarkedFitDS)
+S3method(Nmix.gof.test, unmarkedFitGDS)
+S3method(Nmix.gof.test, unmarkedFitGMM)
+S3method(Nmix.gof.test, unmarkedFitGPC)
+S3method(Nmix.gof.test, unmarkedFitMPois)
+
+
 ##predictSE
 S3method(predictSE, default)
 S3method(predictSE, gls)
@@ -428,6 +468,20 @@ S3method(predictSE, merMod)
 S3method(predictSE, unmarkedFitPCount)
 S3method(predictSE, unmarkedFitPCO)
 
+
+##xtable
+S3method(xtable, aictab)
+S3method(xtable, boot.wt)
+S3method(xtable, dictab)
+S3method(xtable, mb.chisq)
+S3method(xtable, modavg)
+S3method(xtable, modavgEffect)
+S3method(xtable, modavgPred)
+S3method(xtable, modavgShrink)
+S3method(xtable, multComp)
+
+
+##import methods
 import(methods, stats, lattice, MASS, Matrix, nlme, stats4)
 importFrom(unmarked,
            predict,
@@ -442,7 +496,19 @@ importFrom(graphics,
            hist,
            title,
            abline)
-
+importFrom(xtable,
+           xtable,
+           print.xtable,
+           align,
+           caption,
+           label,
+           digits,
+           display,
+           "align<-",
+           "caption<-",
+           "label<-",
+           "digits<-",
+           "display<-")
 
 ##export deprecated functions
 export(extract.LL,

@@ -1,18 +1,37 @@
 \name{mb.gof.test}
 \Rdversion{1.1}
 \alias{mb.gof.test}
+\alias{mb.gof.test.default}
+\alias{mb.gof.test.unmarkedFitOccu}
+\alias{mb.gof.test.unmarkedFitColExt}
 \alias{mb.chisq}
+\alias{mb.chisq.default}
+\alias{mb.chisq.unmarkedFitOccu}
+\alias{mb.chisq.unmarkedFitColExt}
 \alias{print.mb.chisq}
 \title{
-Compute MacKenzie and Bailey Goodness-of-fit Test for Single Season Occupancy Models
+Compute MacKenzie and Bailey Goodness-of-fit Test for Single Season
+and Dynamic Occupancy Models
 }
 \description{
 These functions compute the MacKenzie and Bailey (2004) goodness-of-fit
-test for single season occupancy models based on Pearson's chi-square.
+test for single season occupancy models based on Pearson's chi-square
+and extend it to dynamic (multiple season) occupancy models.
 }
 \usage{
-mb.chisq(mod, print.table = TRUE)
-mb.gof.test(mod, nsim = 5, plot.hist = TRUE)
+mb.chisq(mod, print.table = TRUE, \dots)
+
+\method{mb.chisq}{unmarkedFitOccu}(mod, print.table = TRUE, \dots)
+
+\method{mb.chisq}{unmarkedFitColExt}(mod, print.table = TRUE, \dots)
+
+mb.gof.test(mod, nsim = 5, plot.hist = TRUE, \dots)
+
+\method{mb.gof.test}{unmarkedFitOccu}(mod, nsim = 5, plot.hist = TRUE,
+                     \dots)
+
+\method{mb.gof.test}{unmarkedFitColExt}(mod, nsim = 5, plot.hist = TRUE,
+                     plot.seasons = FALSE, \dots)
 }
 \arguments{
   \item{mod}{
@@ -24,27 +43,43 @@ the model for which a goodness-of-fit test is required.
 \item{nsim}{the number of bootstrapped samples.
 }
 \item{plot.hist}{logical.  Specifies that a histogram of the
-  bootstrapped test statistic is to be included in the output.
+  bootstrapped test statistic is to be included in the output.  For
+  dynamic occupancy models, this produces a histogram of the sum of the
+  season-specific chi-squares for each bootstrap sample.
+}
+\item{plot.seasons}{logical.  For dynamic occupancy models, specifies
+  that a histogram of the bootstrapped test statistic for each primary
+  period (season) is to be included in the output. 
+}
+\item{\dots}{
+  additional arguments passed to the function.
 }
 }
 \details{
 MacKenzie and Bailey (2004) and MacKenzie et al. (2006) suggest using
 the Pearson chi-square to assess the fit of single season occupancy
-models.  Given low expected frequencies, the chi-square statistic will
-deviate from the theoretical distribution and it is recommended to use a
-parametric bootstrap approach to obtain P-values with the \code{parboot}
-function of the \code{unmarked} package.  \code{mb.chisq} computes the
-table of observed and expected values based on the detection histories
-and single season occupancy model used. \code{mb.gof.test} calls
-internally \code{mb.chisq} and \code{parboot} to generate simulated data
-sets based on the model and compute the MacKenzie and Bailey test
-statistic.  Missing values are accomodated by creating cohorts for each
-pattern of missing values.
+models (MacKenzie et al. 2002).  Given low expected frequencies, the
+chi-square statistic will deviate from the theoretical distribution and
+it is recommended to use a parametric bootstrap approach to obtain
+P-values with the \code{parboot} function of the \code{unmarked}
+package.  \code{mb.chisq} computes the table of observed and expected
+values based on the detection histories and single season occupancy
+model used. \code{mb.gof.test} calls internally \code{mb.chisq} and
+\code{parboot} to generate simulated data sets based on the model and
+compute the MacKenzie and Bailey test statistic.  Missing values are
+accomodated by creating cohorts for each pattern of missing values.
 
 It is also possible to obtain an estimate of the overdispersion
 parameter (c-hat) for the model at hand by dividing the observed
 chi-square statistic by the mean of the statistics obtained from
 simulation. 
+
+This test is extended to dynamic occupancy models of MacKenzie et
+al. (2003) by using the occupancy estimates for each season obtained
+from the model.  These estimates are then used to compute the predicted
+and observed frequencies separately within each season.  The chi-squares
+are then summed to be used as the test statistic for the dynamic
+occupancy model.
 
 Note that values of c-hat > 1 indicate overdispersion (variance > mean),
 but that values much higher than 1 (i.e., > 4) probably indicate
@@ -84,51 +119,98 @@ indicate lack-of-fit and that an alternative model should be investigated.
 
 }
 \value{
-  \code{mb.chisq} returns the following components:
+  \code{mb.chisq} returns the following components for single-season
+  occupancy models:
   
   \item{chisq.table}{the table of observed and expected values for each
-  detection history and its chi-square component (if \code{print.table = TRUE}).
-}
-\item{chi.square}{the Pearson chi-square statistic.
+    detection history and its chi-square component (if \code{print.table = TRUE}).
+  }
+  \item{chi.square}{the Pearson chi-square statistic.
+  }
+  \item{model.type}{the model type, either \code{single-season} or \code{dynamic}.
+  }
+
+  \code{mb.chisq} returns the following additional components for dynamic
+  occupancy models:
+  
+  \item{tables}{a list containing the season-specific chi-square tables
+    (if \code{print.table = TRUE}).
+  }
+  \item{all.chisq}{an element containing the season-specific chi-squares.
+  }
+  \item{n.seasons}{the number of primary periods (seasons).
+  }
+
+
+  \code{mb.gof.test} returns the following components for single-season
+  occupancy models:
+  
+  \item{chisq.table}{the table of observed and expected values for each
+    detection history and its chi-square component.
+  }
+  \item{chi.square}{the Pearson chi-square statistic.
+  }
+  \item{t.star}{the bootstrapped chi-square test statistics (i.e.,
+    obtained for each of the simulated data sets).
+  }
+  \item{p.value}{the P-value assessed from the parametric bootstrap,
+    computed as the proportion of the simulated test statistics greater
+    than or equal to the observed test statistic.
+  }
+  \item{c.hat.est}{the estimate of the overdispersion parameter, c-hat,
+    computed as the observed test statistic divided by the mean of the
+    simulated test statistics.
+  }
+  \item{nsim}{the number of bootstrap samples. The recommended number of
+    samples varies with the data set, but should be on the order of 1000
+    or 5000, and in cases with a large number of visits, even 10 000
+    samples, namely to reduce the effect of unusually small values of the
+    test statistics.
+  }
+
+  \code{mb.gof.test} returns the following additional components for
+  dynamic occupancy models:
+
+  \item{chisq.table}{a list including the table of observed and expected
+    values for each detection history and its chi-square component for
+    each primary period (season).
+  }
+  \item{chi.square}{the chi-square test statistic, as the sum of the 
+    chi-squares across the primary periods.
+  }
+  \item{p.value}{a list of the P-values for each of the primary periods,
+    computed separately as the proportion of the simulated test
+    statistics greater than or equal to the observed test statistic.
+  }
+  \item{p.global}{the P-value of the chi-square test statistic for the
+    dynamic occupancy model.  This P-value is computed as the proportion
+    of the simulated sums of chi-squares greater than or equal to the
+    observed sum of chi-squares across the primary periods.
+  }
 }
 
 
-\code{mb.gof.test} returns the following components:
-
-\item{chisq.table}{the table of observed and expected values for each
-  detection history and its chi-square component (if \code{print.table = TRUE}).
-}
-\item{chi.square}{the Pearson chi-square statistic.
-}
-\item{t.star}{the bootstrapped chi-square test statistics (i.e.,
-  obtained for each of the simulated data sets).
-}
-\item{p.value}{the P-value assessed from the parametric bootstrap,
-  computed as the proportion of the simulated test statistics greater
-  than or equal to the observed test statistic.
-}
-\item{c.hat.est}{the estimate of the overdispersion parameter, c-hat,
-  computed as the observed test statistic divided by the mean of the
-  simulated test statistics.
-}
-\item{nsim}{the number of bootstrap samples. The recommended number of
-  samples varies with the data set, but should be on the order of 1000
-  or 5000, and in cases with a large number of visits, even 10 000
-  samples, namely to reduce the effect of unusually small values of the
-  test statistics.
-}
-}
 \references{
 Burnham, K. P., Anderson, D. R. (2002) \emph{Model Selection and
   Multimodel Inference: a practical information-theoretic
   approach}. Second edition. Springer: New York.
 
+MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
+J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
+detection probabilities are less than one. \emph{Ecology} \bold{83},
+2248--2255.
+
+MacKenzie, D. I., Nichols, J. D., Hines, J. E., Knutson, M. G.,
+Franklin, A. B. (2003) Estimating site occupancy, colonization, and
+local extinction when a species is detected imperfectly. \emph{Ecology}
+\bold{84}, 2200--2207.  
+
 MacKenzie, D. I., Bailey, L. L. (2004) Assessing the fit of
-  site-occupancy models. \emph{Journal of Agricultural, Biological, and
-    Environmental Statistics} \bold{9}, 300--318.
+site-occupancy models. \emph{Journal of Agricultural, Biological, and
+  Environmental Statistics} \bold{9}, 300--318.
 
 MacKenzie, D. I., Nichols, J. D., Royle, J. A., Pollock, K. H., Bailey,
-  L. L., Hines, J. E. (2006) \emph{Occupancy estimation and
+L. L., Hines, J. E. (2006) \emph{Occupancy estimation and
   modeling: inferring patterns and dynamics of species
   occurrence}. Academic Press: New York.
 }
@@ -137,10 +219,11 @@ Marc J. Mazerolle
 }
 
 \seealso{
-\code{\link{AICc}}, \code{\link{c_hat}}, \code{\link{evidence}},
-\code{\link{modavg}}, \code{\link{importance}},
-\code{\link{modavgPred}}, \code{\link{Nmix.gof.test}},
-\code{\link[unmarked]{occu}}, \code{\link[unmarked]{parboot}} 
+  \code{\link{AICc}}, \code{\link{c_hat}},
+  \code{\link[unmarked]{colext}}, \code{\link{evidence}},
+  \code{\link{modavg}}, \code{\link{importance}},
+  \code{\link{modavgPred}}, \code{\link{Nmix.gof.test}},
+  \code{\link[unmarked]{occu}}, \code{\link[unmarked]{parboot}} 
 }
 
 \examples{

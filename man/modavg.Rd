@@ -434,7 +434,8 @@ Marc J. Mazerolle
 \code{\link{modavgShrink}}, \code{\link{modavgPred}} 
 }
 \examples{
-##anuran larvae example from Mazerolle (2006)
+##anuran larvae example modified from Mazerolle (2006)
+##these are different models than in the paper
 data(min.trap)
 ##assign "UPLAND" as the reference level as in Mazerolle (2006)          
 min.trap$Type <- relevel(min.trap$Type, ref = "UPLAND") 
@@ -442,23 +443,19 @@ min.trap$Type <- relevel(min.trap$Type, ref = "UPLAND")
 ##set up candidate models          
 Cand.mod <- list( )
 ##global model          
-Cand.mod[[1]] <- glm(Num_anura ~ Type + log.Perimeter + Num_ranatra,
+Cand.mod[[1]] <- glm(Num_anura ~ Type + log.Perimeter +
+                     Type:log.Perimeter + Num_ranatra,
                      family = poisson, offset = log(Effort),
-                     data = min.trap) 
-Cand.mod[[2]] <- glm(Num_anura ~ Type + log.Perimeter, family = poisson,
-                     offset = log(Effort), data = min.trap) 
-Cand.mod[[3]] <- glm(Num_anura ~ Type + Num_ranatra, family = poisson,
-                     offset = log(Effort), data = min.trap) 
-Cand.mod[[4]] <- glm(Num_anura ~ Type, family = poisson,
-                     offset = log(Effort), data = min.trap) 
-Cand.mod[[5]] <- glm(Num_anura ~ log.Perimeter + Num_ranatra,
-                     family = poisson, offset = log(Effort),
-                     data = min.trap) 
-Cand.mod[[6]] <- glm(Num_anura ~ log.Perimeter, family = poisson,
-                     offset = log(Effort), data = min.trap) 
-Cand.mod[[7]] <- glm(Num_anura ~ Num_ranatra, family = poisson,
-                     offset = log(Effort), data = min.trap) 
-Cand.mod[[8]] <- glm(Num_anura ~ 1, family = poisson,
+                     data = min.trap)
+##interactive model
+Cand.mod[[2]] <- glm(Num_anura ~ Type + log.Perimeter +
+                     Type:log.Perimeter, family = poisson, 
+                     offset = log(Effort), data = min.trap)
+##additive model
+Cand.mod[[3]] <- glm(Num_anura ~ Type + log.Perimeter, family = poisson,
+                     offset = log(Effort), data = min.trap)
+##Predator model
+Cand.mod[[4]] <- glm(Num_anura ~ Type + Num_ranatra, family = poisson,
                      offset = log(Effort), data = min.trap) 
           
 ##check c-hat for global model
@@ -468,28 +465,38 @@ c_hat(Cand.mod[[1]]) #uses Pearson's chi-square/df
 ##to 1  
 
 ##assign names to each model
-Modnames <- c("type + logperim + invertpred", "type + logperim",
-              "type + invertpred", "type", "logperim + invertpred",
-              "logperim", "invertpred", "intercept only") 
+Modnames <- c("global model", "interactive model",
+              "additive model", "invertpred model") 
 
-##compute model-averaged estimate of TypeBOG
-modavg(parm = "TypeBOG", cand.set = Cand.mod, modnames = Modnames)
+##model selection
+aictab(Cand.mod, Modnames)
+
+##compute model-averaged estimates for parameters appearing in top
+##models
+modavg(parm = "Num_ranatra", cand.set = Cand.mod, modnames = Modnames)
 ##round to 4 digits after decimal point
-print(modavg(parm = "TypeBOG", cand.set = Cand.mod,
+print(modavg(parm = "Num_ranatra", cand.set = Cand.mod,
              modnames = Modnames), digits = 4)
 
-##compute c-hat estimate based on residual deviance as in Mazerolle
-##(2006)
-Cand.mod[[1]]$deviance/Cand.mod[[1]]$df.residual
+##model-averaging a variable involved in an interaction
+##the following produces an error - because the variable is involved
+##in an interaction in some candidate models
+\dontrun{modavg(parm = "TypeBOG", cand.set = Cand.mod,
+         modnames = Modnames)}
 
-##compute model-averaged estimate of TypeBOG as in Table 4 of
-##Mazerolle (2006) 
+
+##exclude models where the variable is involved in an interaction
+##to get model-averaged estimate of main effect
 modavg(parm = "TypeBOG", cand.set = Cand.mod, modnames = Modnames,
-       c.hat = 1.11) 
+       exclude = list("Type:log.Perimeter"))
+
+##to get model-averaged estimate of interaction
+modavg(parm = "TypeBOG:log.Perimeter", cand.set = Cand.mod,
+       modnames = Modnames)
 
 
 
-##example with similarly-named variables and interaction terms
+##beware of variables that have similar names
 set.seed(seed = 4)
 resp <- rnorm(n = 40, mean = 3, sd = 1)
 size <- rep(c("small", "medsmall", "high", "medhigh"), times = 10)

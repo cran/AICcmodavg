@@ -1529,9 +1529,6 @@ aictab.AICunmarkedFitColExt <- function(cand.set, modnames = NULL, second.ord = 
   }
     
 
-  ##add check for use of c-hat - only with single season occupancy models
-  if(c.hat > 1) stop("\nThe correction for overdispersion is not appropriate for dynamic (multiseason) occupancy models\n")
-
   Results <- data.frame(Modnames = modnames)                    #assign model names to first column
   Results$K <- unlist(lapply(cand.set, AICc, return.K = TRUE,
                              second.ord = second.ord, nobs = nobs, c.hat = c.hat))     #extract number of parameters
@@ -1598,7 +1595,7 @@ aictab.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, second.ord = 
     
 
   ##add check for use of c-hat
-  if(c.hat > 1) stop("\nThe correction for overdispersion is not appropriate with Royle-Nichols heterogeneity models\n")
+  #if(c.hat > 1) stop("\nThe correction for overdispersion is not appropriate with Royle-Nichols heterogeneity models\n")
 
   Results <- data.frame(Modnames = modnames)                    #assign model names to first column
   Results$K <- unlist(lapply(cand.set, AICc, return.K = TRUE,
@@ -1612,12 +1609,33 @@ aictab.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, second.ord = 
   ##check if some models are redundant
   if(length(unique(Results$AICc)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
 
-  Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  ##check if AICc and c.hat = 1
+  if(second.ord == TRUE && c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
+  
+  ##rename correctly to QAICc and add column for c-hat
+  if(second.ord == TRUE && c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QAICc", "Delta_QAICc", "ModelLik", "QAICcWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
 
   ##rename correctly to AIC
-  if(second.ord == FALSE) {
-    colnames(Results)[1:6] <- c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+  if(second.ord == FALSE && c.hat==1) {
+    colnames(Results)<-c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
   }  
+  
+  ##rename correctly to QAIC and add column for c-hat
+  if(second.ord == FALSE && c.hat > 1) {
+    colnames(Results)<-c("Modnames", "K", "QAIC", "Delta_QAIC", "ModelLik", "QAICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat<-c.hat
+  }      
+
   
   if(sort)  {
     Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
@@ -1671,7 +1689,7 @@ aictab.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, second.ord = 
   }      
 
   ##rename correctly to AIC
-  if(second.ord == FALSE && c.hat==1) {
+  if(second.ord == FALSE && c.hat == 1) {
     colnames(Results)<-c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
     Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
   }  
@@ -1785,13 +1803,33 @@ aictab.AICunmarkedFitDS <- function(cand.set, modnames = NULL, second.ord = TRUE
   ##check if some models are redundant
   if(length(unique(Results$AICc)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
 
-  Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  ##check if AICc and c.hat = 1
+  if(second.ord == TRUE && c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
+  
+  ##rename correctly to QAICc and add column for c-hat
+  if(second.ord == TRUE && c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QAICc", "Delta_QAICc", "ModelLik", "QAICcWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
 
   ##rename correctly to AIC
-  if(second.ord == FALSE) {
-    colnames(Results)[1:6] <- c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+  if(second.ord == FALSE && c.hat == 1) {
+    colnames(Results)<-c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
   }  
-    
+  
+  ##rename correctly to QAIC and add column for c-hat
+  if(second.ord == FALSE && c.hat > 1) {
+    colnames(Results)<-c("Modnames", "K", "QAIC", "Delta_QAIC", "ModelLik", "QAICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat<-c.hat
+  }
+  
   if(sort)  {
     Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
@@ -1818,7 +1856,7 @@ aictab.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, second.ord = TRU
     
 
   ##add check for use of c-hat
-  if(c.hat > 1) stop("\nThe correction for overdispersion is not appropriate for distance sampling models\n")
+  #if(c.hat > 1) stop("\nThe correction for overdispersion is not appropriate for distance sampling models\n")
 
   Results <- data.frame(Modnames = modnames)                    #assign model names to first column
   Results$K <- unlist(lapply(cand.set, AICc, return.K = TRUE,
@@ -1832,14 +1870,33 @@ aictab.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, second.ord = TRU
   ##check if some models are redundant
   if(length(unique(Results$AICc)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
 
-  Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
-
+  ##check if AICc and c.hat = 1
+  if(second.ord == TRUE && c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
   
+  ##rename correctly to QAICc and add column for c-hat
+  if(second.ord == TRUE && c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QAICc", "Delta_QAICc", "ModelLik", "QAICcWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
 
   ##rename correctly to AIC
-  if(second.ord == FALSE) {
-    colnames(Results)[1:6] <- c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
-  }
+  if(second.ord == FALSE && c.hat == 1) {
+    colnames(Results)<-c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+  }  
+  
+  ##rename correctly to QAIC and add column for c-hat
+  if(second.ord == FALSE && c.hat > 1) {
+    colnames(Results)<-c("Modnames", "K", "QAIC", "Delta_QAIC", "ModelLik", "QAICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat<-c.hat
+  }      
+
   
   if(sort)  {
     Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
@@ -1911,7 +1968,7 @@ aictab.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, second.ord = T
   }
     
   ##add check for use of c-hat
-  if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for multinomial Poisson models\n")
+  #if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for multinomial Poisson models\n")
 
   Results <- data.frame(Modnames = modnames)                    #assign model names to first column
   Results$K <- unlist(lapply(cand.set, AICc, return.K = TRUE,
@@ -1925,14 +1982,35 @@ aictab.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, second.ord = T
   ##check if some models are redundant
   if(length(unique(Results$AICc)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
 
-  Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
-    
-  ##rename correctly to AIC
-  if(second.ord == FALSE) {
-    colnames(Results)[1:6] <- c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+
+  ##check if AICc and c.hat = 1
+  if(second.ord == TRUE && c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
   }
   
+  ##rename correctly to QAICc and add column for c-hat
+  if(second.ord == TRUE && c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QAICc", "Delta_QAICc", "ModelLik", "QAICcWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
 
+  ##rename correctly to AIC
+  if(second.ord == FALSE && c.hat == 1) {
+    colnames(Results)<-c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+  }  
+  
+  ##rename correctly to QAIC and add column for c-hat
+  if(second.ord == FALSE && c.hat > 1) {
+    colnames(Results)<-c("Modnames", "K", "QAIC", "Delta_QAIC", "ModelLik", "QAICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat<-c.hat
+  }      
+
+  
   if(sort)  {
     Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
@@ -1958,7 +2036,7 @@ aictab.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, second.ord = TRU
     
 
   ##add check for use of c-hat
-  if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for generalized multinomial mixture models\n")
+  #if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for generalized multinomial mixture models\n")
 
   Results <- data.frame(Modnames = modnames)                    #assign model names to first column
   Results$K <- unlist(lapply(cand.set, AICc, return.K = TRUE,
@@ -1972,13 +2050,35 @@ aictab.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, second.ord = TRU
   ##check if some models are redundant
   if(length(unique(Results$AICc)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
 
-  Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+
+  ##check if AICc and c.hat = 1
+  if(second.ord == TRUE && c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
+  
+  ##rename correctly to QAICc and add column for c-hat
+  if(second.ord == TRUE && c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QAICc", "Delta_QAICc", "ModelLik", "QAICcWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
 
   ##rename correctly to AIC
-  if(second.ord == FALSE) {
-    colnames(Results)[1:6] <- c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+  if(second.ord == FALSE && c.hat == 1) {
+    colnames(Results) <- c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
   }  
   
+  ##rename correctly to QAIC and add column for c-hat
+  if(second.ord == FALSE && c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QAIC", "Delta_QAIC", "ModelLik", "QAICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
+
+
   if(sort)  {
     Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
@@ -2004,7 +2104,7 @@ aictab.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, second.ord = TRU
     
 
   ##add check for use of c-hat
-  if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for generalized binomial mixture models\n")
+  #if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for generalized binomial mixture models\n")
 
   Results <- data.frame(Modnames = modnames)                    #assign model names to first column
   Results$K <- unlist(lapply(cand.set, AICc, return.K = TRUE,
@@ -2018,12 +2118,34 @@ aictab.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, second.ord = TRU
   ##check if some models are redundant
   if(length(unique(Results$AICc)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
 
-  Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+
+  ##check if AICc and c.hat = 1
+  if(second.ord == TRUE && c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
+  
+  ##rename correctly to QAICc and add column for c-hat
+  if(second.ord == TRUE && c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QAICc", "Delta_QAICc", "ModelLik", "QAICcWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
 
   ##rename correctly to AIC
-  if(second.ord == FALSE) {
-    colnames(Results)[1:6] <- c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+  if(second.ord == FALSE && c.hat == 1) {
+    colnames(Results) <- c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
   }  
+  
+  ##rename correctly to QAIC and add column for c-hat
+  if(second.ord == FALSE && c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QAIC", "Delta_QAIC", "ModelLik", "QAICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
+
   
   if(sort)  {
     Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights

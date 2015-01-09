@@ -10,7 +10,7 @@ This function compares two models of a candidate model set based on
 their evidence ratio (i.e., ratio of Akaike weights).  The default
 computes the evidence ratio of the Akaike weights between the top-ranked
 model and the second-ranked model.  You must supply a model selection
-table of class 'aictab' as the first argument.
+table of class 'aictab' or 'boot.wt' as the first argument.
 }
 \usage{
 evidence(aic.table, model.high = "top", model.low = "second.ranked")
@@ -18,8 +18,9 @@ evidence(aic.table, model.high = "top", model.low = "second.ranked")
 \arguments{
   \item{aic.table}{
 a model selection table of class \code{aictab} such as that produced by 
-\code{aictab}.  The table may be sorted or not, as the function sorts
-the table internally.
+\code{aictab} or of class \code{boot.wt} as produced by \code{boot.wt}.
+The table may be sorted or not, as the function sorts the table
+internally.
 }
   \item{model.high}{
 the top-ranked model (default), or alternatively, the name of another

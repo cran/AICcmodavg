@@ -4,6 +4,26 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+#revision 2.0-2 (5 January 2015)
+##- added support for c-hat argument for dynamic occupancy models fit with 'colext' and additional mixture 
+##  models fit from 'distsamp', 'gdistsamp', 'gmultmix', 'gpcount', 'multinomPois', and 'occuRN'
+##- made 'Nmix.chisq' and 'Nmix.gof.test' generic and added support for different N-mixture models
+##  and updated the Rd file
+##- made 'mb.chisq' and 'mb.gof.test' generic for unmarkedFitOccu and unmarkedFitColExt models,
+##  modified structure of output, added new arguments 'print.seasons' for 'mb.gof.test.unmarkedFitColExt',
+##  and updated the Rd file
+##- added new function to estimate c-hat in lme4 models and made 'c_hat' function generic and
+##  updated the Rd file
+##- clarified examples in Rd file of 'modavg' to clearly illustrate how to exclude models when
+##  model-averaging the main effect of a variable also involved in an interaction
+##- corrected bug in 'boot.wt' when sorting models in ascending order of Akaike weight
+##- created a separate class for 'boot.wt' objects and print method to facilitate LaTeX formatting
+##- created methods for 'xtable' to format objects from 'aictab', 'boot.wt', 'dictab', 'modavg', 'modavgShrink',
+##  'modavgPred', 'modavgEffect', 'multComp', 'mb.chisq' to LaTeX
+
+
+
+####################################################################
 #revision 2.01 (9 October 2014)
 #- corrected bugs in 'modavg' and 'modavgShrink' for models of class 'unmarkedFitGMM' and 'unmarkedFitGPC'
 #- corrected bugs in 'dictab' to return deviance of all models in model selection table

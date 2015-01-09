@@ -297,7 +297,7 @@ following components:
 \item{Modname}{the names of each model of the candidate model set.}
 \item{K }{the number of estimated parameters for each model.}
 \item{(Q)AIC(c) }{the information criteria requested for each model
-  (AICc, AICc, QAIC, QAICc).}
+  (AIC, AICc, QAIC, QAICc).}
 \item{Delta_(Q)AIC(c) }{the appropriate delta AIC component depending on
   the information criteria selected.}
 \item{ModelLik }{the relative likelihood of the model given the
@@ -444,14 +444,14 @@ aictab(Cand.aov, Cand.names)
 ##single-season occupancy model example modified from ?occu
 \dontrun{
 require(unmarked)
-##single season
+##single season example modified from ?occu
 data(frogs)
 pferUMF <- unmarkedFrameOccu(pfer.bin)
-## add some fake covariates for illustration
+##add fake covariates
 siteCovs(pferUMF) <- data.frame(sitevar1 = rnorm(numSites(pferUMF)),
-                                sitevar2 = rnorm(numSites(pferUMF))) 
+                                sitevar2 = runif(numSites(pferUMF))) 
      
-## observation covariates are in site-major, observation-minor order
+##observation covariates
 obsCovs(pferUMF) <- data.frame(obsvar1 = rnorm(numSites(pferUMF) *
                                  obsNum(pferUMF))) 
 
@@ -460,12 +460,12 @@ fm1 <- occu(~ obsvar1 ~ sitevar1, pferUMF)
 fm2 <- occu(~ 1 ~ sitevar1, pferUMF)
 fm3 <- occu(~ obsvar1 ~ sitevar2, pferUMF)
 fm4 <- occu(~ 1 ~ sitevar2, pferUMF)
-Cand.mods <- list(fm1, fm2, fm3, fm4)
-Modnames <- c("fm1", "fm2", "fm3", "fm4")
+
+##assemble models in named list (alternative to using 'modnames' argument)
+Cand.mods <- list("fm1" = fm1, "fm2" = fm2, "fm3" = fm3, "fm4" = fm4)
 
 ##compute table
-aictab(cand.set = Cand.mods, modnames = Modnames,
-       second.ord = TRUE)
+aictab(cand.set = Cand.mods, second.ord = TRUE)
 
 detach(package:unmarked)
 }

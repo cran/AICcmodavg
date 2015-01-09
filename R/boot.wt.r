@@ -68,6 +68,12 @@ boot.wt.AICaov.lm <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs
   ##original model selection
   orig.aic <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
                      nobs = nobs, sort = FALSE)
+  
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
 
   ##rename column for relative frequencies
   names(orig.aic)[7] <- "PiWt"
@@ -81,7 +87,7 @@ boot.wt.AICaov.lm <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs
     #orig.aic$Cum.PiWt <- cumsum(orig.aic[, 7])
   }
   
-  class(orig.aic) <- c("aictab", "data.frame")
+  class(orig.aic) <- c("boot.wt", "data.frame")
   return(orig.aic)
 }
 
@@ -143,6 +149,12 @@ boot.wt.AICbetareg <- function(cand.set, modnames = NULL, second.ord = TRUE, nob
   orig.aic <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
                      nobs = nobs, sort = FALSE)
 
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
+
   ##rename column for relative frequencies
   names(orig.aic)[7] <- "PiWt"
   
@@ -155,7 +167,7 @@ boot.wt.AICbetareg <- function(cand.set, modnames = NULL, second.ord = TRUE, nob
     #orig.aic$Cum.PiWt <- cumsum(orig.aic[, 7])
   }
   
-  class(orig.aic) <- c("aictab", "data.frame")
+  class(orig.aic) <- c("boot.wt", "data.frame")
   return(orig.aic)
 }
 
@@ -217,6 +229,12 @@ boot.wt.AICsclm.clm <- function(cand.set, modnames = NULL, second.ord = TRUE, no
   orig.aic <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
                      nobs = nobs, sort = FALSE)
 
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
+
   ##rename column for relative frequencies
   names(orig.aic)[7] <- "PiWt"
   
@@ -229,7 +247,7 @@ boot.wt.AICsclm.clm <- function(cand.set, modnames = NULL, second.ord = TRUE, no
     #orig.aic$Cum.PiWt <- cumsum(orig.aic[, 7])
   }
   
-  class(orig.aic) <- c("aictab", "data.frame")
+  class(orig.aic) <- c("boot.wt", "data.frame")
   return(orig.aic)
 }
 
@@ -237,7 +255,7 @@ boot.wt.AICsclm.clm <- function(cand.set, modnames = NULL, second.ord = TRUE, no
 
 ##glm
 boot.wt.AICglm.lm <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
-                                 sort = TRUE, nsim = 100, c.hat = 1, ...) {
+                              sort = TRUE, nsim = 100, c.hat = 1, ...) {
   
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -291,6 +309,18 @@ boot.wt.AICglm.lm <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs
   orig.aic <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
                      nobs = nobs, sort = FALSE, c.hat = c.hat)
 
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
+
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
+
   ##rename column for relative frequencies
   names(orig.aic)[7] <- "PiWt"
   
@@ -303,9 +333,10 @@ boot.wt.AICglm.lm <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs
     #orig.aic$Cum.PiWt <- cumsum(orig.aic[, 7])
   }
   
-  class(orig.aic) <- c("aictab", "data.frame")
+  class(orig.aic) <- c("boot.wt", "data.frame")
   return(orig.aic)
 }
+
 
 
 ##hurdle models
@@ -364,6 +395,12 @@ boot.wt.AIChurdle <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs
   orig.aic <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
                      nobs = nobs, sort = FALSE)
 
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
+
   ##rename column for relative frequencies
   names(orig.aic)[7] <- "PiWt"
   
@@ -376,7 +413,7 @@ boot.wt.AIChurdle <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs
     #orig.aic$Cum.PiWt <- cumsum(orig.aic[, 7])
   }
   
-  class(orig.aic) <- c("aictab", "data.frame")
+  class(orig.aic) <- c("boot.wt", "data.frame")
   return(orig.aic)
 }
 
@@ -438,6 +475,12 @@ boot.wt.AIClm <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs = N
   orig.aic <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
                      nobs = nobs, sort = FALSE)
 
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
+
   ##rename column for relative frequencies
   names(orig.aic)[7] <- "PiWt"
   
@@ -450,7 +493,7 @@ boot.wt.AIClm <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs = N
     #orig.aic$Cum.PiWt <- cumsum(orig.aic[, 7])
   }
   
-  class(orig.aic) <- c("aictab", "data.frame")
+  class(orig.aic) <- c("boot.wt", "data.frame")
   return(orig.aic)
 }
 
@@ -512,6 +555,12 @@ boot.wt.AICmultinom.nnet <- function(cand.set, modnames = NULL, second.ord = TRU
   orig.aic <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
                      nobs = nobs, sort = FALSE, c.hat = c.hat)
 
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
+
   ##rename column for relative frequencies
   names(orig.aic)[7] <- "PiWt"
   
@@ -524,7 +573,7 @@ boot.wt.AICmultinom.nnet <- function(cand.set, modnames = NULL, second.ord = TRU
     #orig.aic$Cum.PiWt <- cumsum(orig.aic[, 7])
   }
   
-  class(orig.aic) <- c("aictab", "data.frame")
+  class(orig.aic) <- c("boot.wt", "data.frame")
   return(orig.aic)
 }
 
@@ -586,6 +635,12 @@ boot.wt.AICpolr <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs =
   orig.aic <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
                      nobs = nobs, sort = FALSE)
 
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
+
   ##rename column for relative frequencies
   names(orig.aic)[7] <- "PiWt"
   
@@ -598,7 +653,7 @@ boot.wt.AICpolr <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs =
     #orig.aic$Cum.PiWt <- cumsum(orig.aic[, 7])
   }
   
-  class(orig.aic) <- c("aictab", "data.frame")
+  class(orig.aic) <- c("boot.wt", "data.frame")
   return(orig.aic)
 }
 
@@ -660,6 +715,12 @@ boot.wt.AICrlm.lm <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs
   orig.aic <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
                      nobs = nobs, sort = FALSE)
 
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
+
   ##rename column for relative frequencies
   names(orig.aic)[7] <- "PiWt"
   
@@ -672,7 +733,7 @@ boot.wt.AICrlm.lm <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs
     #orig.aic$Cum.PiWt <- cumsum(orig.aic[, 7])
   }
   
-  class(orig.aic) <- c("aictab", "data.frame")
+  class(orig.aic) <- c("boot.wt", "data.frame")
   return(orig.aic)
 }
 
@@ -734,6 +795,12 @@ boot.wt.AICsurvreg <- function(cand.set, modnames = NULL, second.ord = TRUE, nob
   orig.aic <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
                      nobs = nobs, sort = FALSE)
 
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
+
   ##rename column for relative frequencies
   names(orig.aic)[7] <- "PiWt"
   
@@ -746,7 +813,7 @@ boot.wt.AICsurvreg <- function(cand.set, modnames = NULL, second.ord = TRUE, nob
     #orig.aic$Cum.PiWt <- cumsum(orig.aic[, 7])
   }
   
-  class(orig.aic) <- c("aictab", "data.frame")
+  class(orig.aic) <- c("boot.wt", "data.frame")
   return(orig.aic)
 }
 
@@ -808,6 +875,12 @@ boot.wt.AICvglm <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs =
   orig.aic <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
                      nobs = nobs, sort = FALSE, c.hat = c.hat)
 
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
+
   ##rename column for relative frequencies
   names(orig.aic)[7] <- "PiWt"
   
@@ -820,12 +893,13 @@ boot.wt.AICvglm <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs =
     #orig.aic$Cum.PiWt <- cumsum(orig.aic[, 7])
   }
   
-  class(orig.aic) <- c("aictab", "data.frame")
+  class(orig.aic) <- c("boot.wt", "data.frame")
   return(orig.aic)
 }
 
 
 
+##zeroinfl
 boot.wt.AICzeroinfl <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
                                    sort = TRUE, nsim = 100, ...) {
   
@@ -881,6 +955,12 @@ boot.wt.AICzeroinfl <- function(cand.set, modnames = NULL, second.ord = TRUE, no
   orig.aic <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
                      nobs = nobs, sort = FALSE)
 
+  ##sort table according to model names
+  orig.aic <- orig.aic[order(orig.aic$Modnames), ]
+
+  ##sort relative frequencies according to model names
+  rel.freqs <- rel.freqs[order(names(rel.freqs))] 
+
   ##rename column for relative frequencies
   names(orig.aic)[7] <- "PiWt"
   
@@ -893,6 +973,23 @@ boot.wt.AICzeroinfl <- function(cand.set, modnames = NULL, second.ord = TRUE, no
     #orig.aic$Cum.PiWt <- cumsum(orig.aic[, 7])
   }
   
-  class(orig.aic) <- c("aictab", "data.frame")
+  class(orig.aic) <- c("boot.wt", "data.frame")
   return(orig.aic)
 }
+
+
+
+print.boot.wt <-
+  function(x, digits = 2, ...) {
+    cat("\nModel selection based on", colnames(x)[3], ":\n")
+    if (any(names(x) == "c_hat")) {cat("(c-hat estimate = ", x$c_hat[1], ")\n")}
+    cat("\n")
+
+    ##check if Cum.Wt should be printed
+    nice.tab <- cbind(x[, 2], x[, 3], x[, 4], x[, 6], x[, 7])
+    colnames(nice.tab) <- c(colnames(x)[c(2, 3, 4, 6, 7)])
+    rownames(nice.tab) <- x[, 1]
+    print(round(nice.tab, digits = digits)) #select rounding off with digits argument
+    cat("\n")
+  }
+

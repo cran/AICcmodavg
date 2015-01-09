@@ -8,6 +8,11 @@ evidence <-
       ##coerce to aictab
       class(aic.table) <- c("aictab", "data.frame")
     }
+
+    if(identical(class(aic.table)[1], "boot.wt")) {
+      ##coerce to aictab
+      class(aic.table) <- c("aictab", "data.frame")
+    }
     
     if(!identical(class(aic.table)[1], "aictab")) {stop("\nThe input object must be of class 'aictab'\n")}
 

@@ -32,14 +32,16 @@ various models of \code{unmarkedFit} and \code{maxLikeFit} classes
 estimating demographic parameters after accounting for imperfect
 detection probabilities.  Some functions also allow the creation of
 model selection tables for Bayesian models of the \code{bugs} and
-\code{rjags} classes.
+\code{rjags} classes.  Objects following model selection and multimodel
+inference can be formatted to LaTeX using \code{xtable} methods included
+in the package. 
 }
 \details{
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 2.0-1\cr
-Date: \tab 2014-10-09\cr
+Version: \tab 2.0-2\cr
+Date: \tab 2015-01-05\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -95,6 +97,8 @@ multimodel inference:
   \emph{N}-mixture models based on the Pearson chi-square statistic.}
 \item{\code{\link{predictSE}}}  {Computes predictions and associated 
   standard errors models of certain classes.}
+\item{\code{\link{xtable}}}  {Formats various objects resulting from
+  model selection and multimodel inference to LaTeX or HTML tables.}
 }
 }
 \author{

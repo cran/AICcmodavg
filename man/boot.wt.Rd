@@ -14,6 +14,7 @@
 \alias{boot.wt.AICsurvreg}
 \alias{boot.wt.AICvglm}
 \alias{boot.wt.AICzeroinfl}
+\alias{print.boot.wt}
 \title{
 Compute Model Selection Relative Frequencies
 }
@@ -127,13 +128,13 @@ weights, and the latter are often preferred due to their link with
 a Bayesian perspective (Burnham and Anderson 2002).  \code{boot.wt} is
 most useful for teaching purposes of sampling-theory based relative
 frequencies of model selection. The current implementation is only
-appropriate with completely randomized designs. For more complex data
+appropriate with completely randomized designs.  For more complex data
 structures (e.g., blocks or random effects), the bootstrap should be
 modified accordingly.
 }
 
 \value{
-\code{boot.wt} creates an object of class \code{aictab} with the
+\code{boot.wt} creates an object of class \code{boot.wt} with the
 following components: 
 
 \item{Modname}{the names of each model of the candidate model set.}
@@ -203,7 +204,8 @@ Modnames <- paste("mod", 1:length(Cand.models), sep = " ")
 
 ##generate AICc table with bootstrapped relative
 ##frequencies of model selection
-boot.wt(cand.set = Cand.models, modnames = Modnames, sort = TRUE)
+boot.wt(cand.set = Cand.models, modnames = Modnames, sort = TRUE,
+        nsim = 10) #number of iterations should be much higher
 
 
 ##Burnham and Anderson (2002) flour beetle data
