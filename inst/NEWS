@@ -4,6 +4,13 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+#revision 2.0-3 (15 January 2015)
+##- modified CITATION file to use meta$Date and meta$Version as requested by CRAN
+##- added the Red-spotted newt CMR data set (Gill 1985)
+
+
+
+####################################################################
 #revision 2.0-2 (5 January 2015)
 ##- added support for c-hat argument for dynamic occupancy models fit with 'colext' and additional mixture 
 ##  models fit from 'distsamp', 'gdistsamp', 'gmultmix', 'gpcount', 'multinomPois', and 'occuRN'
@@ -20,7 +27,7 @@
 ##- created a separate class for 'boot.wt' objects and print method to facilitate LaTeX formatting
 ##- created methods for 'xtable' to format objects from 'aictab', 'boot.wt', 'dictab', 'modavg', 'modavgShrink',
 ##  'modavgPred', 'modavgEffect', 'multComp', 'mb.chisq' to LaTeX
-
+##- modified CITATION file to use meta$Date and meta$Version as requested by CRAN
 
 
 ####################################################################

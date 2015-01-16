@@ -26,11 +26,11 @@ breeding site between 1959 and 1963.
     \item{\code{T1963}}{a binary variable, either 1 (captured) or 0 (not
       captured) during the 1963 breeding season.}
     \item{\code{Males}}{a numeric variable indicating the total number
-      of males with a given capture history. Negative values
-      indicate losses on capture (animals not released on last captured). }
+      of males with a given capture history.  Negative values indicate
+      losses on capture (animals not released on last capture). } 
     \item{\code{Females}}{a numeric variable indicating the total number
-      of females with a given capture history. Negative values
-      indicate losses on capture (animals not released on last captured). }
+      of females with a given capture history.  Negative values indicate
+      losses on capture (animals not released on last capture). } 
   }
 }
 \details{

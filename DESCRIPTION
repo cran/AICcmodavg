@@ -1,8 +1,8 @@
 Package: AICcmodavg
 Type: Package
 Title: Model Selection and Multimodel Inference Based on (Q)AIC(c)
-Version: 2.0-2
-Date: 2015-01-05
+Version: 2.0-3
+Date: 2015-01-15
 Author: Marc J. Mazerolle <marc.mazerolle@uqat.ca>.  
 Maintainer: Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 Depends: R (>= 3.0.0)
@@ -14,6 +14,6 @@ Description: This package includes functions to create model selection tables ba
 License: GPL (>= 2)
 LazyLoad: yes
 Repository: CRAN
-Packaged: 2015-01-08 16:25:44 UTC; mazerolm
+Packaged: 2015-01-15 20:22:15 UTC; mazerolm
 NeedsCompilation: no
-Date/Publication: 2015-01-09 00:19:27
+Date/Publication: 2015-01-16 00:02:19
