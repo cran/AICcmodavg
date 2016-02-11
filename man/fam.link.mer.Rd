@@ -41,7 +41,7 @@ Marc J. Mazerolle
 
 \seealso{
 \code{\link{modavg}}, \code{\link{modavgPred}},
-\code{\link{predictSE.mer}}, \code{\link[lme4]{glmer}}, \code{\link[lme4]{lmer}}
+\code{\link{predictSE}}, \code{\link[lme4]{glmer}}, \code{\link[lme4]{lmer}}
 }
 \examples{
 ##modified example from ?glmer

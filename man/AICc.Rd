@@ -8,10 +8,13 @@
 \alias{AICc.clmm}
 \alias{AICc.coxme}
 \alias{AICc.coxph}
+\alias{AICc.fitdist}
+\alias{AICc.fitdistr}
 \alias{AICc.glm}
 \alias{AICc.gls}
 \alias{AICc.gnls}
 \alias{AICc.hurdle}
+\alias{AICc.lavaan}
 \alias{AICc.lm}
 \alias{AICc.lme}
 \alias{AICc.lmekin}
@@ -56,6 +59,12 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
 \method{AICc}{coxph}(mod, return.K = FALSE, second.ord = TRUE,
      nobs = NULL, \dots) 
 
+\method{AICc}{fitdist}(mod, return.K = FALSE, second.ord = TRUE,
+     nobs = NULL, \dots)
+
+\method{AICc}{fitdistr}(mod, return.K = FALSE, second.ord = TRUE,
+     nobs = NULL, \dots)
+
 \method{AICc}{glm}(mod, return.K = FALSE, second.ord = TRUE,
      nobs = NULL, c.hat = 1, \dots)
 
@@ -66,6 +75,9 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
      nobs = NULL, \dots)
 
 \method{AICc}{hurdle}(mod, return.K = FALSE, second.ord = TRUE,
+     nobs = NULL, \dots)
+
+\method{AICc}{lavaan}(mod, return.K = FALSE, second.ord = TRUE,
      nobs = NULL, \dots)
 
 \method{AICc}{lm}(mod, return.K = FALSE, second.ord = TRUE,
@@ -117,8 +129,9 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
 \arguments{
   \item{mod}{
     an object of class \code{aov}, \code{betareg}, \code{clm},
-    \code{clmm}, \code{clogit}, \code{coxme}, \code{coxph}, \code{glm},
-    \code{gls}, \code{gnls}, \code{hurdle}, \code{lm}, \code{lme},
+    \code{clmm}, \code{clogit}, \code{coxme}, \code{coxph},
+    \code{fitdist}, \code{fitdistr}, \code{glm}, \code{gls},
+    \code{gnls}, \code{hurdle}, \code{lavaan}, \code{lm}, \code{lme},
     \code{lmekin}, \code{maxlikeFit}, \code{mer}, \code{merMod},
     \code{multinom}, \code{nlme}, \code{nls}, \code{polr}, \code{rlm},
     \code{survreg}, \code{vglm}, \code{zeroinfl}, and various
@@ -144,16 +157,18 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
   value of \code{nobs}.
 }
  \item{c.hat}{
-   value of overdispersion parameter (i.e., variance inflation factor)
-   such as that obtained from \code{c_hat}.  Note that values of c.hat
-   different from 1 are only appropriate for binomial GLM's with trials
-   > 1 (i.e., success/trial or cbind(success, failure) syntax), with
-   Poisson GLM's, single-season occupancy models (MacKenzie et
-   al. 2002), or \emph{N}-mixture models (Royle 2004, Dail and Madsen
-   2011).  If c.hat > 1, \code{AICc} will return the quasi-likelihood
-   analogue of the information criterion requested.  This option is not
-   supported for generalized linear mixed models of the \code{mer} or
-   \code{merMod} classes. 
+  value of overdispersion parameter (i.e., variance inflation factor) such
+as that obtained from \code{c_hat}.  Note that values of c.hat different
+from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
+success/trial or cbind(success, failure) syntax), with Poisson GLM's, 
+single-season occupancy models (MacKenzie et al. 2002), dynamic
+occupancy models (MacKenzie et al. 2003), or \emph{N}-mixture models
+(Royle 2004, Dail and Madsen 2011).  If \code{c.hat} > 1,
+\code{modavgShrink} will return the quasi-likelihood analogue of the
+information criteria requested and multiply the variance-covariance
+matrix of the estimates by this value (i.e., SE's are multiplied by
+\code{sqrt(c.hat)}).  This option is not supported for generalized
+linear mixed models of the \code{mer} or \code{merMod} classes.
 }
 \item{\dots}{
   additional arguments passed to the function.
@@ -182,6 +197,10 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
   likelihood function.  Furthermore, a single value does not tell much
   about model fit.  Information criteria become relevant when compared
   to one another for a given data set and set of candidate models.
+%
+%  Note that for robust regression models of class \code{rlm}, the
+%  AIC is computed based on Tharmaratnam and Claeskens (2013).  The
+%  second-order AIC is not yet implemented for the \code{rlm} class.
 }
 
 \references{
@@ -214,6 +233,11 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
   detection probabilities are less than one. \emph{Ecology} \bold{83},
   2248--2255.
 
+  MacKenzie, D. I., Nichols, J. D., Hines, J. E., Knutson, M. G.,
+  Franklin, A. B. (2003) Estimating site occupancy, colonization, and
+  local extinction when a species is detected imperfectly. \emph{Ecology}
+  \bold{84}, 2200--2207.
+
   Pinheiro, J. C., Bates, D. M. (2000) \emph{Mixed-effect models in S and
   S-PLUS}. Springer Verlag: New York.  
 
@@ -223,7 +247,12 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
 
   Sugiura, N. (1978) Further analysis of the data by Akaike's
   information criterion and the finite corrections. \emph{Communications
-  in Statistics:  Theory and Methods} \bold{A7}, 13--26.
+    in Statistics:  Theory and Methods} \bold{A7}, 13--26.
+
+%  Tharmaratnam, K., Claeskens, G. (2013) A comparison of robust
+%  versions of the AIC based on M-, S- and MM-estimators. \emph{Statistics}
+%  \bold{47}, 216--235. 
+
 }
 \author{
   Marc J. Mazerolle

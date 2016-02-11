@@ -47,6 +47,6 @@ evidence <-
 
 
 print.evidence <- function(x, digits = 2, ...) {
-  cat("\nEvidence ratio between models '", x$Model.high,"' and '", x$Model.low, "':\n")
+  cat("\nEvidence ratio between models '", x$Model.high,"' and '", x$Model.low, "':\n", sep = "")
   cat(round(x$Ev.ratio, digits = digits), "\n\n")
 }

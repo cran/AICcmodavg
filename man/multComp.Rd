@@ -195,14 +195,14 @@ multComp(mod, factor.id, letter.labels = TRUE, second.ord = TRUE, nobs =
   \code{multComp} currently implements three methods of computing
   confidence intervals.  The default unconditional confidence intervals
   do not account for multiple comparisons (\code{correction = "none"}).
-  With a large number m of potential pairwise comparisons among levels of
-  \code{factor.id}, there is an increased risk of type I error.  For m
-  pairwise comparisons and a given \eqn{\alpha} level, \code{correction =
-  "bonferroni"} computes the unconditional confidence intervals based on
-  \eqn{\alpha_{corr} = \frac{\alpha}{m}} (Dunn 1961).  When
-  \code{correction = "sidak"}, \code{multComp} reports Sidak-adjusted
-  confidence intervals, i.e., \eqn{\alpha_{corr} = 1 - (1 -
-  \alpha)^{\frac{1}{m}}}. 
+  With a large number \eqn{m} of potential pairwise comparisons among
+  levels of \code{factor.id}, there is an increased risk of type I
+  error.  For \eqn{m} pairwise comparisons and a given \eqn{\alpha}
+  level, \code{correction = "bonferroni"} computes the unconditional
+  confidence intervals based on \eqn{\alpha_{corr} = \frac{\alpha}{m}}
+  (Dunn 1961).  When \code{correction = "sidak"}, \code{multComp}
+  reports Sidak-adjusted confidence intervals, i.e., \eqn{\alpha_{corr}
+  = 1 - (1 - \alpha)^{\frac{1}{m}}}. 
 }
 \value{
   \code{multComp} creates a list of class \code{multComp} with the
@@ -227,25 +227,25 @@ multComp(mod, factor.id, letter.labels = TRUE, second.ord = TRUE, nobs =
   intervals to account for potential pairwise comparisons.}
 }
 \references{
-Burnham, K. P., Anderson, D. R., Huyvaert, K. P. (2011) AIC model
-selection and multimodel inference in behaviorial ecology: some
-background, observations and comparisons. \emph{Behavioral Ecology and
-  Sociobiology} \bold{65}, 23--25. 
+  Burnham, K. P., Anderson, D. R., Huyvaert, K. P. (2011) AIC model
+  selection and multimodel inference in behaviorial ecology: some
+  background, observations and comparisons. \emph{Behavioral Ecology and
+    Sociobiology} \bold{65}, 23--25. 
 
-Day, R. W., Quinn, G. P. (1989) Comparisons of treatments after an
-analysis of variance in ecology. \emph{Ecological Monographs}
-\bold{59}, 433--463. 
+  Day, R. W., Quinn, G. P. (1989) Comparisons of treatments after an
+  analysis of variance in ecology. \emph{Ecological Monographs}
+  \bold{59}, 433--463. 
 
-Dayton, C. M. (1998) Information criteria for the paired-comparisons
-problem. \emph{American Statistician}, \bold{52} 144--151.
+  Dayton, C. M. (1998) Information criteria for the paired-comparisons
+  problem. \emph{American Statistician}, \bold{52} 144--151.
+  
+  Dunn, O. J. (1961) Multiple comparisons among means. \emph{Journal of the
+    American Statistical Association} \bold{56}, 52--64.
 
-Dunn, O. J. (1961) Multiple comparisons among means. \emph{Journal of the
-  American Statistical Association} \bold{56}, 52--64.
-
-%Sidak has accents on S and a
-Sidak, Z. (1967) Rectangular confidence regions for the means of
-multivariate normal distributions. \emph{Journal of the American
-  Statistical Association} \bold{62}, 626--633.
+  %Sidak has accents on S and a
+  Sidak, Z. (1967) Rectangular confidence regions for the means of
+  multivariate normal distributions. \emph{Journal of the American
+    Statistical Association} \bold{62}, 626--633.
 }
 \author{
 Marc J. Mazerolle

@@ -58,15 +58,18 @@ the confidence set for the best model.  Note that the argument is only
 used when \code{method = ratio}.
 }
   \item{c.hat}{
-value of overdispersion parameter (i.e., variance inflation factor) such
+  value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from \code{c_hat}.  Note that values of c.hat different
 from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
-success/trial or cbind(success, failure) syntax), with Poisson
-GLM's, or single-season occupancy models (MacKenzie et al. 2002).  If
-\code{c.hat > 1}, \code{AICc} will return the quasi-likelihood analogue
-of the information criterion requested.  This option is not supported
-for generalized linear mixed models of the \code{mer} or \code{merMod}
-classes. 
+success/trial or cbind(success, failure) syntax), with Poisson GLM's, 
+single-season occupancy models (MacKenzie et al. 2002), dynamic
+occupancy models (MacKenzie et al. 2003), or \emph{N}-mixture models
+(Royle 2004, Dail and Madsen 2011).  If \code{c.hat} > 1,
+\code{modavgShrink} will return the quasi-likelihood analogue of the
+information criteria requested and multiply the variance-covariance
+matrix of the estimates by this value (i.e., SE's are multiplied by
+\code{sqrt(c.hat)}).  This option is not supported for generalized
+linear mixed models of the \code{mer} or \code{merMod} classes.
 }
 }
 \details{
@@ -134,10 +137,24 @@ Burnham, K. P., Anderson, D. R. (2002) \emph{Model Selection and
   Multimodel Inference: a practical information-theoretic
   approach}. Second edition. Springer: New York.
 
-MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
-J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
-detection probabilities are less than one. \emph{Ecology} \bold{83},
-2248--2255.
+Dail, D., Madsen, L. (2011) Models for estimating abundance from
+  repeated counts of an open population. \emph{Biometrics} \bold{67},
+  577--587. 
+  
+  MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
+  J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
+  detection probabilities are less than one. \emph{Ecology} \bold{83},
+  2248--2255.
+
+  MacKenzie, D. I., Nichols, J. D., Hines, J. E., Knutson, M. G.,
+  Franklin, A. B. (2003) Estimating site occupancy, colonization, and
+  local extinction when a species is detected imperfectly. \emph{Ecology}
+  \bold{84}, 2200--2207.
+
+  Royle, J. A. (2004) \emph{N}-mixture models for estimating population
+  size from spatially replicated counts. \emph{Biometrics} \bold{60}, 
+  108--115.
+
 }
 \author{
 Marc J. Mazerolle

@@ -28,94 +28,112 @@
 Compute Model-averaged Predictions
 }
 \description{
-This function computes the model-averaged predictions and unconditional
-standard errors based on the entire candidate model set.  The function
-is currently implemented for \code{glm}, \code{gls}, \code{lm},
-\code{lme}, \code{mer}, \code{merMod}, \code{rlm}, \code{survreg} object
-classes that are stored in a list as well as various models of
-\code{unmarkedFit} classes.
+This function computes the model-averaged predictions, unconditional
+standard errors, and confidence intervals  based on the entire candidate
+model set.  The function is currently implemented for \code{glm},
+\code{gls}, \code{lm}, \code{lme}, \code{mer}, \code{merMod},
+\code{rlm}, \code{survreg} object classes that are stored in a list as
+well as various models of \code{unmarkedFit} classes.
 }
 \usage{
 modavgPred(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-           nobs = NULL, uncond.se = "revised", \dots)
+           nobs = NULL, uncond.se = "revised", conf.level = 0.95, \dots)
 
 \method{modavgPred}{AICaov.lm}(cand.set, modnames = NULL, newdata,
-        second.ord = TRUE, nobs = NULL, uncond.se = "revised", \dots) 
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots) 
 
 \method{modavgPred}{AICglm.lm}(cand.set, modnames = NULL, newdata,
-        second.ord = TRUE, nobs = NULL, uncond.se = "revised", type =
-        "response", c.hat = 1, gamdisp = NULL, \dots)
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, type = "response", c.hat = 1,
+        gamdisp = NULL, \dots)
 
 \method{modavgPred}{AIClm}(cand.set, modnames = NULL, newdata,
-        second.ord = TRUE, nobs = NULL, uncond.se = "revised", \dots) 
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots) 
 
 \method{modavgPred}{AICgls}(cand.set, modnames = NULL, newdata,
-        second.ord = TRUE, nobs = NULL, uncond.se = "revised", \dots) 
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots) 
 
 \method{modavgPred}{AIClme}(cand.set, modnames = NULL, newdata,
-        second.ord = TRUE, nobs = NULL, uncond.se = "revised", \dots)
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots)
 
 \method{modavgPred}{AICmer}(cand.set, modnames = NULL, newdata,
-        second.ord = TRUE, nobs = NULL, uncond.se = "revised", type =
-        "response", c.hat = 1, \dots)
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, type = "response", c.hat = 1, \dots)
 
 \method{modavgPred}{AICglmerMod}(cand.set, modnames = NULL, newdata,
-        second.ord = TRUE, nobs = NULL, uncond.se = "revised", type =
-        "response", c.hat = 1, \dots)
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, type = "response", c.hat = 1, \dots)
 
 \method{modavgPred}{AIClmerMod}(cand.set, modnames = NULL, newdata,
-        second.ord = TRUE, nobs = NULL, uncond.se = "revised", \dots)
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots)
 
 \method{modavgPred}{AICrlm.lm}(cand.set, modnames = NULL, newdata,
-        second.ord = TRUE, nobs = NULL, uncond.se = "revised", \dots) 
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots) 
 
 \method{modavgPred}{AICsurvreg}(cand.set, modnames = NULL, newdata,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        type = "response", \dots) 
+        conf.level = 0.95, type = "response", \dots) 
 
 \method{modavgPred}{AICunmarkedFitOccu}(cand.set, modnames = NULL,
-        newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        type = "response", c.hat = 1, parm.type = NULL, \dots)
+        newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised", 
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 
 \method{modavgPred}{AICunmarkedFitColExt}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        type = "response", c.hat = 1, parm.type = NULL, \dots) 
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)  
 
 \method{modavgPred}{AICunmarkedFitOccuRN}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        type = "response", c.hat = 1, parm.type = NULL, \dots)
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 
 \method{modavgPred}{AICunmarkedFitPCount}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        type = "response", c.hat = 1, parm.type = NULL, \dots) 
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots) 
 
 \method{modavgPred}{AICunmarkedFitPCO}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        type = "response", c.hat = 1, parm.type = NULL, \dots)
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 
 \method{modavgPred}{AICunmarkedFitDS}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        type = "response", c.hat = 1, parm.type = NULL, \dots) 
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots) 
 
 \method{modavgPred}{AICunmarkedFitGDS}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        type = "response", c.hat = 1, parm.type = NULL, \dots)
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 
 \method{modavgPred}{AICunmarkedFitOccuFP}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        type = "response", c.hat = 1, parm.type = NULL, \dots)
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 
 \method{modavgPred}{AICunmarkedFitMPois}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        type = "response", c.hat = 1, parm.type = NULL, \dots)
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 
 \method{modavgPred}{AICunmarkedFitGMM}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        type = "response", c.hat = 1, parm.type = NULL, \dots)
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 
 \method{modavgPred}{AICunmarkedFitGPC}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        type = "response", c.hat = 1, parm.type = NULL, \dots)
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 
 }
 
@@ -161,7 +179,11 @@ for which we want to make predictions.
   AICcmodavg < 1.04 used the old method to compute unconditional
   standard errors.  
 }
-  \item{type}{
+\item{conf.level}{
+  the confidence level (\eqn{1 - \alpha}) requested for the computation of
+  unconditional confidence intervals.
+}
+\item{type}{
 the scale of prediction requested, one of \code{response} or
 \code{link}.  The latter is only relevant for \code{glm}, \code{mer},
 and \code{unmarkedFit} classes.  Note that the value \code{terms} is not
@@ -172,13 +194,13 @@ value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from \code{c_hat}.  Note that values of \code{c.hat}
 different from 1 are only appropriate for binomial GLM's with trials > 1
 (i.e., success/trial or cbind(success, failure) syntax), with Poisson
-GLM's, single-season occupancy models (MacKenzie et al. 2002), or
-\emph{N}-mixture models (Royle 2004, Dail and Madsen 2011).  If
-\code{c.hat > 1}, \code{modavgPred} will return the quasi-likelihood
-analogue of the information criteria requested and multiply the
-variance-covariance matrix of the estimates by this value (i.e., SE's
-are multiplied by \code{sqrt(c.hat)}).  This option is not supported for
-generalized linear mixed models of the \code{mer} class.
+GLM's, single-season and dynamic occupancy models (MacKenzie et
+al. 2002, 2003), or \emph{N}-mixture models (Royle 2004, Dail and Madsen
+2011).  If \code{c.hat > 1}, \code{modavgPred} will return the
+quasi-likelihood analogue of the information criteria requested and
+multiply the variance-covariance matrix of the estimates by this value
+(i.e., SE's are multiplied by \code{sqrt(c.hat)}).  This option is not
+supported for generalized linear mixed models of the \code{mer} class.
 }
 \item{gamdisp}{
   the value of the gamma dispersion parameter.
@@ -221,7 +243,7 @@ generalized linear mixed models of the \code{mer} class.
 }
 
 \details{
-  The candidate models must be stored in a list. Note that a data frame
+  The candidate models must be stored in a list.  Note that a data frame
   from which to make predictions must be supplied with the \code{newdata}
   argument and that all variables appearing in the model set must appear
   in this data frame.  Variables must be of the same type as in the
@@ -236,10 +258,12 @@ generalized linear mixed models of the \code{mer} class.
   may be inappropriate.  In such cases, it is often better to compute
   the confidence intervals on the linear predictor scale and then
   back-transform the limits to the scale of the response variable.
-  Burnham et al. (1987), Burnham and Anderson (2002, p. 164), and
+  These are the confidence intervals returned by \code{modavgPred}.
+  Burnham et al. (1987), Burnham and Anderson (2002, p. 164), and 
   Williams et al. (2002) suggest alternative methods of computing
   confidence intervals for small degrees of freedom with profile
-  likelihood intervals or bootstrapping. 
+  likelihood intervals or bootstrapping, but these approaches are not
+  yet implemented in \code{modavgPred}.
 }
 \value{
 \code{modavgPred} returns an object of class \code{modavgPred} with the 
@@ -254,7 +278,18 @@ following components:
 \item{uncond.se}{
   the unconditional standard error of each model-averaged prediction.
 }
-
+\item{conf.level}{
+  the confidence level used to compute the confidence
+  interval.
+} 
+\item{lower.CL}{the lower confidence limit.
+}
+\item{upper.CL}{the upper confidence limit.
+}
+\item{matrix.output}{a matrix with rows consisting of the model-averaged
+  predictions, the unconditional standard errors, and the confidence
+  limits.
+}
 }
 \references{
 Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:
@@ -277,6 +312,11 @@ MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
 J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
 detection probabilities are less than one. \emph{Ecology} \bold{83},
 2248--2255.
+
+MacKenzie, D. I., Nichols, J. D., Hines, J. E., Knutson, M. G.,
+Franklin, A. B. (2003) Estimating site occupancy, colonization, and
+local extinction when a species is detected imperfectly. \emph{Ecology}
+\bold{84}, 2200--2207.
 
 Royle, J. A. (2004) \emph{N}-mixture models for estimating population
 size from spatially replicated counts. \emph{Biometrics} \bold{60},

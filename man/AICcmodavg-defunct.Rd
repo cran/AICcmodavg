@@ -1,6 +1,6 @@
-\name{AICcmodavg-deprecated}
+\name{AICcmodavg-defunct}
 \Rdversion{1.1}
-\alias{AICcmodavg-deprecated}
+\alias{AICcmodavg-defunct}
 \alias{AICc.mult}
 \alias{AICc.unmarked}
 \alias{extract.LL}
@@ -69,12 +69,11 @@
 \alias{predictSE.zip}
 
 \title{
-Deprecated Functions in AICcmodavg Package
+Defunct Functions in AICcmodavg Package
 }
 \description{
-These functions are provided for compatibility with older versions of
-the \code{AICcmodavg} package and will be removed eventually in future
-versions.
+The functions listed below have been removed from the
+\code{AICcmodavg} package. 
 }
 \usage{
 AICc.mult(\dots)
@@ -150,50 +149,49 @@ predictSE.zip(\dots)
   }
 }
 \details{
-  \code{AICc.mult} is now a synonym for \code{AICc.multinom}.
+  \code{AICc.mult} has been replaced by \code{AICc.multinom}.
 
-  \code{AICc.unmarked} is now a synonym for \code{AICc.unmarkedFit}.
+  \code{AICc.unmarked} has been replaced by \code{AICc.unmarkedFit}.
 
-  \code{extract.LL} is now a synonym for \code{extractLL}.
+  \code{extract.LL} has been replaced by \code{extractLL}.
     
-  \code{extract.LL.coxph} is now a synonym for
-  \code{extractLL.coxph}. 
+  \code{extract.LL.coxph} has been replaced by \code{extractLL.coxph}.
 
-  \code{extract.LL.unmarked} is now a synonym for
-  \code{extractLL.unmarkedFit}. 
+  \code{extract.LL.unmarked} has been replaced by
+  \code{extractLL.unmarkedFit}.
 
-  \code{aictab.clm} is now a synonym for \code{aictab.AICsclm.clm}. 
+  \code{aictab.clm} has been replaced by \code{aictab.AICsclm.clm}. 
   
-  \code{aictab.clmm} is now a synonym for \code{aictab.AICclmm}.
+  \code{aictab.clmm} has been replaced by \code{aictab.AICclmm}.
   
-  \code{aictab.coxph} is now a synonym for \code{aictab.AICcoxph}. 
+  \code{aictab.coxph} has been replaced by \code{aictab.AICcoxph}. 
   
-  \code{aictab.glm} is now a synonym for \code{aictab.AICglm.lm}.
+  \code{aictab.glm} has been replaced by \code{aictab.AICglm.lm}.
   
-  \code{aictab.gls} is now a synonym for \code{aictab.AICgls}.
+  \code{aictab.gls} has been replaced by \code{aictab.AICgls}.
   
-  \code{aictab.lm} is now a synonym for \code{aictab.AIClm}.
+  \code{aictab.lm} has been replaced by \code{aictab.AIClm}.
   
-  \code{aictab.lme} is now a synonym for \code{aictab.AIClme}.
+  \code{aictab.lme} has been replaced by \code{aictab.AIClme}.
   
-  \code{aictab.mer} is now a synonym for \code{aictab.AICmer}.
+  \code{aictab.mer} has been replaced by \code{aictab.AICmer}.
   
-  \code{aictab.merMod} is now a synonym for \code{aictab.AIClmerMod}, 
+  \code{aictab.merMod} has been replaced by \code{aictab.AIClmerMod},
   \code{aictab.AICglmerMod}, or \code{aictab.AICnlmerMod},
   depending on the class of the objects. 
   
-  \code{aictab.mult} is now a synonym for
+  \code{aictab.mult} has been replaced by
   \code{aictab.AICmultinom.nnet}.
   
-  \code{aictab.nlme} is now a synonym for \code{aictab.AICnlme}. 
+  \code{aictab.nlme} has been replaced by \code{aictab.AICnlme}. 
   
-  \code{aictab.nls} is now a synonym for \code{aictab.AICnls}.
+  \code{aictab.nls} has been replaced by \code{aictab.AICnls}.
   
-  \code{aictab.polr} is now a synonym for \code{aictab.AICpolr}. 
+  \code{aictab.polr} has been replaced by \code{aictab.AICpolr}. 
   
-  \code{aictab.rlm} is now a synonym for \code{aictab.AICrlm.lm}. 
+  \code{aictab.rlm} has been replaced by \code{aictab.AICrlm.lm}. 
   
-  \code{aictab.unmarked} is now a synonym for
+  \code{aictab.unmarked} has been replaced by
   \code{aictab.AICunmarkedFitOccu},
   \code{aictab.AICunmarkedFitColExt},
   \code{aictab.AICunmarkedFitOccuRN},
@@ -206,35 +204,35 @@ predictSE.zip(\dots)
   \code{aictab.AICunmarkedFitGPC}, depending on the class of the
   objects.
 
-  \code{dictab.bugs} is now a synonym for \code{dictab.AICbugs}. 
+  \code{dictab.bugs} has been replaced by \code{dictab.AICbugs}. 
 
-  \code{dictab.jags} is now a synonym for \code{dictab.AICjags}. 
+  \code{dictab.jags} has been replaced by \code{dictab.AICjags}. 
 
-  \code{modavg.clm} is now a synonym for \code{modavg.AICsclm.clm}.
+  \code{modavg.clm} has been replaced by \code{modavg.AICsclm.clm}.
   
-  \code{modavg.clmm} is now a synonym for \code{modavg.AICsclm.clm}.
+  \code{modavg.clmm} has been replaced by \code{modavg.AICsclm.clm}.
 
-  \code{modavg.coxph} is now a synonym for \code{modavg.AICcoxph}.
+  \code{modavg.coxph} has been replaced by \code{modavg.AICcoxph}.
   
-  \code{modavg.glm} is now a synonym for \code{modavg.AIClm} or
+  \code{modavg.glm} has been replaced by \code{modavg.AIClm} or
   \code{modavg.AICglm.lm}, depending on the class of the objects.
   
-  \code{modavg.gls} is now a synonym for \code{modavg.AICgls}.
+  \code{modavg.gls} has been replaced by \code{modavg.AICgls}.
 
-  \code{modavg.lme} is now a synonym for \code{modavg.AIClme}.
+  \code{modavg.lme} has been replaced by \code{modavg.AIClme}.
   
-  \code{modavg.mer} is now a synonym for \code{modavg.AICmer}.
+  \code{modavg.mer} has been replaced by \code{modavg.AICmer}.
   
-  \code{modavg.merMod} is now a synonym for \code{modavg.AIClmerMod} or
+  \code{modavg.merMod} has been replaced by \code{modavg.AIClmerMod} or
   \code{modavg.AICglmerMod}, depending on the class of the objects.
   
-  \code{modavg.mult} is now a synonym for \code{modavg.AICmultinom.nnet}.
+  \code{modavg.mult} has been replaced by \code{modavg.AICmultinom.nnet}.
   
-  \code{modavg.polr} is now a synonym for \code{modavg.AICpolr}.
+  \code{modavg.polr} has been replaced by \code{modavg.AICpolr}.
   
-  \code{modavg.rlm} is now a synonym for \code{modavg.AICrlm.lm}.
+  \code{modavg.rlm} has been replaced by \code{modavg.AICrlm.lm}.
   
-  \code{modavg.unmarked} is now a synonym for
+  \code{modavg.unmarked} has been replaced by
   \code{modavg.AICunmarkedFitOccu},
   \code{modavg.AICunmarkedFitColExt},
   \code{modavg.AICunmarkedFitOccuRN},
@@ -247,29 +245,29 @@ predictSE.zip(\dots)
   \code{modavg.AICunmarkedFitGPC}, depending on the class of the
   objects.
 
-  \code{modavg.effect} is now a synonym for \code{modavgEffect}.
+  \code{modavg.effect} has been replaced by \code{modavgEffect}.
   
-  \code{modavg.effect.glm} is now a synonym for
+  \code{modavg.effect.glm} has been replaced by
   \code{modavgEffect.AICglm.lm} or \code{modavgEffect.AIClm},
   depending on the class of the objects.
 
-  \code{modavg.effect.gls} is now a synonym for
+  \code{modavg.effect.gls} has been replaced by
   \code{modavgEffect.AICgls}.
 
-  \code{modavg.effect.lme} is now a synonym for
+  \code{modavg.effect.lme} has been replaced by
   \code{modavgEffect.AIClme}. 
 
-\code{modavg.effect.mer} is now a synonym for
+\code{modavg.effect.mer} has been replaced by
 \code{modavgEffect.AICmer}. 
 
-\code{modavg.effect.merMod} is now a synonym for
+\code{modavg.effect.merMod} has been replaced by
 \code{modavgEffect.AICglmerMod} or
 \code{modavgEffect.AIClmerMod}, depending on the class of the objects.
 
-\code{modavg.effect.rlm} is now a synonym for
+\code{modavg.effect.rlm} has been replaced by
 \code{modavgEffect.AICrlm.lm}.
 
-\code{modavg.effect.unmarked} is now a synonym for
+\code{modavg.effect.unmarked} has been replaced by
   \code{modavgEffect.AICunmarkedFitOccu}, 
   \code{modavgEffect.AICunmarkedFitColExt},
   \code{modavgEffect.AICunmarkedFitOccuRN},
@@ -283,37 +281,45 @@ predictSE.zip(\dots)
   \code{modavgEffect.AICunmarkedFitGPC}, depending on the class of the
   objects.
 
-  \code{modavg.shrink} is now a synonym for \code{modavgShrink}.
+  \code{modavg.shrink} has been replaced by \code{modavgShrink}. 
     
-  \code{modavg.shrink.clm} is now a synonym for \code{modavgShrink.AICsclm.clm}.
+  \code{modavg.shrink.clm} has been replaced by
+  \code{modavgShrink.AICsclm.clm}. 
 
-\code{modavg.shrink.clmm} is now a synonym for \code{modavgShrink.AICclmm}.
+  \code{modavg.shrink.clmm} has been replaced by
+  \code{modavgShrink.AICclmm}. 
 
-\code{modavg.shrink.coxph} is now a synonym for \code{modavgShrink.AICcoxph}.
+  \code{modavg.shrink.coxph} has been replaced by
+  \code{modavgShrink.AICcoxph}. 
 
-\code{modavg.shrink.glm} is now a synonym for
-\code{modavgShrink.AICglm.lm} or \code{modavgShrink.AICglm.lm},
-depending on the class of the objects. 
+  \code{modavg.shrink.glm} has been replaced by
+  \code{modavgShrink.AICglm.lm} or \code{modavgShrink.AICglm.lm},
+  depending on the class of the objects. 
 
-\code{modavg.shrink.gls} is now a synonym for \code{modavgShrink.AICgls}.
+  \code{modavg.shrink.gls} has been replaced by
+  \code{modavgShrink.AICgls}. 
 
-\code{modavg.shrink.lme} is now a synonym for \code{modavgShrink.AIClme}.
+  \code{modavg.shrink.lme} has been replaced by
+  \code{modavgShrink.AIClme}. 
 
-\code{modavg.shrink.mer} is now a synonym for \code{modavgShrink.AICmer}.
+  \code{modavg.shrink.mer} has been replaced by
+  \code{modavgShrink.AICmer}. 
 
-\code{modavg.shrink.merMod} is now a synonym for 
-\code{modavgShrink.AICglmerMod} or
-\code{modavgShrink.AIClmerMod}, depending on the class of the
-objects.
+  \code{modavg.shrink.merMod} has been replaced by
+  \code{modavgShrink.AICglmerMod} or
+  \code{modavgShrink.AIClmerMod}, depending on the class of the
+  objects.
 
-\code{modavg.shrink.mult} is now a synonym for
-\code{modavgShrink.AICmultinom.nnet}. 
+  \code{modavg.shrink.mult} has been replaced by
+  \code{modavgShrink.AICmultinom.nnet}. 
 
-\code{modavg.shrink.polr} is now a synonym for \code{modavgShrink.AICpolr}.
+  \code{modavg.shrink.polr} has been replaced by
+  \code{modavgShrink.AICpolr}. 
 
-\code{modavg.shrink.rlm} is now a synonym for \code{modavgShrink.AICrlm.lm}
+  \code{modavg.shrink.rlm} has been replaced by
+  \code{modavgShrink.AICrlm.lm} 
 
-\code{modavg.shrink.unmarked} is now a synonym for
+  \code{modavg.shrink.unmarked} has been replaced by
   \code{modavgShrink.AICunmarkedFitOccu},
   \code{modavgShrink.AICunmarkedFitColExt}, 
   \code{modavgShrink.AICunmarkedFitOccuRN},
@@ -327,42 +333,42 @@ objects.
   \code{modavgShrink.AICunmarkedFitGPC}, depending on the class of
   the objects.
 
-  \code{modavgpred} is now a synonym for \code{modavgPred}.
+  \code{modavgpred} has been replaced by \code{modavgPred}.
   
-  \code{modavgpred.glm} is now a synonym for
+  \code{modavgpred.glm} has been replaced by
   \code{modavgpred.AICglm.lm} or \code{modavgPred.AIClm},
   depending on the class of the objects.
   
-\code{modavgpred.gls} is now a synonym for \code{modavgPred.AICgls}. 
+  \code{modavgpred.gls} has been replaced by \code{modavgPred.AICgls}.  
 
-\code{modavgpred.lme} is now a synonym for \code{modavgPred.AIClme}. 
+  \code{modavgpred.lme} has been replaced by \code{modavgPred.AIClme}.
 
-\code{modavgpred.mer} is now a synonym for \code{modavgPred.AICmer}.
+  \code{modavgpred.mer} has been replaced by \code{modavgPred.AICmer}.
+  
+  \code{modavgpred.merMod} has been replaced by
+  \code{modavgpred.AICglmerMod} or \code{modavgPred.AIClmerMod},
+  depending on the class of the objects.
 
-\code{modavgpred.merMod} is now a synonym for
-\code{modavgpred.AICglmerMod} or \code{modavgPred.AIClmerMod},
-depending on the class of the objects.
+  \code{modavgpred.rlm} has been replaced by
+  \code{modavgPred.AICrlm.lm}. 
 
-\code{modavgpred.rlm} is now a synonym for
-\code{modavgPred.AICrlm.lm}.
+  \code{modavgpred.unmarked} has been replaced by
+  \code{modavgPred.AICunmarkedFitOccu},
+  \code{modavgPred.AICunmarkedFitColExt}, 
+  \code{modavgPred.AICunmarkedFitOccuRN},
+  \code{modavgPred.AICunmarkedFitPCount},
+  \code{modavgPred.AICunmarkedFitPCO},
+  \code{modavgPred.AICunmarkedFitDS}, 
+  \code{modavgPred.AICunmarkedFitGDS},
+  \code{modavgPred.AICunmarkedFitOccuFP},
+  \code{modavgPred.AICunmarkedFitMPois},
+  \code{modavgPred.AICunmarkedFitGMM}, or
+  \code{modavgPred.AICunmarkedFitGPC}, depending on the class of
+  the objects.
 
-\code{modavgpred.unmarked} is now a synonym for
-\code{modavgPred.AICunmarkedFitOccu},
-\code{modavgPred.AICunmarkedFitColExt}, 
-\code{modavgPred.AICunmarkedFitOccuRN},
-\code{modavgPred.AICunmarkedFitPCount},
-\code{modavgPred.AICunmarkedFitPCO},
-\code{modavgPred.AICunmarkedFitDS}, 
-\code{modavgPred.AICunmarkedFitGDS},
-\code{modavgPred.AICunmarkedFitOccuFP},
-\code{modavgPred.AICunmarkedFitMPois},
-\code{modavgPred.AICunmarkedFitGMM}, or
-\code{modavgPred.AICunmarkedFitGPC}, depending on the class of
-the objects.
+  \code{mult.comp} has been replaced by \code{multComp}.
 
-\code{mult.comp} is  now a synonym for \code{multComp}.
-
-\code{predictSE.zip} is  now a synonym for \code{predictSE}.
+  \code{predictSE.zip} has been replaced by \code{predictSE}.
 }
 
 \author{

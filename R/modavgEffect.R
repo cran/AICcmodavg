@@ -1,6 +1,7 @@
 ##generic
 modavgEffect <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                          nobs = NULL, uncond.se = "revised", conf.level = 0.95, ...){
+                         nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                         ...){
   cand.set <- formatCands(cand.set)
   UseMethod("modavgEffect", cand.set)
 }
@@ -9,7 +10,8 @@ modavgEffect <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
 
 ##default
 modavgEffect.default <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                  nobs = NULL, uncond.se = "revised", conf.level = 0.95, ...){
+                                 nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                 ...){
   stop("\nFunction not yet defined for this object class\n")
 }
 
@@ -17,7 +19,8 @@ modavgEffect.default <- function(cand.set, modnames = NULL, newdata, second.ord 
 
 ##aov
 modavgEffect.AICaov.lm <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                   nobs = NULL, uncond.se = "revised", conf.level = 0.95, ...){
+                                   nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                   ...){
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
 
   ##check if named list if modnames are not supplied
@@ -30,71 +33,83 @@ modavgEffect.AICaov.lm <- function(cand.set, modnames = NULL, newdata, second.or
     }
   }
     
-    ##determine number of observations in new data set
-    nobserv <- nrow(newdata)
+  ##determine number of observations in new data set
+  nobserv <- nrow(newdata)
 
-    if(nobserv > 2) stop("\nCurrent maximum number of groups compared is 2:\nmodify newdata argument accordingly\n")
+  if(nobserv > 2) stop("\nCurrent maximum number of groups compared is 2:\nmodify newdata argument accordingly\n")
 
-    ##determine number of columns in new data set
-    ncolumns <- ncol(newdata)
+  ##determine number of columns in new data set
+  ncolumns <- ncol(newdata)
         
-    ##if only 1 column, add an additional column to avoid problems in computation
-    if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
+  ##if only 1 column, add an additional column to avoid problems in computation
+  if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
 
-    ##determine which column varies
-    uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
-    lengths <- lapply(X = uniques, FUN = length)
-    singles <- sapply(X = lengths, FUN = function(i) i > 1)
-    if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
-
-    ##extract name of column
-    var.id <- names(singles)[which(singles == TRUE)]
   
+  ##determine which column varies
+  uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
+  lengths <- lapply(X = uniques, FUN = length)
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
+
+    
+  ##extract name of column
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+    
     ##determine name of groups compared
     group1 <- as.character(newdata[,paste(var.id)][1])
     group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
     
-    ##number of models
-    nmods <- length(modnames)
+  ##number of models
+  nmods <- length(modnames)
 
-    ##compute fitted values
-    fit <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata)$fit)),
-                  nrow = nmods, ncol = 2, byrow = TRUE)
+  ##compute fitted values
+  fit <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata)$fit)),
+                nrow = nmods, ncol = 2, byrow = TRUE)
+  
+  ##compute SE's on fitted values
+  SE <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata)$se.fit)),
+               nrow = nmods, ncol = 2, byrow = TRUE)
     
-    ##compute SE's on fitted values
-    SE <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata)$se.fit)),
-                 nrow = nmods, ncol = 2, byrow = TRUE)
+  ##difference between groups 
+  diff <- fit[, 1] - fit[, 2]
     
-    ##difference between groups 
-    diff <- fit[, 1] - fit[, 2]
-    
-    ##SE on difference
-    SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  ##SE on difference
+  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
 
-    ##store AICc table
-    AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs, sort = FALSE)
+  ##store AICc table
+  AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs, sort = FALSE)
 
-    #create object to hold Model-averaged estimates and unconditional SE's
-    Mod.avg.out <- matrix(NA, nrow = 1, ncol = 2)
-    colnames(Mod.avg.out) <- c("Mod.avg.diff", "Uncond.SE")
+  ##create object to hold Model-averaged estimates and unconditional SE's
+  Mod.avg.out <- matrix(NA, nrow = 1, ncol = 2)
+  colnames(Mod.avg.out) <- c("Mod.avg.diff", "Uncond.SE")
 
-    ##begin loop - AICc
-    if(second.ord == TRUE){
+  ##begin loop - AICc
+  if(second.ord == TRUE){
                    
-      ##create temporary data.frame to store fitted values and SE 
-      AICctmp <- AICctab
-      AICctmp$diff <- diff
-      AICctmp$SE.diff <- SE.diff
+    ##create temporary data.frame to store fitted values and SE 
+    AICctmp <- AICctab
+    AICctmp$diff <- diff
+    AICctmp$SE.diff <- SE.diff
       
-      ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
-      ##compute unconditional SE and store in output matrix
+    ##compute model averaged prediction and store in output matrix
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    ##compute unconditional SE and store in output matrix
       
-      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
-      if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
-      }
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+    }
 
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
@@ -148,8 +163,9 @@ modavgEffect.AICaov.lm <- function(cand.set, modnames = NULL, newdata, second.or
 
 ##glm
 modavgEffect.AICglm.lm <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                       nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                       type = "response", c.hat = 1, gamdisp = NULL, ...){
+                                   nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                   type = "response", c.hat = 1, gamdisp = NULL,
+                                   ...){
   
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -176,16 +192,25 @@ modavgEffect.AICglm.lm <- function(cand.set, modnames = NULL, newdata, second.or
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   if(type == "terms") {stop("\nThe terms argument is not defined for this function\n")}
@@ -196,7 +221,20 @@ modavgEffect.AICglm.lm <- function(cand.set, modnames = NULL, newdata, second.or
   if(identical(fam.unique, "gaussian")) {
     dispersion <- NULL  #set to NULL if gaussian is used
   } else{dispersion <- c.hat}
-  ##poisson, binomial, and negative binomial defaults to 1 (no separate parameter for variance)
+  ##poisson and binomial defaults to 1 (no separate parameter for variance)
+
+  ##for negative binomial - reset to NULL
+  if(any(regexpr("Negative Binomial", fam.type) != -1)) {
+    dispersion <- NULL
+    ##check for mixture of negative binomial and other
+    ##number of models with negative binomial
+    negbin.num <- sum(regexpr("Negative Binomial", fam.type) != -1)
+    if(negbin.num < length(fam.type)) {
+      stop("Function does not support mixture of negative binomial with other distribution")
+    }
+  }
+  
+  
     
 ###################CHANGES####
 ##############################
@@ -366,7 +404,8 @@ modavgEffect.AICglm.lm <- function(cand.set, modnames = NULL, newdata, second.or
 
 ##gls
 modavgEffect.AICgls <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                    nobs = NULL, uncond.se = "revised", conf.level = 0.95, ...){
+                                nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                ...){
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
 
   ##check if named list if modnames are not supplied
@@ -390,19 +429,30 @@ modavgEffect.AICgls <- function(cand.set, modnames = NULL, newdata, second.ord =
     ##if only 1 column, add an additional column to avoid problems in computation
     if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
 
-    ##determine which column varies
-    uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
-    lengths <- lapply(X = uniques, FUN = length)
-    singles <- sapply(X = lengths, FUN = function(i) i > 1)
-    if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
-
-    ##extract name of column
-    var.id <- names(singles)[which(singles == TRUE)]
   
+  ##determine which column varies
+  uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
+  lengths <- lapply(X = uniques, FUN = length)
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
+
+    
+  ##extract name of column
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
     ##determine name of groups compared
     group1 <- as.character(newdata[,paste(var.id)][1])
     group2 <- as.character(newdata[,paste(var.id)][2])
-  
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
     
     ##number of models
     nmods <- length(modnames)
@@ -499,7 +549,8 @@ modavgEffect.AICgls <- function(cand.set, modnames = NULL, newdata, second.ord =
 
 ##lm
 modavgEffect.AIClm <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                   nobs = NULL, uncond.se = "revised", conf.level = 0.95, ...){
+                               nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                               ...){
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
 
   ##check if named list if modnames are not supplied
@@ -523,19 +574,30 @@ modavgEffect.AIClm <- function(cand.set, modnames = NULL, newdata, second.ord = 
     ##if only 1 column, add an additional column to avoid problems in computation
     if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
 
-    ##determine which column varies
-    uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
-    lengths <- lapply(X = uniques, FUN = length)
-    singles <- sapply(X = lengths, FUN = function(i) i > 1)
-    if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
-
-    ##extract name of column
-    var.id <- names(singles)[which(singles == TRUE)]
   
+  ##determine which column varies
+  uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
+  lengths <- lapply(X = uniques, FUN = length)
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
+
+    
+  ##extract name of column
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
     ##determine name of groups compared
     group1 <- as.character(newdata[,paste(var.id)][1])
     group2 <- as.character(newdata[,paste(var.id)][2])
-  
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
     
     ##number of models
     nmods <- length(modnames)
@@ -655,19 +717,31 @@ function(cand.set, modnames = NULL, newdata, second.ord = TRUE, nobs = NULL,
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
 
+  
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
   
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
+    
   ##number of models
   nmods <- length(modnames)
 
@@ -760,8 +834,8 @@ function(cand.set, modnames = NULL, newdata, second.ord = TRUE, nobs = NULL,
 
 ##mer  - lme4 version < 1
 modavgEffect.AICmer <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                    nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                    type = "response", ...) {
+                                nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                type = "response", ...) {
 
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -784,19 +858,30 @@ modavgEffect.AICmer <- function(cand.set, modnames = NULL, newdata, second.ord =
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
   
+
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
     
   ##extract classes
   mod.class <- unlist(lapply(X=cand.set, FUN=class))
@@ -903,8 +988,8 @@ modavgEffect.AICmer <- function(cand.set, modnames = NULL, newdata, second.ord =
 
 ##glmerMod
 modavgEffect.AICglmerMod <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                         nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                         type = "response", ...) {
+                                     nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                     type = "response", ...) {
 
   ##check if named list if modnames are not supplied
     if(is.null(modnames)) {
@@ -926,20 +1011,32 @@ modavgEffect.AICglmerMod <- function(cand.set, modnames = NULL, newdata, second.
   
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
-  
+
+    
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
+    
     
   ##extract classes
   mod.class <- unlist(lapply(X=cand.set, FUN=class))
@@ -1046,7 +1143,8 @@ modavgEffect.AICglmerMod <- function(cand.set, modnames = NULL, newdata, second.
 
 ##lmerMod
 modavgEffect.AIClmerMod <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                        nobs = NULL, uncond.se = "revised", conf.level = 0.95, ...) {
+                                    nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                    ...) {
 
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -1069,19 +1167,30 @@ modavgEffect.AIClmerMod <- function(cand.set, modnames = NULL, newdata, second.o
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
   
+
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
     
   ##extract classes
   mod.class <- unlist(lapply(X=cand.set, FUN=class))
@@ -1180,7 +1289,8 @@ modavgEffect.AIClmerMod <- function(cand.set, modnames = NULL, newdata, second.o
 
 ##rlm
 modavgEffect.AICrlm.lm <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                       nobs = NULL, uncond.se = "revised", conf.level = 0.95, ...){
+                                   nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                   ...){
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
 
   ##check if named list if modnames are not supplied
@@ -1204,18 +1314,30 @@ modavgEffect.AICrlm.lm <- function(cand.set, modnames = NULL, newdata, second.or
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
 
+  
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
-  
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
+
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
   ##number of models
   nmods <- length(modnames)
@@ -1341,19 +1463,30 @@ modavgEffect.AICsurvreg <- function(cand.set, modnames = NULL, newdata, second.o
     ##if only 1 column, add an additional column to avoid problems in computation
     if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
 
-    ##determine which column varies
-    uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
-    lengths <- lapply(X = uniques, FUN = length)
-    singles <- sapply(X = lengths, FUN = function(i) i > 1)
-    if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
-
-    ##extract name of column
-    var.id <- names(singles)[which(singles == TRUE)]
   
+  ##determine which column varies
+  uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
+  lengths <- lapply(X = uniques, FUN = length)
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
+
+    
+  ##extract name of column
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
     ##determine name of groups compared
     group1 <- as.character(newdata[,paste(var.id)][1])
     group2 <- as.character(newdata[,paste(var.id)][2])
-  
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+    
     
     ##number of models
     nmods <- length(modnames)
@@ -1446,8 +1579,9 @@ modavgEffect.AICsurvreg <- function(cand.set, modnames = NULL, newdata, second.o
 
 ##occu
 modavgEffect.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                                nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                                type = "response", c.hat = 1, parm.type = NULL, ...) {
+                                            nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                            type = "response", c.hat = 1, parm.type = NULL,
+                                            ...) {
 
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -1479,20 +1613,31 @@ modavgEffect.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, newdata, 
 
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
+
   
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
   ##number of models
   nmods <- length(modnames)
@@ -1659,8 +1804,9 @@ modavgEffect.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, newdata, 
 
 ##colext
 modavgEffect.AICunmarkedFitColExt <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                                  nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                                  type = "response", c.hat = 1, parm.type = NULL, ...) {
+                                              nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                              type = "response", c.hat = 1, parm.type = NULL,
+                                              ...) {
 
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -1702,20 +1848,31 @@ modavgEffect.AICunmarkedFitColExt <- function(cand.set, modnames = NULL, newdata
 
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
+
   
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
   ##number of models
   nmods <- length(modnames)
@@ -1881,8 +2038,9 @@ modavgEffect.AICunmarkedFitColExt <- function(cand.set, modnames = NULL, newdata
 
 ##occuRN
 modavgEffect.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                                  nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                                  type = "response", c.hat = 1, parm.type = NULL, ...) {
+                                              nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                              type = "response", c.hat = 1, parm.type = NULL,
+                                              ...) {
 
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -1915,19 +2073,30 @@ modavgEffect.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, newdata
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
   
+
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
   ##number of models
   nmods <- length(modnames)
@@ -2092,8 +2261,9 @@ modavgEffect.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, newdata
 
 ##pcount
 modavgEffect.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                                  nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                                  type = "response", c.hat = 1, parm.type = NULL, ...) {
+                                              nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                              type = "response", c.hat = 1, parm.type = NULL,
+                                              ...) {
 
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -2125,7 +2295,7 @@ modavgEffect.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, newdata
    
 
   ##detect
-  if(identical(parm.type, "detect")) parm.type1 <- "det"; parm.id <- "p"
+  if(identical(parm.type, "detect")) {parm.type1 <- "det"; parm.id <- "p"}
      
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   ##check on newdata
@@ -2139,18 +2309,30 @@ modavgEffect.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, newdata
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
   
+
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
   
   ##number of models
@@ -2326,8 +2508,9 @@ modavgEffect.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, newdata
 
 ##unmarkedFitPCO
 modavgEffect.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                               nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                               type = "response", c.hat = 1, parm.type = NULL, ...) {
+                                           nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                           type = "response", c.hat = 1, parm.type = NULL,
+                                           ...) {
   
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -2369,7 +2552,7 @@ modavgEffect.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, newdata, s
   }
 
   ##detect
-  if(identical(parm.type, "detect")) parm.type1 <- "det"; parm.id <- "p"
+  if(identical(parm.type, "detect")) {parm.type1 <- "det"; parm.id <- "p"}
   
     ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   ##check on newdata
@@ -2382,19 +2565,31 @@ modavgEffect.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, newdata, s
 
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
+
   
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
   
   ##number of models
@@ -2572,8 +2767,9 @@ modavgEffect.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, newdata, s
 
 ##DS
 modavgEffect.AICunmarkedFitDS <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                              nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                              type = "response", c.hat = 1, parm.type = NULL, ...) {
+                                          nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                          type = "response", c.hat = 1, parm.type = NULL,
+                                          ...) {
 
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -2610,19 +2806,30 @@ modavgEffect.AICunmarkedFitDS <- function(cand.set, modnames = NULL, newdata, se
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
   
+
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
   ##number of models
   nmods <- length(modnames)
@@ -2788,8 +2995,9 @@ modavgEffect.AICunmarkedFitDS <- function(cand.set, modnames = NULL, newdata, se
 
 ##gdistsamp
 modavgEffect.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                               nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                               type = "response", c.hat = 1, parm.type = NULL, ...) {
+                                           nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                           type = "response", c.hat = 1, parm.type = NULL,
+                                           ...) {
   
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -2805,7 +3013,7 @@ modavgEffect.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, newdata, s
 
   ##lambda
   if(identical(parm.type, "lambda")) {
-    parm.type1 <- "state"; parm.id <- "lam"
+    parm.type1 <- "lambda"; parm.id <- "lam"
   }
 
   ##detect
@@ -2814,7 +3022,7 @@ modavgEffect.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, newdata, s
     ##parm.type1 <- "det"; parm.id <- "p"
   }
   ##availability
-  if(identical(parm.type, "phi")) parm.type1 <- "phi"; parm.id <- "phi"
+  if(identical(parm.type, "phi")) {parm.type1 <- "phi"; parm.id <- "phi"}
   
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   ##check on newdata
@@ -2828,19 +3036,30 @@ modavgEffect.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, newdata, s
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
   
+
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
   ##number of models
   nmods <- length(modnames)
@@ -3007,8 +3226,9 @@ modavgEffect.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, newdata, s
 
 ##occuFP
 modavgEffect.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                                  nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                                  type = "response", c.hat = 1, parm.type = NULL, ...) {
+                                              nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                              type = "response", c.hat = 1, parm.type = NULL,
+                                              ...) {
 
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -3028,10 +3248,10 @@ modavgEffect.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, newdata
 
 
   ##detect
-  if(identical(parm.type, "detect")) parm.type1 <- "det"; parm.id <- "p"
+  if(identical(parm.type, "detect")) {parm.type1 <- "det"; parm.id <- "p"}
 
   ##false positives
-  if(identical(parm.type, "fp")) parm.type1 <- "fp"
+  if(identical(parm.type, "fp")) {parm.type1 <- "fp"; parm.id <- "fp"}
     
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   ##check on newdata
@@ -3045,19 +3265,30 @@ modavgEffect.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, newdata
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
   
+
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
   ##number of models
   nmods <- length(modnames)
@@ -3223,8 +3454,9 @@ modavgEffect.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, newdata
 
 ##multinomPois
 modavgEffect.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                                 nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                                 type = "response", c.hat = 1, parm.type = NULL, ...) {
+                                             nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                             type = "response", c.hat = 1, parm.type = NULL,
+                                             ...) {
 
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -3246,7 +3478,7 @@ modavgEffect.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, newdata,
   
 
   ##detect
-  if(identical(parm.type, "detect")) parm.type1 <- "det"; parm.id <- "p"
+  if(identical(parm.type, "detect")) {parm.type1 <- "det"; parm.id <- "p"}
        
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   ##check on newdata
@@ -3260,19 +3492,30 @@ modavgEffect.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, newdata,
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
   
+
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
   ##number of models
   nmods <- length(modnames)
@@ -3437,8 +3680,9 @@ modavgEffect.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, newdata,
 
 ##gmultmix
 modavgEffect.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                                  nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                                  type = "response", c.hat = 1, parm.type = NULL, ...) {
+                                           nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                           type = "response", c.hat = 1, parm.type = NULL,
+                                           ...) {
 
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -3457,10 +3701,10 @@ modavgEffect.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, newdata, s
   }
 
   ##detect
-  if(identical(parm.type, "detect")) parm.type1 <- "det"; parm.id <- "p"
+  if(identical(parm.type, "detect")) {parm.type1 <- "det"; parm.id <- "p"}
   
   ##availability
-  if(identical(parm.type, "phi")) parm.type1 <- "phi"; parm.id <- "phi"
+  if(identical(parm.type, "phi")) {parm.type1 <- "phi"; parm.id <- "phi"}
   
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   ##check on newdata
@@ -3473,19 +3717,31 @@ modavgEffect.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, newdata, s
 
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
+
   
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
   
   
   ##number of models
@@ -3651,8 +3907,9 @@ modavgEffect.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, newdata, s
 
 ##gpcount
 modavgEffect.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-                                                  nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-                                                  type = "response", c.hat = 1, parm.type = NULL, ...) {
+                                           nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                           type = "response", c.hat = 1, parm.type = NULL,
+                                           ...) {
 
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -3672,10 +3929,10 @@ modavgEffect.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, newdata, s
   }
 
   ##detect
-  if(identical(parm.type, "detect")) parm.type1 <- "det"; parm.id <- "p"
+  if(identical(parm.type, "detect")) {parm.type1 <- "det"; parm.id <- "p"}
   
   ##availability
-  if(identical(parm.type, "phi")) parm.type1 <- "phi"; parm.id <- "phi"
+  if(identical(parm.type, "phi")) {parm.type1 <- "phi"; parm.id <- "phi"}
 
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   ##check on newdata
@@ -3688,21 +3945,32 @@ modavgEffect.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, newdata, s
 
   ##if only 1 column, add an additional column to avoid problems in computation
   if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
+
   
   ##determine which column varies
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
-  singles <- sapply(X = lengths, FUN = function(i) i > 1)
-  if(sum(singles) != 1) stop("\nAll columns in 'newdata' should be constant, except the group variable\n")
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
 
+    
   ##extract name of column
-  var.id <- names(singles)[which(singles == TRUE)]
-  
-  ##determine name of groups compared
-  group1 <- as.character(newdata[,paste(var.id)][1])
-  group2 <- as.character(newdata[,paste(var.id)][2])
-  
-  
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
+    
   ##number of models
   nmods <- length(modnames)
 
@@ -3876,8 +4144,8 @@ print.modavgEffect <- function(x, digits = 2, ...) {
   
   ##extract elements
   if(length(stripped.type) == 1) {
-    cat("\nMultimodel inference on \"", paste(x$Group.variable, x$Group1, sep = ""), "-",
-        paste(x$Group.variable, x$Group2, sep = ""), "\" based on", ic, "\n")
+    cat("\nMultimodel inference on \"", paste(x$Group.variable, x$Group1, sep = ""), " - ",
+        paste(x$Group.variable, x$Group2, sep = ""), "\" based on ", ic, "\n", sep = "")
     
     ##if unmarkedFit model, then print differently
   } else {
@@ -3887,14 +4155,14 @@ print.modavgEffect <- function(x, digits = 2, ...) {
     ##extract Group.variable name
     var.id <- gsub("(^ +)|( +$)", "", unlist(strsplit(stripped.type[2], "\\)"))[1])
 
-    cat("\nMultimodel inference on \"", paste(parm.type, "(", var.id, x$Group1, ")", sep = ""), "-",
-        paste(parm.type, "(", var.id, x$Group2, ")", sep = ""), "\" based on", ic, "\n")
+    cat("\nMultimodel inference on \"", paste(parm.type, "(", var.id, x$Group1, ")", sep = ""), " - ",
+        paste(parm.type, "(", var.id, x$Group2, ")", sep = ""), "\" based on ", ic, "\n", sep = "")
   }
 
   
-  cat("\n", ic, "table used to obtain model-averaged effect size:\n")
+  cat("\n", ic, " table used to obtain model-averaged effect size:\n", sep = "")
   oldtab <- x$Mod.avg.table
-  if (any(names(oldtab)=="c_hat")) {cat("\t(c-hat estimate = ", oldtab$c_hat[1], ")\n")}
+  if (any(names(oldtab)=="c_hat")) {cat("\t(c-hat estimate = ", oldtab$c_hat[1], ")\n", sep = "")}
   cat("\n")
   if (any(names(oldtab)=="c_hat")) {
     nice.tab <- cbind(oldtab[,2], oldtab[,3], oldtab[,4], oldtab[,6],
@@ -3903,12 +4171,12 @@ print.modavgEffect <- function(x, digits = 2, ...) {
                             oldtab[,8], oldtab[,9])
         }
 
-  colnames(nice.tab) <- c(colnames(oldtab)[c(2,3,4,6)], paste("Effect (", x$Group1, " - ", x$Group2, ")", sep = ""), "SE")
+  colnames(nice.tab) <- c(colnames(oldtab)[c(2,3,4,6)], paste("Effect(", x$Group1, " - ", x$Group2, ")", sep = ""), "SE")
   rownames(nice.tab) <- oldtab[,1]
   print(round(nice.tab, digits=digits))
   cat("\nModel-averaged effect size:", eval(round(x$Mod.avg.eff, digits=digits)), "\n")
   cat("Unconditional SE:", eval(round(x$Uncond.se, digits=digits)), "\n")
-  cat("",x$Conf.level * 100, "% Unconditional confidence interval:", round(x$Lower.CL, digits=digits),
-      ",", round(x$Upper.CL, digits=digits), "\n\n")
+  cat("",x$Conf.level * 100, "% Unconditional confidence interval: ", round(x$Lower.CL, digits=digits),
+      ", ", round(x$Upper.CL, digits=digits), "\n\n", sep = "")
 }
 

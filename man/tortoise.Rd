@@ -6,13 +6,14 @@
 Gopher Tortoise Distance Sampling Data
 }
 \description{
-This simulated data set is based on the biological parameters for the
-Gopher Tortoise (\emph{Gopherus polyphemus}) reported by Smith et
-al. (2009). A half-normal distribution with a scale of 10 and without an 
-adjustment factor was used to simulate the distance data for a study
-area of 120 km^2. An effort of 500 m in 300 line transects was
-deployed. A density of 72 individuals per km^2 was used in the
-simulation using the approach outlined in Buckland et al. (2001).
+This simulated data set by Mazerolle (2015) is based on the biological
+parameters for the Gopher Tortoise (\emph{Gopherus polyphemus}) reported
+by Smith et al. (2009).  A half-normal distribution with a scale of 10
+and without an  adjustment factor was used to simulate the distance data
+for a study area of 120 \eqn{km^2}. An effort of 500 m in 300 line
+transects was deployed. A density of 72 individuals per \eqn{km^2} was
+used in the simulation using the approach outlined in Buckland et
+al. (2001). 
 }
 \usage{data(tortoise)}
 \format{
@@ -32,7 +33,7 @@ simulation using the approach outlined in Buckland et al. (2001).
 }
 \details{
 This data set is used to illustrate classic distance sampling (Buckland
-et al. 2001). 
+et al. 2001, Mazerolle 2015). 
 }
 \source{
   Buckland, S. T., Anderson, D. R., Burnham, K. P., Laake, J. L.,
@@ -40,6 +41,10 @@ et al. 2001).
     sampling: estimating abundance of biological populations.} Oxford
   University Press: Oxford.
 
+  Mazerolle, M. J. (2015) Estimating detectability and biological
+  parameters of interest with the use of the R
+  environment. \emph{Journal of Herpetology} \bold{49}, 541--559.
+  
   Smith, L. L., Linehan, J. M., Stober, J. M., Elliott, M. J., Jensen,
   J. B. (2009) An evaluation of distance sampling for large-scale gopher
   tortoise surveys in Georgia, USA. \emph{Applied Herpetology} \bold{6},

@@ -4,6 +4,52 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 2.0-4 (10 February 2016)
+##- updated email address
+##- modified 'mb.gof.test' to deal with dynamic occupancy data for entire
+##  visits without data, and seasons with only a single visit (Thanks to G. Sadoti for comments)
+##- corrected bug for negative binomial models and dispersion argument in
+##  'modavg', 'modavgShrink', 'modavgPred', 'modavgEffect', 'multComp'
+##- corrected bug on parameter count when negative binomial formated to
+##  glm object with glm.convert( )
+##- updated functionality for overdispersion correction of ZIP N-mixture
+##  models in unmarked with 'modavgPred'
+##- added new estimators of overdispersion in 'c_hat' for GLM's (deviance,
+##  Farrington, and Fletcher) and print method
+##- added comment on help page of 'mb.gof.test' to clarify that the table
+##  only shows the observed detection histories, but that unobserved
+##  detection histories are included in the computations, and that the
+##  chi-square test statistic should be compared against bootstrap
+##  distribution because low expected frequencies invalidate chi-square
+##  assumption.
+##- modified 'modavgEffect' to allow multiple variables to vary and print
+##  generic group names
+##- modified 'modavgShrink' to allow cases where variables do not appear
+##  with the same frequency in models, but issues a warning
+##- corrected bug in 'modavgShrink' to deal with 'unmarkedFitGDS' objects
+##  on lambda
+##- added support for model selection of 'lavaan' class objects
+##- added support for model selection of fitdistr class objects
+##  (package MASS)
+##- added support for model selection of fitdist class objects
+##  (package fitdistrplus)
+##- added functionality to request CI's (back-transformed when using
+##  type = "response") with 'modavgPred' and modified 'xtable.modavgPred'
+##- added covariance diagnostic for lambda in N-mixture models based on
+##  Dennis et al. 2015 Biometrics 71: 237-246
+##- added 'detHist' function to summarize information on detection histories
+##- added 'countHist' function to summarize information on count data
+##- added 'countDist' function to summarize information on count data
+##  collected by distance sampling
+##- added xtable methods for objects of 'detHist' and 'countHist' classes
+##- added fat and body measurement data set
+##- added GPA data set and test scores
+##- moved deprecated functions to defunct
+##- cleaned up print method of functions
+
+
+
+####################################################################
 #revision 2.0-3 (15 January 2015)
 ##- modified CITATION file to use meta$Date and meta$Version as requested by CRAN
 ##- added the Red-spotted newt CMR data set (Gill 1985)

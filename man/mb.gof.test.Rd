@@ -123,9 +123,15 @@ indicate lack-of-fit and that an alternative model should be investigated.
   occupancy models:
   
   \item{chisq.table}{the table of observed and expected values for each
-    detection history and its chi-square component (if \code{print.table = TRUE}).
+    detection history and its chi-square component (if \code{print.table
+    = TRUE}).  Note that the table only shows the observed detection
+    histories.  Unobserved detection histories are not shown, but are
+    included in the computation of the test statistic.
   }
-  \item{chi.square}{the Pearson chi-square statistic.
+  \item{chi.square}{the Pearson chi-square statistic.  This test
+    statistic should be compared against a bootstrap distribution
+    instead of the theoretical chi-square distribution because low
+    expected frequencies invalidate the chi-square assumption.
   }
   \item{model.type}{the model type, either \code{single-season} or \code{dynamic}.
   }

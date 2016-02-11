@@ -64,6 +64,7 @@ AICc.clmm <-
   }
 
 
+
 ##coxme objects
 AICc.coxme <- function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
   
@@ -76,6 +77,7 @@ AICc.coxme <- function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ..
 }
 
 
+
 ##coxph objects
 AICc.coxph <- function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
     
@@ -86,6 +88,35 @@ AICc.coxph <- function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ..
   if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
   AICc
 }
+
+
+
+##fitdist (from fitdistrplus)
+AICc.fitdist <-
+  function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
+    
+    if(identical(nobs, NULL)) {n <- mod$n} else {n <- nobs}
+    LL <- logLik(mod)
+    K <- length(mod$estimate)
+    if(second.ord == TRUE) {AICc <- -2*LL+2*K*(n/(n-K-1))}  else{AICc <- -2*LL+2*K}
+    if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
+    AICc
+  }
+
+
+
+##fitdistr (from MASS)
+AICc.fitdistr <-
+  function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
+    
+    if(identical(nobs, NULL)) {n <- mod$n} else {n <- nobs}
+    LL <- logLik(mod)[1]
+    K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model - this includes LM
+    if(second.ord == TRUE) {AICc <- -2*LL+2*K*(n/(n-K-1))}  else{AICc <- -2*LL+2*K}
+    if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
+    AICc
+  }
+
 
 
 ##glm and lm objects
@@ -116,18 +147,21 @@ AICc.glm <-
 
     ##check if negative binomial and add 1 to K for estimation of theta if glm( ) was used
     if(!is.na(charmatch(x="Negative Binomial", table=family(mod)$family))) {
-      if(is.null(mod$theta)) {
+      if(!identical(class(mod)[1], "negbin")) { #if not negbin, add + 1 because k of negbin was estimated glm.convert( ) screws up logLik
         K <- K+1
         if(second.ord == TRUE) {
           AICc <- -2*LL+2*K*(n/(n-K-1))
         } else {
           AICc <- -2*LL+2*K
         }
-                                                                                                    }
+      }
       if(c.hat != 1) stop("You should not use the c.hat argument with the negative binomial")
     }
-    ##add 1 for theta parameter in negative binomial fit glm( )
+    ##add 1 for theta parameter in negative binomial fit with glm( )
+
     ##check if gamma and add 1 to K for estimation of shape parameter if glm( ) was used
+    if(identical(family(mod)$family, "Gamma") && c.hat > 1) stop("You should not use the c.hat argument with the gamma")
+      
     ##an extra condition must be added to avoid adding a parameter for theta with negative binomial when glm.nb( ) is fit which estimates the correct number of parameters
     if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
     AICc
@@ -175,6 +209,18 @@ AICc.hurdle <-
     AICc
   }
 
+
+##lavaan
+AICc.lavaan <-
+  function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
+    
+    if(identical(nobs, NULL)) {n <- mod@Data@nobs[[1]]} else {n <- nobs}
+    LL <- logLik(mod)[1]
+    K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model
+    if(second.ord == TRUE) {AICc <- -2*LL+2*K*(n/(n-K-1))}  else{AICc <- -2*LL+2*K}
+    if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
+    AICc
+  }
 
 
 ##lm objects
@@ -351,6 +397,44 @@ function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
 
 
 ##rlm objects
+##only valid for M-estimation (Huber M-estimator)
+##modified from Tharmaratnam and Claeskens 2013 (equation 8)
+##AICc.rlm <- function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...)
+##{
+
+##  if(second.ord == TRUE) stop("\nOnly 'second.ord = FALSE' is supported for 'rlm' models\n")
+
+##  ##extract design matrix
+##  X <- model.matrix(mod)
+  
+##  ##extract scale
+##  scale.m <- mod$s
+
+##  ##extract threshold value
+##  cval <- mod$k2
+    
+##  ##extract residuals
+##  res <- residuals(mod)
+##  res.scaled <- res/scale.m
+##  n <- length(res)
+  
+##  ##partial derivatives based on Huber's loss function
+##  dPsi <- ifelse(abs(res.scaled) <= cval, 2, 0)
+##  Psi <- (ifelse(abs(res.scaled) <= cval, 2*res.scaled, 2*cval*sign(res.scaled)))^2
+    
+##  J <- (t(X) %*% diag(as.vector(dPsi)) %*% X * (1/(scale.m^2)))/n
+##  inv.J <- solve(J)
+  
+##  ##variance
+##  K.var <- (t(X) %*% diag(as.vector(Psi)) %*% X * (1/(scale.m^2)))/n
+##  AIC <- 2*n*(log(scale.m)) + 2 * sum(diag(inv.J %*%(K.var)))
+  
+##  if(return.K) {AIC <- 2 * sum(diag(inv.J %*%(K.var)))}
+##  return(AIC)
+##}
+
+##the estimator below extracts the estimates obtained from M- or MM-estimator
+##and plugs them in the normal likelihood function
 AICc.rlm <-
   function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
 

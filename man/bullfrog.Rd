@@ -71,7 +71,7 @@ Bullfrogs (\emph{Lithobates catesbeianus}) in 50 wetlands sampled in
 }
 \details{
 This data set is used to illustrate single-species single-season
-occupancy models (MacKenzie et al. 2002). 
+occupancy models (MacKenzie et al. 2002) in Mazerolle (2015). 
 }
 \source{
   MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
@@ -82,7 +82,11 @@ occupancy models (MacKenzie et al. 2002).
   Mazerolle, M. J., Perez, A., Brisson, J. (2014) Common reed
   (\emph{Phragmites australis}) invasion and amphibian distribution in
   freshwater wetlands. \emph{Wetlands Ecology and Management} \bold{22},
-  325--340. 
+  325--340.
+  
+  Mazerolle, M. J. (2015) Estimating detectability and biological
+  parameters of interest with the use of the R
+  environment. \emph{Journal of Herpetology} \bold{49}, 541--559.
 }
 \examples{
 data(bullfrog)

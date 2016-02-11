@@ -8,10 +8,13 @@
 \alias{aictab.AICclmm}
 \alias{aictab.AICcoxme}
 \alias{aictab.AICcoxph}
+\alias{aictab.AICfitdist}
+\alias{aictab.AICfitdistr}
 \alias{aictab.AICglm.lm}
 \alias{aictab.AICgls}
 \alias{aictab.AICgnls.gls}
 \alias{aictab.AIChurdle}
+\alias{aictab.AIClavaan}
 \alias{aictab.AIClm}
 \alias{aictab.AIClme}
 \alias{aictab.AIClmekin}
@@ -51,12 +54,13 @@ provides delta AIC and Akaike weights.  \code{aictab} selects the
 appropriate function to create the model selection table based on the 
 object class.  The current version works with lists containing objects
 of \code{aov}, \code{betareg}, \code{clm}, \code{clmm}, \code{clogit},
-\code{coxme}, \code{coxph}, \code{glm}, \code{gls}, \code{gnls},
-\code{hurdle}, \code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit},
-\code{mer}, \code{merMod}, \code{multinom}, \code{nlme}, \code{nls},
-\code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, and
-\code{zeroinfl} classes as well as various models of \code{unmarkedFit}
-classes but does not yet allow mixing of different classes. 
+\code{coxme}, \code{coxph}, \code{fitdist}, \code{fitdistr}, \code{glm},
+\code{gls}, \code{gnls}, \code{hurdle}, \code{lavaan}, \code{lm},
+\code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer}, \code{merMod},
+\code{multinom}, \code{nlme}, \code{nls}, \code{polr}, \code{rlm},
+\code{survreg}, \code{vglm}, and \code{zeroinfl} classes as well as
+various models of \code{unmarkedFit} classes but does not yet allow
+mixing of different classes.
 }
 \usage{
 aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
@@ -80,6 +84,12 @@ aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
 \method{aictab}{AICcoxph}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
+\method{aictab}{AICfitdist}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
+\method{aictab}{AICfitdistr}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
 \method{aictab}{AICglm.lm}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)  
 
@@ -90,6 +100,9 @@ aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
 \method{aictab}{AIChurdle}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
+\method{aictab}{AIClavaan}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
 \method{aictab}{AIClm}(cand.set, modnames = NULL,
@@ -207,13 +220,15 @@ to the (Q)AIC(c) values.
 value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from \code{c_hat}.  Note that values of c.hat different
 from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
-success/trial or cbind(success, failure) syntax), with Poisson
-GLM's, single-season occupancy models (MacKenzie et al. 2002), or
-\emph{N}-mixture models (Royle 2004, Dail and Madsen 2011).  If
-\code{c.hat} > 1, \code{AICc} will return the quasi-likelihood analogue of the
-information criterion requested.  This option is not supported for
-generalized linear mixed models of the \code{mer} and \code{merMod}
-classes.
+success/trial or cbind(success, failure) syntax), with Poisson GLM's, 
+single-season occupancy models (MacKenzie et al. 2002), dynamic
+occupancy models (MacKenzie et al. 2003), or \emph{N}-mixture models
+(Royle 2004, Dail and Madsen 2011).  If \code{c.hat} > 1,
+\code{modavgShrink} will return the quasi-likelihood analogue of the
+information criteria requested and multiply the variance-covariance
+matrix of the estimates by this value (i.e., SE's are multiplied by
+\code{sqrt(c.hat)}).  This option is not supported for generalized
+linear mixed models of the \code{mer} or \code{merMod} classes.
 }
 \item{\dots}{
   additional arguments passed to the function.
@@ -223,13 +238,14 @@ classes.
 \code{aictab} internally creates a new class for the \code{cand.set}
 list of candidate models, according to the contents of the list. The
 current function is implemented for \code{clogit}, \code{coxme},
-\code{coxph}, \code{glm}, \code{gls}, \code{gnls}, \code{hurdle},
-\code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
-\code{merMod}, \code{multinom}, \code{nlme}, \code{nls}, \code{polr},
-\code{rlm}, \code{survreg}, \code{vglm}, and \code{zeroinfl} classes as
-well as various \code{unmarkedFit} classes. The function constructs a
-model selection table based on one of the four information criteria:
-AIC, AICc, QAIC, and QAICc. 
+\code{coxph}, \code{fitdist}, \code{fitdistr}, \code{glm}, \code{gls},
+\code{gnls}, \code{hurdle}, \code{lavaan}, \code{lm}, \code{lme},
+\code{lmekin}, \code{maxlikeFit}, \code{mer}, \code{merMod},
+\code{multinom}, \code{nlme}, \code{nls}, \code{polr}, \code{rlm},
+\code{survreg}, \code{vglm}, and \code{zeroinfl} classes as well as
+various \code{unmarkedFit} classes.  The function constructs a model
+selection table based on one of the four information criteria:  AIC,
+AICc, QAIC, and QAICc.
 
 Ten guidelines for model selection:
 
@@ -258,7 +274,7 @@ to remove missing cases before starting model selection.
 7) Use the same response variable for all models of the candidate model
 set.  It is inappropriate to run some models with a transformed response
 variable and others with the untransformed variable.  A workaround is to
-use a different link function for some models (i.e., identity vs log link).
+use a different link function for some models (e.g., identity vs log link).
 
 8) When dealing with models with overdispersion, use the same value of
 c-hat for all models in the candidate model set.  For binomial models
@@ -278,17 +294,18 @@ precision (standard error, confidence intervals).
 10) Determining the ranking of the models is just the first step.
 Akaike weights sum to 1 for the entire model set and can be interpreted
 as the weight of evidence in favor of a given model being the best one
-given the candidate model set considered and the data at hand. Models
+given the candidate model set considered and the data at hand.  Models
 with large Akaike weights have strong support.  Evidence ratios,
 importance values, and confidence sets for the best model are all
 measures that assist in interpretation.  In cases where the top ranking
 model has an  Akaike weight > 0.9, one can base inference on this single
 most parsimonious model.  When many models rank highly (i.e., delta
-(Q)AIC(c) < 4), one should model-average the parameters of interest
-appearing in the top models.  Model averaging consists in making
-inference based on the whole set of candidate models, instead of basing
-conclusions on a single 'best' model.  It is an elegant way of making
-inference based on the information contained in the entire model set.
+(Q)AIC(c) < 4), one should model-average effect sizes for the parameters
+with most support across the entire set of models.  Model averaging
+consists in making inference based on the whole set of candidate models,
+instead of basing conclusions on a single 'best' model.  It is an
+elegant way of making inference based on the information contained in
+the entire model set.  
 }
 \value{
 \code{aictab} creates an object of class \code{aictab} with the
@@ -342,6 +359,11 @@ J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
 detection probabilities are less than one. \emph{Ecology} \bold{83},
 2248--2255.
 
+MacKenzie, D. I., Nichols, J. D., Hines, J. E., Knutson, M. G.,
+Franklin, A. B. (2003) Estimating site occupancy, colonization, and
+local extinction when a species is detected imperfectly. \emph{Ecology}
+\bold{84}, 2200--2207.
+
 Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
 Akaike's Information Criterion (AIC) to assess the strength of
 biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180.
@@ -356,8 +378,8 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{aictabCustom}}, \code{\link{confset}},
 \code{\link{c_hat}}, \code{\link{evidence}}, \code{\link{importance}},
-\code{\link{modavg}}, \code{\link{modavgShrink}},
-\code{\link{modavgPred}}
+\code{\link{modavg}}, \code{\link{modavgEffect}},
+\code{\link{modavgShrink}}, \code{\link{modavgPred}}
 }
 \examples{
 ##Mazerolle (2006) frog water loss example

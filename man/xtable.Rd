@@ -2,6 +2,9 @@
 \Rdversion{1.1}
 \alias{xtable.aictab}
 \alias{xtable.boot.wt}
+\alias{xtable.countDist}
+\alias{xtable.countHist}
+\alias{xtable.detHist}
 \alias{xtable.dictab}
 \alias{xtable.mb.chisq}
 \alias{xtable.modavg}
@@ -27,6 +30,18 @@
 \method{xtable}{boot.wt}(x, caption = NULL, label = NULL, align = NULL,
         digits = NULL, display = NULL, nice.names = TRUE,
         include.AICc = TRUE, include.AICcWt = FALSE, \dots)
+
+\method{xtable}{countDist}(x, caption = NULL, label = NULL,
+        align = NULL, digits = NULL, display = NULL,
+        nice.names = TRUE, table.countDist = "distance", \dots)
+
+\method{xtable}{countHist}(x, caption = NULL, label = NULL,
+        align = NULL, digits = NULL, display = NULL,
+        nice.names = TRUE, table.countHist = "count", \dots)
+
+\method{xtable}{detHist}(x, caption = NULL, label = NULL,
+        align = NULL, digits = NULL, display = NULL,
+        nice.names = TRUE, table.detHist = "freq", \dots)
 
 \method{xtable}{dictab}(x, caption = NULL, label = NULL, align = NULL, 
         digits = NULL, display = NULL, nice.names = TRUE,
@@ -59,10 +74,10 @@
 
 \arguments{
   \item{x}{
-    an object of class \code{aictab}, \code{boot.wt}, \code{dictab}, 
-    \code{mb.chisq}, \code{modavg}, \code{modavgEffect},
-    \code{modavgPred}, \code{modavgShrink}, or \code{multComp} resulting
-    from model selection or multimodel inference.
+    an object of class \code{aictab}, \code{boot.wt}, \code{countDist},
+    \code{countHist}, \code{detHist}, \code{dictab}, \code{mb.chisq},
+    \code{modavg}, \code{modavgEffect}, \code{modavgPred},
+    \code{modavgShrink}, or \code{multComp}.
   }
   
   \item{caption}{
@@ -141,6 +156,46 @@
     printed in the table.
   }
   
+  \item{table.detHist}{character string specifying, either \code{"freq"},
+  \code{"prop"}, or \code{"hist"}.  If \code{table.type = "freq"}, the
+  function returns a table of frequencies of sites sampled, of sites with
+  at least one detection, and for data with multiple primary periods,
+  the frequencies of sites with observed extinctions and colonizations.
+  If \code{table.type = "prop"}, the table returns the proportion of
+  sites with at least one detection, and for data with multiple periods,
+  the proportion of sites with observed extinctions and colonizations.
+  If \code{table.type = "hist"}, the function returns the frequencies of
+  each observed detection history.
+}
+
+  \item{table.countDist}{character string specifying, either
+  \code{"distance"}, \code{"count"}, \code{"freq"}, or \code{"prop"}.  If
+  \code{table.type = "distance"}, the function returns a table of counts
+  summarized for each distance class.  If \code{table.type = "count"},
+  the function returns the table of frequencies of counts observed
+  across sites.  If \code{table.type = "freq"}, the function returns a
+  table of frequencies of sites sampled, of sites with at least one
+  detection, and for data with multiple primary periods, the frequencies
+  of sites with observed extinctions and colonizations.  If
+  \code{table.type = "prop"}, the table returns the proportion of sites
+  with at least one detection, and for data with multiple periods, the
+  proportion of sites with observed extinctions and colonizations.
+}
+
+\item{table.countHist}{character string specifying, either
+  \code{"count"}, \code{"freq"}, \code{"prop"}, or \code{"hist"}.  If
+  \code{table.type = "count"}, the function returns the table of
+  frequencies of counts observed across sites.  If \code{table.type =
+  "freq"}, the function returns a table of frequencies of sites sampled,
+  of sites with at least one detection, and for data with multiple
+  primary periods, the frequencies of sites with observed extinctions
+  and colonizations.  If \code{table.type = "prop"}, the table returns
+  the proportion of sites with at least one detection, and for data with
+  multiple periods, the proportion of sites with observed extinctions
+  and colonizations.  If \code{table.type = "hist"}, the function
+  returns the frequencies of each observed count history.
+}
+
 \item{\dots}{
   additional arguments passed to the function.
   }
@@ -174,7 +229,7 @@
 
 \examples{
 if(require(xtable)) {
-##model selection
+##model selection example
 data(dry.frog)
 ##setup candidate models
 Cand.models <- list( )
@@ -212,6 +267,27 @@ xtable(mavg.mass, print.table = TRUE)
 preds <- modavgPred(cand.set = Cand.models, modnames = Model.names,
                     newdata = dry.frog[1:10, ])
 xtable(preds)
+}
+
+
+##example of diagnostics
+\dontrun{
+if(require(unmarked)){
+##distance sampling example from ?distsamp
+data(linetran)
+ltUMF <- with(linetran, {
+              unmarkedFrameDS(y = cbind(dc1, dc2, dc3, dc4),
+              siteCovs = data.frame(Length, area, habitat),
+              dist.breaks = c(0, 5, 10, 15, 20),
+              tlength = linetran$Length * 1000, survey = "line",
+              unitsIn = "m")
+              })
+
+##summarize counts across distance classes
+xtable(countDist(ltUMF), table.countDist = "distance")
+##summarize counts across all sites
+xtable(countDist(ltUMF), table.countDist = "count")
+}
 }
 }
 \keyword{models}

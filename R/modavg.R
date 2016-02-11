@@ -1394,7 +1394,18 @@ modavg.AICglm.lm <-
     fam.type <- unlist(lapply(cand.set, FUN=function(i) family(i)$family))
     fam.unique <- unique(fam.type)
     if(identical(fam.unique, "gaussian")) {disp <- NULL} else{disp <- 1}
-    ##poisson, binomial, and negative binomial defaults to 1 (no separate parameter for variance)
+    ##poisson and binomial defaults to 1 (no separate parameter for variance)
+
+    ##for negative binomial - reset to NULL
+    if(any(regexpr("Negative Binomial", fam.type) != -1)) {
+      disp <- NULL
+      ##check for mixture of negative binomial and other
+      ##number of models with negative binomial
+      negbin.num <- sum(regexpr("Negative Binomial", fam.type) != -1)
+      if(negbin.num < length(fam.type)) {
+        stop("\nFunction does not support mixture of negative binomial with other distributions in model set\n")
+      }
+    }
     ##gamma is treated separately
 
 #####MODIFICATIONS BEGIN#######
@@ -4616,7 +4627,9 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE,
     fam.unique <- unique(fam.type)
     if(identical(fam.unique, "gaussianff")) {disp <- NULL} else{disp <- 1}
     if(identical(fam.unique, "gammaff")) stop("\nGamma distribution is not supported yet\n")
-    ##poisson, binomial, and negative binomial defaults to 1 (no separate parameter for variance)
+  ##poisson and binomial defaults to 1 (no separate parameter for variance)
+  ##for negative binomial - reset to NULL
+  if(identical(fam.unique, "negbinomial")) {disp <- NULL}
 
 
 #####MODIFICATIONS BEGIN#######
@@ -8360,10 +8373,10 @@ modavg.AICunmarkedFitGPC <-
 print.modavg <-
   function(x, digits = 2, ...) {
     ic <- colnames(x$Mod.avg.table)[3]
-    cat("\nMultimodel inference on \"", x$Parameter, "\" based on", ic, "\n")
-    cat("\n", ic, "table used to obtain model-averaged estimate:\n")
+    cat("\nMultimodel inference on \"", x$Parameter, "\" based on ", ic, "\n", sep = "")
+    cat("\n", ic, " table used to obtain model-averaged estimate:\n", sep = "")
     oldtab <- x$Mod.avg.table
-    if (any(names(oldtab)=="c_hat")) {cat("\t(c-hat estimate = ", oldtab$c_hat[1], ")\n")}
+    if (any(names(oldtab)=="c_hat")) {cat("\t(c-hat estimate = ", oldtab$c_hat[1], ")\n", sep = "")}
     cat("\n")
     if (any(names(oldtab)=="c_hat")) {
       nice.tab <- cbind(oldtab[,2], oldtab[,3], oldtab[,4], oldtab[,6],
@@ -8379,8 +8392,8 @@ print.modavg <-
       print(round(nice.tab, digits=digits))
       cat("\nModel-averaged estimate:", eval(round(x$Mod.avg.beta, digits=digits)), "\n")
       cat("Unconditional SE:", eval(round(x$Uncond.SE, digits=digits)), "\n")
-      cat("",x$Conf.level*100, "% Unconditional confidence interval:", round(x$Lower.CL, digits=digits),
-          ",", round(x$Upper.CL, digits=digits), "\n\n")
+      cat("",x$Conf.level*100, "% Unconditional confidence interval: ", round(x$Lower.CL, digits=digits),
+          ", ", round(x$Upper.CL, digits=digits), "\n\n", sep = "")
     } else {
       col.ns <- ncol(nice.tab)
       nice.tab <- nice.tab[,-c(col.ns-1,col.ns)]
@@ -8390,8 +8403,8 @@ print.modavg <-
       cat("\n\nModel-averaged estimates for different levels of response variable:", "\n\n")
       resp.labels <- labels(x$Mod.avg.beta)
       mult.out <- matrix(NA, nrow=length(resp.labels), ncol=4)
-      colnames(mult.out) <- c("Model-averaged estimate", "Uncond. SE", paste(x$Conf.level*100,"% lower CL"),
-                              paste(x$Conf.level*100, "% upper CL"))
+      colnames(mult.out) <- c("Model-averaged estimate", "Uncond. SE", paste(x$Conf.level*100,"% lower CL", sep = ""),
+                              paste(x$Conf.level*100, "% upper CL", sep = ""))
       rownames(mult.out) <- resp.labels
       mult.out[,1] <- round(x$Mod.avg.beta, digits=digits)
       mult.out[,2] <- round(x$Uncond.SE, digits=digits)

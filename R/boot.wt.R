@@ -981,8 +981,8 @@ boot.wt.AICzeroinfl <- function(cand.set, modnames = NULL, second.ord = TRUE, no
 
 print.boot.wt <-
   function(x, digits = 2, ...) {
-    cat("\nModel selection based on", colnames(x)[3], ":\n")
-    if (any(names(x) == "c_hat")) {cat("(c-hat estimate = ", x$c_hat[1], ")\n")}
+    cat("\nModel selection based on ", colnames(x)[3], ":\n", sep = "")
+    if (any(names(x) == "c_hat")) {cat("(c-hat estimate = ", x$c_hat[1], ")\n", sep = "")}
     cat("\n")
 
     ##check if Cum.Wt should be printed

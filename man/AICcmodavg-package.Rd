@@ -26,8 +26,10 @@ and ordinal logistic regressions (\code{multinom}, \code{polr},
 \code{clm}, and \code{clmm} classes), robust regression models
 (\code{rlm} class), beta regression models (\code{betareg} class),
 parametric survival models (\code{survreg} class), nonlinear models
-(\code{nls} and \code{gnls} classes), and nonlinear mixed models
-(\code{nlme} and \code{nlmerMod} classes).  The package also supports
+(\code{nls} and \code{gnls} classes), nonlinear mixed models
+(\code{nlme} and \code{nlmerMod} classes), univariate models
+(\code{fitdist} and \code{fitdistr} classes), and certain types of
+latent variable models (\code{lavaan} class).  The package also supports
 various models of \code{unmarkedFit} and \code{maxLikeFit} classes
 estimating demographic parameters after accounting for imperfect
 detection probabilities.  Some functions also allow the creation of
@@ -36,15 +38,17 @@ model selection tables for Bayesian models of the \code{bugs} and
 inference can be formatted to LaTeX using \code{xtable} methods included
 in the package. 
 }
+
 \details{
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 2.0-3\cr
-Date: \tab 2015-01-15\cr
+Version: \tab 2.0-4\cr
+Date: \tab 2016-02-10\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
+
 This package contains several useful functions for model selection and
 multimodel inference:
 \itemize{
@@ -53,10 +57,8 @@ multimodel inference:
 \item{\code{\link{aictab}}}  {Constructs model selection tables with
   number of parameters, AIC, delta AIC, Akaike weights or variants based
   on other AICc, QAIC, and QAICc for a set of candidate models.}
-\item{\code{\link{boot.wt}}}  {Computes model selection relative
-  frequencies based on the bootstrap.}
-\item{\code{\link{c_hat}}}  {Computes an estimate of variance inflation
-  factor for binomial or Poisson GLM's based on Pearson's chi-square.}
+\item{\code{\link{boot.wt}}}  {Computes summary statistics from
+  detection histories.}
 \item{\code{\link{confset}}}  {Determines the confidence set for the
   best model based on one of three criteria.}
 \item{\code{\link{DIC}}}  {Extracts DIC.}
@@ -66,20 +68,8 @@ multimodel inference:
 \item{\code{\link{evidence}}}  {Computes the evidence ratio between the
   highest-ranked model based on the information criteria selected and a
   lower-ranked model.}
-\item{\code{\link{extractCN}}}  {Extracts condition number from models of
-  certain classes.}
-\item{\code{\link{extractLL}}}  {Extracts log-likelihood from
-  models of certain classes.}
-\item{\code{\link{extractSE}}}  {Extracts standard errors from models of
-  certain classes and adds the labels.}
-\item{\code{\link{fam.link.mer}}}  {Extracts the distribution family and 
-  link function from a generalized linear mixed model of classes \code{mer}
-  and \code{merMod}.} 
 \item{\code{\link{importance}}}  {Computes importance values (w+) for
   the support of a given parameter among set of candidate models.}
-\item{\code{\link{mb.gof.test}}}  {Computes the MacKenzie and Bailey
-  goodness-of-fit test for single season occupancy models using the
-  Pearson chi-square statistic.}
 \item{\code{\link{modavg}}}  {Computes model-averaged estimate,
   unconditional standard error, and unconditional confidence interval of
   a parameter of interest among a set of candidate models.}
@@ -87,20 +77,52 @@ multimodel inference:
   sizes between groups based on the entire candidate model set.}
 \item{\code{\link{modavgShrink}}}  {Computes shrinkage version of
   model-averaged estimate, unconditional standard error, and
-  unconditional confidence interval of a parameter of interest among a
-  set of candidate models.} 
-\item{\code{\link{modavgPred}}}  {Computes model-average predictions and 
-  unconditional SE's among entire set of candidate models.}
-\item{\code{\link{multComp}}}  {Performs multiple comparisons in a
-  model selection framework.}
+  unconditional confidence interval of a parameter of interest among
+  entire set of candidate models.} 
+\item{\code{\link{modavgPred}}}  {Computes model-average predictions, 
+  unconditional SE's, and confidence intervals among entire set of
+  candidate models.}
+\item{\code{\link{multComp}}}  {Performs multiple comparisons across
+  levels of a factor in a model selection framework.}
+}
+
+A number of functions for model diagnostics are available:
+\itemize{
+\item{\code{\link{c_hat}}}  {Estimates variance inflation factor for
+  binomial or Poisson GLM's based on various estimators.} 
+\item{\code{\link{countDist}}}  {Computes summary statistics from
+  distance sampling data.}
+\item{\code{\link{countHist}}}  {Computes summary statistics from
+  count history data.} 
+\item{\code{\link{covDiag}}}  {Computes covariance diagnostics for
+  lambda in \emph{N}-mixture models.}
+\item{\code{\link{detHist}}}  {Computes summary statistics from
+  detection histories.}
+\item{\code{\link{extractCN}}}  {Extracts condition number from models of
+  certain classes.}
+\item{\code{\link{mb.gof.test}}}  {Computes the MacKenzie and Bailey
+  goodness-of-fit test for single season and dynamic occupancy models
+  using the Pearson chi-square statistic.}
 \item{\code{\link{Nmix.gof.test}}}  {Computes goodness-of-fit test for
   \emph{N}-mixture models based on the Pearson chi-square statistic.}
+}
+
+Other utility functions include:
+\itemize{
+\item{\code{\link{extractLL}}}  {Extracts log-likelihood from
+  models of certain classes.}
+\item{\code{\link{extractSE}}}  {Extracts standard errors from models of
+  certain classes and adds the labels.}
+\item{\code{\link{fam.link.mer}}}  {Extracts the distribution family and 
+  link function from a generalized linear mixed model of classes \code{mer}
+  and \code{merMod}.}
 \item{\code{\link{predictSE}}}  {Computes predictions and associated 
   standard errors models of certain classes.}
 \item{\code{\link{xtable}}}  {Formats various objects resulting from
   model selection and multimodel inference to LaTeX or HTML tables.}
 }
 }
+
 \author{
   Marc J. Mazerolle <marc.mazerolle@uqat.ca>.
 }
@@ -150,7 +172,7 @@ Cand.mod[[8]] <- glm(Num_anura ~ 1, family = poisson,
                      offset = log(Effort), data = min.trap) 
           
 ##check c-hat for global model
-c_hat(Cand.mod[[1]]) #uses Pearson's chi-square/df
+c_hat(Cand.mod[[1]], method = "pearson") #uses Pearson's chi-square/df
 ##note the very low overdispersion: in this case, the analysis could be
 ##conducted without correcting for c-hat as its value is reasonably close
 ##to 1  
@@ -191,7 +213,12 @@ dat.pred <- data.frame(Type = factor(c("BOG", "UPLAND")),
 
 ##model-averaged predictions across entire model set
 modavgPred(cand.set = Cand.mod, modnames = Modnames,
-           newdata = dat.pred)
+           newdata = dat.pred, type = "response")
+
+##compute model-averaged effect size between two groups
+##works when data set has two rows
+modavgEffect(cand.set = Cand.mod, modnames = Modnames,
+             newdata = dat.pred, type = "link")
 
 
 ##single-season occupancy model example modified from ?occu
@@ -208,8 +235,14 @@ siteCovs(pferUMF) <- data.frame(sitevar1 = rnorm(numSites(pferUMF)),
 obsCovs(pferUMF) <- data.frame(obsvar1 = rnorm(numSites(pferUMF) *
                                  obsNum(pferUMF))) 
 
+##check detection history data from data object
+detHist(pferUMF)
+
 ##set up candidate model set
 fm1 <- occu(~ obsvar1 ~ sitevar1, pferUMF)
+##check detection history data from model object
+detHist(fm1) 
+
 fm2 <- occu(~ 1 ~ sitevar1, pferUMF)
 fm3 <- occu(~ obsvar1 ~ sitevar2, pferUMF)
 fm4 <- occu(~ 1 ~ sitevar2, pferUMF)

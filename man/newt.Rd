@@ -46,7 +46,7 @@ A single cohort of individuals was followed throughout the study, as all
 individuals were marked in 1975 and no new individuals were added during
 the subsequent years.  This data set is used to illustrate classic
 Cormack-Jolly-Seber and related models (Cormack 1964, Jolly 1965, Seber
-1965, Lebreton et al. 1992).
+1965, Lebreton et al. 1992, Mazerolle 2015).
 }
 \source{
   Cormack, R. M. (1964) Estimates of survival from the sighting of
@@ -69,9 +69,14 @@ Cormack-Jolly-Seber and related models (Cormack 1964, Jolly 1965, Seber
   animals: a unified approach with case-studies. \emph{Ecological
     Monographs} \bold{62}, 67-118.
 
+  Mazerolle, M. J. (2015) Estimating detectability and biological
+  parameters of interest with the use of the R
+  environment. \emph{Journal of Herpetology} \bold{49}, 541--559. 
+  
   Seber, G. A. F. (1965) A note on the multiple-recapture
   census. \emph{Biometrika} \bold{52}, 249--259.
 }
+
 \examples{
 data(newt)
 str(newt)

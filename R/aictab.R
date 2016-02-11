@@ -68,7 +68,7 @@ aictab.AICaov.lm <-
 
 
 
-##aov
+##betareg
 aictab.AICbetareg <-
   function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL, sort = TRUE, ...){
 
@@ -217,6 +217,7 @@ aictab.AICclmm <-
   }
 
 
+
 ##coxme
 aictab.AICcoxme <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL, sort = TRUE, ...){  
 
@@ -265,6 +266,7 @@ aictab.AICcoxme <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs =
 }
 
 
+
 ##coxph and clogit
 aictab.AICcoxph <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL, sort = TRUE, ...){  
 
@@ -311,6 +313,114 @@ aictab.AICcoxph <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs =
   class(Results) <- c("aictab", "data.frame")
   return(Results)
 }
+
+
+
+##fitdist (from fitdistrplus)
+aictab.AICfitdist <-
+  function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL, sort = TRUE, ...){
+
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+      if(is.null(names(cand.set))) {
+        modnames <- paste("Mod", 1:length(cand.set), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+      } else {
+        modnames <- names(cand.set)
+      }
+    }
+      
+
+    ##add check to see whether response variable is the same for all models
+    #check.resp <- lapply(X = cand.set, FUN = function(b) formula(b)[2])
+    #if(length(unique(check.resp)) > 1) stop("\nYou must use the same response variable for all models\n")
+
+    Results <- NULL
+    Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+    Results$K <- unlist(lapply(X = cand.set, FUN = AICc, return.K = TRUE,
+                               second.ord = second.ord, nobs = nobs))     #extract number of parameters
+    Results$AICc <- unlist(lapply(X = cand.set, FUN = AICc, return.K = FALSE, 
+                                  second.ord = second.ord, nobs = nobs))  #extract AICc                                      #
+    Results$Delta_AICc <- Results$AICc - min(Results$AICc)            #compute delta AICc
+    Results$ModelLik <- exp(-0.5*Results$Delta_AICc)                #compute model likelihood required to compute Akaike weights
+    Results$AICcWt <- Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights
+
+    ##check if some models are redundant
+    if(length(unique(Results$AICc)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+
+    
+    ##extract LL
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))
+
+    ##rename correctly to AIC
+    if(second.ord == FALSE) {
+      colnames(Results)[1:6] <- c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+    }
+
+    
+    if(sort)  {
+      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
+    } else {Results$Cum.Wt <- NULL}
+
+    
+    class(Results) <- c("aictab", "data.frame")
+    return(Results)
+  }
+
+
+
+##fitdistr (from MASS)
+aictab.AICfitdistr <-
+  function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL, sort = TRUE, ...){
+
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+      if(is.null(names(cand.set))) {
+        modnames <- paste("Mod", 1:length(cand.set), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+      } else {
+        modnames <- names(cand.set)
+      }
+    }
+      
+
+    ##add check to see whether response variable is the same for all models
+    #check.resp <- lapply(X = cand.set, FUN = function(b) formula(b)[2])
+    #if(length(unique(check.resp)) > 1) stop("\nYou must use the same response variable for all models\n")
+
+    Results <- NULL
+    Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+    Results$K <- unlist(lapply(X = cand.set, FUN = AICc, return.K = TRUE,
+                               second.ord = second.ord, nobs = nobs))     #extract number of parameters
+    Results$AICc <- unlist(lapply(X = cand.set, FUN = AICc, return.K = FALSE, 
+                                  second.ord = second.ord, nobs = nobs))  #extract AICc                                      #
+    Results$Delta_AICc <- Results$AICc - min(Results$AICc)            #compute delta AICc
+    Results$ModelLik <- exp(-0.5*Results$Delta_AICc)                #compute model likelihood required to compute Akaike weights
+    Results$AICcWt <- Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights
+
+    ##check if some models are redundant
+    if(length(unique(Results$AICc)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+
+    
+    ##extract LL
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))
+
+    ##rename correctly to AIC
+    if(second.ord == FALSE) {
+      colnames(Results)[1:6] <- c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+    }
+
+    
+    if(sort)  {
+      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
+    } else {Results$Cum.Wt <- NULL}
+
+    
+    class(Results) <- c("aictab", "data.frame")
+    return(Results)
+  }
 
 
 
@@ -456,7 +566,7 @@ aictab.AICgls <-
 
 
 
-##nls
+##gnls
 aictab.AICgnls.gls <-
   function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL, sort = TRUE, ...){  #specify whether table should be sorted or not by delta AICc
 
@@ -544,6 +654,62 @@ aictab.AIChurdle <-
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
+    
+    class(Results) <- c("aictab", "data.frame")
+    return(Results)
+  }
+
+
+
+##lavaan
+aictab.AIClavaan <-
+  function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL, sort = TRUE, ...){
+
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+      if(is.null(names(cand.set))) {
+        modnames <- paste("Mod", 1:length(cand.set), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+      } else {
+        modnames <- names(cand.set)
+      }
+    }
+      
+
+    ##add check to see whether observed variables are the same for all models
+    check.obs <- unlist(lapply(X = cand.set, FUN = function(b) b@Data@ov.names[[1]]))
+    ##frequency of each observed variable
+    freq.obs <- table(check.obs)
+    if(length(unique(freq.obs)) > 1) stop("\nModels with different sets of observed variables are not directly comparable\n")
+
+    Results <- NULL
+    Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+    Results$K <- unlist(lapply(X = cand.set, FUN = AICc, return.K = TRUE,
+                               second.ord = second.ord, nobs = nobs))     #extract number of parameters
+    Results$AICc <- unlist(lapply(X = cand.set, FUN = AICc, return.K = FALSE, 
+                                  second.ord = second.ord, nobs = nobs))  #extract AICc                                      #
+    Results$Delta_AICc <- Results$AICc - min(Results$AICc)            #compute delta AICc
+    Results$ModelLik <- exp(-0.5*Results$Delta_AICc)                #compute model likelihood required to compute Akaike weights
+    Results$AICcWt <- Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights
+
+    ##check if some models are redundant
+    if(length(unique(Results$AICc)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+
+    
+    ##extract LL
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))
+
+    ##rename correctly to AIC
+    if(second.ord == FALSE) {
+      colnames(Results)[1:6] <- c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+    }
+
+    
+    if(sort)  {
+      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
+    } else {Results$Cum.Wt <- NULL}
+
     
     class(Results) <- c("aictab", "data.frame")
     return(Results)
@@ -2280,8 +2446,8 @@ aictab.AICzeroinfl <-
 
 print.aictab <-
   function(x, digits = 2, LL = TRUE, ...) {
-    cat("\nModel selection based on", colnames(x)[3], ":\n")
-    if (any(names(x) == "c_hat")) {cat("(c-hat estimate = ", x$c_hat[1], ")\n")}
+    cat("\nModel selection based on ", colnames(x)[3], ":\n", sep = "")
+    if (any(names(x) == "c_hat")) {cat("(c-hat estimate = ", x$c_hat[1], ")\n", sep = "")}
     cat("\n")
 
     #check if Cum.Wt should be printed

@@ -4,27 +4,40 @@
 \alias{c_hat.default}
 \alias{c_hat.glm}
 \alias{c_hat.merMod}
+\alias{c_hat.vglm}
+\alias{print.c_hat}
 \title{
 Estimate Dispersion for Poisson and Binomial GLM's and GLMM's
 }
 \description{
 Functions to compute an estimate of c-hat for binomial or Poisson GLM's
-and GLMM's based on Pearson's chi-square divided by the residual degrees
-of freedom.
+and GLMM's using different estimators of overdispersion.
 }
 \usage{
-c_hat(mod, \dots)
+c_hat(mod, method = "pearson", \dots)
 
-\method{c_hat}{glm}(mod, \dots)
+\method{c_hat}{glm}(mod, method = "pearson", \dots)
 
-\method{c_hat}{merMod}(mod, \dots)
+\method{c_hat}{merMod}(mod, method = "pearson", \dots)
+
+\method{c_hat}{vglm}(mod, method = "pearson", \dots)
 }
 
 \arguments{
   \item{mod}{
-    an object of class \code{glm} or \code{merMod} for which a c-hat
-    estimate is required.
+    an object of class \code{glm}, \code{merMod}, or \code{vglm} for
+    which a c-hat estimate is required.
   }
+  
+\item{method}{
+  this argument defines the estimator used. The default
+  \code{"pearson"} uses the Pearson chi-square divided by the residual
+  degrees of freedom. Other methods include \code{"deviance"} consisting
+  of the residual deviance divided by the residual degrees of freedom,
+  \code{"farrington"} for the estimator suggested by Farrington (1996),
+  and \code{"fletcher"} for the estimator suggested by Fletcher (2012).
+  }
+
   \item{\dots}{
     additional arguments passed to the function.
   }
@@ -36,10 +49,15 @@ it is usually held fixed to 1 (i.e., mean = variance).  However, one must
 check whether this assumption is appropriate by estimating the
 overdispersion parameter (c-hat).  Though one can obtain an estimate of
 c-hat by dividing the residual deviance by the residual degrees of
-freedom, McCullagh and Nelder (1989) and Venables and Ripley (2002)
-recommend using Pearson's chi-square divided by the residual degrees of
-freedom, which performs better.  The latter is the method implemented by
-\code{c_hat}.
+freedom (i.e., \code{method = "deviance"}), McCullagh and Nelder (1989) and
+Venables and Ripley (2002) recommend using Pearson's chi-square divided
+by the residual degrees of freedom (\code{method = "pearson"}).  An
+estimator based on Farrington (1996) is also implemented by the function
+using the argument \code{method = "farrington"}.  Recent work by
+Fletcher (2012) suggests that an alternative estimator performs better
+than the above-mentioned methods in the presence of sparse data and is
+now implemented with \code{method = "fletcher"}.  For GLMM's, only the
+Pearson chi-square estimator of overdispersion is currently implemented. 
 
 Note that values of c-hat > 1 indicate overdispersion (variance > mean),
 but that values much higher than 1 (i.e., > 4) probably indicate
@@ -78,12 +96,14 @@ value of \code{c.hat} to 1.  However, note that values of c-hat << 1 can
 also indicate lack-of-fit and that an alternative model (and distribution)
 should be investigated. 
 
-Note that it is only possible to estimate c-hat for binomial models with
-trials > 1 (i.e., success/trial or cbind(success, failure) syntax) or
-with Poisson GLM's or GLMM's.
+Note that \code{c_hat} only supports the estimation of c-hat for
+binomial models with trials > 1 (i.e., success/trial or cbind(success,
+failure) syntax) or with Poisson GLM's or GLMM's.
 }
+
 \value{
-\code{c_hat} returns the estimated c-hat value
+\code{c_hat} returns an object of class \code{c_hat} with the estimated
+c-hat value and an attribute for the type of estimator used.
 }
 \references{
 Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:
@@ -97,9 +117,17 @@ Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
   understanding AIC and BIC in model selection. \emph{Sociological
   Methods and Research} \bold{33}, 261--304. 
 
+Farrington, C. P. (1996) On assessing goodness of fit of generalized
+  linear models to sparse data. \emph{Journal of the Royal Statistical
+  Society B} \bold{58}, 349--360.
+  
+Fletcher, D. J. (2012) Estimating overdispersion when fitting a
+  generalized linear model to sparse data. \emph{Biometrika} \bold{99},
+  230--237.
+  
 Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
-Akaike's Information Criterion (AIC) to assess the strength of
-biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180.
+  Akaike's Information Criterion (AIC) to assess the strength of
+  biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
 
 McCullagh, P., Nelder, J. A. (1989) \emph{Generalized Linear
   Models}. Second edition. Chapman and Hall: New York.

@@ -1665,7 +1665,18 @@ multComp.glm <- function(mod, factor.id, letter.labels = TRUE, second.ord = TRUE
   if(identical(fam.type, "gaussian")) {
     dispersion <- NULL  #set to NULL if gaussian is used
   } else{dispersion <- c.hat}
-    
+
+  ##for negative binomial - reset to NULL
+  if(any(regexpr("Negative Binomial", fam.type) != -1)) {
+    dispersion <- NULL
+    ##check for mixture of negative binomial and other
+    ##number of models with negative binomial
+    negbin.num <- sum(regexpr("Negative Binomial", fam.type) != -1)
+    if(negbin.num < length(fam.type)) {
+      stop("Function does not support mixture of negative binomial with other distributions in model set")
+    }
+  }
+  
   if(c.hat > 1) {dispersion <- c.hat }
   if(!is.null(gamdisp)) {dispersion <- gamdisp}
   if(c.hat > 1 && !is.null(gamdisp)) {stop("\nYou cannot specify values for both \'c.hat\' and \'gamdisp\'\n")}
@@ -4832,8 +4843,8 @@ print.multComp <-
     correction <- x$correction
     x <- x$model.table
     
-    cat("\nModel selection for multiple comparisons of \"", parm, "\" based on", colnames(x)[3], ":\n")
-    if (any(names(x) == "c_hat")) {cat("(c-hat estimate = ", x$c_hat[1], ")\n")}
+    cat("\nModel selection for multiple comparisons of \"", parm, "\" based on ", colnames(x)[3], ":\n", sep = "")
+    if (any(names(x) == "c_hat")) {cat("(c-hat estimate = ", x$c_hat[1], ")\n", sep = "")}
     cat("\n")
 
     #check if Cum.Wt should be printed
@@ -4862,13 +4873,13 @@ print.multComp <-
     print(round(mod.avg.out, digits = digits))
     cat("---\n")
     if(identical(correction, "none")) {
-      cat("Note: ", conf.level*100, "% unconditional confidence intervals uncorrected for multiple comparisons\n")
+      cat("Note:  ", conf.level*100, "% unconditional confidence intervals uncorrected for multiple comparisons\n", sep = "")
     }
     if(identical(correction, "bonferroni")) {
-      cat("Note:  ", conf.level*100, "% unconditional confidence intervals with Bonferroni adjustment\n")
+      cat("Note:  ", conf.level*100, "% unconditional confidence intervals with Bonferroni adjustment\n", sep = "")
     }
     if(identical(correction, "sidak")) {
-      cat("Note:  ", conf.level*100, "% unconditional confidence intervals with Sidak adjustment\n")
+      cat("Note:  ", conf.level*100, "% unconditional confidence intervals with Sidak adjustment\n", sep = "")
     }
     cat("\n")    
   }

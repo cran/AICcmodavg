@@ -7,6 +7,10 @@ export(AICc,
        boot.wt,
        c_hat,
        confset,
+       countDist,
+       countHist,
+       covDiag,
+       detHist,
        DIC,
        dictab,
        evidence,
@@ -107,7 +111,12 @@ export(AICc,
 ##export S3 methods
 S3method(print, aictab)
 S3method(print, boot.wt)
+S3method(print, c_hat)
 S3method(print, confset)
+S3method(print, countDist)
+S3method(print, countHist)
+S3method(print, covDiag)
+S3method(print, detHist)
 S3method(print, modavgCustom)
 S3method(print, dictab)
 S3method(print, extractCN)
@@ -130,10 +139,13 @@ S3method(AICc, clm)
 S3method(AICc, clmm)
 S3method(AICc, coxme)
 S3method(AICc, coxph)
+S3method(AICc, fitdist)
+S3method(AICc, fitdistr)
 S3method(AICc, glm)
 S3method(AICc, gls)
 S3method(AICc, gnls)
 S3method(AICc, hurdle)
+S3method(AICc, lavaan)
 S3method(AICc, lm)
 S3method(AICc, lme)
 S3method(AICc, lmekin)
@@ -161,10 +173,13 @@ S3method(aictab, AICsclm.clm)
 S3method(aictab, AICclmm)
 S3method(aictab, AICcoxme)
 S3method(aictab, AICcoxph)
+S3method(aictab, AICfitdist)
+S3method(aictab, AICfitdistr)
 S3method(aictab, AICglm.lm)
 S3method(aictab, AICgls)
 S3method(aictab, AICgnls.gls)
 S3method(aictab, AIChurdle)
+S3method(aictab, AIClavaan)
 S3method(aictab, AIClm)
 S3method(aictab, AIClme)
 S3method(aictab, AIClmekin)
@@ -214,6 +229,44 @@ S3method(boot.wt, AICzeroinfl)
 S3method(c_hat, default)
 S3method(c_hat, glm)
 S3method(c_hat, merMod)
+
+
+##countDist
+S3method(countDist, default)
+S3method(countDist, unmarkedFrameDS)
+S3method(countDist, unmarkedFitDS)
+S3method(countDist, unmarkedFrameGDS)
+S3method(countDist, unmarkedFitGDS)
+
+
+##countHist
+S3method(countHist, default)
+S3method(countHist, unmarkedFramePCount)
+S3method(countHist, unmarkedFitPCount)
+S3method(countHist, unmarkedFrameGPC)
+S3method(countHist, unmarkedFitGPC)
+S3method(countHist, unmarkedFrameMPois)
+S3method(countHist, unmarkedFitMPois)
+S3method(countHist, unmarkedFramePCO)
+S3method(countHist, unmarkedFitPCO)
+S3method(countHist, unmarkedFrameGMM)
+S3method(countHist, unmarkedFitGMM)
+
+
+##covDiag
+S3method(covDiag, default)
+S3method(covDiag, unmarkedFitPCount)
+
+
+##detHist
+S3method(detHist, default)
+S3method(detHist, unmarkedFitColExt)
+S3method(detHist, unmarkedFitOccu)
+S3method(detHist, unmarkedFitOccuFP)
+S3method(detHist, unmarkedFitOccuRN)
+S3method(detHist, unmarkedFrameOccu)
+S3method(detHist, unmarkedFrameOccuFP)
+S3method(detHist, unmarkedMultFrame)
 
 
 ##DIC
@@ -472,6 +525,9 @@ S3method(predictSE, unmarkedFitPCO)
 ##xtable
 S3method(xtable, aictab)
 S3method(xtable, boot.wt)
+S3method(xtable, countDist)
+S3method(xtable, countHist)
+S3method(xtable, detHist)
 S3method(xtable, dictab)
 S3method(xtable, mb.chisq)
 S3method(xtable, modavg)
@@ -481,8 +537,65 @@ S3method(xtable, modavgShrink)
 S3method(xtable, multComp)
 
 
+##defunct functions
+##to avoid NOTE during R CMD check
+S3method(AICc, mult)
+S3method(AICc, unmarked)
+S3method(aictab, clm)
+S3method(aictab, clmm)
+S3method(aictab, coxph)
+S3method(aictab, glm)
+S3method(aictab, gls)
+S3method(aictab, lm)
+S3method(aictab, lme)
+S3method(aictab, mer)
+S3method(aictab, merMod)
+S3method(aictab, mult)
+S3method(aictab, nlme)
+S3method(aictab, nls)
+S3method(aictab, polr)
+S3method(aictab, rlm)
+S3method(aictab, unmarked)
+S3method(dictab, bugs)
+S3method(dictab, rjags)
+S3method(modavg, clm)
+S3method(modavg, clmm)
+S3method(modavg, coxph)
+S3method(modavg, effect)
+S3method(modavg, effect.glm)
+S3method(modavg, effect.gls)
+S3method(modavg, effect.lme)
+S3method(modavg, effect.mer)
+S3method(modavg, effect.merMod)
+S3method(modavg, effect.rlm)
+S3method(modavg, effect.unmarked)
+S3method(modavg, glm)
+S3method(modavg, gls)
+S3method(modavg, lme)
+S3method(modavg, mer)
+S3method(modavg, merMod)
+S3method(modavg, mult)
+S3method(modavg, polr)
+S3method(modavg, rlm)
+S3method(modavg, shrink)
+S3method(modavg, shrink.clm)
+S3method(modavg, shrink.clmm)
+S3method(modavg, shrink.coxph)
+S3method(modavg, shrink.glm)
+S3method(modavg, shrink.gls)
+S3method(modavg, shrink.lme)
+S3method(modavg, shrink.mer)
+S3method(modavg, shrink.merMod)
+S3method(modavg, shrink.mult)
+S3method(modavg, shrink.polr)
+S3method(modavg, shrink.rlm)
+S3method(modavg, shrink.unmarked)
+S3method(modavg, unmarked)
+S3method(predictSE, zip)
+
+
 ##import methods
-import(methods, stats, lattice, MASS, Matrix, nlme, stats4)
+import(methods, stats, lattice, MASS, Matrix, nlme, stats4, survival)
 importFrom(unmarked,
            predict,
            coef,
@@ -491,11 +604,15 @@ importFrom(unmarked,
 importFrom(VGAM,
            formula,
            logLik,
-           coefficients)
+           coefficients,
+           residuals,
+           fitted)
 importFrom(graphics,
+           barplot,
            hist,
            title,
-           abline)
+           abline,
+           par)
 importFrom(xtable,
            xtable,
            print.xtable,

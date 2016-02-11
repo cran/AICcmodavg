@@ -29,7 +29,7 @@ y.data <- y.raw[!na.raw, ]
 N <- N.raw - sum(na.raw)
 
 #N is required for computations in the end
-T <- ncol(y.data)
+Ts <- ncol(y.data)
 
 det.hist <- apply(X = y.data, MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
 
@@ -40,7 +40,7 @@ preds.psi <- predict(mod, type = "state")$Predicted
 
 ##compute predicted values of p
 preds.p <- matrix(data = predict(mod, type = "det")$Predicted,
-                  ncol = T, byrow = TRUE)
+                  ncol = Ts, byrow = TRUE)
 
 ##assemble in data.frame
 out.hist <- data.frame(det.hist, preds.psi)
@@ -116,7 +116,7 @@ if(n.cohort.not.na > 0) {  ##expected frequencies for non-missing data
     strip.hist <- unlist(strsplit(select.hist, split = ""))
     
     ##translate each visit in probability statement
-    hist.mat <- matrix(NA, nrow = n.sites.not.na, ncol = T)
+    hist.mat <- matrix(NA, nrow = n.sites.not.na, ncol = Ts)
 
     ##iterate over sites
     for(j in 1:n.sites.not.na) {
@@ -195,11 +195,20 @@ if(na.vals) {
             ##strip all values
             strip.hist <- unlist(strsplit(select.hist, split = ""))
             ##translate each visit in probability statement
-            hist.mat <- matrix(NA, nrow = n.total.sites, ncol = T)
+            hist.mat <- matrix(NA, nrow = n.total.sites, ncol = Ts)
             ##iterate over sites
             for(j in 1:n.total.sites) {
-              hist.mat[j, ] <- ifelse(strip.hist == "1", select.preds.p.na[j, ],
-                                      ifelse(strip.hist == "0", 1 - select.preds.p.na[j, ], 1))
+##################
+              ##modified
+              if(Ts == 1) {
+                hist.mat[j, ] <- ifelse(strip.hist == "1", select.preds.p.na[j],
+                                        ifelse(strip.hist == "0", 1 - select.preds.p.na[j], 1))
+              } else {
+                hist.mat[j, ] <- ifelse(strip.hist == "1", select.preds.p.na[j, ],
+                                        ifelse(strip.hist == "0", 1 - select.preds.p.na[j, ], 1))
+              }
+              ##modified
+##################  
               ##replace NA by 1 (missing visit is removed from likelihood)
 ###################################################
 ###for missing value, remove occasion
@@ -298,6 +307,10 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
   ##number of visits per season
   n.visits <- total.visits/n.seasons
 
+  ##determine if certain sites have no data for certain visits
+  
+  
+  
   ##split encounter history for each season
   starts <- seq(1, total.visits, by = n.visits)
 
@@ -389,16 +402,42 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
     ##number of observed detection histories (excludes cases with all NA's)
     N <- N.raw - sum(na.raw)
 
-    ##N is required for computations in the end
-    T <- ncol(y.data)
-  
-    det.hist <- apply(X = y.data, MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
+    ##check if any columns are empty
+    nodata.raw <- apply(X = y.data, MARGIN = 2, FUN = function(i) all(is.na(i)))
+    with.data <- which(nodata.raw == FALSE)
+    ##select only columns with data
+    if(any(nodata.raw)) {
+      y.data <- y.data[, with.data]
+    }
 
+    ##T is required for computations in the end
+    ##if only a single visit, ncol( ) returns NULL
+###########################
+    ##modified
+    if(is.vector(y.data)){
+      Ts <- 1
+    } else { 
+      Ts <- ncol(y.data)
+    }
+
+    ##if single visit, returns error
+    if(Ts == 1) {
+      det.hist <- paste(y.data, sep = "")
+    } else {
+      det.hist <- apply(X = y.data, MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
+    }
+    ##modified
+###########################
+    
     ##compute predicted values of occupancy for season i
     preds.psi <- psi.seasons[[season]] ##MODIFIED FROM mb.chisq - change iteration number
 
     ##extract matrix of p's for season i
-    preds.p <- p.seasons[[season]]
+    if(any(nodata.raw)) {
+      preds.p <- p.seasons[[season]][, with.data]
+    } else {
+      preds.p <- p.seasons[[season]]
+    }
 
     ##assemble in data.frame
     out.hist <- data.frame(det.hist, preds.psi)
@@ -440,7 +479,15 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
       
       ##number of sites with each history
       na.freqs <- table(det.hist[id.det.hist.na]) 
-      preds.p.na <- preds.p[id.det.hist.na, ]
+#####################
+      ##modified
+      if(Ts == 1) {
+        preds.p.na <- preds.p[id.det.hist.na]
+      } else {
+        preds.p.na <- preds.p[id.det.hist.na, ]
+      }
+      ##modified
+#####################
   
       ##cohorts without NA
       cohort.not.na <- sort(un.hist[-id.na])
@@ -448,7 +495,15 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
       out.hist.not.na$det.hist <- droplevels(out.hist.not.na$det.hist)
       n.cohort.not.na <- length(cohort.not.na)
       n.sites.not.na <- length(det.hist) - length(id.det.hist.na)
-      preds.p.not.na <- preds.p[-id.det.hist.na, ]
+#####################
+      ##modified
+      if(Ts == 1) {
+        preds.p.not.na <- preds.p[-id.det.hist.na]
+      } else {
+        preds.p.not.na <- preds.p[-id.det.hist.na, ]
+      }
+      ##modified
+#####################
 
       
     } else {
@@ -474,13 +529,17 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
         strip.hist <- unlist(strsplit(select.hist, split = ""))
     
         ##translate each visit in probability statement
-        hist.mat <- matrix(NA, nrow = n.sites.not.na, ncol = T)
+        hist.mat <- matrix(NA, nrow = n.sites.not.na, ncol = Ts)
         
         ##iterate over sites
         for(j in 1:n.sites.not.na) {
 
           ##in extreme cases where only a single cohort occurs without missing values
-          if(n.sites.not.na == 1) {
+############
+          ##modified
+          if(n.sites.not.na == 1 || Ts == 1) {
+            ##modified
+#############            
             hist.mat[j, ] <- ifelse(strip.hist == "1", preds.p.not.na[j],
                                     ifelse(strip.hist == "0", 1 - preds.p.not.na[j],
                                            0))
@@ -533,7 +592,15 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
       for(m in 1:n.missing.cohorts) {
         ##select cohort
         select.cohort <- out.hist.na[which(out.hist.na$coh == names(freqs.missing.cohorts)[m]), ]
-        select.preds.p.na <- preds.p.na[which(out.hist.na$coh == names(freqs.missing.cohorts)[m]), ]
+#######################
+        ##modified
+        if(Ts == 1) {
+          select.preds.p.na <- preds.p.na[which(out.hist.na$coh == names(freqs.missing.cohorts)[m])]
+        } else {
+          select.preds.p.na <- preds.p.na[which(out.hist.na$coh == names(freqs.missing.cohorts)[m]), ]
+        }
+        ##modified
+#######################
         ##replace NA's with 1 to remove from likelihood
         if(!is.matrix(select.preds.p.na)) {select.preds.p.na <- matrix(data = select.preds.p.na, nrow = 1)}
         select.preds.p.na[, gregexpr(pattern = "N", text = gsub(pattern = "NA", replacement = "N", x = select.cohort$det[1]))[[1]]] <- 1
@@ -553,7 +620,7 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
           ##strip all values
           strip.hist <- unlist(strsplit(select.hist, split = ""))
           ##translate each visit in probability statement
-          hist.mat <- matrix(NA, nrow = n.total.sites, ncol = T)
+          hist.mat <- matrix(NA, nrow = n.total.sites, ncol = Ts)
           ##iterate over sites
           for(j in 1:n.total.sites) {
             hist.mat[j, ] <- ifelse(strip.hist == "1", select.preds.p.na[j, ],
@@ -612,6 +679,16 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
     ##compute partial chi-square for unobserved detection histories (X)
     if(na.vals) {
       chisq.missing <- do.call("rbind", lapply(missing.cohorts, FUN = function(i) i$out.freqs.na))
+
+      ##check for sites never sampled in table 
+      sites.never <- rownames(chisq.missing)
+      never.sampled <- grep(pattern = paste(rep(NA, Ts), collapse = ""), x = sites.never)
+
+      if(length(never.sampled) > 0) {
+        ##remove row for site never sampled
+        chisq.missing <- chisq.missing[-never.sampled, ]
+      }
+
       if(n.cohort.not.na > 0) {
         chisq.unobs.det <- N - sum(out.freqs[, "Expected"]) - sum(chisq.missing[, "Expected"])
         chisq.table <- rbind(out.freqs, chisq.missing)

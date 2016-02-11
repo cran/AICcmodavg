@@ -238,14 +238,14 @@ value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from \code{c_hat}.  Note that values of c.hat different
 from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
 success/trial or cbind(success, failure) syntax), with Poisson GLM's, 
-single-season occupancy models (MacKenzie et al. 2002), or
-\emph{N}-mixture models (Royle 2004, Dail and Madsen 2011).  If
-\code{c.hat} > 1, \code{modavgShrink} will return the quasi-likelihood
-analogue of the information criteria requested and multiply the
-variance-covariance matrix of the estimates by this value (i.e., SE's
-are multiplied by \code{sqrt(c.hat)}).  This option is not supported for
-generalized linear mixed models of the \code{mer} or \code{merMod}
-classes.
+single-season occupancy models (MacKenzie et al. 2002), dynamic
+occupancy models (MacKenzie et al. 2003), or \emph{N}-mixture models
+(Royle 2004, Dail and Madsen 2011).  If \code{c.hat} > 1,
+\code{modavgShrink} will return the quasi-likelihood analogue of the
+information criteria requested and multiply the variance-covariance
+matrix of the estimates by this value (i.e., SE's are multiplied by
+\code{sqrt(c.hat)}).  This option is not supported for generalized
+linear mixed models of the \code{mer} or \code{merMod} classes.
 }
   \item{gamdisp}{
 if gamma GLM is used, the dispersion parameter should be specified here
@@ -354,6 +354,11 @@ J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
 detection probabilities are less than one. \emph{Ecology} \bold{83},
 2248--2255.
 
+MacKenzie, D. I., Nichols, J. D., Hines, J. E., Knutson, M. G.,
+  Franklin, A. B. (2003) Estimating site occupancy, colonization, and
+  local extinction when a species is detected imperfectly. \emph{Ecology}
+  \bold{84}, 2200--2207.
+  
 Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
 Akaike's Information Criterion (AIC) to assess the strength of
 biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 

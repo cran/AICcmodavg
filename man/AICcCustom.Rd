@@ -42,10 +42,10 @@ AICcCustom(logL, K, return.K = FALSE, second.ord = TRUE, nobs = NULL,
    such as that obtained from \code{c_hat}.  Note that values of
    \code{c.hat} different from 1 are only appropriate for binomial GLM's
    with trials > 1 (i.e., success/trial or cbind(success, failure)
-   syntax), with Poisson GLM's, single-season occupancy models
-   (MacKenzie et al. 2002), \emph{N}-mixture models (Royle 2004, Dail
-   and Madsen 2011), or capture-mark-recapture models (e.g., Lebreton et
-   al. 1992).  If c.hat > 1, \code{AICc} will return the
+   syntax), with Poisson GLM's, single-season or dynamic occupancy
+   models (MacKenzie et al. 2002, 2003), \emph{N}-mixture models (Royle
+   2004, Dail and Madsen 2011), or capture-mark-recapture models (e.g.,
+   Lebreton et al. 1992).  If c.hat > 1, \code{AICc} will return the
    quasi-likelihood analogue of the information criterion requested.
 }
 }
@@ -98,7 +98,12 @@ repeated counts of an open population. \emph{Biometrics} \bold{67},
   detection probabilities are less than one. \emph{Ecology} \bold{83},
   2248--2255.
 
-  Royle, J. A. (2004) \emph{N}-mixture models for estimating population
+  MacKenzie, D. I., Nichols, J. D., Hines, J. E., Knutson, M. G.,
+  Franklin, A. B. (2003) Estimating site occupancy, colonization, and
+  local extinction when a species is detected imperfectly. \emph{Ecology}
+  \bold{84}, 2200--2207.
+  
+Royle, J. A. (2004) \emph{N}-mixture models for estimating population
   size from spatially replicated counts. \emph{Biometrics} \bold{60}, 
   108--115.
 

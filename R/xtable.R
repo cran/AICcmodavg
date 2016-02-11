@@ -222,21 +222,22 @@ xtable.modavgShrink <- function(x, caption = NULL, label = NULL, align = NULL,
 xtable.modavgPred <- function(x, caption = NULL, label = NULL, align = NULL,
                               digits = NULL, display = NULL, 
                               nice.names = TRUE, ...) {
-  modavg.pred <- data.frame(Mod.avg.pred = x$mod.avg.pred, Uncond.SE = x$uncond.se,
-                            check.names = FALSE)
-
+  modavg.pred <- data.frame(x$matrix.output, check.names = FALSE)
+  
   ##change to nicer names
   if(nice.names) {
     names(modavg.pred)[1] <- "Model-averaged predictions" 
     names(modavg.pred)[2] <- "Unconditional SE"
+    names(modavg.pred)[3] <- paste(100*x$conf.level, "%", " lower limit", sep = "")
+    names(modavg.pred)[4] <- paste(100*x$conf.level, "%", " upper limit", sep = "")
   }
   
   ##format to data.frame
   class(modavg.pred) <- c("xtable","data.frame")
 
-  align(modavg.pred) <- switch(1+is.null(align), align, c("l","r","r"))
-  digits(modavg.pred) <- switch(1+is.null(digits), digits, c(0,2,2))
-  display(modavg.pred) <- switch(1+is.null(display), display, c("s","f","f"))
+  align(modavg.pred) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
+  digits(modavg.pred) <- switch(1+is.null(digits), digits, c(0,2,2,2,2))
+  display(modavg.pred) <- switch(1+is.null(display), display, c("s","f","f","f","f"))
 
   caption(modavg.pred) <- caption
   label(modavg.pred) <- label
@@ -550,3 +551,322 @@ xtable.mb.chisq <- function(x, caption = NULL, label = NULL, align = NULL,
   label(chisq.table) <- label
   return(chisq.table)
 }
+
+
+
+##add method for detHist class
+xtable.detHist <- function(x, caption = NULL, label = NULL, align = NULL,
+                           digits = NULL, display = NULL, 
+                           nice.names = TRUE, table.detHist = "freq",
+                           ...) {
+  ##for single season, display frequencies in a single matrix
+  if(x$n.seasons == 1) {
+
+    ##display detection histories
+    if(identical(table.detHist, "hist")){
+      det.hist <- x$hist.table.full
+      det.mat <- matrix(det.hist, nrow = 1)
+      
+      if(nice.names) {
+        det.names <- names(det.hist)
+        new.names <- gsub(pattern = "NA", replacement = " -", det.names)
+        colnames(det.mat) <- new.names
+        rownames(det.mat) <- "Season-1"
+      }
+      
+      det.frame <- as.data.frame(det.mat)
+      n.cols <- ncol(det.frame)
+    }
+
+    ##display frequencies
+    if(identical(table.detHist, "freq")) {
+        det.frame <- as.data.frame(x$out.freqs)
+        n.cols <- ncol(det.frame)
+      }
+
+    ##display proportions
+    if(identical(table.detHist, "prop")){
+      det.frame <- as.data.frame(x$out.props)
+      n.cols <- ncol(det.frame)
+    }
+       
+  } else {
+
+      ##display entire detection histories
+      if(identical(table.detHist, "hist")) {
+        det.hist <- x$hist.table.full
+        det.mat <- matrix(det.hist, nrow = 1)
+      
+        if(nice.names) {
+          det.names <- names(det.hist)
+          new.names <- gsub(pattern = "NA", replacement = " -", det.names)
+          colnames(det.mat) <- new.names
+          rownames(det.mat) <- "All seasons"
+        }
+        
+        det.frame <- as.data.frame(det.mat)
+        n.cols <- ncol(det.frame)
+      }
+
+      ##display frequencies
+      if(identical(table.detHist, "freq")) {
+        det.frame <- as.data.frame(x$out.freqs)
+        #det.frame[1, 3:6] <- "."
+        n.cols <- ncol(det.frame)
+      }
+
+      ##display proportions
+      if(identical(table.detHist, "prop")) {
+        det.frame <- as.data.frame(x$out.props)
+#        det.frame[1, 2:4] <- "."
+        n.cols <- ncol(det.frame)
+      }
+    }
+
+    
+  ##format to data.frame
+  class(det.frame) <- c("xtable","data.frame")
+  
+  align(det.frame) <- switch(1+is.null(align), align, c("l", rep("r", n.cols)))
+
+  if(identical(table.detHist, "prop")) {
+    digits(det.frame) <- switch(1+is.null(digits), digits, c(0, rep(2, n.cols)))
+  } else {
+    digits(det.frame) <- switch(1+is.null(digits), digits, c(0, rep(0, n.cols)))
+  }
+  display(det.frame) <- switch(1+is.null(display), display, c("s", rep("f", n.cols)))
+  
+  caption(det.frame) <- caption
+  label(det.frame) <- label
+  return(det.frame)
+}
+
+
+
+##add method for countHist class
+xtable.countHist <- function(x, caption = NULL, label = NULL, align = NULL,
+                             digits = NULL, display = NULL, 
+                             nice.names = TRUE, table.countHist = "count",
+                             ...) {
+  ##for single season, display frequencies in a single matrix
+  if(x$n.seasons == 1) {
+
+    ##display count histories
+    if(identical(table.countHist, "hist")){
+      det.hist <- x$hist.table.full
+      det.mat <- matrix(det.hist, nrow = 1)
+      
+      if(nice.names) {
+        det.names <- names(det.hist)
+        new.names <- gsub(pattern = "NA", replacement = " -", det.names)
+        colnames(det.mat) <- new.names
+        rownames(det.mat) <- "Season-1"
+      }
+      
+      det.frame <- as.data.frame(det.mat)
+      n.cols <- ncol(det.frame)
+    }
+
+    ##display frequencies
+    if(identical(table.countHist, "freq")) {
+        det.frame <- as.data.frame(x$out.freqs)
+        n.cols <- ncol(det.frame)
+      }
+
+    ##display counts
+    if(identical(table.countHist, "count")) {
+        det.mat <- matrix(x$count.table.full, nrow = 1)
+        colnames(det.mat) <- names(x$count.table.full)
+
+        if(nice.names) {
+          rownames(det.mat) <- "Season-1"
+        }
+        
+        n.cols <- ncol(det.mat)
+        det.frame <- as.data.frame(det.mat)
+      }
+
+    ##display proportions
+    if(identical(table.countHist, "prop")){
+      det.frame <- as.data.frame(x$out.props)
+      n.cols <- ncol(det.frame)
+    }
+       
+  } else {
+
+      ##display entire detection histories
+      if(identical(table.countHist, "hist")) {
+        det.hist <- x$hist.table.full
+        det.mat <- matrix(det.hist, nrow = 1)
+      
+        if(nice.names) {
+          det.names <- names(det.hist)
+          new.names <- gsub(pattern = "NA", replacement = " -", det.names)
+          colnames(det.mat) <- new.names
+          rownames(det.mat) <- "All seasons"
+        }
+        
+        det.frame <- as.data.frame(det.mat)
+        n.cols <- ncol(det.frame)
+      }
+
+      ##display frequencies
+      if(identical(table.countHist, "freq")) {
+        det.frame <- as.data.frame(x$out.freqs)
+        #det.frame[1, 3:6] <- "."
+        n.cols <- ncol(det.frame)
+      }
+
+      ##display counts
+      if(identical(table.countHist, "count")) {
+        det.mat <- matrix(x$count.table.full, nrow = 1)
+        colnames(det.mat) <- names(x$count.table.full)
+
+        if(nice.names) {
+          rownames(det.mat) <- "All seasons"
+        }
+        n.cols <- ncol(det.mat)
+        det.frame <- as.data.frame(det.mat)
+      }
+
+      ##display proportions
+      if(identical(table.countHist, "prop")) {
+        det.frame <- as.data.frame(x$out.props)
+#        det.frame[1, 2:4] <- "."
+        n.cols <- ncol(det.frame)
+      }
+
+    }
+
+    
+  ##format to data.frame
+  class(det.frame) <- c("xtable","data.frame")
+  
+  align(det.frame) <- switch(1+is.null(align), align, c("l", rep("r", n.cols)))
+
+  if(identical(table.countHist, "prop")) {
+    digits(det.frame) <- switch(1+is.null(digits), digits, c(0, rep(2, n.cols)))
+  } else {
+    digits(det.frame) <- switch(1+is.null(digits), digits, c(0, rep(0, n.cols)))
+  }
+  display(det.frame) <- switch(1+is.null(display), display, c("s", rep("f", n.cols)))
+  
+  caption(det.frame) <- caption
+  label(det.frame) <- label
+  return(det.frame)
+}
+
+
+
+##add method for countDist class
+xtable.countDist <- function(x, caption = NULL, label = NULL, align = NULL,
+                             digits = NULL, display = NULL, 
+                             nice.names = TRUE, table.countDist = "distance",
+                             ...) {
+  ##for single season, display frequencies in a single matrix
+  if(x$n.seasons == 1) {
+
+    ##display counts across distance classes
+    if(identical(table.countDist, "distance")){
+      det.dist <- matrix(x$dist.sums.full, nrow = 1)
+      colnames(det.dist) <- names(x$dist.sums.full)
+
+      if(nice.names) {
+        rownames(det.dist) <- "Season-1"
+      }
+      
+      n.cols <- ncol(det.dist)
+      det.frame <- as.data.frame(det.dist)
+    }
+
+    ##display frequencies
+    if(identical(table.countDist, "freq")) {
+        det.frame <- as.data.frame(x$out.freqs)
+        n.cols <- ncol(det.frame)
+      }
+
+    ##display counts
+    if(identical(table.countDist, "count")) {
+        det.mat <- matrix(x$count.table.full, nrow = 1)
+        colnames(det.mat) <- names(x$count.table.full)
+
+        if(nice.names) {
+          rownames(det.mat) <- "Season-1"
+        }
+        
+        n.cols <- ncol(det.mat)
+        det.frame <- as.data.frame(det.mat)
+      }
+
+    ##display proportions
+    if(identical(table.countDist, "prop")){
+      det.frame <- as.data.frame(x$out.props)
+      n.cols <- ncol(det.frame)
+    }
+       
+  } else {
+
+      ##display counts across distance classes
+      if(identical(table.countDist, "distance")) {
+        ##assumes the same distance classes were used each year
+        det.dist <- matrix(unlist(x$dist.sums.seasons),
+                           nrow = x$n.seasons)
+        colnames(det.dist) <- names(x$dist.sums.full)
+
+        if(nice.names) {
+          rownames(det.dist) <- paste("Season-", 1:x$n.seasons, sep = "")
+        }
+      
+        n.cols <- ncol(det.dist)
+        det.frame <- as.data.frame(det.dist)
+      }
+
+      ##display frequencies
+      if(identical(table.countDist, "freq")) {
+        det.frame <- as.data.frame(x$out.freqs)
+        #det.frame[1, 3:6] <- "."
+        n.cols <- ncol(det.frame)
+      }
+
+      ##display counts
+      if(identical(table.countDist, "count")) {
+        det.mat <- matrix(x$count.table.full, nrow = 1)
+        colnames(det.mat) <- names(x$count.table.full)
+
+        if(nice.names) {
+          rownames(det.mat) <- "All seasons"
+        }
+        
+        n.cols <- ncol(det.mat)
+        det.frame <- as.data.frame(det.mat)
+      }
+
+      ##display proportions
+      if(identical(table.countDist, "prop")) {
+        det.frame <- as.data.frame(x$out.props)
+#        det.frame[1, 2:4] <- "."
+        n.cols <- ncol(det.frame)
+      }
+
+    }
+
+    
+  ##format to data.frame
+  class(det.frame) <- c("xtable","data.frame")
+  
+  align(det.frame) <- switch(1+is.null(align), align, c("l", rep("r", n.cols)))
+
+  if(identical(table.countDist, "prop")) {
+    digits(det.frame) <- switch(1+is.null(digits), digits, c(0, rep(2, n.cols)))
+  } else {
+    digits(det.frame) <- switch(1+is.null(digits), digits, c(0, rep(0, n.cols)))
+  }
+  display(det.frame) <- switch(1+is.null(display), display, c("s", rep("f", n.cols)))
+  
+  caption(det.frame) <- caption
+  label(det.frame) <- label
+  return(det.frame)
+}
+
+
+

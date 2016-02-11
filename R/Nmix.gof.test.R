@@ -466,7 +466,7 @@ Nmix.gof.test.unmarkedFitMPois <- function(mod, nsim = 5, plot.hist = TRUE, ...)
 
 ##print method
 print.Nmix.chisq <- function(x, digits.vals = 2, digits.chisq = 4, ...) {
-  cat("\nChi-square goodness-of-fit for N-mixture model of \'", x$model.type, "\' class\n")
+  cat("\nChi-square goodness-of-fit for N-mixture model of \'", x$model.type, "\' class\n", sep = "")
   cat("\nObserved chi-square statistic =", round(x$chi.square, digits = digits.chisq), "\n")
   if(length(x) > 2){
     cat("Number of bootstrap samples =", x$nsim)

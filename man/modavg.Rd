@@ -44,7 +44,7 @@ Compute Model-averaged Parameter Estimate (Multimodel Inference)
 This function model-averages the estimate of a parameter of interest
 among a set of candidate models, computes the unconditional standard
 error and unconditional confidence intervals as described in Buckland et
-al. (1997) and Burnham and Anderson (2002). This model-averaged estimate
+al. (1997) and Burnham and Anderson (2002).  This model-averaged estimate
 is also referred to as a natural average of the estimate by Burnham and
 Anderson (2002, p. 152).
 }
@@ -269,18 +269,17 @@ terms).
 }
   \item{c.hat}{
 value of overdispersion parameter (i.e., variance inflation factor) such
-as that obtained from \code{c_hat}.  Note that values of \code{c.hat}
-different from 1 are only appropriate for binomial GLM's with trials > 1
-(i.e., success/trial or cbind(success, failure) syntax), with Poisson
-GLM's, single-season occupancy models (MacKenzie et al. 2002),
-\emph{N}-mixture models (Royle 2004, Dail and Madsen 2011), or
-capture-mark-recapture models (e.g., Lebreton et al. 1992).  If
-\code{c.hat} > 1, \code{modavg} will return the quasi-likelihood
-analogue of the information criteria requested and multiply the
-variance-covariance matrix of the estimates by this value (i.e., SE's
-are multiplied by \code{sqrt(c.hat)}). This option is not supported for
-generalized linear mixed models of the \code{mer} or \code{merMod}
-classes. 
+as that obtained from \code{c_hat}.  Note that values of c.hat different
+from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
+success/trial or cbind(success, failure) syntax), with Poisson GLM's, 
+single-season occupancy models (MacKenzie et al. 2002), dynamic
+occupancy models (MacKenzie et al. 2003), or \emph{N}-mixture models
+(Royle 2004, Dail and Madsen 2011).  If \code{c.hat} > 1,
+\code{modavgShrink} will return the quasi-likelihood analogue of the
+information criteria requested and multiply the variance-covariance
+matrix of the estimates by this value (i.e., SE's are multiplied by
+\code{sqrt(c.hat)}).  This option is not supported for generalized
+linear mixed models of the \code{mer} or \code{merMod} classes.
 }
   \item{gamdisp}{
 if gamma GLM is used, the dispersion parameter should be specified here
@@ -358,6 +357,14 @@ When this warning is only due to the presence of similarly named
 variables in the models (and NOT due to interaction terms), you can
 suppress this warning by setting \code{warn = FALSE}.
 
+The model-averaging estimator implemented in \code{modavg} is known to
+be biased away from 0 when there is substantial model selection
+uncertainty (Cade 2015).  In such instances, it is recommended to use
+the model-averaging shrinkage estimator (i.e., \code{modavgShrink}) for
+inference on beta estimates or to focus on model-averaged effect sizes
+(\code{modavgEffect}) and model-averaged predictions
+(\code{modavgPred}).
+
 \code{modavg} is implemented for a list containing objects of
 \code{aov}, \code{betareg}, \code{clm}, \code{clmm}, \code{clogit},
 \code{coxme}, \code{coxph}, \code{glm}, \code{gls}, \code{hurdle},
@@ -371,57 +378,65 @@ as various models of \code{unmarkedFit} classes.
 components: 
 
 \item{Parameter}{the parameter for which a model-averaged estimate was
-  obtained} 
+  obtained.} 
 \item{Mod.avg.table}{the reduced model selection table based on models
-  including the parameter of interest}
+  including the parameter of interest.}
 \item{Mod.avg.beta}{the model-averaged estimate based on all models
   including the parameter of interest (see 'Details' above regarding the
   exclusion of models where parameter of interest is involved in an
-  interaction)}
+  interaction).}
 \item{Uncond.SE}{the unconditional standard error for the model-averaged
-  estimate (as opposed to the conditional SE based on a single model)}
+  estimate (as opposed to the conditional SE based on a single model).}
 \item{Conf.level}{the confidence level used to compute the confidence
-  interval} 
-\item{Lower.CL}{the lower confidence limit}
-\item{Upper.CL}{the upper confidence limit}
+  interval.} 
+\item{Lower.CL}{the lower confidence limit.}
+\item{Upper.CL}{the upper confidence limit.}
 
 }
 \references{
-Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:
-a primer on evidence}. Springer: New York.
+  Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:
+    a primer on evidence}. Springer: New York.
 
-Buckland, S. T., Burnham, K. P., Augustin, N. H. (1997) Model selection:
-an integral part of inference. \emph{Biometrics} \bold{53}, 603--618.  
+  Buckland, S. T., Burnham, K. P., Augustin, N. H. (1997) Model selection:
+  an integral part of inference. \emph{Biometrics} \bold{53}, 603--618.  
 
-Burnham, K. P., Anderson, D. R. (2002) \emph{Model Selection and
-Multimodel Inference: a practical information-theoretic
-approach}. Second edition. Springer: New York.
+  Burnham, K. P., Anderson, D. R. (2002) \emph{Model Selection and
+    Multimodel Inference: a practical information-theoretic
+    approach}. Second edition. Springer: New York.
 
-Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
-understanding AIC and BIC in model selection. \emph{Sociological
-Methods and Research} \bold{33}, 261--304.
+  Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
+  understanding AIC and BIC in model selection. \emph{Sociological
+    Methods and Research} \bold{33}, 261--304.
 
-Dail, D., Madsen, L. (2011) Models for estimating abundance from 
-repeated counts of an open population. \emph{Biometrics} \bold{67},
-577--587.
+  Cade, B. S. (2015) Model averaging and muddled multimodel
+  inferences. \emph{Ecology} \bold{96}, 2370--2382. 
 
-Lebreton, J.-D., Burnham, K. P., Clobert, J., Anderson, D. R. (1992)
-Modeling survival and testing biological hypotheses using marked
-animals: a unified approach with case-studies. \emph{Ecological
-  Monographs} \bold{62}, 67--118. 
+  Dail, D., Madsen, L. (2011) Models for estimating abundance from 
+  repeated counts of an open population. \emph{Biometrics} \bold{67},
+  577--587.
 
-MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
-J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
-detection probabilities are less than one. \emph{Ecology} \bold{83},
-2248--2255.
+  Lebreton, J.-D., Burnham, K. P., Clobert, J., Anderson, D. R. (1992)
+  Modeling survival and testing biological hypotheses using marked
+  animals: a unified approach with case-studies. \emph{Ecological
+    Monographs} \bold{62}, 67--118. 
 
-Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
-Akaike's Information Criterion (AIC) to assess the strength of
-biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
+  MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,
+  J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
+  detection probabilities are less than one. \emph{Ecology} \bold{83},
+  2248--2255.
 
-Royle, J. A. (2004) \emph{N}-mixture models for estimating population
-size from spatially replicated counts. \emph{Biometrics} \bold{60},
-108--115.
+  MacKenzie, D. I., Nichols, J. D., Hines, J. E., Knutson, M. G.,
+  Franklin, A. B. (2003) Estimating site occupancy, colonization, and
+  local extinction when a species is detected imperfectly. \emph{Ecology}
+  \bold{84}, 2200--2207.
+  
+  Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
+  Akaike's Information Criterion (AIC) to assess the strength of
+  biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
+  
+  Royle, J. A. (2004) \emph{N}-mixture models for estimating population
+  size from spatially replicated counts. \emph{Biometrics} \bold{60},
+  108--115.
 }
 \author{
 Marc J. Mazerolle

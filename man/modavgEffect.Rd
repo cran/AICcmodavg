@@ -33,16 +33,16 @@ Compute Model-averaged Effect Sizes (Multimodel Inference on Group Differences)
   defined by a categorical variable based on the entire model set and
   computes the unconditional standard error and unconditional confidence
   intervals as described in Buckland et al. (1997) and Burnham and
-  Anderson (2002). This can be particularly useful when dealing with
+  Anderson (2002).  This can be particularly useful when dealing with
   data from an experiment (e.g., ANOVA) and when the focus is to
-  determine the effect of a given factor. This is an
+  determine the effect of a given factor.  This is an
   information-theoretic alternative to multiple comparisons (e.g.,
   Burnham et al. 2011).
 }
 \usage{
 modavgEffect(cand.set, modnames = NULL, newdata, second.ord = TRUE,
-              nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-              \dots)
+             nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+             \dots)
 
 \method{modavgEffect}{AICaov.lm}(cand.set, modnames = NULL, newdata,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
@@ -87,58 +87,58 @@ modavgEffect(cand.set, modnames = NULL, newdata, second.ord = TRUE,
 
 \method{modavgEffect}{AICunmarkedFitOccu}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        conf.level = 0.95, type = "response", c.hat = 1, parm.type =
-        NULL, \dots)
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 
 \method{modavgEffect}{AICunmarkedFitColExt}(cand.set, modnames =
         NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
-        "revised", conf.level = 0.95, type = "response", c.hat = 1,
-        parm.type = NULL, \dots)
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
 
 \method{modavgEffect}{AICunmarkedFitOccuRN}(cand.set, modnames =
         NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
-        "revised", conf.level = 0.95, type = "response", c.hat = 1,
-        parm.type = NULL, \dots)
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
 
 \method{modavgEffect}{AICunmarkedFitPCount}(cand.set, modnames =
         NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
-        "revised", conf.level = 0.95, type = "response", c.hat = 1,
-        parm.type = NULL, \dots)
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
 
 \method{modavgEffect}{AICunmarkedFitPCO}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        conf.level = 0.95, type = "response", c.hat = 1, parm.type =
-        NULL, \dots)
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 
 \method{modavgEffect}{AICunmarkedFitDS}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        conf.level = 0.95, type = "response", c.hat = 1, parm.type =
-        NULL, \dots)
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 
 \method{modavgEffect}{AICunmarkedFitGDS}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
-        conf.level = 0.95, type = "response", c.hat = 1, parm.type =
-        NULL, \dots)
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 
 \method{modavgEffect}{AICunmarkedFitOccuFP}(cand.set, modnames =
         NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
-        "revised", conf.level = 0.95, type = "response", c.hat = 1,
-        parm.type = NULL, \dots)
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
 
 \method{modavgEffect}{AICunmarkedFitMPois}(cand.set, modnames =
         NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
-        "revised", conf.level = 0.95, type = "response", c.hat = 1,
-        parm.type = NULL, \dots)
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
 
 \method{modavgEffect}{AICunmarkedFitGMM}(cand.set, modnames =
        NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
-       "revised", conf.level = 0.95, type = "response", c.hat = 1,
-       parm.type = NULL, \dots)
+       "revised", conf.level = 0.95, type = "response",
+       c.hat = 1, parm.type = NULL, \dots)
 
 \method{modavgEffect}{AICunmarkedFitGPC}(cand.set, modnames =
         NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
-        "revised", conf.level = 0.95, type = "response", c.hat = 1,
-        parm.type = NULL, \dots)
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
 }
 
 
@@ -200,7 +200,7 @@ corrected for multiple comparisons between pairs of treatments, it is
 possible to adjust the \eqn{\alpha} level according to various
 strategies such as the Bonferroni correction (Dunn 1961).
 }
-  \item{type}{
+\item{type}{
 the scale of prediction requested, one of \code{"response"} or
 \code{"link"} (only relevant for \code{glm}, \code{mer}, and
 \code{unmarkedFit} classes).  Note that the value \code{"terms"} is not
@@ -211,13 +211,13 @@ value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from \code{c_hat}.  Note that values of \code{c.hat}
 different from 1 are only appropriate for binomial GLM's with trials > 1
 (i.e., success/trial or cbind(success, failure) syntax), with Poisson
-GLM's, single-season occupancy models (MacKenzie et al. 2002), or 
-\emph{N}-mixture models (Royle 2004, Dail and Madsen 2011).  If
-\code{c.hat > 1}, \code{modavgEffect} will return the quasi-likelihood
-analogue of the information criteria requested and multiply the
-variance-covariance matrix of the estimates by this value (i.e., SE's
-are multiplied by \code{sqrt(c.hat)}.  This option is not supported for
-generalized linear mixed models of the \code{mer} class.
+GLM's, single-season and dynamic occupancy models (MacKenzie et
+al. 2002, 2003), or \emph{N}-mixture models (Royle 2004, Dail and Madsen
+2011).  If \code{c.hat > 1}, \code{modavgEffect} will return the
+quasi-likelihood analogue of the information criteria requested and
+multiply the variance-covariance matrix of the estimates by this value
+(i.e., SE's are multiplied by \code{sqrt(c.hat)}).  This option is not
+supported for generalized linear mixed models of the \code{mer} class.
 }
   \item{gamdisp}{
 if gamma GLM is used, the dispersion parameter should be specified here
@@ -264,14 +264,19 @@ to apply the same value to each model.
 \details{
 The strategy used here to compute effect sizes is to work from the
 \code{newdata} object to create two predictions from a given model and
-compute the differences and standard errors between both values. This
+compute the differences and standard errors between both values.  This 
 step is executed for each model in the candidate model set, to obtain a
 model-averaged estimate of the effect size and unconditional standard
-error. As a result, the \code{newdata} argument is restricted to two
-rows, each for a given prediction. To specify each group, the values
-entered in the column for each explanatory variable must be identical,
-except for the grouping variable. A sensible choice of value for the
-explanatory variables is the average of the variable. 
+error.  As a result, the \code{newdata} argument is restricted to two
+rows, each for a given prediction.  To specify each group, the values
+entered in the column for each explanatory variable can be identical,
+except for the grouping variable.  In such a case, the function will
+identify the variable and the assign group names based on the values of 
+the variable.  If more than a single variable has different values in
+its respective column, the function will print generic names in the
+output to identify the two groups.  A sensible choice of value for the 
+explanatory variables to be held constant is the average of the
+variable.
 
 Model-averaging effect sizes is most useful in true experiments (e.g.,
 ANOVA-type designs), where one wants to obtain the best estimate of
@@ -329,7 +334,7 @@ Methods and Research} \bold{33}, 261--304.
 
 Burnham, K. P., Anderson, D. R., Huyvaert, K. P. (2011) AIC model
 selection and multimodel inference in behaviorial ecology: some
-background, observations and comparisons. \emph{Behavioral Ecology and
+background, observations and comparisons. \emph{Behavioral Ecology and 
 Sociobiology} \bold{65}, 23--25. 
 
 Dail, D., Madsen, L. (2011) Models for estimating abundance from 
@@ -344,9 +349,14 @@ J. A., Langtimm, C. A. (2002) Estimating site occupancy rates when
 detection probabilities are less than one. \emph{Ecology} \bold{83},
 2248--2255.
 
-Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
-Akaike's Information Criterion (AIC) to assess the strength of
-biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
+MacKenzie, D. I., Nichols, J. D., Hines, J. E., Knutson, M. G.,
+  Franklin, A. B. (2003) Estimating site occupancy, colonization, and
+  local extinction when a species is detected imperfectly. \emph{Ecology}
+  \bold{84}, 2200--2207.
+
+  Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
+  Akaike's Information Criterion (AIC) to assess the strength of
+  biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
 
 Royle, J. A. (2004) \emph{N}-mixture models for estimating population
 size from spatially replicated counts. \emph{Biometrics} \bold{60},

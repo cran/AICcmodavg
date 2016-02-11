@@ -46,7 +46,7 @@ modavgShrink.AICaov.lm <- function(cand.set, parm, modnames = NULL, second.ord =
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction
@@ -274,7 +274,7 @@ modavgShrink.AICsclm.clm <-
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction
@@ -379,7 +379,7 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE,
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction
@@ -474,8 +474,9 @@ modavgShrink.AICcoxme <- function(cand.set, parm, modnames = NULL, second.ord = 
     ##determine frequency of each term across models (except (Intercept) ) 
     pooled.terms <- unlist(mod_formula)
     terms.freq <- table(pooled.terms)
-    if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
+  
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
     inter.check <- ifelse(attr(regexpr(parm.inter[1], pooled.terms, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
@@ -567,8 +568,9 @@ modavgShrink.AICcoxph <- function(cand.set, parm, modnames = NULL, second.ord = 
     ##determine frequency of each term across models (except (Intercept) ) 
     pooled.terms <- unlist(mod_formula)
     terms.freq <- table(pooled.terms)
-    if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
+  
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
     inter.check <- ifelse(attr(regexpr(parm.inter[1], pooled.terms, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
@@ -661,7 +663,18 @@ modavgShrink.AICglm.lm <-
   fam.type <- unlist(lapply(cand.set, FUN = function(i) family(i)$family))
   fam.unique <- unique(fam.type)
   if(identical(fam.unique, "gaussian")) {disp <- NULL} else{disp <- 1}
-  ##poisson, binomial, and negative binomial defaults to 1 (no separate parameter for variance)
+  ##poisson and binomial defaults to 1 (no separate parameter for variance)
+
+  ##for negative binomial - reset to NULL
+  if(any(regexpr("Negative Binomial", fam.type) != -1)) {
+    disp <- NULL
+    ##check for mixture of negative binomial and other
+    ##number of models with negative binomial
+    negbin.num <- sum(regexpr("Negative Binomial", fam.type) != -1)
+    if(negbin.num < length(fam.type)) {
+      stop("Function does not support mixture of negative binomial with other distributions in model set")
+    }
+  }  
   ##gamma is treated separately
 
   ##remove all leading and trailing white space and within parm
@@ -677,7 +690,7 @@ modavgShrink.AICglm.lm <-
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction
@@ -828,8 +841,9 @@ modavgShrink.AICgls <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
+    
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
     inter.check <- ifelse(attr(regexpr(parm.inter[1], pooled.terms, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
@@ -930,7 +944,7 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE,
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "count_(Intercept)" & pooled.terms != "zero_(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction
@@ -1031,7 +1045,7 @@ modavgShrink.AIClm <- function(cand.set, parm, modnames = NULL, second.ord = TRU
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction
@@ -1128,7 +1142,7 @@ modavgShrink.AIClme <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
     ##check whether parm is involved in interaction
@@ -1227,7 +1241,7 @@ modavgShrink.AIClmekin <-
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction
@@ -1334,7 +1348,7 @@ modavgShrink.AICmaxlikeFit.list <-
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction
@@ -1444,7 +1458,7 @@ modavgShrink.AICmer <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
   
     ##check whether parm is involved in interaction
@@ -1555,7 +1569,7 @@ modavgShrink.AICglmerMod <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
   
     ##check whether parm is involved in interaction
@@ -1654,7 +1668,7 @@ modavgShrink.AIClmerMod <-
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
   
   ##check whether parm is involved in interaction
@@ -1757,8 +1771,9 @@ modavgShrink.AICmultinom.nnet <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
+    
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
     inter.check <- ifelse(attr(regexpr(parm.inter[1], pooled.terms, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
@@ -1926,7 +1941,7 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE,
   ##remove intercept from vector
   no.int <- pooled.terms[attr(regexpr(pattern = "\\|", text = pooled.terms), "match.length") == -1 ]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction
@@ -2032,7 +2047,7 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE,
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction
@@ -2135,7 +2150,7 @@ modavgShrink.AICsurvreg <- function(cand.set, parm, modnames = NULL, second.ord 
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction
@@ -2232,7 +2247,9 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE,
   fam.unique <- unique(fam.type)
   if(identical(fam.unique, "gaussianff")) {disp <- NULL} else{disp <- 1}
   if(identical(fam.unique, "gammaff")) stop("\nGamma distribution is not supported yet\n")
-  ##poisson, binomial, and negative binomial defaults to 1 (no separate parameter for variance)
+  ##poisson and binomial defaults to 1 (no separate parameter for variance)
+  ##for negative binomial - reset to NULL
+  if(identical(fam.unique, "negbinomial")) {disp <- NULL}
 
     
   ##remove all leading and trailing white space and within parm
@@ -2248,7 +2265,7 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE,
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "(Intercept)" & pooled.terms != "(Intercept):1" & pooled.terms != "(Intercept):2")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction or if label changes for some models - e.g., ZIP models
@@ -2422,7 +2439,7 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE,
   ##remove intercept from vector
   no.int <- pooled.terms[which(pooled.terms != "count_(Intercept)" & pooled.terms != "zero_(Intercept)")]
   terms.freq <- table(no.int)
-  if(length(unique(terms.freq)) > 1) stop("\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+  if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
 
   ##check whether parm is involved in interaction
@@ -2530,7 +2547,7 @@ modavgShrink.AICunmarkedFitOccu <-
     
     
     ##check for parm.type and stop if NULL
-    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
   
     
     ##remove all leading and trailing white space and within parm
@@ -2562,7 +2579,8 @@ modavgShrink.AICunmarkedFitOccu <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
+
 
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
@@ -2690,7 +2708,7 @@ modavgShrink.AICunmarkedFitColExt <-
     
     
     ##check for parm.type and stop if NULL
-    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
   
     
     ##remove all leading and trailing white space and within parm
@@ -2738,8 +2756,9 @@ modavgShrink.AICunmarkedFitColExt <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
+    
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
     inter.check <- ifelse(attr(regexpr(parm.inter[1], mod_formula, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
@@ -2866,7 +2885,7 @@ modavgShrink.AICunmarkedFitOccuRN <-
     
     
     ##check for parm.type and stop if NULL
-    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
   
     
     ##remove all leading and trailing white space and within parm
@@ -2897,8 +2916,9 @@ modavgShrink.AICunmarkedFitOccuRN <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
+    
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
     inter.check <- ifelse(attr(regexpr(parm.inter[1], mod_formula, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
@@ -3025,7 +3045,7 @@ modavgShrink.AICunmarkedFitPCount <-
     
     
     ##check for parm.type and stop if NULL
-    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
   
     
     ##remove all leading and trailing white space and within parm
@@ -3057,8 +3077,9 @@ modavgShrink.AICunmarkedFitPCount <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
+    
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
     inter.check <- ifelse(attr(regexpr(parm.inter[1], mod_formula, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
@@ -3185,7 +3206,7 @@ modavgShrink.AICunmarkedFitPCO <-
     
     
     ##check for parm.type and stop if NULL
-    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
   
     
     ##remove all leading and trailing white space and within parm
@@ -3233,8 +3254,9 @@ modavgShrink.AICunmarkedFitPCO <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
 
+    
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
     inter.check <- ifelse(attr(regexpr(parm.inter[1], mod_formula, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
@@ -3361,7 +3383,7 @@ modavgShrink.AICunmarkedFitDS <-
     
     
     ##check for parm.type and stop if NULL
-    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
   
     
     ##remove all leading and trailing white space and within parm
@@ -3393,7 +3415,8 @@ modavgShrink.AICunmarkedFitDS <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
+    
 
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
@@ -3521,7 +3544,7 @@ modavgShrink.AICunmarkedFitGDS <-
     
     
     ##check for parm.type and stop if NULL
-    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
   
     
     ##remove all leading and trailing white space and within parm
@@ -3534,8 +3557,8 @@ modavgShrink.AICunmarkedFitGDS <-
     ##lambda - abundance
     if(identical(parm.type, "lambda")) {
       ##extract model formula for each model in cand.set
-      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
-      parm.unmarked <- "lam"
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$lambda)))
+      parm.unmarked <- "lambda"
       parm <- paste(parm.unmarked, "(", parm, ")", sep="")
     }
     ##detect
@@ -3558,7 +3581,8 @@ modavgShrink.AICunmarkedFitGDS <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
+    
 
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
@@ -3686,7 +3710,7 @@ modavgShrink.AICunmarkedFitOccuFP <-
     
     
     ##check for parm.type and stop if NULL
-    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
   
     
     ##remove all leading and trailing white space and within parm
@@ -3724,7 +3748,8 @@ modavgShrink.AICunmarkedFitOccuFP <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
+    
 
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
@@ -3852,7 +3877,7 @@ modavgShrink.AICunmarkedFitMPois <-
     
     
     ##check for parm.type and stop if NULL
-    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
   
     
     ##remove all leading and trailing white space and within parm
@@ -3886,7 +3911,8 @@ modavgShrink.AICunmarkedFitMPois <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
+    
 
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
@@ -4014,7 +4040,7 @@ modavgShrink.AICunmarkedFitGMM <-
     
     
     ##check for parm.type and stop if NULL
-    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
   
     
     ##remove all leading and trailing white space and within parm
@@ -4053,7 +4079,8 @@ modavgShrink.AICunmarkedFitGMM <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
+    
 
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
@@ -4181,7 +4208,7 @@ modavgShrink.AICunmarkedFitGPC <-
     
     
     ##check for parm.type and stop if NULL
-    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
   
     
     ##remove all leading and trailing white space and within parm
@@ -4220,7 +4247,8 @@ modavgShrink.AICunmarkedFitGPC <-
     ##remove intercept from vector
     no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
     terms.freq <- table(no.int)
-    if(length(unique(terms.freq)) > 1) stop("\n\nTo compute a shrinkage version of model-averaged estimate, each term must appear with the same frequency across models\n")
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
+    
 
     ##check whether parm is involved in interaction
     parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
@@ -4332,10 +4360,10 @@ modavgShrink.AICunmarkedFitGPC <-
 print.modavgShrink <-
   function(x, digits = 2, ...) {
     ic <- colnames(x$Mod.avg.table)[3]
-    cat("\nMultimodel inference on \"", x$Parameter, "\" based on", ic, "\n")
-    cat("\n", ic, "table used to obtain model-averaged estimate with shrinkage:\n")
+    cat("\nMultimodel inference on \"", x$Parameter, "\" based on ", ic, "\n", sep = "")
+    cat("\n", ic, " table used to obtain model-averaged estimate with shrinkage:\n", sep = "")
     oldtab <- x$Mod.avg.table
-    if (any(names(oldtab) == "c_hat")) {cat("\t(c-hat estimate = ", oldtab$c_hat[1], ")\n")}
+    if (any(names(oldtab) == "c_hat")) {cat("\t(c-hat estimate = ", oldtab$c_hat[1], ")\n", sep = "")}
     cat("\n")
     if (any(names(oldtab)=="c_hat")) {
       nice.tab <- cbind(oldtab[, 2], oldtab[, 3], oldtab[, 4], oldtab[, 6],
@@ -4351,8 +4379,8 @@ print.modavgShrink <-
       print(round(nice.tab, digits = digits))
       cat("\nModel-averaged estimate with shrinkage:", eval(round(x$Mod.avg.beta, digits = digits)), "\n")
       cat("Unconditional SE:", eval(round(x$Uncond.SE, digits = digits)), "\n")
-      cat("",x$Conf.level*100, "% Unconditional confidence interval:", round(x$Lower.CL, digits = digits),
-          ",", round(x$Upper.CL, digits = digits), "\n\n")
+      cat("",x$Conf.level*100, "% Unconditional confidence interval: ", round(x$Lower.CL, digits = digits),
+          ", ", round(x$Upper.CL, digits = digits), "\n\n", sep = "")
     } else {
       col.ns <- ncol(nice.tab)
       nice.tab <- nice.tab[,-c(col.ns - 1, col.ns)]
@@ -4362,8 +4390,8 @@ print.modavgShrink <-
       cat("\n\nModel-averaged estimates with shrinkage for different levels of response variable:", "\n\n")
       resp.labels <- labels(x$Mod.avg.beta)
       mult.out <- matrix(NA, nrow = length(resp.labels), ncol = 4)
-      colnames(mult.out) <- c("Model-averaged estimate with shrinkage", "Uncond. SE", paste(x$Conf.level*100,"% lower CL"),
-                              paste(x$Conf.level*100, "% upper CL"))
+      colnames(mult.out) <- c("Model-averaged estimate with shrinkage", "Uncond. SE", paste(x$Conf.level*100,"% lower CL", sep = ""),
+                              paste(x$Conf.level*100, "% upper CL", sep = ""))
       rownames(mult.out) <- resp.labels
       mult.out[, 1] <- round(x$Mod.avg.beta, digits = digits)
       mult.out[, 2] <- round(x$Uncond.SE, digits = digits)
