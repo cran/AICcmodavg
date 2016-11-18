@@ -210,6 +210,7 @@ AICc.hurdle <-
   }
 
 
+
 ##lavaan
 AICc.lavaan <-
   function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
@@ -221,6 +222,7 @@ AICc.lavaan <-
     if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
     AICc
   }
+
 
 
 ##lm objects
@@ -250,6 +252,7 @@ AICc.lme <-
   }
 
 
+
 ##lmekin objects
 AICc.lmekin <-
   function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
@@ -261,6 +264,7 @@ AICc.lmekin <-
     if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
     return(AICc)
   }
+
 
 
 ##maxlike objects
@@ -283,6 +287,7 @@ AICc.maxlikeFit <- function(mod, return.K = FALSE, second.ord = TRUE, nobs = NUL
 }
 
 
+
 ##mer object
 AICc.mer <-
   function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
@@ -299,6 +304,7 @@ AICc.mer <-
     if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
     AICc
   }
+
 
 
 ##merMod objects
@@ -318,6 +324,7 @@ AICc.merMod <-
     if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
     AICc
   }
+
 
 
 ##mult objects
@@ -348,6 +355,7 @@ AICc.multinom <-
     if(return.K==TRUE) AICc[1]<-K #attributes the first element of AICc to K
     AICc
   }
+
 
 
 ##nlme objects

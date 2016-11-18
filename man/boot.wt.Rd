@@ -101,7 +101,7 @@ value of overdispersion parameter (i.e., variance inflation factor) such
 as that obtained from \code{c_hat}.  Note that values of c.hat different
 from 1 are only appropriate for binomial GLM's with trials > 1 (i.e.,
 success/trial or cbind(success, failure) syntax) or with Poisson
-GLM's.  If c.hat > 1, \code{AICc} will return the quasi-likelihood
+GLM's.  If c.hat > 1, \code{boot.wt} will return the quasi-likelihood
 analogue of the information criterion requested.
 }
 

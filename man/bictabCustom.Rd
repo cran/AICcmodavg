@@ -1,22 +1,22 @@
-\name{aictabCustom}
+\name{bictabCustom}
 \Rdversion{1.1}
-\alias{aictabCustom}
+\alias{bictabCustom}
 \title{
 Custom Creation of Model Selection Tables from User-supplied Input Based
-on (Q)AIC(c)
+on (Q)BIC
 }
 \description{
   This function creates a model selection table from model input
   (log-likelihood, number of estimated parameters) supplied by the user
   instead of extracting the values automatically from a list of
-  candidate models.  The models are ranked based on one of the following
-  information criteria:  AIC, AICc, QAIC, QAICc.  The table ranks the
-  models based on the selected information criteria and also provides
-  delta AIC and Akaike weights.  
+  candidate models.  The models are ranked based on the BIC (Schwarz
+  1978) or on a quasi-likelihood analogue (QBIC) corrected for
+  overdispersion.  The table ranks the models based on the selected
+  information criteria and also provides delta BIC and BIC weights.
 }
 \usage{
-aictabCustom(logL, K, modnames = NULL, second.ord = TRUE, nobs = NULL,
-             sort = TRUE, c.hat = 1) 
+bictabCustom(logL, K, modnames = NULL, nobs = NULL, sort = TRUE,
+             c.hat = 1) 
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -37,16 +37,12 @@ aictabCustom(logL, K, modnames = NULL, second.ord = TRUE, nobs = NULL,
     provided, generic names (e.g., \code{Mod1}, \code{Mod2}) are supplied in
     the table in the same order as in the list of candidate models.
   }
-  \item{second.ord}{
-    logical.  If \code{TRUE}, the function returns the second-order
-    Akaike information criterion (i.e., AICc).
-  }
   \item{nobs}{
     the sample size required to compute the AICc or QAICc.
   }
   \item{sort}{
     logical.  If \code{TRUE}, the model selection table is ranked according
-    to the (Q)AIC(c) values.
+    to the (Q)BIC values.
   }
   \item{c.hat}{
    value of overdispersion parameter (i.e., variance inflation factor)
@@ -56,39 +52,38 @@ aictabCustom(logL, K, modnames = NULL, second.ord = TRUE, nobs = NULL,
    syntax), with Poisson GLM's, single-season or dynamic occupancy
    models (MacKenzie et al. 2002, 2003), \emph{N}-mixture models (Royle
    2004, Dail and Madsen 2011), or capture-mark-recapture models (e.g.,
-   Lebreton et al. 1992).  If c.hat > 1, \code{aictabCustom} will return the
-   quasi-likelihood analogue of the information criterion requested.
+   Lebreton et al. 1992).  If c.hat > 1, \code{bictabCustom} will return
+   the quasi-likelihood analogue of the information criterion requested.
 }
 }
 \details{
-  \code{aictabCustom} constructs a model selection table based on one of
-  the four information criteria: AIC, AICc, QAIC, and QAICc.  This
-  function is most useful when model input is imported into R from other
-  software (e.g., Program MARK, PRESENCE) or for model classes that are
-  not yet supported by \code{aictab}.
+  \code{bictabCustom} constructs a model selection table based on BIC or
+  QBIC.  This function is most useful when model input is imported into
+  R from other software (e.g., Program MARK, PRESENCE) or for model
+  classes that are not yet supported by \code{bictab}.
 }
 
   \value{
-    \code{aictabCustom} creates an object of class \code{aictab} with the
+    \code{bictabCustom} creates an object of class \code{bictab} with the
     following components:
 
     \item{Modname}{the names of each model of the candidate model set.}
     \item{K }{the number of estimated parameters for each model.}
-    \item{(Q)AIC(c) }{the information criteria requested for each model
-      (AICc, AICc, QAIC, QAICc).}
-    \item{Delta_(Q)AIC(c) }{the appropriate delta AIC component depending on
-      the information criteria selected.}
+    \item{(Q)BIC }{the information criteria requested for each model
+      (BIC, QBIC).}
+    \item{Delta_(Q)BIC }{the appropriate delta BIC component depending
+    on the information criteria selected.}
     \item{ModelLik }{the relative likelihood of the model given the
       data (exp(-0.5*delta[i])).  This is not to be confused with the
       likelihood of the parameters given the data.  The relative likelihood
       can then be normalized across all models to get the model probabilities.} 
-    \item{(Q)AIC(c)Wt}{the Akaike weights, also termed "model
-      probabilities" sensu Burnham and Anderson (2002) and Anderson (2008).
-      These measures indicate the level of support (i.e., weight of
-      evidence) in favor of any given model being the most parsimonious
-      among the candidate model set.}
-    \item{Cum.Wt }{the cumulative Akaike weights.  These are only meaningful
-      if results in table are sorted in decreasing order of Akaike weights
+    \item{(Q)BICWt}{the BIC weights, also termed "model probabilities"
+    sensu Burnham and Anderson (2002) and Anderson (2008).  These
+    measures indicate the level of support (i.e., weight of evidence) in
+    favor of any given model being the most parsimonious among the
+    candidate model set.} 
+    \item{Cum.Wt }{the cumulative BIC weights.  These are only meaningful
+      if results in table are sorted in decreasing order of BIC weights
       (i.e., sort = TRUE).}
     \item{c.hat}{if c.hat was specified as an argument, it is included in
       the table.}
@@ -130,6 +125,9 @@ biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180.
 Royle, J. A. (2004) \emph{N}-mixture models for estimating population
 size from spatially replicated counts. \emph{Biometrics} \bold{60},
 108--115.
+
+Schwarz, G. (1978) Estimating the dimension of a model. \emph{Annals of
+  Statistics} \bold{6}, 461--464.
 }
 \author{
 Marc J. Mazerolle
@@ -148,9 +146,9 @@ Ks <- c(7, 9, 4)
 ##create a vector of names to trace back models in set
 Modnames <- c("Cm1", "Cm2", "Cm3")
 
-##generate AICc table
-aictabCustom(logL = LL, K = Ks, modnames = Modnames, nobs = 121,
-             sort = TRUE) 
+##generate BIC table
+bictabCustom(logL = LL, K = Ks, modnames = Modnames, nobs = 121,
+             sort = TRUE)
 }
 
 \keyword{models}

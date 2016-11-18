@@ -16,7 +16,7 @@ al. (1997) and Burnham and Anderson (2002).
 \usage{
 modavgCustom(logL, K, modnames = NULL, estimate, se, second.ord = TRUE,
              nobs = NULL, uncond.se = "revised", conf.level = 0.95,
-             c.hat = 1) 
+             c.hat = 1, useBIC = FALSE) 
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -48,10 +48,11 @@ models.
 }  
 \item{second.ord}{
 logical.  If \code{TRUE}, the function returns the second-order
-Akaike information criterion (i.e., AICc).
+Akaike information criterion (i.e., AICc).  This argument is ignored if
+\code{useBIC = TRUE}.
 }
 \item{nobs}{
-  the sample size required to compute the AICc or QAICc.
+  the sample size required to compute the AICc, QAICc, BIC, or QBIC.
 }
 \item{uncond.se}{
   either, \code{"old"}, or \code{"revised"}, specifying the equation
@@ -76,10 +77,15 @@ different from 1 are only appropriate for binomial GLM's with trials > 1
 GLM's, single-season and dynamic occupancy models (MacKenzie et
 al. 2002, 2003), \emph{N}-mixture models (Royle 2004, Dail and Madsen
 2011), or capture-mark-recapture models (e.g., Lebreton et al. 1992).
-If \code{c.hat} > 1, \code{modavg} will return the quasi-likelihood
-analogue of the information criteria requested and multiply the
-variance-covariance matrix of the estimates by this value (i.e., SE's
-are multiplied by \code{sqrt(c.hat)}).
+If \code{c.hat} > 1, \code{modavgCustom} will return the
+quasi-likelihood analogue of the information criteria requested and
+multiply the variance-covariance matrix of the estimates by this value
+(i.e., SE's are multiplied by \code{sqrt(c.hat)}).
+}
+\item{useBIC}{
+logical.  If \code{TRUE}, the function returns the Bayesian information
+criterion (BIC) when \code{c.hat = 1} or the quasi-likelihood BIC (QBIC)
+when \code{c.hat > 1}.
 }
 }
 
@@ -148,9 +154,9 @@ Marc J. Mazerolle
 }
 
 \seealso{
-\code{\link{AICcCustom}}, \code{\link{aictabCustom}}
-\code{\link{modavg}}, \code{\link{modavgShrink}},
-\code{\link{modavgPred}}
+\code{\link{AICcCustom}}, \code{\link{aictabCustom}},
+\code{\link{bictabCustom}}, \code{\link{modavg}},
+\code{\link{modavgShrink}}, \code{\link{modavgPred}}
 }
 \examples{
 \dontrun{
@@ -170,13 +176,16 @@ model.ests <- c(0.0478, 0.0480, 0.0478)
 ##vector of SE's of beta estimates for a parameter of interest
 model.se.ests <- c(0.0028, 0.0028, 0.0034)
 
-##compute model-averaged estimate and unconditional SE
+##compute model-averaged estimate and unconditional SE based on AICc
 modavgCustom(logL = LL, K = Ks, modnames = Modnames, 
-             estimate = mode.ests, se = model.se.ests, nobs = 121)
+             estimate = model.ests, se = model.se.ests, nobs = 121)
+##compute model-averaged estimate and unconditional SE based on BIC
+modavgCustom(logL = LL, K = Ks, modnames = Modnames, 
+             estimate = model.ests, se = model.se.ests, nobs = 121,
+             useBIC = TRUE)
 
 
-
-##model-averaging with shrinkage
+##model-averaging with shrinkage based on AICc
 ##set up candidate models
 data(min.trap)
 Cand.mod <- list( )
@@ -207,9 +216,13 @@ betas[2] <- 0
 ##extract SE's
 ses <- sapply(Cand.mod, FUN = function(i) sqrt(diag(vcov(i))["log.Perimeter"]))
 ses[2] <- 0
-##extract
+##model-averaging with shrinkage based on AICc
 modavgCustom(logL = LLs, K = Ks, modnames = Model.names,
              nobs = nrow(min.trap), estimate = betas, se = ses)
+##model-averaging with shrinkage based on BIC
+modavgCustom(logL = LLs, K = Ks, modnames = Model.names,
+             nobs = nrow(min.trap), estimate = betas, se = ses,
+             useBIC = TRUE)
 }
 }
 \keyword{models}

@@ -86,7 +86,7 @@ if(na.vals) {
   
   ##cohorts without NA
   cohort.not.na <- sort(un.hist[-id.na])
-  out.hist.not.na <- out.hist[-id.det.hist.na, ]
+  out.hist.not.na <- out.hist[-id.det.hist.na, , drop = FALSE]
   out.hist.not.na$det.hist <- droplevels(out.hist.not.na$det.hist)
   n.cohort.not.na <- length(cohort.not.na)
   n.sites.not.na <- length(det.hist) - length(id.det.hist.na)
@@ -123,8 +123,8 @@ if(n.cohort.not.na > 0) {  ##expected frequencies for non-missing data
 
       ##in extreme cases where only a single cohort occurs without missing values
       if(n.sites.not.na == 1) {
-        hist.mat[j, ] <- ifelse(strip.hist == "1", preds.p.not.na[j],
-                                ifelse(strip.hist == "0", 1 - preds.p.not.na[j],
+        hist.mat[j, ] <- ifelse(strip.hist == "1", preds.p.not.na,
+                                ifelse(strip.hist == "0", 1 - preds.p.not.na,
                                        0))
       } else {
         hist.mat[j, ] <- ifelse(strip.hist == "1", preds.p.not.na[j, ],
@@ -491,7 +491,7 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
   
       ##cohorts without NA
       cohort.not.na <- sort(un.hist[-id.na])
-      out.hist.not.na <- out.hist[-id.det.hist.na, ]
+      out.hist.not.na <- out.hist[-id.det.hist.na, , drop = FALSE]
       out.hist.not.na$det.hist <- droplevels(out.hist.not.na$det.hist)
       n.cohort.not.na <- length(cohort.not.na)
       n.sites.not.na <- length(det.hist) - length(id.det.hist.na)
@@ -540,8 +540,8 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
           if(n.sites.not.na == 1 || Ts == 1) {
             ##modified
 #############            
-            hist.mat[j, ] <- ifelse(strip.hist == "1", preds.p.not.na[j],
-                                    ifelse(strip.hist == "0", 1 - preds.p.not.na[j],
+            hist.mat[j, ] <- ifelse(strip.hist == "1", preds.p.not.na,
+                                    ifelse(strip.hist == "0", 1 - preds.p.not.na,
                                            0))
           } else {
             hist.mat[j, ] <- ifelse(strip.hist == "1", preds.p.not.na[j, ],
@@ -686,7 +686,7 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
 
       if(length(never.sampled) > 0) {
         ##remove row for site never sampled
-        chisq.missing <- chisq.missing[-never.sampled, ]
+        chisq.missing <- chisq.missing[-never.sampled, , drop = FALSE]
       }
 
       if(n.cohort.not.na > 0) {
@@ -737,24 +737,36 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
 
 ##simulating data from model to compute P-value of test statistic
 ##create generic mb.gof.test 
-mb.gof.test <- function(mod, nsim = 5, plot.hist = TRUE, ...){
+mb.gof.test <- function(mod, nsim = 5, plot.hist = TRUE,
+                        report = NULL, ...){
   UseMethod("mb.gof.test", mod)
 }
 
-mb.gof.test.default <- function(mod, nsim = 5, plot.hist = TRUE, ...){
+mb.gof.test.default <- function(mod, nsim = 5, plot.hist = TRUE,
+                                report = NULL, ...){
   stop("\nFunction not yet defined for this object class\n")
 }
 
 
 ##for single-season occupancy models of class unmarkedFitOccu
-mb.gof.test.unmarkedFitOccu <- function(mod, nsim = 5, plot.hist = TRUE, ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
+mb.gof.test.unmarkedFitOccu <- function(mod, nsim = 5, plot.hist = TRUE,
+                                        report = NULL, ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract table from fitted model
   mod.table <- mb.chisq(mod)
 
+  ##if NULL, don't print test statistic at each iteration
+  if(is.null(report)) {
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) mb.chisq(i)$chi.square,
+                     nsim = nsim)
+  } else {
+
   ##compute GOF P-value
   out <- parboot(mod, statistic = function(i) mb.chisq(i)$chi.square,
-                 nsim = nsim)
+                 nsim = nsim, report = report)
+}
+  
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
@@ -784,17 +796,27 @@ gof.out <- list(model.type = mod.table$model.type, chisq.table = mod.table$chisq
 
 
 ##dynamic occupancy models of class unmarkedFitColExt
-mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE, plot.seasons = FALSE, ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
+mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
+                                          report = NULL, plot.seasons = FALSE,
+                                          ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract table from fitted model
   mod.table <- mb.chisq(mod)
   n.seasons <- mod.table$n.seasons
   n.seasons.adj <- n.seasons #total number of plots fixed to 11 or 12, depending on plots requested
-    
-  ##compute GOF P-value
-  out <- parboot(mod, statistic = function(i) mb.chisq(i)$all.chisq, #extract chi-square for each year
-                 nsim = nsim)
 
+  ##if NULL, don't print test statistic at each iteration
+  if(is.null(report)) {
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) mb.chisq(i)$all.chisq,
+                     nsim = nsim)
+  } else {
+
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) mb.chisq(i)$all.chisq, #extract chi-square for each year
+                     nsim = nsim, report = report)
+  }
+  
   ##list to hold results
   p.vals <- list( )
 
@@ -921,7 +943,7 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE, plot.
   if(p.global == 0) {
     p.global.display <- paste("< ", 1/nsim)
   } else {
-    p.global.display <- round(p.global, digits = 4)
+    p.global.display <- paste("=", round(p.global, digits = 4))
   }
 
   ##optionally show sum of chi-squares
@@ -930,8 +952,8 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE, plot.
     hist(sum.chisq, main = paste("Bootstrapped sum of chi-square statistic (", nsim, " samples)", sep = ""),
          xlim = range(c(sum.chisq, obs.chisq)),
          xlab = paste("Simulated statistic ", "(observed = ", round(obs.chisq, digits = 2), ")", sep = ""))
-    title(main = bquote(paste(italic(P), " ", .(p.vals[[k]]$p.display))), line = 0.5)
-    abline(v = out@t0[k], lty = "dashed", col = "red")
+    title(main = bquote(paste(italic(P), " ", .(p.global.display))), line = 0.5)
+    abline(v = obs.chisq, lty = "dashed", col = "red")
   }
 
   

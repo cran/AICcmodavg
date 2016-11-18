@@ -5,6 +5,7 @@
 \alias{aictab.AICaov.lm}
 \alias{aictab.AICbetareg}
 \alias{aictab.AICsclm.clm}
+\alias{aictab.AICclm}
 \alias{aictab.AICclmm}
 \alias{aictab.AICcoxme}
 \alias{aictab.AICcoxph}
@@ -76,6 +77,9 @@ aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
 \method{aictab}{AICclmm}(cand.set, modnames = NULL,
+       second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
+\method{aictab}{AICclm}(cand.set, modnames = NULL,
        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
 \method{aictab}{AICcoxme}(cand.set, modnames = NULL,
@@ -224,7 +228,7 @@ success/trial or cbind(success, failure) syntax), with Poisson GLM's,
 single-season occupancy models (MacKenzie et al. 2002), dynamic
 occupancy models (MacKenzie et al. 2003), or \emph{N}-mixture models
 (Royle 2004, Dail and Madsen 2011).  If \code{c.hat} > 1,
-\code{modavgShrink} will return the quasi-likelihood analogue of the
+\code{aictab} will return the quasi-likelihood analogue of the
 information criteria requested and multiply the variance-covariance
 matrix of the estimates by this value (i.e., SE's are multiplied by
 \code{sqrt(c.hat)}).  This option is not supported for generalized
@@ -313,7 +317,7 @@ following components:
 
 \item{Modname}{the names of each model of the candidate model set.}
 \item{K }{the number of estimated parameters for each model.}
-\item{(Q)AIC(c) }{the information criteria requested for each model
+\item{(Q)AIC(c) }{the information criterion requested for each model
   (AIC, AICc, QAIC, QAICc).}
 \item{Delta_(Q)AIC(c) }{the appropriate delta AIC component depending on
   the information criteria selected.}
@@ -328,7 +332,7 @@ following components:
   among the candidate model set.}
 \item{Cum.Wt }{the cumulative Akaike weights.  These are only meaningful
 if results in table are sorted in decreasing order of Akaike weights
-(i.e., sort = TRUE).}
+(i.e., \code{sort = TRUE}).}
 \item{c.hat}{if c.hat was specified as an argument, it is included in
   the table.}
 \item{LL}{if c.hat = 1 and parameters estimated by maximum likelihood,
@@ -376,10 +380,11 @@ size from spatially replicated counts. \emph{Biometrics} \bold{60},
 Marc J. Mazerolle
 }
 \seealso{
-\code{\link{AICc}}, \code{\link{aictabCustom}}, \code{\link{confset}},
-\code{\link{c_hat}}, \code{\link{evidence}}, \code{\link{importance}},
-\code{\link{modavg}}, \code{\link{modavgEffect}},
-\code{\link{modavgShrink}}, \code{\link{modavgPred}}
+\code{\link{AICc}}, \code{\link{aictabCustom}}, \code{\link{bictab}},
+\code{\link{confset}}, \code{\link{c_hat}}, \code{\link{evidence}},
+\code{\link{importance}}, \code{\link{modavg}},
+\code{\link{modavgEffect}}, \code{\link{modavgShrink}},
+\code{\link{modavgPred}} 
 }
 \examples{
 ##Mazerolle (2006) frog water loss example

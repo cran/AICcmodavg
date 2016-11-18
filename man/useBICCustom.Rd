@@ -1,22 +1,19 @@
-\name{AICcCustom}
+\name{useBICCustom}
 \Rdversion{1.1}
-\alias{AICcCustom}
+\alias{useBICCustom}
 \title{
-  Custom Computation of AIC, AICc, QAIC, and QAICc from User-supplied
-  Input
+  Custom Computation of BIC and QBIC from User-supplied Input
 }
 \description{
-  This function computes Akaike's information criterion (AIC), the
-  second-order AIC (AICc), as well as their quasi-likelihood
-  counterparts (QAIC, QAICc) from user-supplied input instead of
-  extracting the values automatically from a model object.  This
+  This function computes the Bayesian information criterion (BIC) or a
+  quasi-likelihood counterpart (QBIC) from user-supplied input instead
+  of extracting the values automatically from a model object.  This
   function is particularly useful for output imported from other
   software or for model classes that are not currently supported by
-  \code{AICc}.
+  \code{useBIC}.
 }
 \usage{
-AICcCustom(logL, K, return.K = FALSE, second.ord = TRUE, nobs = NULL,
-           c.hat = 1)
+useBICCustom(logL, K, return.K = FALSE, nobs = NULL, c.hat = 1)
 }
 
 \arguments{
@@ -31,12 +28,8 @@ AICcCustom(logL, K, return.K = FALSE, second.ord = TRUE, nobs = NULL,
     criterion specified.  If \code{TRUE}, the function returns K (number
     of estimated parameters) for a given model.  
 }
-\item{second.ord}{
-  logical.  If \code{TRUE}, the function returns the second-order Akaike
-  information criterion (i.e., AICc). 
-}
 \item{nobs}{
-  the sample size required to compute the AICc or QAICc.
+  the sample size required to compute the BIC or QBIC.
 }
  \item{c.hat}{
    value of overdispersion parameter (i.e., variance inflation factor)
@@ -46,25 +39,24 @@ AICcCustom(logL, K, return.K = FALSE, second.ord = TRUE, nobs = NULL,
    syntax), with Poisson GLM's, single-season or dynamic occupancy
    models (MacKenzie et al. 2002, 2003), \emph{N}-mixture models (Royle
    2004, Dail and Madsen 2011), or capture-mark-recapture models (e.g.,
-   Lebreton et al. 1992).  If c.hat > 1, \code{AICcCustom} will return
+   Lebreton et al. 1992).  If c.hat > 1, \code{useBICCustom} will return
    the quasi-likelihood analogue of the information criterion requested.
 }
 }
 \details{
-  \code{AICcCustom} computes one of the following four information criteria:
+  \code{useBICCustom} computes one of the following two information
+  criteria:
   
-  Akaike's information criterion (AIC, Akaike 1973), the  second-order
-  or small sample AIC (AICc, Sugiura   1978, Hurvich and Tsai 1991), the
-  quasi-likelihood AIC (QAIC, Burnham and Anderson 2002), and the
-  quasi-likelihood AICc (QAICc, Burnham and Anderson 2002).
+  the Bayesian information criterion (BIC, Schwarz 1978) or the
+  quasi-likelihood BIC (QBIC).
 }
 \value{
-  \code{AICcCustom} returns the AIC, AICc, QAIC, or QAICc, or the number
-  of estimated parameters, depending on the values of the arguments.
+  \code{useBICCustom} returns the BIC or QBIC depending on the values of
+  the \code{c.hat} argument.
 }
 
 \note{
-  The actual (Q)AIC(c) values are not really interesting in themselves,
+  The actual (Q)BIC values are not really interesting in themselves,
   as they depend directly on the data, parameters estimated, and
   likelihood function.  Furthermore, a single value does not tell much
   about model fit.  Information criteria become relevant when compared
@@ -72,23 +64,14 @@ AICcCustom(logL, K, return.K = FALSE, second.ord = TRUE, nobs = NULL,
 }
 
 \references{
-  Akaike, H. (1973) Information theory as an extension of the maximum
-  likelihood principle. In:  \emph{Second International Symposium on
-  Information Theory}, pp. 267--281. Petrov, B.N., Csaki, F., Eds,
-  Akademiai Kiado, Budapest.
-
   Burnham, K. P., Anderson, D. R. (2002) \emph{Model Selection and
   Multimodel Inference: a practical information-theoretic
   approach}. Second edition. Springer: New York.
 
-Dail, D., Madsen, L. (2011) Models for estimating abundance from
-repeated counts of an open population. \emph{Biometrics} \bold{67},
-577--587. 
+  Dail, D., Madsen, L. (2011) Models for estimating abundance from
+  repeated counts of an open population. \emph{Biometrics} \bold{67},
+  577--587. 
   
-  Hurvich, C. M., Tsai, C.-L. (1991) Bias of the corrected AIC
-  criterion for underfitted regression and time series
-  models. \emph{Biometrika} \bold{78}, 499--509. 
-
   Lebreton, J.-D., Burnham, K. P., Clobert, J., Anderson, D. R. (1992)
   Modeling survival and testing biological hypotheses using marked
   animals: a unified approach with case-studies. \emph{Ecological
@@ -104,21 +87,21 @@ repeated counts of an open population. \emph{Biometrics} \bold{67},
   local extinction when a species is detected imperfectly. \emph{Ecology}
   \bold{84}, 2200--2207.
   
-Royle, J. A. (2004) \emph{N}-mixture models for estimating population
+  Royle, J. A. (2004) \emph{N}-mixture models for estimating population
   size from spatially replicated counts. \emph{Biometrics} \bold{60}, 
   108--115.
 
-  Sugiura, N. (1978) Further analysis of the data by Akaike's
-  information criterion and the finite corrections. \emph{Communications
-  in Statistics:  Theory and Methods} \bold{A7}, 13--26.
+Schwarz, G. (1978) Estimating the dimension of a model. \emph{Annals of
+  Statistics} \bold{6}, 461--464.
+
 }
 \author{
   Marc J. Mazerolle
 }
 
 \seealso{
-\code{\link{AICc}}, \code{\link{aictabCustom}}, \code{\link{confset}}, 
-\code{\link{evidence}}, \code{\link{c_hat}}, \code{\link{modavgCustom}}
+\code{\link{AICc}}, \code{\link{aictabCustom}}, \code{\link{useBIC}}, 
+\code{\link{bictab}}, \code{\link{evidence}}, \code{\link{modavgCustom}} 
 }
 
 
@@ -132,9 +115,12 @@ glob.mod <- lm(y ~ x1 + x2 + x3 + x4, data = cement)
 LL <- logLik(glob.mod)[1]
 
 ##extract number of parameters
-K.mod <- coef(glob.mod) + 1
+##including residual variance
+K.mod <- length(coef(glob.mod)) + 1
 
-##compute AICc with full likelihood
-AICcCustom(LL, K.mod, nobs = nrow(cement))
+##compute BIC with full likelihood
+useBICCustom(LL, K.mod, nobs = nrow(cement))
+##compare against useBIC
+useBIC(glob.mod)
 }
 \keyword{models}

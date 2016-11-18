@@ -164,7 +164,7 @@ success/trial or cbind(success, failure) syntax), with Poisson GLM's,
 single-season occupancy models (MacKenzie et al. 2002), dynamic
 occupancy models (MacKenzie et al. 2003), or \emph{N}-mixture models
 (Royle 2004, Dail and Madsen 2011).  If \code{c.hat} > 1,
-\code{modavgShrink} will return the quasi-likelihood analogue of the
+\code{AICc} will return the quasi-likelihood analogue of the
 information criteria requested and multiply the variance-covariance
 matrix of the estimates by this value (i.e., SE's are multiplied by
 \code{sqrt(c.hat)}).  This option is not supported for generalized
@@ -177,14 +177,27 @@ linear mixed models of the \code{mer} or \code{merMod} classes.
 \details{
   \code{AICc} computes one of the following four information criteria:
   
-  Akaike's information criterion (AIC, Akaike 1973), the  second-order
-  or small sample AIC (AICc, Sugiura   1978, Hurvich and Tsai 1991), the
-  quasi-likelihood AIC (QAIC, Burnham and Anderson 2002), and the
-  quasi-likelihood AICc (QAICc, Burnham and Anderson 2002). Note that
-  AIC and AICc values are meaningful to select among \code{gls} or
-  \code{lme} models fit by maximum likelihood; AIC and AICc based on
-  REML are valid to select among different models that only differ in
-  their random effects (Pinheiro and Bates 2000).
+  Akaike's information criterion (AIC, Akaike 1973), \deqn{-2 *
+  log-likelihood + 2 * K,} where the log-likelihood is the maximum
+  log-likelihood of the model and \emph{K} corresponds to the number of
+  estimated parameters.
+  
+  Second-order or small sample AIC (AICc, Sugiura   1978, Hurvich and
+  Tsai 1991), \deqn{-2 * log-likelihood + 2 * K  * (n/(n - K - 1)),}
+  where \emph{n} is the sample size of the data set.
+  
+  Quasi-likelihood AIC (QAIC, Burnham and Anderson 2002), \deqn{QAIC =
+  \frac{-2 * log-likelihood}{c-hat} + 2 * K,} where \emph{c-hat} is the
+  overdispersion parameter specified by the user with the argument
+  \code{c.hat}.
+
+  Quasi-likelihood AICc (QAICc, Burnham and Anderson 2002), \deqn{QAIC = 
+  \frac{-2 * log-likelihood}{c-hat} + 2 * K * (n/(n - K - 1))}. 
+
+  Note that AIC and AICc values are meaningful to select among
+  \code{gls} or \code{lme} models fit by maximum likelihood. AIC and
+  AICc based on REML are valid to select among different models that
+  only differ in their random effects (Pinheiro and Bates 2000).
 }
 \value{
   \code{AICc} returns the AIC, AICc, QAIC, or QAICc, or the number of
@@ -262,7 +275,7 @@ linear mixed models of the \code{mer} or \code{merMod} classes.
 \code{\link{AICcCustom}}, \code{\link{aictab}}, \code{\link{confset}},
 \code{\link{importance}}, \code{\link{evidence}}, \code{\link{c_hat}},
 \code{\link{modavg}}, \code{\link{modavgShrink}},
-\code{\link{modavgPred}}
+\code{\link{modavgPred}}, \code{\link{useBIC}}, 
 }
 
 

@@ -180,27 +180,39 @@ Nmix.chisq.unmarkedFitGMM <- function(mod, ...) {
 
 
 ##generic
-Nmix.gof.test <- function(mod, nsim = 5, plot.hist = TRUE, ...){
+Nmix.gof.test <- function(mod, nsim = 5, plot.hist = TRUE,
+                          report = NULL, ...){
   UseMethod("Nmix.gof.test", mod)
 }
 
 
-Nmix.gof.test.default <- function(mod, nsim = 5, plot.hist = TRUE, ...){
+Nmix.gof.test.default <- function(mod, nsim = 5, plot.hist = TRUE,
+                                  report = NULL, ...){
   stop("\nFunction not yet defined for this object class\n")
 }
 
 
 ##PCount
-Nmix.gof.test.unmarkedFitPCount <- function(mod, nsim = 5, plot.hist = TRUE, ...){
+Nmix.gof.test.unmarkedFitPCount <- function(mod, nsim = 5, plot.hist = TRUE,
+                                            report = NULL, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
   model.type <- Nmix.chisq(mod)$model.type
-  
-  ##compute GOF P-value
-  out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                 nsim = nsim)
 
+  ##if NULL, don't print test statistic at each iteration
+  if(is.null(report)) {
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim)
+  } else {
+
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim, report = report)
+
+  }
+  
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
@@ -230,16 +242,26 @@ Nmix.gof.test.unmarkedFitPCount <- function(mod, nsim = 5, plot.hist = TRUE, ...
 
 
 ##PCO
-Nmix.gof.test.unmarkedFitPCO <- function(mod, nsim = 5, plot.hist = TRUE, ...){
+Nmix.gof.test.unmarkedFitPCO <- function(mod, nsim = 5, plot.hist = TRUE,
+                                         report = NULL, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
   model.type <- Nmix.chisq(mod)$model.type
-  
-  ##compute GOF P-value
-  out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                 nsim = nsim)
 
+  ##if NULL, don't print test statistic at each iteration
+  if(is.null(report)) {
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim)
+  } else {
+
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim, report = report)
+      
+  }
+  
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
@@ -269,15 +291,25 @@ Nmix.gof.test.unmarkedFitPCO <- function(mod, nsim = 5, plot.hist = TRUE, ...){
 
 
 ##DS
-Nmix.gof.test.unmarkedFitDS <- function(mod, nsim = 5, plot.hist = TRUE, ...){
+Nmix.gof.test.unmarkedFitDS <- function(mod, nsim = 5, plot.hist = TRUE,
+                                        report = NULL, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
   model.type <- Nmix.chisq(mod)$model.type
-  
-  ##compute GOF P-value
-  out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                 nsim = nsim)
+
+  ##if NULL, don't print test statistic at each iteration
+  if(is.null(report)) {
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim)
+  } else {
+
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim, report = report)
+
+  }
 
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
@@ -308,16 +340,26 @@ Nmix.gof.test.unmarkedFitDS <- function(mod, nsim = 5, plot.hist = TRUE, ...){
 
 
 ##GDS
-Nmix.gof.test.unmarkedFitGDS <- function(mod, nsim = 5, plot.hist = TRUE, ...){
+Nmix.gof.test.unmarkedFitGDS <- function(mod, nsim = 5, plot.hist = TRUE,
+                                         report = NULL, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
   model.type <- Nmix.chisq(mod)$model.type
-  
-  ##compute GOF P-value
-  out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                 nsim = nsim)
 
+  ##if NULL, don't print test statistic at each iteration
+  if(is.null(report)) {
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim)
+  } else {
+
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim, report = report)
+
+  }
+  
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
@@ -347,16 +389,26 @@ Nmix.gof.test.unmarkedFitGDS <- function(mod, nsim = 5, plot.hist = TRUE, ...){
 
 
 ##GMM
-Nmix.gof.test.unmarkedFitGMM <- function(mod, nsim = 5, plot.hist = TRUE, ...){
+Nmix.gof.test.unmarkedFitGMM <- function(mod, nsim = 5, plot.hist = TRUE,
+                                         report = NULL, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
   model.type <- Nmix.chisq(mod)$model.type
-  
-  ##compute GOF P-value
-  out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                 nsim = nsim)
 
+  ##if NULL, don't print test statistic at each iteration
+  if(is.null(report)) {
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim)
+  } else {
+
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim, report = report)
+
+  }
+  
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
@@ -386,16 +438,26 @@ Nmix.gof.test.unmarkedFitGMM <- function(mod, nsim = 5, plot.hist = TRUE, ...){
 
 
 ##GPC
-Nmix.gof.test.unmarkedFitGPC <- function(mod, nsim = 5, plot.hist = TRUE, ...){
+Nmix.gof.test.unmarkedFitGPC <- function(mod, nsim = 5, plot.hist = TRUE,
+                                         report = NULL, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
   model.type <- Nmix.chisq(mod)$model.type
-  
-  ##compute GOF P-value
-  out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                 nsim = nsim)
 
+  ##if NULL, don't print test statistic at each iteration
+  if(is.null(report)) {
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim)
+  } else {
+
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim, report = report)
+
+  }
+  
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
@@ -425,16 +487,26 @@ Nmix.gof.test.unmarkedFitGPC <- function(mod, nsim = 5, plot.hist = TRUE, ...){
 
 
 ##MPois
-Nmix.gof.test.unmarkedFitMPois <- function(mod, nsim = 5, plot.hist = TRUE, ...){
+Nmix.gof.test.unmarkedFitMPois <- function(mod, nsim = 5, plot.hist = TRUE,
+                                           report = NULL, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
   model.type <- Nmix.chisq(mod)$model.type
-  
-  ##compute GOF P-value
-  out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                 nsim = nsim)
 
+  ##if NULL, don't print test statistic at each iteration
+  if(is.null(report)) {
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim)
+  } else {
+
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim, report = report)
+
+  }
+  
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {

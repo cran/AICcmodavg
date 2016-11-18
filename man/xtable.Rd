@@ -1,7 +1,9 @@
 \name{xtable}
 \Rdversion{1.1}
 \alias{xtable.aictab}
+\alias{xtable.bictab}
 \alias{xtable.boot.wt}
+\alias{xtable.checkParms}
 \alias{xtable.countDist}
 \alias{xtable.countHist}
 \alias{xtable.detHist}
@@ -27,6 +29,11 @@
         include.AICc = TRUE, include.LL = TRUE, include.Cum.Wt = FALSE,
         \dots)
 
+\method{xtable}{bictab}(x, caption = NULL, label = NULL, align = NULL, 
+        digits = NULL, display = NULL, nice.names = TRUE,
+        include.BIC = TRUE, include.LL = TRUE, include.Cum.Wt = FALSE,
+        \dots)
+
 \method{xtable}{boot.wt}(x, caption = NULL, label = NULL, align = NULL,
         digits = NULL, display = NULL, nice.names = TRUE,
         include.AICc = TRUE, include.AICcWt = FALSE, \dots)
@@ -34,6 +41,11 @@
 \method{xtable}{countDist}(x, caption = NULL, label = NULL,
         align = NULL, digits = NULL, display = NULL,
         nice.names = TRUE, table.countDist = "distance", \dots)
+
+\method{xtable}{checkParms}(x, caption = NULL, label = NULL,
+        align = NULL, digits = NULL, display = NULL,
+        nice.names = TRUE, include.variable = TRUE, include.max.se =
+        TRUE, include.n.high.se = TRUE, \dots)
 
 \method{xtable}{countHist}(x, caption = NULL, label = NULL,
         align = NULL, digits = NULL, display = NULL,
@@ -74,10 +86,11 @@
 
 \arguments{
   \item{x}{
-    an object of class \code{aictab}, \code{boot.wt}, \code{countDist},
-    \code{countHist}, \code{detHist}, \code{dictab}, \code{mb.chisq},
-    \code{modavg}, \code{modavgEffect}, \code{modavgPred},
-    \code{modavgShrink}, or \code{multComp}.
+    an object of class \code{aictab}, \code{bictab}, \code{boot.wt},
+    \code{checkParms}, \code{countDist}, \code{countHist},
+    \code{detHist}, \code{dictab}, \code{mb.chisq}, \code{modavg},
+    \code{modavgEffect}, \code{modavgPred}, \code{modavgShrink}, or
+  \code{multComp}.
   }
   
   \item{caption}{
@@ -120,8 +133,14 @@
   }
 
   \item{include.AICc}{logical.  If \code{TRUE}, the column containing
-    the information criterion of each model is printed in the table.
-    If \code{FALSE}, the column is suppressed.
+    the information criterion (AIC, AICc, QAIC, or QAICc) of each model
+    is printed in the table.  If \code{FALSE}, the column is
+    suppressed.
+  }
+
+  \item{include.BIC}{logical.  If \code{TRUE}, the column containing
+    the information criterion (BIC or QBIC) of each model is printed in
+    the table.  If \code{FALSE}, the column is suppressed.
   }
 
   \item{include.DIC}{logical.  If \code{TRUE}, the column containing
@@ -148,7 +167,23 @@
     column containing detection histories is printed in the table.  If
     \code{FALSE}, the column is suppressed. 
   }
-    
+
+  \item{include.variable}{logical.  If \code{TRUE}, the
+    column containing the variable name is printed in the table.  If
+    \code{FALSE}, the column is suppressed.
+  }
+
+    \item{include.max.se}{logical.  If \code{TRUE}, the
+      column containing the maximum SE in the model is printed in the
+      table.  If \code{FALSE}, the column is suppressed.
+    }
+
+    \item{include.n.high.se}{logical.  If \code{TRUE}, the
+      column containing the number of SE's greater than the threshold 
+      specified by the user is printed in the table.  If \code{FALSE},
+      the column is suppressed.
+    }
+  
   \item{print.table}{logical.  If \code{TRUE}, the model selection table
     is printed and other sections of the output are suppressed (e.g.,
     model-averaged estimates).  If \code{FALSE}, the model selection
@@ -211,7 +246,7 @@
 
 \references{
   Dahl, D. B. (2014) xtable: Export tables to LaTeX or HTML. R package
-  version 1.7-3. \url{http://CRAN.R-project.org/package=xtable}.
+  version 1.7-3. \url{https://cran.r-project.org/package=xtable}.
 }
 
 \author{
@@ -243,7 +278,7 @@ Cand.models[[3]] <- lm(log_Mass_lost ~ cent_Initial_mass +
                        Initial_mass2, data = dry.frog)
 Model.names <- c("additive", "interaction", "no shade")
 
-##model selection table
+##model selection table - AICc
 out <- aictab(cand.set = Cand.models, modnames = Model.names)
 
 xtable(out)
@@ -251,6 +286,17 @@ xtable(out)
 xtable(out, include.AICc = FALSE, include.LL = FALSE)
 ##remove row names and add caption
 print(xtable(out, caption = "Model selection based on AICc"),
+      include.rownames = FALSE, caption.placement = "top")
+
+
+##model selection table - BIC
+out2 <- bictab(cand.set = Cand.models, modnames = Model.names)
+
+xtable(out2)
+##exclude AICc and LL
+xtable(out2, include.BIC = FALSE, include.LL = FALSE)
+##remove row names and add caption
+print(xtable(out2, caption = "Model selection based on BIC"),
       include.rownames = FALSE, caption.placement = "top")
 
 
@@ -287,6 +333,11 @@ ltUMF <- with(linetran, {
 xtable(countDist(ltUMF), table.countDist = "distance")
 ##summarize counts across all sites
 xtable(countDist(ltUMF), table.countDist = "count")
+
+##Half-normal detection function
+fm1 <- distsamp(~ 1 ~ 1, ltUMF)
+##determine parameters with highest SE's
+xtable(checkParms(fm1))
 }
 }
 }

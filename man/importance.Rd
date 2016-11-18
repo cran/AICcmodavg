@@ -6,6 +6,7 @@
 \alias{importance.AICbetareg}
 \alias{importance.AICsclm.clm}
 \alias{importance.AICclmm}
+\alias{importance.AICclm}
 \alias{importance.AICclogit.coxph}
 \alias{importance.AICcoxme}
 \alias{importance.AICcoxph}
@@ -57,6 +58,9 @@ importance(cand.set, parm, modnames = NULL, second.ord = TRUE,
            second.ord = TRUE, nobs = NULL, ...)
 
 \method{importance}{AICsclm.clm}(cand.set, parm, modnames = NULL,
+           second.ord = TRUE, nobs = NULL, ...)
+
+\method{importance}{AICclm}(cand.set, parm, modnames = NULL,
            second.ord = TRUE, nobs = NULL, ...)
 
 \method{importance}{AICclmm}(cand.set, parm, modnames = NULL,
@@ -182,7 +186,7 @@ success/trial or cbind(success, failure) syntax), with Poisson GLM's,
 single-season occupancy models (MacKenzie et al. 2002), dynamic
 occupancy models (MacKenzie et al. 2003), or \emph{N}-mixture models
 (Royle 2004, Dail and Madsen 2011).  If \code{c.hat} > 1,
-\code{modavgShrink} will return the quasi-likelihood analogue of the
+\code{importance} will return the quasi-likelihood analogue of the
 information criteria requested and multiply the variance-covariance
 matrix of the estimates by this value (i.e., SE's are multiplied by
 \code{sqrt(c.hat)}).  This option is not supported for generalized

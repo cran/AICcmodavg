@@ -206,8 +206,8 @@ c_hat.merMod <- function(mod, method = "pearson", ...) {
 
 ##print method
 print.c_hat <- function(x, digits = 2, ...) {
-  cat("'c-hat' ", paste(format(c(x), digits = digits), collapse = ", "),
-      " (method: ", format(attr(x, "method")), ")\n", sep = "")
+  cat("'c-hat' ", paste(round(x, digits = digits), collapse = ", "),
+      " (method: ", attr(x, "method"), ")\n", sep = "")
 }
 
 

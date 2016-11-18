@@ -17,7 +17,8 @@ predictSE.default <- function(mod, newdata, se.fit = TRUE, print.matrix = FALSE,
 predictSE.gls <- function(mod, newdata, se.fit = TRUE, print.matrix = FALSE, ...){
     
   ##first part of code converts data.frame (including factors) into design matrix of model
-  fixed <- mod$call$model[-2] #extract only fixed portion of model formula
+  ##fixed <- mod$call$model[-2] #extract only fixed portion of model formula
+  fixed <- formula(mod)[-2] #modification suggested by C. R. Andersen to extract left part of model formula
   tt <- terms.formula(formula(mod))
   TT <- delete.response(tt)
   newdata <- as.data.frame(newdata)

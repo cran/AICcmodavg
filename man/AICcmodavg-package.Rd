@@ -43,8 +43,8 @@ in the package.
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 2.0-4\cr
-Date: \tab 2016-02-10\cr
+Version: \tab 2.1-0\cr
+Date: \tab 2016-11-17\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -57,6 +57,9 @@ multimodel inference:
 \item{\code{\link{aictab}}}  {Constructs model selection tables with
   number of parameters, AIC, delta AIC, Akaike weights or variants based
   on other AICc, QAIC, and QAICc for a set of candidate models.}
+\item{\code{\link{bictab}}}  {Constructs model selection tables with
+  number of parameters, BIC, delta BIC, BIC weights for a set of
+  candidate models.}
 \item{\code{\link{boot.wt}}}  {Computes summary statistics from
   detection histories.}
 \item{\code{\link{confset}}}  {Determines the confidence set for the
@@ -84,12 +87,18 @@ multimodel inference:
   candidate models.}
 \item{\code{\link{multComp}}}  {Performs multiple comparisons across
   levels of a factor in a model selection framework.}
+\item{\code{\link{useBIC}}}  {Computes BIC or a quasi-likelihood
+  counterparts (QBIC).}
 }
 
 A number of functions for model diagnostics are available:
 \itemize{
 \item{\code{\link{c_hat}}}  {Estimates variance inflation factor for
-  binomial or Poisson GLM's based on various estimators.} 
+  binomial or Poisson GLM's based on various estimators.}
+\item{\code{\link{checkConv}}}  {Checks the convergence information of
+  the algorithm for the model.}
+\item{\code{\link{checkParms}}}  {Checks the occurrence of parameter
+  estimates with high standard errors in a model.}
 \item{\code{\link{countDist}}}  {Computes summary statistics from
   distance sampling data.}
 \item{\code{\link{countHist}}}  {Computes summary statistics from

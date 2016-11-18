@@ -870,3 +870,177 @@ xtable.countDist <- function(x, caption = NULL, label = NULL, align = NULL,
 
 
 
+##bictab
+xtable.bictab <- function(x, caption = NULL, label = NULL, align = NULL,
+                          digits = NULL, display = NULL, nice.names = TRUE,
+                          include.BIC = TRUE, include.LL = TRUE,
+                          include.Cum.Wt = FALSE, ...) {
+
+  ##change to nicer names
+  if(nice.names) {
+    new.delta <- names(x)[4]
+    new.weight <- names(x)[6]
+    names(x)[1] <- "Model"
+    names(x)[2] <- "K"
+    #names(x)[4] <- paste("$\\delta$", unlist(strsplit(new.delta, "_"))[2], collapse = " ") #requires sanitize.text.function( )
+    names(x)[4] <- paste(unlist(strsplit(new.delta, "_")), collapse = " ")
+    names(x)[6] <- paste(unlist(strsplit(new.weight, "Wt")), "weight", collapse = " ")
+    names(x)[7] <- "log-Likelihood"
+    names(x)[8] <- "Cumulative weight"
+  }
+
+  #format to data.frame
+  x <- data.frame(x, check.names = FALSE)
+  class(x) <- c("xtable","data.frame")
+  
+  ##with BIC and LL but not Cum.Wt
+  if(include.BIC && include.LL && !include.Cum.Wt) {
+    x <- x[, c(1:4, 6:7)]
+    align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
+    digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2))
+    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f"))
+  }
+
+  ##with BIC, but not LL and Cum.Wt
+  if(include.BIC && !include.LL && !include.Cum.Wt) {
+    x <- x[, c(1:4, 6)]
+    align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
+    digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
+    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+  }
+
+  ##without BIC, but with LL but not Cum.Wt
+  if(!include.BIC && include.LL && !include.Cum.Wt) {
+    x <- x[, c(1:2, 4, 6:7)]
+    align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
+    digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
+    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+  }
+
+  ##without BIC and LL and Cum.Wt
+  if(!include.BIC && !include.LL && !include.Cum.Wt) {
+    x <- x[, c(1:2, 4, 6)]
+    align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
+    digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2))
+    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f"))
+  }
+
+  ##with BIC and LL and Cum.Wt
+  if(include.BIC && include.LL && include.Cum.Wt) {
+    x <- x[, c(1:4, 6:8)]
+    align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
+    digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2,2))
+    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f","f"))
+  }
+
+  ##with BIC, but not LL but with Cum.Wt
+  if(include.BIC && !include.LL && include.Cum.Wt) {
+    x <- x[, c(1:4, 6, 8)]
+    align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
+    digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2))
+    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f"))
+  }
+
+  ##without BIC, but with LL and Cum.Wt
+  if(!include.BIC && include.LL && include.Cum.Wt) {
+    x <- x[, c(1:2, 4, 6:8)]
+    align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
+    digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2))
+    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f"))
+  }
+
+  ##without BIC and LL but with Cum.Wt
+  if(!include.BIC && !include.LL && include.Cum.Wt) {
+    x <- x[, c(1:2, 4, 6, 8)]
+    align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
+    digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
+    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+  }
+
+  caption(x) <- caption
+  label(x) <- label
+  return(x)
+}
+
+
+
+##checkParms
+xtable.checkParms <- function(x, caption = NULL, label = NULL, align = NULL,
+                              digits = NULL, display = NULL, nice.names = TRUE,
+                              include.variable = TRUE, include.max.se = TRUE,
+                              include.n.high.se = TRUE, ...) {
+
+    ##change to nicer names
+    if(nice.names) {
+        se.max <- x$se.max
+        names(x$result)[1] <- "Variable"
+        names(x$result)[2] <- "Maximum SE"
+        names(x$result)[3] <- paste("Num parms with SE >", se.max, sep = " ")
+    }
+          
+
+    ##format to data.frame
+    x <- data.frame(x$result, check.names = FALSE)
+    class(x) <- c("xtable","data.frame")
+  
+    ##with variable, max.se, and n.high.se
+    if(include.variable && include.max.se && include.n.high.se) {
+        x <- x[, c(1:3)]
+        align(x) <- switch(1+is.null(align), align, c("l","r","r","r"))
+        digits(x) <- switch(1+is.null(digits), digits, c(0,2,2,0))
+        display(x) <- switch(1+is.null(display), display, c("s","f","f","f"))
+    }
+
+    ##with variable and max.se, but not n.high.se
+    if(include.variable && include.max.se && !include.n.high.se) {
+        x <- x[, c(1:2)]
+        align(x) <- switch(1+is.null(align), align, c("l","r","r"))
+        digits(x) <- switch(1+is.null(digits), digits, c(0,2,2))
+        display(x) <- switch(1+is.null(display), display, c("s","f","f"))
+    }
+
+    ##with variable and n.high.se, but not max.se
+    if(include.variable && !include.max.se && include.n.high.se) {
+        x <- x[, c(1, 3)]
+        align(x) <- switch(1+is.null(align), align, c("l","r","r"))
+        digits(x) <- switch(1+is.null(digits), digits, c(0,2,0))
+        display(x) <- switch(1+is.null(display), display, c("s","f","f"))
+    }
+    
+    ##with n.high.se and max.se, but without variable
+    if(!include.variable && include.max.se && include.n.high.se) {
+        x <- x[, c(2:3)]
+        align(x) <- switch(1+is.null(align), align, c("l","r","r"))
+        digits(x) <- switch(1+is.null(digits), digits, c(0,2,0))
+        display(x) <- switch(1+is.null(display), display, c("s","f","f"))
+    }
+
+    ##with n.high.se
+    if(!include.variable && !include.max.se && include.n.high.se) {
+        x <- x[, 3, drop = FALSE]
+        align(x) <- switch(1+is.null(align), align, c("l","r"))
+        digits(x) <- switch(1+is.null(digits), digits, c(0,0))
+        display(x) <- switch(1+is.null(display), display, c("s","f"))
+    }
+
+    ##with max.se
+    if(!include.variable && include.max.se && !include.n.high.se) {
+        x <- x[, 2, drop = FALSE]
+        align(x) <- switch(1+is.null(align), align, c("l","r"))
+        digits(x) <- switch(1+is.null(digits), digits, c(0,2))
+        display(x) <- switch(1+is.null(display), display, c("s","f"))
+    }
+
+    ##with variable
+    if(include.variable && !include.max.se && !include.n.high.se) {
+        x <- x[, 1, drop = FALSE]
+        align(x) <- switch(1+is.null(align), align, c("l","r"))
+        digits(x) <- switch(1+is.null(digits), digits, c(0,2))
+        display(x) <- switch(1+is.null(display), display, c("s","f"))
+    }
+
+    caption(x) <- caption
+    label(x) <- label
+    return(x)
+}
+

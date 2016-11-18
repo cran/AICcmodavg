@@ -4,6 +4,40 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 2.1-0 (17 November 2016)
+##- corrected minor bug in storing lower.CL in 'modavgPred' result
+##- modified 'fam.link.mer' to account for negative binomial with 'glmer.nb'
+##- corrected minor bug in rounding output of 'c_hat'
+##- corrected bug in 'countDist' with GDS objects including NA's
+##- modified ifelse( ) test when single site includes NA's in
+##  'mb.chisq.unmarkedFitOccu' and 'mb.chisq.unmarkedFitColExt' (thanks to D. Linden)
+##- added drop = FALSE to preserve matrix in 'mb.chisq.unmarkedFitOccu' and
+##  'mb.chisq.unmarkedFitColExt'
+##- added 'report' argument to print test statistic in terminal for functions
+##  'mb.gof.test' and 'Nmix.gof.test'
+##- added 'checkConv' function to check convergence status of algorithm at
+##  termination for different model classes
+##- added 'checkParms' function to identify parameters with high SE's in
+##  different model classes
+##- modified gls method for 'predictSE' to extract model formula following
+##  suggestion by C. R. Andersen
+##- corrected bug in creating final plot of theoretical distribution of sums of
+##  chi-squares in mb.gof.test for dynamic occupancy models (thanks to M. Kéry)
+##- corrected bug in 'covDiag'
+##- added 'useBIC' and 'bictab' methods for different model objects based on
+##  Bayesian Information Criterion
+##- added 'useBICCustom' function to compute BIC or QBIC from user-supplied
+##  inputs (log-likelihood, K, n, c.hat)
+##- added 'bictabCustom' function to create model selection table using BIC or
+##  QBIC from user-supplied inputs
+##- added methods for 'xtable' for objects of 'checkParms' and 'bictab' classes
+##- added functionality of 'evidence' with dictab and bictab objects
+##- added new 'useBIC' argument to 'modavgCustom' to conduct multimodel inference
+##  based on BIC from user-supplied inputs
+##- removed functions that were moved to defunct during previous cycle of package
+
+
+####################################################################
 ##revision 2.0-4 (10 February 2016)
 ##- updated email address
 ##- modified 'mb.gof.test' to deal with dynamic occupancy data for entire

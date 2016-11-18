@@ -6,8 +6,8 @@ citEntry(entry="Manual",
         author = personList(as.person("Marc J. Mazerolle")),
 	       year = year,
                note = vers,
-	       url = "http://CRAN.R-project.org/package=AICcmodavg",	       
+	       url = "https://cran.r-project.org/package=AICcmodavg",	       
                textVersion =
                paste("Marc J. Mazerolle (", 
 	       year, ") AICcmodavg: Model selection and multimodel inference based on (Q)AIC(c). ",
-                      vers, ". http://CRAN.R-project.org/package=AICcmodavg.", sep=""))
+                      vers, ". https://cran.r-project.org/package=AICcmodavg.", sep=""))

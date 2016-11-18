@@ -141,7 +141,7 @@ modavgPred.AICaov.lm <-
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -490,7 +490,7 @@ modavgPred.AICglm.lm <-
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -620,7 +620,7 @@ modavgPred.AIClm <-
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -745,7 +745,7 @@ function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -869,7 +869,7 @@ modavgPred.AIClme <-
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -1067,7 +1067,7 @@ modavgPred.AICmer <- function(cand.set, modnames = NULL, newdata, second.ord = T
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -1269,7 +1269,7 @@ modavgPred.AICglmerMod <- function(cand.set, modnames = NULL, newdata, second.or
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -1399,7 +1399,7 @@ modavgPred.AIClmerMod <- function(cand.set, modnames = NULL, newdata, second.ord
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -1521,7 +1521,7 @@ modavgPred.AICrlm.lm <-
     
     ##organize as list
     Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                          "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                          "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                           "matrix.output" = matrix.output)
     
     class(Mod.pred.list) <- c("modavgPred", "list")
@@ -1726,7 +1726,7 @@ modavgPred.AICsurvreg <-
   
     ##organize as list
     Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                          "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                          "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                           "matrix.output" = matrix.output)
     class(Mod.pred.list) <- c("modavgPred", "list")
     return(Mod.pred.list)
@@ -1832,7 +1832,7 @@ modavgPred.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, newdata, se
           AICctmp$fit.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
                                              type = parm.type1, backTransform = FALSE)$Predicted))
           AICctmp$SE.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
-                                                           type = parm.type1, backTransform = FALSE)$SE))
+                                                             type = parm.type1, backTransform = FALSE)$SE))
         } else {
           warning("\nIt is not appropriate to model-average linear predictors using different link functions\n")
           AICctmp$fit.link <- NA
@@ -2107,7 +2107,7 @@ modavgPred.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, newdata, se
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -2494,7 +2494,7 @@ modavgPred.AICunmarkedFitColExt <-
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -2875,7 +2875,7 @@ modavgPred.AICunmarkedFitOccuRN <-
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -3318,7 +3318,7 @@ modavgPred.AICunmarkedFitPCount <-
   
     ##organize as list
     Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                          "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                          "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                           "matrix.output" = matrix.output)
     class(Mod.pred.list) <- c("modavgPred", "list")
     return(Mod.pred.list)
@@ -3771,7 +3771,7 @@ modavgPred.AICunmarkedFitPCO <-
   
     ##organize as list
     Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                          "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                          "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                           "matrix.output" = matrix.output)
     class(Mod.pred.list) <- c("modavgPred", "list")
     return(Mod.pred.list)
@@ -4150,7 +4150,7 @@ modavgPred.AICunmarkedFitDS <-
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -4535,7 +4535,7 @@ modavgPred.AICunmarkedFitGDS <-
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -4917,7 +4917,7 @@ modavgPred.AICunmarkedFitOccuFP <-
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -5297,7 +5297,7 @@ modavgPred.AICunmarkedFitMPois <-
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -5680,7 +5680,7 @@ modavgPred.AICunmarkedFitGMM <-
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)
@@ -6061,7 +6061,7 @@ modavgPred.AICunmarkedFitGPC <-
   
   ##organize as list
   Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
-                        "conf.level" = conf.level, "lower.CL" = "lower.CL", "upper.CL" = upper.CL,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
                         "matrix.output" = matrix.output)
   class(Mod.pred.list) <- c("modavgPred", "list")
   return(Mod.pred.list)

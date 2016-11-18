@@ -5,6 +5,7 @@
 \alias{modavgShrink.AICaov.lm}
 \alias{modavgShrink.AICbetareg}
 \alias{modavgShrink.AICsclm.clm}
+\alias{modavgShrink.AICclm}
 \alias{modavgShrink.AICclmm}
 \alias{modavgShrink.AICcoxme}
 \alias{modavgShrink.AICcoxph}
@@ -63,6 +64,10 @@ modavgShrink(cand.set, parm, modnames = NULL, second.ord = TRUE,
         conf.level = 0.95, \dots)
 
 \method{modavgShrink}{AICsclm.clm}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots)
+
+\method{modavgShrink}{AICclm}(cand.set, parm, modnames = NULL,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
 

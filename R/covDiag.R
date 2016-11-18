@@ -8,6 +8,8 @@ covDiag <- function(object, ...){
   UseMethod("covDiag", object)
 }
 
+
+
 covDiag.default <- function(object, ...){
   stop("\nFunction not yet defined for this object class\n")
 }
@@ -26,9 +28,14 @@ covDiag.unmarkedFramePCount <- function(object, ...){
     }
   }
   cov.diag <- mean(p1)/ct-mean(yMat)^2
+
+  if(cov.diag <= 0) {
+      msg <- "Warning: lambda is infinite, data too sparse"
+  } else {
+      msg <- NULL
+  }
   out <- list("cov.diag" = cov.diag,
-              "message" = ifelse(cov.diag <= 0,
-                "Warning: lambda is infinite, data too sparse", NULL))
+              "message" = msg)
   class(out) <- "covDiag"
   return(out)
 }
@@ -47,9 +54,15 @@ covDiag.unmarkedFitPCount <- function(object, ...){
     }
   }
   cov.diag <- mean(p1)/ct-mean(yMat)^2
+
+  if(cov.diag <= 0) {
+      msg <- "Warning: lambda is infinite, data too sparse"
+  } else {
+      msg <- NULL
+  }
+
   out <- list("cov.diag" = cov.diag,
-              "message" = ifelse(cov.diag <= 0,
-                "Warning: lambda is infinite, data too sparse", NULL))
+              "message" = msg)
   class(out) <- "covDiag"
   return(out)
 }

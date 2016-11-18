@@ -269,11 +269,12 @@ countDist.unmarkedFrameGDS <- function(object, plot.freq = TRUE, plot.distance =
   dist.sums.full <- rep(NA, n.dist.classes)
   ##create matrix to hold indices of visits x dist.classes
   mat.dist <- matrix(1:(nvisits*n.dist.classes),
-                     nrow = nvisits,
-                     ncol = n.dist.classes)
+                     nrow = n.dist.classes,
+                     ncol = nvisits)
   for(j in 1:n.dist.classes) {
-    dist.sums.full[j] <- sum(colSums(yMat[, mat.dist[j, ]]))
+    dist.sums.full[j] <- sum(colSums(yMat[, mat.dist[j, ]], na.rm = TRUE), na.rm = TRUE)
   }
+
   names(dist.sums.full) <- dist.names
   dist.sums.seasons <- list(dist.sums.full)
   
@@ -381,11 +382,12 @@ countDist.unmarkedFitGDS <- function(object, plot.freq = TRUE, plot.distance = T
   dist.sums.full <- rep(NA, n.dist.classes)
   ##create matrix to hold indices of visits x dist.classes
   mat.dist <- matrix(1:(nvisits*n.dist.classes),
-                     nrow = nvisits,
-                     ncol = n.dist.classes)
+                     nrow = n.dist.classes,
+                     ncol = nvisits)
   for(j in 1:n.dist.classes) {
-    dist.sums.full[j] <- sum(colSums(yMat[, mat.dist[j, ]]))
-  }
+      dist.sums.full[j] <- sum(colSums(yMat[, mat.dist[j, ]], na.rm = TRUE), na.rm = TRUE)
+  }  
+
   names(dist.sums.full) <- dist.names
   dist.sums.seasons <- list(dist.sums.full)
   

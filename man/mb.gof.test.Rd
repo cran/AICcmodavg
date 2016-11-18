@@ -25,13 +25,13 @@ mb.chisq(mod, print.table = TRUE, \dots)
 
 \method{mb.chisq}{unmarkedFitColExt}(mod, print.table = TRUE, \dots)
 
-mb.gof.test(mod, nsim = 5, plot.hist = TRUE, \dots)
+mb.gof.test(mod, nsim = 5, plot.hist = TRUE, report = NULL, \dots)
 
 \method{mb.gof.test}{unmarkedFitOccu}(mod, nsim = 5, plot.hist = TRUE,
-                     \dots)
+                     report = NULL, \dots)
 
 \method{mb.gof.test}{unmarkedFitColExt}(mod, nsim = 5, plot.hist = TRUE,
-                     plot.seasons = FALSE, \dots)
+                     report = NULL, plot.seasons = FALSE, \dots)
 }
 \arguments{
   \item{mod}{
@@ -46,6 +46,12 @@ the model for which a goodness-of-fit test is required.
   bootstrapped test statistic is to be included in the output.  For
   dynamic occupancy models, this produces a histogram of the sum of the
   season-specific chi-squares for each bootstrap sample.
+}
+\item{report}{If \code{NULL}, the test statistic for each iteration is
+  not printed in the terminal.  Otherwise, an integer indicating the
+  number of values of the test statistic that should be printed on
+  the same line.  For example, if \code{report = 3}, the values of the
+  test statistic for three iterations are reported on each line.
 }
 \item{plot.seasons}{logical.  For dynamic occupancy models, specifies
   that a histogram of the bootstrapped test statistic for each primary

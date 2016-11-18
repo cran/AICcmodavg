@@ -32,7 +32,7 @@ based on Pearson's chi-square.
 ##'unmarkedFitGPC', and 'unmarkedFitMPois' classes
 Nmix.chisq(mod, \dots)
 
-Nmix.gof.test(mod, nsim = 5, plot.hist = TRUE, \dots)
+Nmix.gof.test(mod, nsim = 5, plot.hist = TRUE, report = NULL, \dots)
 
 }
 \arguments{
@@ -46,6 +46,12 @@ Nmix.gof.test(mod, nsim = 5, plot.hist = TRUE, \dots)
 }
 \item{plot.hist}{logical.  Specifies that a histogram of the
   bootstrapped test statistic is to be included in the output.
+}
+\item{report}{If \code{NULL}, the test statistic for each iteration is
+  not printed in the terminal.  Otherwise, an integer indicating the
+  number of values of the test statistic that should be printed on
+  the same line.  For example, if \code{report = 3}, the values of the
+  test statistic for three iterations are reported on each line.
 }
 \item{\dots}{
   additional arguments passed to the function.
