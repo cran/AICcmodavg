@@ -37,6 +37,7 @@ export(AICc,
        extractCN,
        extractLL,
        extractSE,
+       extractX,
        fam.link.mer,
        
        ##custom functions
@@ -64,6 +65,7 @@ S3method(print, detHist)
 S3method(print, modavgCustom)
 S3method(print, dictab)
 S3method(print, extractCN)
+S3method(print, extractX)
 S3method(print, evidence)
 S3method(print, importance)
 S3method(print, mb.chisq)
@@ -336,6 +338,30 @@ S3method(extractSE, coxme)
 S3method(extractSE, lmekin)
 S3method(extractSE, mer)
 S3method(extractSE, merMod)
+
+
+##extractX
+S3method(extractX, default)
+S3method(extractX, AICaov.lm)
+S3method(extractX, AICglm.lm)
+S3method(extractX, AICgls)
+S3method(extractX, AIClm)
+S3method(extractX, AIClme)
+S3method(extractX, AICglmerMod)
+S3method(extractX, AIClmerMod)
+S3method(extractX, AICrlm.lm)
+S3method(extractX, AICsurvreg)
+S3method(extractX, AICunmarkedFitOccu)
+S3method(extractX, AICunmarkedFitColExt)
+S3method(extractX, AICunmarkedFitOccuRN)
+S3method(extractX, AICunmarkedFitPCount)
+S3method(extractX, AICunmarkedFitPCO)
+S3method(extractX, AICunmarkedFitDS)
+S3method(extractX, AICunmarkedFitGDS)
+S3method(extractX, AICunmarkedFitOccuFP)
+S3method(extractX, AICunmarkedFitMPois)
+S3method(extractX, AICunmarkedFitGMM)
+S3method(extractX, AICunmarkedFitGPC)
 
 
 ##importance
@@ -617,7 +643,10 @@ importFrom(unmarked,
            predict,
            coef,
            fitted,
-           parboot)
+           parboot,
+           obsCovs,
+           siteCovs,
+           yearlySiteCovs)
 importFrom(VGAM,
            formula,
            logLik,
@@ -643,10 +672,13 @@ importFrom(xtable,
            "label<-",
            "digits<-",
            "display<-")
+importFrom("utils",
+           "capture.output",
+           "str")
 
 ##export deprecated functions
 
-##these functions are imported from other packages
+##these functions are imported by other packages
 export(predictSE.lme,
        predictSE.mer)
 

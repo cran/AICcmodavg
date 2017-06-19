@@ -43,8 +43,8 @@ in the package.
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 2.1-0\cr
-Date: \tab 2016-11-17\cr
+Version: \tab 2.1-1\cr
+Date: \tab 2016-06-19\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -122,6 +122,8 @@ Other utility functions include:
   models of certain classes.}
 \item{\code{\link{extractSE}}}  {Extracts standard errors from models of
   certain classes and adds the labels.}
+\item{\code{\link{extractX}}}  {Extracts the predictors and associated
+  information on variables from a list of candidate models.}
 \item{\code{\link{fam.link.mer}}}  {Extracts the distribution family and 
   link function from a generalized linear mixed model of classes \code{mer}
   and \code{merMod}.}
@@ -250,7 +252,7 @@ detHist(pferUMF)
 ##set up candidate model set
 fm1 <- occu(~ obsvar1 ~ sitevar1, pferUMF)
 ##check detection history data from model object
-detHist(fm1) 
+detHist(fm1)
 
 fm2 <- occu(~ 1 ~ sitevar1, pferUMF)
 fm3 <- occu(~ obsvar1 ~ sitevar2, pferUMF)

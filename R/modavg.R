@@ -6565,48 +6565,63 @@ modavg.AICunmarkedFitPCO <-
   
   
     
-  ##open version of N-mixture model
-  ##lambda - abundance
-  if(identical(parm.type, "lambda")) {
-    ##extract model formula for each model in cand.set
-    mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$lambda)))
-    parm <- paste("lam", "(", parm, ")", sep="")
-    if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
-    not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
-  }
-  ##gamma - recruitment
-  if(identical(parm.type, "gamma")) {
-    ##extract model formula for each model in cand.set
-    mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$gamma)))
-    
-    ##determine if same H0 on gamma (gamConst, gamAR, gamTrend)
-    strip.gam <- sapply(mod_formula, FUN = function(i) unlist(strsplit(i, "\\("))[[1]])
-    unique.gam <- unique(strip.gam)
-    if(length(unique.gam) > 1) stop("\nDifferent formulations of gamma parameter occur among models:\n
+      ##open version of N-mixture model
+      ##lambda - abundance
+      if(identical(parm.type, "lambda")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$lambda)))
+          parm <- paste("lam", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
+      }
+      ##gamma - recruitment
+      if(identical(parm.type, "gamma")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$gamma)))
+          
+          ##determine if same H0 on gamma (gamConst, gamAR, gamTrend)
+          strip.gam <- sapply(mod_formula, FUN = function(i) unlist(strsplit(i, "\\("))[[1]])
+          unique.gam <- unique(strip.gam)
+          if(length(unique.gam) > 1) stop("\nDifferent formulations of gamma parameter occur among models:\n
 beta estimates cannot be model-averaged\n")
     
-    ##create label for parm
-    parm <- paste(unique.gam, "(", parm, ")", sep="")
-    if(!is.null(reversed.parm)) {reversed.parm <- paste(unique.gam, "(", reversed.parm, ")", sep="")}
-    not.include <- lapply(cand.set, FUN = function(i) i@formlist$gammaformula)
-  }
-  ##omega - apparent survival
-  if(identical(parm.type, "omega")) {
-    ##extract model formula for each model in cand.set
-    mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$omega)))   
-    ##create label for parm
-    parm <- paste("omega", "(", parm, ")", sep="")
-    if(!is.null(reversed.parm)) {reversed.parm <- paste("omega", "(", reversed.parm, ")", sep="")}
-    not.include <- lapply(cand.set, FUN = function(i) i@formlist$omegaformula)
-  }
-  ##detect
-  if(identical(parm.type, "detect")) {
-    mod_formula<-lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
-    parm <- paste("p", "(", parm, ")", sep="")
-    if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
-    not.include <- lapply(cand.set, FUN = function(i) i@formlist$pformula)
-  }
-  
+          ##create label for parm
+          parm <- paste(unique.gam, "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste(unique.gam, "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$gammaformula)
+      }
+      ##omega - apparent survival
+      if(identical(parm.type, "omega")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$omega)))   
+          ##create label for parm
+          parm <- paste("omega", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("omega", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$omegaformula)
+      }
+      ##iota (for immigration = TRUE with dynamics = "autoreg", "trend", "ricker", or "gompertz")
+      if(identical(parm.type, "iota")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$iota)))   
+          ##create label for parm
+          parm <- paste("iota", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("iota", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$iotaformula)
+          ##check that parameter appears in all models
+          parfreq <- sum(sapply(cand.set, FUN = function(i) any(names(i@estimates@estimates) == parm.type)))
+          if(!identical(length(cand.set), parfreq)) {
+              stop("\nParameter \'iota\' (parm.type = \"", parm.type, "\") does not appear in all models:",
+                   "\ncannot compute model-averaged estimate across all models\n")
+          }
+      }
+      ##detect
+      if(identical(parm.type, "detect")) {
+          mod_formula<-lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+          parm <- paste("p", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$pformula)
+      }
+      
   nmods <- length(cand.set)
   
   ##setup matrix to indicate presence of parms in the model
@@ -6888,9 +6903,26 @@ modavg.AICunmarkedFitDS <-
     }
     ##detect
     if(identical(parm.type, "detect")) {
-      if(identical(parm.type, "detect")) {
-        stop("\nModel-averaging estimates of detection covariates not yet supported for unmarkedFitDS class\n")
-      }
+        ##check for key function used
+        keyid <- unique(sapply(cand.set, FUN = function(i) i@keyfun))
+        if(length(keyid) > 1) stop("\nDifferent key functions used across models:\n",
+                                   "cannot compute model-averaged estimate\n")
+        if(identical(keyid, "uniform")) stop("\nDetection parameter not found in models\n")
+        ##set key prefix used in coef( )
+        if(identical(keyid, "halfnorm")) {
+            parm.key <- "sigma"
+        }
+        if(identical(keyid, "hazard")) {
+            parm.key <- "shape"
+        }
+        if(identical(keyid, "exp")) {
+            parm.key <- "rate"
+        }
+        
+        mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+        parm <- paste("p", "(", parm.key, parm, ")", sep="")
+        if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", parm.key, reversed.parm, ")", sep="")}
+        not.include <- lapply(cand.set, FUN = function(i) i@formula[[2]])
     }
     
     nmods <- length(cand.set)
@@ -7172,10 +7204,17 @@ modavg.AICunmarkedFitGDS <-
   }
   ##detect
   if(identical(parm.type, "detect")) {
-    if(identical(parm.type, "detect")) {
-      stop("\nModel-averaging estimates of detection covariates not yet supported for unmarkedFitGDS class\n")
-    }
-    }
+    ##check for key function used
+      keyid <- unique(sapply(cand.set, FUN = function(i) i@keyfun))
+      if(length(keyid) > 1) stop("\nDifferent key functions used across models:\n",
+                                 "cannot compute model-averaged estimate\n")
+      if(identical(keyid, "uniform")) stop("\nDetection parameter not found in models\n")
+
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+      parm <- paste("p", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
+      not.include <- lapply(cand.set, FUN = function(i) i@formula[[2]])
+  }
   ##availability
   if(identical(parm.type, "phi")) {
     ##extract model formula for each model in cand.set
@@ -7472,13 +7511,25 @@ modavg.AICunmarkedFitOccuFP <-
       not.include <- lapply(cand.set, FUN = function(i) i@detformula)
     }
     ##false positives - fp
-    if(identical(parm.type, "fp")) {
+    if(identical(parm.type, "falsepos") || identical(parm.type, "fp")) {
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$fp)))
       parm <- paste("fp", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("fp", "(", reversed.parm, ")", sep="")}
       not.include <- lapply(cand.set, FUN = function(i) i@FPformula)
     }
-  
+    ##certainty of detections - b
+    if(identical(parm.type, "certain")) {
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$b)))
+      parm <- paste("b", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("b", "(", reversed.parm, ")", sep="")}
+      not.include <- lapply(cand.set, FUN = function(i) i@Bformula)
+      ##check that parameter appears in all models
+      parfreq <- sum(sapply(cand.set, FUN = function(i) any(names(i@estimates@estimates) == parm.type)))
+      if(!identical(length(cand.set), parfreq)) {
+          stop("\nParameter \'b\' (parm.type = \"", parm.type, "\") does not appear in all models:",
+               "\ncannot compute model-averaged estimate across all models\n")
+      }
+    } 
   
   nmods <- length(cand.set)
   

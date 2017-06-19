@@ -1043,4 +1043,3 @@ xtable.checkParms <- function(x, caption = NULL, label = NULL, align = NULL,
     label(x) <- label
     return(x)
 }
-

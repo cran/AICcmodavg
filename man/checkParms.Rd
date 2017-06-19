@@ -181,10 +181,10 @@ Marc J. Mazerolle
 }
 
 \seealso{
-\code{\link{c_hat}}, \code{\link{detHist}}, \code{\link{countDist}},
-\code{\link{countHist}}, \code{\link{extractCN}},
-\code{\link{mb.gof.test}}, \code{\link{Nmix.gof.test}},
-\code{\link[unmarked]{parboot}}
+  \code{\link{c_hat}}, \code{\link{detHist}}, \code{\link{checkConv}},
+  \code{\link{countDist}}, \code{\link{countHist}},
+  \code{\link{extractCN}}, \code{\link{mb.gof.test}},
+  \code{\link{Nmix.gof.test}}, \code{\link[unmarked]{parboot}} 
 }
 
 \examples{

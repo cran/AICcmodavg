@@ -3332,53 +3332,64 @@ modavgPred.AICunmarkedFitPCO <-
            nobs = NULL, uncond.se = "revised", conf.level = 0.95,
            type = "response", c.hat = 1, parm.type = NULL, ...) {
 
-  ##check if named list if modnames are not supplied
-  if(is.null(modnames)) {
-    if(is.null(names(cand.set))) {
-      modnames <- paste("Mod", 1:length(cand.set), sep = "")
-      warning("\nModel names have been supplied automatically in the table\n")
-    } else {
-      modnames <- names(cand.set)
-    }
-  }
-
-
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgPred for details\n")}
-
-  
-  ##rename values according to unmarked to extract from object
-  ##lambda
-  if(identical(parm.type, "lambda")) {
-    parm.type1 <- "lambda"
-    ##check mixture type for mixture models
-    mixture.type <- sapply(X = cand.set, FUN = function(i) i@mixture)
-    unique.mixture <- unique(mixture.type)
-    if(length(unique.mixture) > 1) {
-      if(any(unique.mixture == "ZIP")) stop("\nThis function does not yet support mixing ZIP with other distributions\n")
-    } else {
-      mixture.id <- unique(mixture.type)
-      if(identical(unique.mixture, "ZIP")) {
-        if(identical(type, "link")) stop("\nLink scale not yet supported for ZIP mixtures\n")
-        if(identical(type, "response")) warning("\nModel-averaging linear predictor from a ZIP model not yet implemented\n")
+      ##check if named list if modnames are not supplied
+      if(is.null(modnames)) {
+          if(is.null(names(cand.set))) {
+              modnames <- paste("Mod", 1:length(cand.set), sep = "")
+              warning("\nModel names have been supplied automatically in the table\n")
+          } else {
+              modnames <- names(cand.set)
+          }
       }
-    }
-  }
 
 
+      ##check for parm.type and stop if NULL
+      if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgPred for details\n")}
 
-  ##gamma
-  if(identical(parm.type, "gamma")) {
-    parm.type1 <- "gamma"
-  }
   
-  ##omega
-  if(identical(parm.type, "omega")) {
-    parm.type1 <- "omega"
-  }
+      ##rename values according to unmarked to extract from object
+      ##lambda
+      if(identical(parm.type, "lambda")) {
+          parm.type1 <- "lambda"
+          ##check mixture type for mixture models
+          mixture.type <- sapply(X = cand.set, FUN = function(i) i@mixture)
+          unique.mixture <- unique(mixture.type)
+          if(length(unique.mixture) > 1) {
+              if(any(unique.mixture == "ZIP")) stop("\nThis function does not yet support mixing ZIP with other distributions\n")
+          } else {
+              mixture.id <- unique(mixture.type)
+              if(identical(unique.mixture, "ZIP")) {
+                  if(identical(type, "link")) stop("\nLink scale not yet supported for ZIP mixtures\n")
+                  if(identical(type, "response")) warning("\nModel-averaging linear predictor from a ZIP model not yet implemented\n")
+              }
+          }
+      }
 
-  ##detect
-  if(identical(parm.type, "detect")) {parm.type1 <- "det"}
+
+
+      ##gamma
+      if(identical(parm.type, "gamma")) {
+          parm.type1 <- "gamma"
+      }
+  
+      ##omega
+      if(identical(parm.type, "omega")) {
+          parm.type1 <- "omega"
+      }
+
+      ##iota (for immigration = TRUE with dynamics = "autoreg", "trend", "ricker", or "gompertz")
+      if(identical(parm.type, "iota")) {
+          parm.type1 <- "iota"
+          ##check that parameter appears in all models
+          parfreq <- sum(sapply(cand.set, FUN = function(i) any(names(i@estimates@estimates) == parm.type1)))
+          if(!identical(length(cand.set), parfreq)) {
+              stop("\nParameter \'", parm.type1, "\' (parm.type = \"", parm.type, "\") does not appear in all models:",
+                   "\ncannot compute model-averaged predictions across all models\n")
+          }
+      }
+
+      ##detect
+      if(identical(parm.type, "detect")) {parm.type1 <- "det"}
 
 
 ####changes#############
@@ -3807,7 +3818,12 @@ modavgPred.AICunmarkedFitDS <-
   }
   
   ##detect
-  if(identical(parm.type, "detect")) stop("\nModel-averaging predictions of detection not yet supported for unmarkedFitDS class\n")
+  if(identical(parm.type, "detect")){
+      parm.type1 <- "det"
+      ##check for key function used
+      keyid <- unique(sapply(cand.set, FUN = function(i) i@keyfun))
+      if(any(keyid == "uniform")) stop("\nDetection parameter not found in some models\n")
+  }
 
 
 ####changes#############
@@ -4187,7 +4203,12 @@ modavgPred.AICunmarkedFitGDS <-
   }
   
   ##detect
-  if(identical(parm.type, "detect")) {stop("\nModel-averaging predictions of detection not yet supported for unmarkedFitGDS class\n")}
+  if(identical(parm.type, "detect")) {
+      parm.type1 <- "det"
+      ##check for key function used
+      keyid <- unique(sapply(cand.set, FUN = function(i) i@keyfun))
+      if(any(keyid == "uniform")) stop("\nDetection parameter not found in some models\n")
+  }
   
   ##availability
   if(identical(parm.type, "phi")) {parm.type1 <- "phi"}
@@ -4575,8 +4596,19 @@ modavgPred.AICunmarkedFitOccuFP <-
   if(identical(parm.type, "detect")) {parm.type1 <- "det"}
   
   ##false positives
-  if(identical(parm.type, "fp")) {parm.type1 <- "fp"}
+  if(identical(parm.type, "falsepos") || identical(parm.type, "fp")) {parm.type1 <- "fp"}
 
+  ##certain detections
+  if(identical(parm.type, "certain")) {
+      parm.type1 <- "b"
+      ##check that parameter appears in all models
+      parfreq <- sum(sapply(cand.set, FUN = function(i) any(names(i@estimates@estimates) == parm.type1)))
+      if(!identical(length(cand.set), parfreq)) {
+          stop("\nParameter \'", parm.type1, "\' (parm.type = \"", parm.type, "\") does not appear in all models:",
+               "\ncannot compute model-averaged predictions across all models\n")
+      }
+  }
+      
   
 ####changes#############
   ##extract link function

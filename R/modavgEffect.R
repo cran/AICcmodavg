@@ -82,10 +82,10 @@ modavgEffect.AICaov.lm <- function(cand.set, modnames = NULL, newdata, second.or
                nrow = nmods, ncol = 2, byrow = TRUE)
     
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
 
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs, sort = FALSE)
@@ -99,21 +99,21 @@ modavgEffect.AICaov.lm <- function(cand.set, modnames = NULL, newdata, second.or
                    
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+        Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
       }
       ##store table
       AICc.out <- AICctmp
@@ -125,21 +125,21 @@ modavgEffect.AICaov.lm <- function(cand.set, modnames = NULL, newdata, second.or
     if(second.ord==FALSE) {
       
       AICtmp <- AICctab
-      AICtmp$diff <- diff
-      AICtmp$SE.diff <- SE.diff
+      AICtmp$differ <- differ
+      AICtmp$SE.differ <- SE.differ
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+      Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
       }
 
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+        Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
       }  
       ##store table
       AICc.out <- AICtmp
@@ -279,10 +279,10 @@ modavgEffect.AICglm.lm <- function(cand.set, modnames = NULL, newdata, second.or
                                                     dispersion = dispersion)$se.fit)), nrow = nmods, ncol = 2, byrow = TRUE)
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
   
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -297,21 +297,21 @@ modavgEffect.AICglm.lm <- function(cand.set, modnames = NULL, newdata, second.or
              
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -321,21 +321,21 @@ modavgEffect.AICglm.lm <- function(cand.set, modnames = NULL, newdata, second.or
   if(second.ord==TRUE && c.hat > 1) {
     
     QAICctmp <- AICctab
-    QAICctmp$diff <- diff
-    QAICctmp$SE.diff <- SE.diff
+    QAICctmp$differ <- differ
+    QAICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
       
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2)))  
+      Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
     }
     ##store table
     AICc.out <- QAICctmp
@@ -346,21 +346,21 @@ modavgEffect.AICglm.lm <- function(cand.set, modnames = NULL, newdata, second.or
   if(second.ord == FALSE && c.hat == 1) {
     
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
     
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -370,20 +370,20 @@ modavgEffect.AICglm.lm <- function(cand.set, modnames = NULL, newdata, second.or
   if(second.ord == FALSE && c.hat > 1) {
           
     QAICtmp <- AICctab
-    QAICtmp$diff <- diff
-    QAICtmp$SE.diff <- SE.diff
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
       
     ##compute unconditional SE and store in output matrix
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- QAICtmp
@@ -466,10 +466,10 @@ modavgEffect.AICgls <- function(cand.set, modnames = NULL, newdata, second.ord =
                  nrow = nmods, ncol = 2, byrow = TRUE)
     
     ##difference between groups 
-    diff <- fit[, 1] - fit[, 2]
+    differ <- fit[, 1] - fit[, 2]
     
     ##SE on difference
-    SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+    SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
 
 
     
@@ -485,21 +485,21 @@ modavgEffect.AICgls <- function(cand.set, modnames = NULL, newdata, second.ord =
                    
       ##create temporary data.frame to store fitted values and SE 
       AICctmp <- AICctab
-      AICctmp$diff <- diff
-      AICctmp$SE.diff <- SE.diff
+      AICctmp$differ <- differ
+      AICctmp$SE.differ <- SE.differ
       
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+      Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
       ##compute unconditional SE and store in output matrix
       
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
       }
 
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+        Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
       }
       ##store table
       AICc.out <- AICctmp
@@ -511,21 +511,21 @@ modavgEffect.AICgls <- function(cand.set, modnames = NULL, newdata, second.ord =
     if(second.ord==FALSE) {
       
       AICtmp <- AICctab
-      AICtmp$diff <- diff
-      AICtmp$SE.diff <- SE.diff
+      AICtmp$differ <- differ
+      AICtmp$SE.differ <- SE.differ
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+      Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
       }
 
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+        Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
       }  
       ##store table
       AICc.out <- AICtmp
@@ -611,10 +611,10 @@ modavgEffect.AIClm <- function(cand.set, modnames = NULL, newdata, second.ord = 
                  nrow = nmods, ncol = 2, byrow = TRUE)
     
     ##difference between groups 
-    diff <- fit[, 1] - fit[, 2]
+    differ <- fit[, 1] - fit[, 2]
     
     ##SE on difference
-    SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+    SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
 
     ##store AICc table
     AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs, sort = FALSE)
@@ -628,21 +628,21 @@ modavgEffect.AIClm <- function(cand.set, modnames = NULL, newdata, second.ord = 
                    
       ##create temporary data.frame to store fitted values and SE 
       AICctmp <- AICctab
-      AICctmp$diff <- diff
-      AICctmp$SE.diff <- SE.diff
+      AICctmp$differ <- differ
+      AICctmp$SE.differ <- SE.differ
       
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+      Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
       ##compute unconditional SE and store in output matrix
       
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
       }
 
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+        Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
       }
       ##store table
       AICc.out <- AICctmp
@@ -654,21 +654,21 @@ modavgEffect.AIClm <- function(cand.set, modnames = NULL, newdata, second.ord = 
     if(second.ord==FALSE) {
       
       AICtmp <- AICctab
-      AICtmp$diff <- diff
-      AICtmp$SE.diff <- SE.diff
+      AICtmp$differ <- differ
+      AICtmp$SE.differ <- SE.differ
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+      Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
       }
 
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+        Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
       }  
       ##store table
       AICc.out <- AICtmp
@@ -754,10 +754,10 @@ function(cand.set, modnames = NULL, newdata, second.ord = TRUE, nobs = NULL,
                nrow = nmods, ncol = 2, byrow = TRUE)
     
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs, sort = FALSE)
@@ -772,21 +772,21 @@ function(cand.set, modnames = NULL, newdata, second.ord = TRUE, nobs = NULL,
     
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
     
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -796,21 +796,21 @@ function(cand.set, modnames = NULL, newdata, second.ord = TRUE, nobs = NULL,
   if(second.ord==FALSE) {
     
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
     
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -910,10 +910,10 @@ modavgEffect.AICmer <- function(cand.set, modnames = NULL, newdata, second.ord =
                nrow = nmods, ncol = 2, byrow = TRUE)
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   
   ##store AICc table
@@ -929,21 +929,21 @@ modavgEffect.AICmer <- function(cand.set, modnames = NULL, newdata, second.ord =
   if(second.ord==TRUE){
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -953,21 +953,21 @@ modavgEffect.AICmer <- function(cand.set, modnames = NULL, newdata, second.ord =
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord==FALSE) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -1065,10 +1065,10 @@ modavgEffect.AICglmerMod <- function(cand.set, modnames = NULL, newdata, second.
                nrow = nmods, ncol = 2, byrow = TRUE)
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   
   ##store AICc table
@@ -1084,21 +1084,21 @@ modavgEffect.AICglmerMod <- function(cand.set, modnames = NULL, newdata, second.
   if(second.ord==TRUE){
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -1108,21 +1108,21 @@ modavgEffect.AICglmerMod <- function(cand.set, modnames = NULL, newdata, second.
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord==FALSE) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -1210,10 +1210,10 @@ modavgEffect.AIClmerMod <- function(cand.set, modnames = NULL, newdata, second.o
                nrow = nmods, ncol = 2, byrow = TRUE)
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
   
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -1227,21 +1227,21 @@ modavgEffect.AIClmerMod <- function(cand.set, modnames = NULL, newdata, second.o
   if(second.ord==TRUE){
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -1251,21 +1251,21 @@ modavgEffect.AIClmerMod <- function(cand.set, modnames = NULL, newdata, second.o
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord==FALSE) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -1351,10 +1351,10 @@ modavgEffect.AICrlm.lm <- function(cand.set, modnames = NULL, newdata, second.or
                nrow = nmods, ncol = 2, byrow = TRUE)
     
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
     
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs, sort = FALSE)
@@ -1368,21 +1368,21 @@ modavgEffect.AICrlm.lm <- function(cand.set, modnames = NULL, newdata, second.or
                    
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
     
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -1392,21 +1392,21 @@ modavgEffect.AICrlm.lm <- function(cand.set, modnames = NULL, newdata, second.or
   if(second.ord==FALSE) {
       
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
     
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -1500,10 +1500,10 @@ modavgEffect.AICsurvreg <- function(cand.set, modnames = NULL, newdata, second.o
                  nrow = nmods, ncol = 2, byrow = TRUE)
     
     ##difference between groups 
-    diff <- fit[, 1] - fit[, 2]
+    differ <- fit[, 1] - fit[, 2]
     
     ##SE on difference
-    SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+    SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
 
     ##store AICc table
     AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs, sort = FALSE)
@@ -1517,21 +1517,21 @@ modavgEffect.AICsurvreg <- function(cand.set, modnames = NULL, newdata, second.o
                    
       ##create temporary data.frame to store fitted values and SE 
       AICctmp <- AICctab
-      AICctmp$diff <- diff
-      AICctmp$SE.diff <- SE.diff
+      AICctmp$differ <- differ
+      AICctmp$SE.differ <- SE.differ
       
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+      Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
       ##compute unconditional SE and store in output matrix
       
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
       }
 
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+        Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
       }
       ##store table
       AICc.out <- AICctmp
@@ -1543,21 +1543,21 @@ modavgEffect.AICsurvreg <- function(cand.set, modnames = NULL, newdata, second.o
     if(second.ord==FALSE) {
       
       AICtmp <- AICctab
-      AICtmp$diff <- diff
-      AICtmp$SE.diff <- SE.diff
+      AICtmp$differ <- differ
+      AICtmp$SE.differ <- SE.differ
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+      Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
       }
 
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+        Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
       }  
       ##store table
       AICc.out <- AICtmp
@@ -1673,10 +1673,10 @@ modavgEffect.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, newdata, 
 
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -1691,21 +1691,21 @@ modavgEffect.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, newdata, 
      
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -1716,21 +1716,21 @@ modavgEffect.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, newdata, 
   if(second.ord == TRUE && c.hat > 1){
       ##create temporary data.frame to store fitted values and SE 
       QAICctmp <- AICctab
-      QAICctmp$diff <- diff
-      QAICctmp$SE.diff <- SE.diff * sqrt(c.hat)
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$diff)
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
       
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
       }
       
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2)))  
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
       }
       ##store table
       AICc.out <- QAICctmp
@@ -1742,21 +1742,21 @@ modavgEffect.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, newdata, 
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord == FALSE && c.hat == 1) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -1768,20 +1768,20 @@ modavgEffect.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, newdata, 
       
     ##create temporary data.frame to store fitted values and SE 
     QAICtmp <- AICctab
-    QAICtmp$diff <- diff
-    QAICtmp$SE.diff <- SE.diff* sqrt(c.hat)
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
       
     ##compute unconditional SE and store in output matrix
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- QAICtmp
@@ -1907,10 +1907,10 @@ modavgEffect.AICunmarkedFitColExt <- function(cand.set, modnames = NULL, newdata
 
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -1925,21 +1925,21 @@ modavgEffect.AICunmarkedFitColExt <- function(cand.set, modnames = NULL, newdata
      
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -1950,21 +1950,21 @@ modavgEffect.AICunmarkedFitColExt <- function(cand.set, modnames = NULL, newdata
   if(second.ord == TRUE && c.hat > 1){
       ##create temporary data.frame to store fitted values and SE 
       QAICctmp <- AICctab
-      QAICctmp$diff <- diff
-      QAICctmp$SE.diff <- SE.diff * sqrt(c.hat)
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$diff)
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
       
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
       }
       
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2)))  
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
       }
       ##store table
       AICc.out <- QAICctmp
@@ -1976,21 +1976,21 @@ modavgEffect.AICunmarkedFitColExt <- function(cand.set, modnames = NULL, newdata
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord == FALSE && c.hat == 1) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -2002,20 +2002,20 @@ modavgEffect.AICunmarkedFitColExt <- function(cand.set, modnames = NULL, newdata
       
     ##create temporary data.frame to store fitted values and SE 
     QAICtmp <- AICctab
-    QAICtmp$diff <- diff
-    QAICtmp$SE.diff <- SE.diff* sqrt(c.hat)
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
       
     ##compute unconditional SE and store in output matrix
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- QAICtmp
@@ -2130,10 +2130,10 @@ modavgEffect.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, newdata
 
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -2148,21 +2148,21 @@ modavgEffect.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, newdata
      
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -2173,21 +2173,21 @@ modavgEffect.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, newdata
   if(second.ord == TRUE && c.hat > 1){
       ##create temporary data.frame to store fitted values and SE 
       QAICctmp <- AICctab
-      QAICctmp$diff <- diff
-      QAICctmp$SE.diff <- SE.diff * sqrt(c.hat)
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$diff)
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
       
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
       }
       
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2)))  
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
       }
       ##store table
       AICc.out <- QAICctmp
@@ -2199,21 +2199,21 @@ modavgEffect.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, newdata
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord == FALSE && c.hat == 1) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -2225,20 +2225,20 @@ modavgEffect.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, newdata
       
     ##create temporary data.frame to store fitted values and SE 
     QAICtmp <- AICctab
-    QAICtmp$diff <- diff
-    QAICtmp$SE.diff <- SE.diff* sqrt(c.hat)
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
       
     ##compute unconditional SE and store in output matrix
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- QAICtmp
@@ -2379,10 +2379,10 @@ modavgEffect.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, newdata
 
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -2397,21 +2397,21 @@ modavgEffect.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, newdata
      
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -2422,21 +2422,21 @@ modavgEffect.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, newdata
   if(second.ord == TRUE && c.hat > 1){
       ##create temporary data.frame to store fitted values and SE 
       QAICctmp <- AICctab
-      QAICctmp$diff <- diff
-      QAICctmp$SE.diff <- SE.diff * sqrt(c.hat)
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$diff)
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
       
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
       }
       
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2)))  
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
       }
       ##store table
       AICc.out <- QAICctmp
@@ -2448,21 +2448,21 @@ modavgEffect.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, newdata
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord == FALSE && c.hat == 1) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -2474,20 +2474,20 @@ modavgEffect.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, newdata
       
     ##create temporary data.frame to store fitted values and SE 
     QAICtmp <- AICctab
-    QAICtmp$diff <- diff
-    QAICtmp$SE.diff <- SE.diff* sqrt(c.hat)
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
       
     ##compute unconditional SE and store in output matrix
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- QAICtmp
@@ -2551,10 +2551,21 @@ modavgEffect.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, newdata, s
     parm.type1 <- "omega"; parm.id <- "omega"
   }
 
+  ##iota (for immigration = TRUE with dynamics = "autoreg", "trend", "ricker", or "gompertz")
+  if(identical(parm.type, "iota")) {
+      parm.type1 <- "iota"; parm.id <- "iota"
+      ##check that parameter appears in all models
+      parfreq <- sum(sapply(cand.set, FUN = function(i) any(names(i@estimates@estimates) == parm.type1)))
+      if(!identical(length(cand.set), parfreq)) {
+          stop("\nParameter \'", parm.type1, "\' (parm.type = \"", parm.type, "\") does not appear in all models:",
+               "\ncannot compute model-averaged effect size across all models\n")
+      }
+  }
+
   ##detect
   if(identical(parm.type, "detect")) {parm.type1 <- "det"; parm.id <- "p"}
   
-    ##newdata is data frame with exact structure of the original data frame (same variable names and type)
+  ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   ##check on newdata
   ##determine number of observations in new data set
   nobserv <- nrow(newdata)
@@ -2636,10 +2647,10 @@ modavgEffect.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, newdata, s
 
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -2654,21 +2665,21 @@ modavgEffect.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, newdata, s
      
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -2679,21 +2690,21 @@ modavgEffect.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, newdata, s
   if(second.ord == TRUE && c.hat > 1){
       ##create temporary data.frame to store fitted values and SE 
       QAICctmp <- AICctab
-      QAICctmp$diff <- diff
-      QAICctmp$SE.diff <- SE.diff * sqrt(c.hat)
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$diff)
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
       
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
       }
       
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2)))  
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
       }
       ##store table
       AICc.out <- QAICctmp
@@ -2705,21 +2716,21 @@ modavgEffect.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, newdata, s
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord == FALSE && c.hat == 1) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -2731,20 +2742,20 @@ modavgEffect.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, newdata, s
       
     ##create temporary data.frame to store fitted values and SE 
     QAICtmp <- AICctab
-    QAICtmp$diff <- diff
-    QAICtmp$SE.diff <- SE.diff* sqrt(c.hat)
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
       
     ##compute unconditional SE and store in output matrix
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- QAICtmp
@@ -2791,8 +2802,10 @@ modavgEffect.AICunmarkedFitDS <- function(cand.set, modnames = NULL, newdata, se
 
   ##detect
   if(identical(parm.type, "detect")) {
-    stop("\nModel-averaging effect sizes on detection not yet supported for unmarkedFitDS class\n")
-    ##parm.type1 <- "det"; parm.id <- "p"
+      parm.type1 <- "det"; parm.id <- "p"
+      ##check for key function used
+      keyid <- unique(sapply(cand.set, FUN = function(i) i@keyfun))
+      if(any(keyid == "uniform")) stop("\nDetection parameter not found in some models\n")
   }
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   ##check on newdata
@@ -2864,10 +2877,10 @@ modavgEffect.AICunmarkedFitDS <- function(cand.set, modnames = NULL, newdata, se
 
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -2882,21 +2895,21 @@ modavgEffect.AICunmarkedFitDS <- function(cand.set, modnames = NULL, newdata, se
      
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -2907,21 +2920,21 @@ modavgEffect.AICunmarkedFitDS <- function(cand.set, modnames = NULL, newdata, se
   if(second.ord == TRUE && c.hat > 1){
       ##create temporary data.frame to store fitted values and SE 
       QAICctmp <- AICctab
-      QAICctmp$diff <- diff
-      QAICctmp$SE.diff <- SE.diff * sqrt(c.hat)
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$diff)
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
       
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
       }
       
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2)))  
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
       }
       ##store table
       AICc.out <- QAICctmp
@@ -2933,21 +2946,21 @@ modavgEffect.AICunmarkedFitDS <- function(cand.set, modnames = NULL, newdata, se
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord == FALSE && c.hat == 1) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -2959,20 +2972,20 @@ modavgEffect.AICunmarkedFitDS <- function(cand.set, modnames = NULL, newdata, se
       
     ##create temporary data.frame to store fitted values and SE 
     QAICtmp <- AICctab
-    QAICtmp$diff <- diff
-    QAICtmp$SE.diff <- SE.diff* sqrt(c.hat)
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
       
     ##compute unconditional SE and store in output matrix
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- QAICtmp
@@ -3018,9 +3031,12 @@ modavgEffect.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, newdata, s
 
   ##detect
   if(identical(parm.type, "detect")) {
-    stop("\nModel-averaging effect sizes on detection not yet supported for unmarkedFitGDS class\n")
-    ##parm.type1 <- "det"; parm.id <- "p"
+      parm.type1 <- "det"; parm.id <- "p"
+      ##check for key function used
+      keyid <- unique(sapply(cand.set, FUN = function(i) i@keyfun))
+      if(any(keyid == "uniform")) stop("\nDetection parameter not found in some models\n")
   }
+    
   ##availability
   if(identical(parm.type, "phi")) {parm.type1 <- "phi"; parm.id <- "phi"}
   
@@ -3095,10 +3111,10 @@ modavgEffect.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, newdata, s
 
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -3113,21 +3129,21 @@ modavgEffect.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, newdata, s
      
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -3138,21 +3154,21 @@ modavgEffect.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, newdata, s
   if(second.ord == TRUE && c.hat > 1){
       ##create temporary data.frame to store fitted values and SE 
       QAICctmp <- AICctab
-      QAICctmp$diff <- diff
-      QAICctmp$SE.diff <- SE.diff * sqrt(c.hat)
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$diff)
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
       
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
       }
       
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2)))  
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
       }
       ##store table
       AICc.out <- QAICctmp
@@ -3164,21 +3180,21 @@ modavgEffect.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, newdata, s
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord == FALSE && c.hat == 1) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -3190,20 +3206,20 @@ modavgEffect.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, newdata, s
       
     ##create temporary data.frame to store fitted values and SE 
     QAICtmp <- AICctab
-    QAICtmp$diff <- diff
-    QAICtmp$SE.diff <- SE.diff* sqrt(c.hat)
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
       
     ##compute unconditional SE and store in output matrix
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- QAICtmp
@@ -3251,7 +3267,19 @@ modavgEffect.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, newdata
   if(identical(parm.type, "detect")) {parm.type1 <- "det"; parm.id <- "p"}
 
   ##false positives
-  if(identical(parm.type, "fp")) {parm.type1 <- "fp"; parm.id <- "fp"}
+  if(identical(parm.type, "falsepos") || identical(parm.type, "fp")) {parm.type1 <- "fp"; parm.id <- "fp"}
+
+  ##certain detections
+  if(identical(parm.type, "certain")) {
+      parm.type1 <- "b"; parm.id <- "b"
+      ##check that parameter appears in all models
+      parfreq <- sum(sapply(cand.set, FUN = function(i) any(names(i@estimates@estimates) == parm.type1)))
+      if(!identical(length(cand.set), parfreq)) {
+          stop("\nParameter \'", parm.type1, "\' (parm.type = \"", parm.type, "\") does not appear in all models:",
+               "\ncannot compute model-averaged effect size across all models\n")
+      }
+  }
+
     
   ##newdata is data frame with exact structure of the original data frame (same variable names and type)
   ##check on newdata
@@ -3323,10 +3351,10 @@ modavgEffect.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, newdata
 
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -3341,21 +3369,21 @@ modavgEffect.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, newdata
      
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -3366,21 +3394,21 @@ modavgEffect.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, newdata
   if(second.ord == TRUE && c.hat > 1){
       ##create temporary data.frame to store fitted values and SE 
       QAICctmp <- AICctab
-      QAICctmp$diff <- diff
-      QAICctmp$SE.diff <- SE.diff * sqrt(c.hat)
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$diff)
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
       
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
       }
       
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2)))  
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
       }
       ##store table
       AICc.out <- QAICctmp
@@ -3392,21 +3420,21 @@ modavgEffect.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, newdata
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord == FALSE && c.hat == 1) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -3418,20 +3446,20 @@ modavgEffect.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, newdata
       
     ##create temporary data.frame to store fitted values and SE 
     QAICtmp <- AICctab
-    QAICtmp$diff <- diff
-    QAICtmp$SE.diff <- SE.diff* sqrt(c.hat)
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
       
     ##compute unconditional SE and store in output matrix
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- QAICtmp
@@ -3549,10 +3577,10 @@ modavgEffect.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, newdata,
 
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -3567,21 +3595,21 @@ modavgEffect.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, newdata,
      
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -3592,21 +3620,21 @@ modavgEffect.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, newdata,
   if(second.ord == TRUE && c.hat > 1){
       ##create temporary data.frame to store fitted values and SE 
       QAICctmp <- AICctab
-      QAICctmp$diff <- diff
-      QAICctmp$SE.diff <- SE.diff * sqrt(c.hat)
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$diff)
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
       
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
       }
       
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2)))  
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
       }
       ##store table
       AICc.out <- QAICctmp
@@ -3618,21 +3646,21 @@ modavgEffect.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, newdata,
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord == FALSE && c.hat == 1) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -3644,20 +3672,20 @@ modavgEffect.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, newdata,
       
     ##create temporary data.frame to store fitted values and SE 
     QAICtmp <- AICctab
-    QAICtmp$diff <- diff
-    QAICtmp$SE.diff <- SE.diff* sqrt(c.hat)
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
       
     ##compute unconditional SE and store in output matrix
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- QAICtmp
@@ -3776,10 +3804,10 @@ modavgEffect.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, newdata, s
   
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -3794,21 +3822,21 @@ modavgEffect.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, newdata, s
      
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -3819,21 +3847,21 @@ modavgEffect.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, newdata, s
   if(second.ord == TRUE && c.hat > 1){
       ##create temporary data.frame to store fitted values and SE 
       QAICctmp <- AICctab
-      QAICctmp$diff <- diff
-      QAICctmp$SE.diff <- SE.diff * sqrt(c.hat)
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$diff)
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
       
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
       }
       
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2)))  
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
       }
       ##store table
       AICc.out <- QAICctmp
@@ -3845,21 +3873,21 @@ modavgEffect.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, newdata, s
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord == FALSE && c.hat == 1) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -3871,20 +3899,20 @@ modavgEffect.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, newdata, s
       
     ##create temporary data.frame to store fitted values and SE 
     QAICtmp <- AICctab
-    QAICtmp$diff <- diff
-    QAICtmp$SE.diff <- SE.diff* sqrt(c.hat)
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
       
     ##compute unconditional SE and store in output matrix
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- QAICtmp
@@ -4003,10 +4031,10 @@ modavgEffect.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, newdata, s
 
   
   ##difference between groups 
-  diff <- fit[, 1] - fit[, 2]
+  differ <- fit[, 1] - fit[, 2]
     
   ##SE on difference
-  SE.diff <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
   
   ##store AICc table
   AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
@@ -4021,21 +4049,21 @@ modavgEffect.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, newdata, s
      
     ##create temporary data.frame to store fitted values and SE 
     AICctmp <- AICctab
-    AICctmp$diff <- diff
-    AICctmp$SE.diff <- SE.diff
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
     
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$diff)
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
     ##compute unconditional SE and store in output matrix
       
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.diff^2 + (AICctmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
     }
     ##store table
     AICc.out <- AICctmp
@@ -4046,21 +4074,21 @@ modavgEffect.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, newdata, s
   if(second.ord == TRUE && c.hat > 1){
       ##create temporary data.frame to store fitted values and SE 
       QAICctmp <- AICctab
-      QAICctmp$diff <- diff
-      QAICctmp$SE.diff <- SE.diff * sqrt(c.hat)
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
 
       ##compute model averaged prediction and store in output matrix
-      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$diff)
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
       
       ##compute unconditional SE and store in output matrix
       ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
       if(identical(uncond.se, "old")) {
-        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2))
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
       }
       
       ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
       if(identical(uncond.se, "revised")) {
-        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.diff^2 + (QAICctmp$diff - Mod.avg.out[, 1])^2)))  
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
       }
       ##store table
       AICc.out <- QAICctmp
@@ -4072,21 +4100,21 @@ modavgEffect.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, newdata, s
   ##create temporary data.frame to store fitted values and SE - AIC
   if(second.ord == FALSE && c.hat == 1) {
     AICtmp <- AICctab
-    AICtmp$diff <- diff
-    AICtmp$SE.diff <- SE.diff
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
 
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$diff)
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
 
     ##compute unconditional SE and store in output matrix
     ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
     }
 
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.diff^2 + (AICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- AICtmp
@@ -4098,20 +4126,20 @@ modavgEffect.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, newdata, s
       
     ##create temporary data.frame to store fitted values and SE 
     QAICtmp <- AICctab
-    QAICtmp$diff <- diff
-    QAICtmp$SE.diff <- SE.diff* sqrt(c.hat)
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
       
     ##compute model averaged prediction and store in output matrix
-    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$diff)
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
       
     ##compute unconditional SE and store in output matrix
     if(identical(uncond.se, "old")) {
-      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2))
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
     }
       
     ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
     if(identical(uncond.se, "revised")) {
-      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.diff^2 + (QAICtmp$diff - Mod.avg.out[, 1])^2)))
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
     }  
     ##store table
     AICc.out <- QAICtmp

@@ -4,6 +4,30 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 2.1-1 (19 June 2017)
+##- created 'extractX' generic function to extract all predictors that appear
+##  in a given list of candidate models and provide info on these variables
+##  (added imports of getData from nlme and unmarked, and of formula for lme4)
+##- corrected minor bug for unmarkedFitPCO model class with 'modavgShrink'
+##  to modify label of gamma depending on H0 (gamConst, gamAR, gamTrend)
+##- cleaned up modavgEffect
+##- added type = "certain" and "falsepos" as values for the 'parm.type' argument
+##  of 'modavgPred', 'modavgEffect', 'modavgShrink', and 'modavg' methods for
+##  objects of 'unmarkedFitOccuFP' class and added check for consistency of
+##  parameter occurrence in different models
+##- added "iota" as a value for the 'parm.type' argument for 'modavgPred',
+##  'modavgEffect', 'modavgShrink', and 'modavg' methods for objects of
+##  'unmarkedFitPCO' class and added check for consistency of
+##  parameter occurrence in different models
+##- added "detect" as a value for the 'parm.type' argument of 'modavgPred',
+##  'modavgEffect', 'modavgShrink', and 'modavg' methods for objects of
+##  'unmarkedFitDS' class
+##- added "detect" as a value for the 'parm.type' argument of 'modavgPred',
+##  'modavgEffect', 'modavgShrink', and 'modavg' methods for objects of
+##  'unmarkedFitGDS' class
+
+
+####################################################################
 ##revision 2.1-0 (17 November 2016)
 ##- corrected minor bug in storing lower.CL in 'modavgPred' result
 ##- modified 'fam.link.mer' to account for negative binomial with 'glmer.nb'

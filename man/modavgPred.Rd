@@ -220,22 +220,24 @@ supported for generalized linear mixed models of the \code{mer} class.
   \code{detect}, for parameters on occupancy in the inital year,
   colonization, extinction, and detectability, respectively.  For
   \code{unmarkedFitOccuFP} objects, one can specify \code{psi},
-  \code{detect}, or \code{fp}, for occupancy, detectability, and
-  probability of assigning false-positives, respectively.  For
+  \code{detect}, \code{falsepos}, and \code{certain}, for occupancy,
+  detectability, probability of assigning false-positives, and
+  probability detections are certain, respectively.  For
   \code{unmarkedFitOccuRN} objects, either \code{lambda} or
   \code{detect} can be entered for abundance and detectability
   parameters, respectively.  For \code{unmarkedFitPCount} and
   \code{unmarkedFitMPois} objects, \code{lambda} or \code{detect} denote
   parameters on abundance and detectability, respectively.  For
   \code{unmarkedFitPCO} objects, one can enter \code{lambda},
-  \code{gamma}, \code{omega}, or \code{detect}, to specify parameters on
-  abundance, recruitment, apparent survival, and detectability,
-  respectively.  For \code{unmarkedFitDS} objects, only \code{lambda} is
-  supported for the moment.  For \code{unmarkedFitGDS}, \code{lambda}
-  and \code{phi} denote abundance and availability, respectively.  For  
+  \code{gamma}, \code{omega}, \code{iota}, or \code{detect}, to specify
+  parameters on abundance, recruitment, apparent survival, immigration,
+  and detectability, respectively.  For \code{unmarkedFitDS} objects,
+  \code{lambda} and \code{detect} are supported.  For
+  \code{unmarkedFitGDS}, \code{lambda}, \code{phi}, and \code{detect}
+  denote abundance, availability, and detectability, respectively.  For
   \code{unmarkedFitGMM} and \code{unmarkedFitGPC} objects,
-  \code{lambda}, \code{phi}, and \code{detect} denote abundance, 
-  availability, and detectability, respectively. 
+  \code{lambda}, \code{phi}, and \code{detect} denote abundance,
+  availability, and detectability, respectively.
 }
 \item{\dots}{
   additional arguments passed to the function.
