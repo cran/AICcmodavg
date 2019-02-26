@@ -3,6 +3,7 @@
 \alias{reverse.parm}
 \alias{reverse.exclude}
 \alias{formatCands}
+\alias{formulaShort}
 \title{
 Various Utility Functions
 }
@@ -13,11 +14,14 @@ variables in an interaction term.
 \code{formatCands} creates new classes for lists containing candidate
 models.
 
+\code{formulaShort} prints a succinct formula from an \code{unmarkedFit} object.
+
 }
 \usage{
 reverse.parm(parm)
 reverse.exclude(exclude)
 formatCands(cand.set)
+formulaShort(mod, unmarked.type = NULL)
 }
 
 \arguments{
@@ -32,7 +36,14 @@ a list of interaction or polynomial terms appearing in some models, as
   excluded to obtain a model-averaged estimate.
 }
 \item{cand.set}{a list storing each of the models in the candidate model set.
-  }
+}
+\item{mod}{an object storing the result of an \code{unmarkedFit}.
+}
+\item{unmarked.type}{a character string specifying the type of parameter in
+  an \code{unmarkedFit} for which a formula is requested.  This argument
+  uses the character string for each parameter group as defined by
+  \code{unmarked}.
+}
 }
 \details{
   These utility functions are used internally by \code{aictab},
@@ -47,6 +58,8 @@ a list of interaction or polynomial terms appearing in some models, as
   \code{formatCands} creates new classes for the list of candidate
   models based on the contents of the list.  These new classes are used
   for method dispatch.
+
+  \code{formulaShort} is used by \code{anovaOD}.
 }
 \value{
   \code{reverse.parm} returns all possible combinations of an interaction
@@ -59,6 +72,9 @@ a list of interaction or polynomial terms appearing in some models, as
 
   \code{formatCands} adds a new class to the list of candidate
   models based on the classes of the models.
+
+  \code{formulaShort} creates a character string for the formula related
+  to a given parameter type from an \code{unmarkedFit} object.
 }
 
 \author{
@@ -66,8 +82,8 @@ Marc J. Mazerolle
 }
 
 \seealso{
-\code{\link{aictab}}, \code{\link{modavg}}, \code{\link{modavgShrink}},
-\code{\link{modavgPred}} 
+\code{\link{aictab}}, \code{\link{anovaOD}}, \code{\link{modavg}},
+\code{\link{modavgShrink}}, \code{\link{modavgPred}} 
 }
 \examples{
 ##a main effect
@@ -100,5 +116,15 @@ Cand.models[[3]] <- lm(log_Mass_lost ~ cent_Initial_mass +
                        Initial_mass2, data = dry.frog)
 
 formatCands(Cand.models)
+
+\dontrun{
+require(unmarked)
+data(bullfrog)
+bfrog <- unmarkedFrameOccu(y = bullfrog[, c("V1", "V2", "V3", "V4")],
+                           siteCovs = bullfrog[, 1:2])
+fm1 <- occu(~ 1 ~ Reed.presence, data = bfrog)
+formulaShort(fm1, unmarked.type = "state")
+formulaShort(fm1, unmarked.type = "det")
+}
 }
 \keyword{models}

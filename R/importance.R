@@ -745,6 +745,77 @@ importance.AICglmerMod <- function(cand.set, parm, modnames = NULL, second.ord =
 
 
 
+##glmmTMB
+importance.AICglmmTMB <- function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, c.hat = 1, ...){
+
+  ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+      if(is.null(names(cand.set))) {
+        modnames <- paste("Mod", 1:length(cand.set), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+      } else {
+        modnames <- names(cand.set)
+      }
+    }
+    
+    
+    ##remove all leading and trailing white space and within parm
+    parm <- gsub('[[:space:]]+', "", parm)
+
+    ##reverse parm
+    reversed.parm <- reverse.parm(parm)
+
+
+    ##extract labels
+    mod_formula <- lapply(cand.set, FUN = function(i) labels(fixef(i)$cond))
+
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+
+
+    ##setup matrix to indicate presence of parm in the model
+    include <- matrix(NA, nrow=length(cand.set), ncol=1)
+
+    ##iterate over each formula in mod_formula list
+    for (i in 1:length(cand.set)) {
+      idents <- NULL
+      form <- mod_formula[[i]]
+
+      ##iterate over each element of formula[[i]] in list
+      if(is.null(reversed.parm)) {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(paste(parm), form[j])
+        }
+      } else {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+        }
+      }
+    
+      include[i] <- ifelse(any(idents==1), 1, 0)
+    }
+
+    ##add a check to determine if include always == 0
+    if (sum(include)==0) {stop("\nParameter not found in any of the candidate models\n") }
+
+    new_table <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs,
+                        sort = FALSE, c.hat = c.hat)  
+
+    ##add a check to determine if the same number of models include and exlude parameter
+    if (length(which(include == 1)) != length(which(include != 1)) ) {
+      stop("\nImportance values are only meaningful when the number of models with and without parameter are equal\n")
+    }
+
+    w.plus <- sum(new_table[which(include == 1), 6]) #select models including a given parameter
+    w.minus <- 1 - w.plus
+    imp <- list("parm" = parm, "w.plus" = w.plus, "w.minus" = w.minus)
+
+  
+    class(imp) <- c("importance", "list")
+    return(imp)
+}
+
 
 
 ##gls
@@ -1329,6 +1400,79 @@ importance.AICmultinom.nnet <- function(cand.set, parm, modnames = NULL, second.
 
 
    
+##glm.nb
+importance.AICnegbin.glm.lm <- function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, ...){
+
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+      if(is.null(names(cand.set))) {
+        modnames <- paste("Mod", 1:length(cand.set), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+      } else {
+        modnames <- names(cand.set)
+      }
+    }
+    
+    
+    ##remove all leading and trailing white space and within parm
+    parm <- gsub('[[:space:]]+', "", parm)
+
+    ##reverse parm
+    reversed.parm <- reverse.parm(parm)
+
+
+    ##extract labels
+    mod_formula <- lapply(cand.set, FUN=function(i) rownames(summary(i)$coefficients))
+
+
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+
+
+    ##setup matrix to indicate presence of parm in the model
+    include <- matrix(NA, nrow=length(cand.set), ncol=1)
+
+    ##iterate over each formula in mod_formula list
+    for (i in 1:length(cand.set)) {
+      idents <- NULL
+      form <- mod_formula[[i]]
+
+      ##iterate over each element of formula[[i]] in list
+      if(is.null(reversed.parm)) {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(paste(parm), form[j])
+        }
+      } else {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+        }
+      }
+    
+      include[i] <- ifelse(any(idents==1), 1, 0)
+    }
+
+    ##add a check to determine if include always == 0
+    if (sum(include)==0) {stop("\nParameter not found in any of the candidate models\n") }
+
+    new_table <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs,
+                        sort = FALSE)  
+
+    ##add a check to determine if the same number of models include and exlude parameter
+    if (length(which(include == 1)) != length(which(include != 1)) ) {
+      stop("\nImportance values are only meaningful when the number of models with and without parameter are equal\n")
+    }
+
+    w.plus <- sum(new_table[which(include == 1), 6]) #select models including a given parameter
+    w.minus <- 1 - w.plus
+    imp <- list("parm" = parm, "w.plus" = w.plus, "w.minus" = w.minus)
+
+  
+    class(imp) <- c("importance", "list")
+    return(imp)
+  }
+
+
+
 ##nlmer
 importance.AICnlmerMod <- function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, ...){
 
@@ -2505,6 +2649,188 @@ importance.AICunmarkedFitGMM <- function(cand.set, parm, modnames = NULL, second
   }
   
   
+  ##check for parm.type and stop if NULL
+  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+  ##if (Intercept) is chosen assign (Int) - for compatibility
+  if(identical(parm, "(Intercept)")) parm <- "Int"
+  
+  
+  ##setup matrix to indicate presence of parm in the model
+  include <- matrix(NA, nrow=length(cand.set), ncol=1)
+
+  ##iterate over each formula in mod_formula list
+  for (i in 1:length(cand.set)) {
+    idents <- NULL
+    form <- mod_formula[[i]]
+    
+    ##iterate over each element of formula[[i]] in list
+    if(is.null(reversed.parm)) {
+      for (j in 1:length(form)) {
+        idents[j] <- identical(paste(parm), form[j])
+      }
+    } else {
+      for (j in 1:length(form)) {
+        idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+      }
+    }
+    
+    include[i] <- ifelse(any(idents==1), 1, 0)
+  }
+
+  ##add a check to determine if include always == 0
+  if (sum(include)==0) {stop("\nParameter not found in any of the candidate models\n") }
+  
+  new_table <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs,
+                      sort = FALSE, c.hat = c.hat)  
+
+  ##add a check to determine if the same number of models include and exlude parameter
+  if (length(which(include == 1)) != length(which(include != 1)) ) {
+    stop("\nImportance values are only meaningful when the number of models with and without parameter are equal\n")
+  }
+  
+  w.plus <- sum(new_table[which(include == 1), 6]) #select models including a given parameter
+  w.minus <- 1 - w.plus
+  imp <- list("parm" = parm, "w.plus" = w.plus, "w.minus" = w.minus)
+
+  
+  class(imp) <- c("importance", "list")
+  return(imp)
+}
+
+
+##gmultmix
+importance.AICunmarkedFitGPC <- function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, c.hat = 1,
+                                         parm.type = NULL, ...){
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+
+  ##reverse parm
+  reversed.parm <- reverse.parm(parm)
+
+  
+  ##lambda - abundance
+  if(identical(parm.type, "lambda")) {
+    ##extract model formula for each model in cand.set
+    mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$lambda)))
+    parm.unmarked <- "lambda"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+  
+  ##detect
+  if(identical(parm.type, "detect")) {
+    mod_formula<-lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+    parm.unmarked <- "p"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+
+  ##availability
+  if(identical(parm.type, "phi")) {
+    mod_formula<-lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$phi)))
+    parm.unmarked <- "phi"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+  
+  
+  ##check for parm.type and stop if NULL
+  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+  ##if (Intercept) is chosen assign (Int) - for compatibility
+  if(identical(parm, "(Intercept)")) parm <- "Int"
+  
+  
+  ##setup matrix to indicate presence of parm in the model
+  include <- matrix(NA, nrow=length(cand.set), ncol=1)
+
+  ##iterate over each formula in mod_formula list
+  for (i in 1:length(cand.set)) {
+    idents <- NULL
+    form <- mod_formula[[i]]
+    
+    ##iterate over each element of formula[[i]] in list
+    if(is.null(reversed.parm)) {
+      for (j in 1:length(form)) {
+        idents[j] <- identical(paste(parm), form[j])
+      }
+    } else {
+      for (j in 1:length(form)) {
+        idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+      }
+    }
+    
+    include[i] <- ifelse(any(idents==1), 1, 0)
+  }
+
+  ##add a check to determine if include always == 0
+  if (sum(include)==0) {stop("\nParameter not found in any of the candidate models\n") }
+  
+  new_table <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs,
+                      sort = FALSE, c.hat = c.hat)  
+
+  ##add a check to determine if the same number of models include and exlude parameter
+  if (length(which(include == 1)) != length(which(include != 1)) ) {
+    stop("\nImportance values are only meaningful when the number of models with and without parameter are equal\n")
+  }
+  
+  w.plus <- sum(new_table[which(include == 1), 6]) #select models including a given parameter
+  w.minus <- 1 - w.plus
+  imp <- list("parm" = parm, "w.plus" = w.plus, "w.minus" = w.minus)
+
+  
+  class(imp) <- c("importance", "list")
+  return(imp)
+}
+
+
+##occuMulti
+importance.AICunmarkedFitOccuMulti <- function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, c.hat = 1,
+                                             parm.type = NULL, ...){
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+  ##remove all leading and trailing white space and within parm
+  ##parm <- gsub('[[:space:]]+', "", parm)
+
+  ##reverse parm
+  reversed.parm <- reverse.parm(parm)
+
+  
+  ##psi
+  if(identical(parm.type, "psi")) {
+    ##extract model formula for each model in cand.set
+    mod_formula <- lapply(cand.set, FUN = function(x) labels(coef(x@estimates@estimates$state)))
+    parm.unmarked <- "psi"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+
+  ##detect
+  if(identical(parm.type, "detect")) {
+    mod_formula <- lapply(cand.set, FUN = function(x) labels(coef(x@estimates@estimates$det)))
+    parm.unmarked <- "p"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+  
+
+    
   ##check for parm.type and stop if NULL
   if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
     

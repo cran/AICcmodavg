@@ -51,7 +51,7 @@ bictab.AICaov.lm <-
     Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -97,7 +97,7 @@ bictab.AICbetareg <-
     Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -138,7 +138,7 @@ bictab.AICsclm.clm <-
     Results$LL <- unlist(lapply(X= cand.set, FUN = function(i) logLik(i)[1]))      
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -179,7 +179,7 @@ bictab.AICclm <-
     Results$LL <- unlist(lapply(X= cand.set, FUN = function(i) logLik(i)[1]))      
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -221,7 +221,7 @@ bictab.AICclmm <-
     Results$LL <- unlist(lapply(X= cand.set, FUN = function(i) logLik(i)[1]))      
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
        
@@ -264,7 +264,7 @@ bictab.AICcoxme <- function(cand.set, modnames = NULL, nobs = NULL, sort = TRUE,
   Results$LL <- unlist(lapply(X = cand.set, FUN=function(i) extractLL(i)[1]))      
   
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
     
@@ -307,7 +307,7 @@ bictab.AICcoxph <- function(cand.set, modnames = NULL, nobs = NULL, sort = TRUE,
   Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)[1]))      
   
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
     
@@ -354,7 +354,7 @@ bictab.AICfitdist <-
     Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -401,7 +401,7 @@ bictab.AICfitdistr <-
     Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -457,12 +457,67 @@ bictab.AICglm.lm <-
     }      
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
 
     class(Results) <- c("bictab", "data.frame")
     return(Results)
+  }
+
+
+
+##glmmTMB
+bictab.AICglmmTMB <-
+  function(cand.set, modnames = NULL, nobs = NULL, sort = TRUE, c.hat = 1, ...){  #specify whether table should be sorted or not by delta BIC
+
+      ##check if named list if modnames are not supplied
+      if(is.null(modnames)) {
+          if(is.null(names(cand.set))) {
+              modnames <- paste("Mod", 1:length(cand.set), sep = "")
+              warning("\nModel names have been supplied automatically in the table\n")
+          } else {
+              modnames <- names(cand.set)
+          }
+      }
+    
+        
+      ##add check to see whether response variable is the same for all models
+      check.resp <- lapply(X = cand.set, FUN = function(b) formula(b)[2])
+      if(length(unique(check.resp)) > 1) stop("\nYou must use the same response variable for all models\n")
+
+      Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+      Results$K <- unlist(lapply(cand.set, useBIC, return.K = TRUE, nobs = nobs,
+                                 c.hat = c.hat))     #extract number of parameters
+      Results$BIC <- unlist(lapply(cand.set, useBIC, return.K = FALSE, nobs = nobs,
+                                   c.hat = c.hat))  #extract BIC                          
+      Results$Delta_BIC <- Results$BIC - min(Results$BIC)            #compute delta BIC
+      Results$ModelLik <- exp(-0.5*Results$Delta_BIC)                #compute model likelihood required to compute BIC weights
+      Results$BICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute BIC weights
+
+      ##check if some models are redundant
+      if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+    
+      ##check if BIC and c.hat = 1
+      if(c.hat == 1) {
+          Results$LL <- unlist(lapply(X = cand.set, FUN=function(i) logLik(i)[1]))
+      }
+
+      ##rename correctly to QBIC and add column for c-hat
+      if(c.hat > 1) {
+          colnames(Results) <- c("Modnames", "K", "QBIC", "Delta_QBIC", "ModelLik", "QBICWt")
+          LL <- unlist(lapply(X=cand.set, FUN = function(i) logLik(i)[1]))
+          Results$Quasi.LL <- LL/c.hat
+          Results$c_hat <- c.hat
+      }
+      
+      if(sort)  {
+          Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+          Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
+      } else {Results$Cum.Wt <- NULL}
+    
+      class(Results) <- c("bictab", "data.frame")
+      return(Results)
   }
 
 
@@ -521,7 +576,7 @@ bictab.AICgls <-
 
     
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
        
@@ -561,7 +616,7 @@ bictab.AICgnls.gls <-
     if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
     
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
        
@@ -604,7 +659,7 @@ bictab.AIChurdle <-
     Results$LL <- unlist(lapply(X= cand.set, FUN = function(i) logLik(i)))      
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
        
@@ -653,7 +708,7 @@ bictab.AIClavaan <-
     Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -699,7 +754,7 @@ bictab.AIClm <-
     Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -762,7 +817,7 @@ bictab.AIClme <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
        
@@ -825,7 +880,7 @@ bictab.AIClmekin <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
        
@@ -868,7 +923,7 @@ bictab.AICmaxlikeFit.list <-
     Results$LL <- unlist(lapply(X= cand.set, FUN = function(i) logLik(i)))      
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -931,7 +986,7 @@ bictab.AICmer <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -997,7 +1052,7 @@ bictab.AIClmerMod <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -1041,7 +1096,53 @@ bictab.AICglmerMod <-
     Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))      
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
+    } else {Results$Cum.Wt <- NULL}
+    
+    class(Results) <- c("bictab", "data.frame")
+    return(Results)
+  }
+
+
+
+##negbin
+bictab.AICnegbin.glm.lm <-
+  function(cand.set, modnames = NULL, nobs = NULL, sort = TRUE, ...){
+
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+      if(is.null(names(cand.set))) {
+        modnames <- paste("Mod", 1:length(cand.set), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+      } else {
+        modnames <- names(cand.set)
+      }
+    }
+      
+
+    ##add check to see whether response variable is the same for all models
+    check.resp <- lapply(X = cand.set, FUN = function(b) formula(b)[2])
+    if(length(unique(check.resp)) > 1) stop("\nYou must use the same response variable for all models\n")
+
+    Results <- NULL
+    Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+    Results$K <- unlist(lapply(X = cand.set, FUN = useBIC, return.K = TRUE,
+                               nobs = nobs))     #extract number of parameters
+    Results$BIC <- unlist(lapply(X = cand.set, FUN = useBIC, return.K = FALSE, 
+                                 nobs = nobs))  #extract BIC                                      #
+    Results$Delta_BIC <- Results$BIC - min(Results$BIC)            #compute delta BIC
+    Results$ModelLik <- exp(-0.5*Results$Delta_BIC)                #compute model likelihood required to compute BIC weights
+    Results$BICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute BIC weights
+
+    ##check if some models are redundant
+    if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+         
+    ##extract LL
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))
+
+    if(sort)  {
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -1104,7 +1205,7 @@ bictab.AICnlme.lme <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -1146,7 +1247,7 @@ bictab.AICnlmerMod <-
     Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))      
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -1200,7 +1301,7 @@ bictab.AICmultinom.nnet <-
     }      
     
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -1265,7 +1366,7 @@ bictab.AIClme <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -1305,7 +1406,7 @@ bictab.AICnls <-
     if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -1348,7 +1449,7 @@ bictab.AICpolr <-
     if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -1391,7 +1492,7 @@ bictab.AICrlm.lm <-
     Results$LL <- unlist(lapply(X= cand.set, FUN = function(i) logLik(i)[1]))      
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -1437,7 +1538,7 @@ bictab.AICsurvreg <-
     Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))
         
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -1487,7 +1588,7 @@ bictab.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, nobs = NULL, so
   }      
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -1537,7 +1638,7 @@ bictab.AICunmarkedFitColExt <- function(cand.set, modnames = NULL, nobs = NULL, 
   }      
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -1589,7 +1690,7 @@ bictab.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, nobs = NULL, 
   }      
   
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -1640,7 +1741,7 @@ bictab.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, nobs = NULL, 
   }      
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -1690,7 +1791,7 @@ bictab.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, nobs = NULL, sor
   }      
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -1738,7 +1839,7 @@ bictab.AICunmarkedFitDS <- function(cand.set, modnames = NULL, nobs = NULL, sort
   }      
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -1791,7 +1892,7 @@ bictab.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, nobs = NULL, sor
   }      
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -1832,13 +1933,55 @@ bictab.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, nobs = NULL, 
   Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
     
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
   
   class(Results) <- c("bictab", "data.frame")
   return(Results)
 }
+
+
+
+##occuMulti
+bictab.AICunmarkedFitOccuMulti <- function(cand.set, modnames = NULL, nobs = NULL, sort = TRUE, c.hat = 1, ...){  #specify whether table should be sorted or not by delta BIC
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+  ##add check for use of c-hat
+  if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for multispecies occupancy models\n")
+
+  Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+  Results$K <- unlist(lapply(cand.set, useBIC, return.K = TRUE,
+                             nobs = nobs, c.hat = c.hat))     #extract number of parameters
+  Results$BIC <- unlist(lapply(cand.set, useBIC, return.K = FALSE,
+                                nobs = nobs, c.hat = c.hat))  #extract BIC
+  Results$Delta_BIC <- Results$BIC - min(Results$BIC)            #compute delta BIC
+  Results$ModelLik <- exp(-0.5*Results$Delta_BIC)                #compute model likelihood required to compute BIC weights
+  Results$BICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute BIC weights
+
+  ##check if some models are redundant
+  if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+
+  Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+    
+  if(sort)  {
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on delta BIC
+    Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
+  } else {Results$Cum.Wt <- NULL}
+  
+  class(Results) <- c("bictab", "data.frame")
+  return(Results)
+}
+
 
 
 ##multinomPois
@@ -1884,7 +2027,7 @@ bictab.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, nobs = NULL, s
   }      
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -1937,7 +2080,7 @@ bictab.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, nobs = NULL, sor
   }      
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -1990,7 +2133,7 @@ bictab.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, nobs = NULL, sor
   }      
   
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -2045,7 +2188,7 @@ bictab.AICvglm <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     
@@ -2088,7 +2231,7 @@ bictab.AICzeroinfl <-
     Results$LL <- unlist(lapply(X= cand.set, FUN = function(i) logLik(i)))      
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on BIC weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
     } else {Results$Cum.Wt <- NULL}
     

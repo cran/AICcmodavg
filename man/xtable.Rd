@@ -14,6 +14,8 @@
 \alias{xtable.modavgPred}
 \alias{xtable.modavgEffect}
 \alias{xtable.multComp}
+\alias{xtable.summaryOD}
+\alias{xtable.anovaOD}
 
 \title{
   Format Objects to LaTeX or HTML
@@ -82,6 +84,13 @@
 \method{xtable}{multComp}(x, caption = NULL, label = NULL,
         align = NULL, digits = NULL, display = NULL, nice.names = TRUE, 
         print.table = FALSE, \dots)
+
+\method{xtable}{summaryOD}(x, caption = NULL, label = NULL, align = NULL,
+                           digits = NULL, display = NULL, 
+                           nice.names = TRUE, \dots)
+\method{xtable}{anovaOD}(x, caption = NULL, label = NULL, align = NULL,
+                         digits = NULL, display = NULL, 
+                         nice.names = TRUE, \dots)
 }
 
 \arguments{
@@ -89,8 +98,8 @@
     an object of class \code{aictab}, \code{bictab}, \code{boot.wt},
     \code{checkParms}, \code{countDist}, \code{countHist},
     \code{detHist}, \code{dictab}, \code{mb.chisq}, \code{modavg},
-    \code{modavgEffect}, \code{modavgPred}, \code{modavgShrink}, or
-  \code{multComp}.
+    \code{modavgEffect}, \code{modavgPred}, \code{modavgShrink}, 
+    \code{multComp}, \code{summaryOD}, \code{anovaOD}.
   }
   
   \item{caption}{
@@ -121,7 +130,7 @@
     a character vector of length equal to the number of columns
     (including the rownames) specifying the format of each column.  For
     example, use \code{s} for strings, \code{f} for numbers in the
-    regular format, or \code{d} for integers. See \code{formatC} for
+    regular format, or \code{d} for integers.  See \code{formatC} for
     additional possible values.
   }
 
@@ -258,6 +267,7 @@
 \code{\link{formatC}}, \code{\link{mb.chisq}}, \code{\link{modavg}},
 \code{\link{modavgEffect}}, \code{\link{modavgPred}},
 \code{\link{modavgShrink}}, \code{\link{multComp}},
+\code{\link{summaryOD}}, \code{\link{anovaOD}},
 \code{\link[xtable]{xtable}}, \code{\link[xtable]{print.xtable}}
 }
 

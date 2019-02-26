@@ -6,8 +6,10 @@
 \alias{detHist.unmarkedFitOccu}
 \alias{detHist.unmarkedFitOccuFP}
 \alias{detHist.unmarkedFitOccuRN}
+\alias{detHist.unmarkedFitOccuMulti}
 \alias{detHist.unmarkedFrameOccu}
 \alias{detHist.unmarkedFrameOccuFP}
+\alias{detHist.unmarkedFrameOccuMulti}
 \alias{detHist.unmarkedMultFrame}
 \alias{print.detHist}
 \title{
@@ -28,11 +30,16 @@ detHist(object, \dots)
 
 \method{detHist}{unmarkedFitOccuRN}(object, \dots)
 
+\method{detHist}{unmarkedFitOccuMulti}(object, \dots)
+
 \method{detHist}{unmarkedFrameOccu}(object, \dots)
 
 \method{detHist}{unmarkedFrameOccuFP}(object, \dots)
 
 \method{detHist}{unmarkedMultFrame}(object, \dots)
+
+\method{detHist}{unmarkedFrameOccuMulti}(object, \dots)
+
 }
 
 \arguments{
@@ -50,19 +57,25 @@ detHist(object, \dots)
   This function computes a number of summary statistics in data sets
   used for single-season occupancy models (MacKenzie et al. 2002),
   dynamic occupancy models (MacKenzie et al. 2003), Royle-Nichols models
-  (Royle and Nichols 2003), and false-positive occupancy models (Royle
-  and Link 2006, Miller et al. 2011).
+  (Royle and Nichols 2003), false-positive occupancy models (Royle
+  and Link 2006, Miller et al. 2011), and multispecies occupancy models
+  (Rota et al. 2016.
   
   \code{detHist} can take data frames of the \code{unmarkedFrameOccu},
-  \code{unmarkedFrameOccuFP}, and \code{unmarkedMultFrame} classes as
-  input.  For convenience, the function can also extract the raw data
-  from model objects of classes \code{unmarkedFitColExt},
-  \code{unmarkedFitOccu}, \code{unmarkedFitOccuFP}, and
-  \code{detHist.unmarkedFitOccuRN}.  Note that different model objects
+  \code{unmarkedFrameOccuFP}, \code{unmarkedMultFrame}, and
+  \code{unmarkedFrameOccuMulti} classes as input.  For convenience, the
+  function can also extract the raw data from model objects of classes
+  \code{unmarkedFitColExt}, \code{unmarkedFitOccu}, 
+  \code{unmarkedFitOccuFP}, \code{unmarkedFitOccuRN}, and
+  \code{unmarkedFrameOccuMulti}.  Note that different model objects
   using the same data set will have identical values.
 }
 \value{
-  \code{detHist} returns a list with the following components:
+  For objects of classes \code{unmarkedFitOccu}, \code{unmarkedFitOccuRN},
+  \code{unmarkedFitOccuRN}, \code{unmarkedFitColExt},
+  \code{unmarkedFrameOccu}, \code{unmarkedFrameOccuFP}, and
+  \code{unmarkedMultFrame}, \code{detHist} returns a list with the
+  following components: 
   
   \item{hist.table.full}{a table with the frequency of each observed
     detection history.}
@@ -81,7 +94,9 @@ detHist(object, \dots)
     number of sites sampled in season \eqn{t - 1} without changes
     observed in season \eqn{t} (\code{static}), and the number of sites
     sampled in season \eqn{t} that were also sampled in season \eqn{t -
-    1} (\code{common}).
+    1} (\code{common}).  For multispecies data, \code{out.freqs}
+    presents for each species the number of sites sampled and the number
+    of sites with at least one detection.
   }
 
   \item{out.props}{a matrix where the rows correspond to each sampling
@@ -93,13 +108,49 @@ detHist(object, \dots)
     sampled in season \eqn{t - 1} with extinctions observed in season
     \eqn{t} (\code{naive.extinction}), and the proportion of sites
     sampled in season \eqn{t - 1} with no changes observed in season
-    \eqn{t}.
+    \eqn{t}. For multispecies data, \code{out.props} presents the
+    proportion of sites with a least one detection for each species.
   }
 
   \item{n.seasons}{the number of seasons (primary periods) in the data set.
   }
 
   \item{n.visits.season}{the maximum number of visits per season in the data set.
+  }
+
+  \item{n.species}{the number of species in the data set.
+  }
+
+  For objects of classes \code{unmarkedFitOccuMulti} and
+  \code{unmarkedFrameOccuMulti}, \code{detHist} returns a list with the
+  following components: 
+  
+  \item{hist.table.full}{a table with the frequency of each observed
+    detection history.  The species are coded with letters and follow
+    the same order of presentation as in the other parts of the output.}
+  
+  \item{hist.table.species}{a list of tables with the frequency of
+    each species-specific detection history.  The last element of
+    \code{hist.table.species} features the number of sites with
+    co-occurrence of the different species (\code{coOcc}).} 
+
+  \item{out.freqs}{a matrix where the rows correspond to each species
+    and where columns consist of the number of sites sampled during the
+    season (\code{sampled}) and the number of sites with at least one
+    detection (\code{detected}).}
+
+  \item{out.props}{a matrix where the rows correspond to each species
+    and where columns consist of the proportion of sites with at least
+    one detection during the season (\code{naive.occ}).
+  }
+
+  \item{n.seasons}{the number of seasons (primary periods) in the data set.
+  }
+
+  \item{n.visits.season}{the maximum number of visits per season in the data set.
+  }
+
+  \item{n.species}{the number of species in the data set.
   }
 }
 
@@ -123,6 +174,12 @@ detHist(object, \dots)
   Grant, E. H., Bailey, L. L. (2011) Improving occupancy estimation when
   two types of observational error occur: non-detection and species
   misidentification. \emph{Ecology} \bold{92}, 1422--1428.
+
+  Rota, C. T., Ferreira, M. A. R., Kays, R. W., Forrester, T. D.,
+  Kalies, E. L., McShea, W. J., Parsons, A. W., Millspaugh, J. J. (2016)
+  A multispecies occupancy model for two or more interacting
+  species. \emph{Methods in Ecology and Evolution} \bold{7},
+  1164--1173.
 
   Royle, J. A., Link, W. A. (2006) Generalized site occupancy models
   allowing for false positive and false negative errors. \emph{Ecology}

@@ -365,6 +365,49 @@ checkParms.glm <- function(mod, se.max = 25, ...) {
 
 
 
+##GLM's
+checkParms.glmmTMB <- function(mod, se.max = 25, ...) {
+    
+    ##extract SE
+    SEs <- sqrt(diag(vcov(mod)$cond))
+
+    ##extract names
+    var.names <- names(SEs)
+
+    ##format as matrix
+    matSE <- data.frame(SEs = SEs, variable = var.names)
+    
+    ##create matrix to hold results for parm with highest SE
+    out.result <- data.frame(variable = rep(NA, 1),
+                             max.se = rep(NA, 1),
+                             n.high.se = rep(NA, 1))
+
+    ##identify maximum value of SE in model
+    maxSE <- max(SEs)
+    
+    ##check if length = 0 (when NaN are present)
+    if(is.nan(maxSE)) {
+        nan.var <- as.character(matSE[is.nan(matSE$SEs), "variable"])
+        if(length(nan.var) == 1) {
+            nameSE <- nan.var
+        } else {nameSE <- nan.var[1]}
+    } else {
+        nameSE <- as.character(matSE[which(matSE$SEs == maxSE), "variable"])
+    }
+    
+    rownames(out.result) <- "beta"
+    
+    out.result[, "variable"] <- nameSE
+    out.result[, "max.se"] <- maxSE
+    out.result[, "n.high.se"] <- length(which(matSE$SEs > se.max))
+
+    out <- list(model.class = class(mod), se.max = se.max, result = out.result)
+    class(out) <- "checkParms"
+    return(out)
+}
+
+
+
 ##gls objects
 checkParms.gls <- function(mod, se.max = 25, ...) {
     

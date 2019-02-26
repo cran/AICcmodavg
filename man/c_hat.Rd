@@ -3,6 +3,7 @@
 \alias{c_hat}
 \alias{c_hat.default}
 \alias{c_hat.glm}
+\alias{c_hat.glmmTMB}
 \alias{c_hat.merMod}
 \alias{c_hat.vglm}
 \alias{print.c_hat}
@@ -18,6 +19,8 @@ c_hat(mod, method = "pearson", \dots)
 
 \method{c_hat}{glm}(mod, method = "pearson", \dots)
 
+\method{c_hat}{glmmTMB}(mod, method = "pearson", \dots)
+
 \method{c_hat}{merMod}(mod, method = "pearson", \dots)
 
 \method{c_hat}{vglm}(mod, method = "pearson", \dots)
@@ -25,14 +28,14 @@ c_hat(mod, method = "pearson", \dots)
 
 \arguments{
   \item{mod}{
-    an object of class \code{glm}, \code{merMod}, or \code{vglm} for
-    which a c-hat estimate is required.
+    an object of class \code{glm}, \code{glmmTMB}, \code{merMod}, or
+    \code{vglm} for which a c-hat estimate is required.
   }
   
 \item{method}{
-  this argument defines the estimator used. The default
+  this argument defines the estimator used.  The default
   \code{"pearson"} uses the Pearson chi-square divided by the residual
-  degrees of freedom. Other methods include \code{"deviance"} consisting
+  degrees of freedom.  Other methods include \code{"deviance"} consisting
   of the residual deviance divided by the residual degrees of freedom,
   \code{"farrington"} for the estimator suggested by Farrington (1996),
   and \code{"fletcher"} for the estimator suggested by Fletcher (2012).
@@ -106,34 +109,34 @@ failure) syntax) or with Poisson GLM's or GLMM's.
 c-hat value and an attribute for the type of estimator used.
 }
 \references{
-Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:
-  a primer on evidence}. Springer: New York. 
+  Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:
+    a primer on evidence}. Springer: New York. 
 
-Burnham, K. P., Anderson, D. R. (2002) \emph{Model Selection and
-  Multimodel Inference: a practical information-theoretic
-  approach}. Second edition. Springer: New York.
+  Burnham, K. P., Anderson, D. R. (2002) \emph{Model Selection and
+    Multimodel Inference: a practical information-theoretic
+    approach}. Second edition. Springer: New York.
 
-Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
+  Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
   understanding AIC and BIC in model selection. \emph{Sociological
-  Methods and Research} \bold{33}, 261--304. 
+    Methods and Research} \bold{33}, 261--304. 
 
-Farrington, C. P. (1996) On assessing goodness of fit of generalized
+  Farrington, C. P. (1996) On assessing goodness of fit of generalized
   linear models to sparse data. \emph{Journal of the Royal Statistical
-  Society B} \bold{58}, 349--360.
+    Society B} \bold{58}, 349--360.
   
-Fletcher, D. J. (2012) Estimating overdispersion when fitting a
+  Fletcher, D. J. (2012) Estimating overdispersion when fitting a
   generalized linear model to sparse data. \emph{Biometrika} \bold{99},
   230--237.
   
-Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
+  Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
   Akaike's Information Criterion (AIC) to assess the strength of
   biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
 
-McCullagh, P., Nelder, J. A. (1989) \emph{Generalized Linear
-  Models}. Second edition. Chapman and Hall: New York.
+  McCullagh, P., Nelder, J. A. (1989) \emph{Generalized Linear
+    Models}. Second edition. Chapman and Hall: New York.
 
-Venables, W. N., Ripley, B. D. (2002) \emph{Modern Applied Statistics
-  with S}. Second edition. Springer: New York. 
+  Venables, W. N., Ripley, B. D. (2002) \emph{Modern Applied Statistics
+    with S}. Second edition. Springer: New York. 
 }
 
 \author{
@@ -143,7 +146,8 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICc}}, \code{\link{confset}}, \code{\link{evidence}}, 
 \code{\link{modavg}}, \code{\link{importance}},
-\code{\link{modavgPred}}, \code{\link{mb.gof.test}}, \code{\link{Nmix.gof.test}}
+\code{\link{modavgPred}}, \code{\link{mb.gof.test}},
+\code{\link{Nmix.gof.test}}, \code{\link{anovaOD}}, \code{\link{summaryOD}} 
 }
 
 \examples{

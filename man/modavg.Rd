@@ -10,6 +10,7 @@
 \alias{modavg.AICcoxme}
 \alias{modavg.AICcoxph}
 \alias{modavg.AICglm.lm}
+\alias{modavg.AICglmmTMB}
 \alias{modavg.AICgls}
 \alias{modavg.AIChurdle}
 \alias{modavg.AIClm}
@@ -20,6 +21,7 @@
 \alias{modavg.AIClmerMod}
 \alias{modavg.AICglmerMod}
 \alias{modavg.AICmultinom.nnet}
+\alias{modavg.AICnegbin.glm.lm}
 \alias{modavg.AICpolr}
 \alias{modavg.AICrlm.lm}
 \alias{modavg.AICsurvreg}
@@ -36,6 +38,7 @@
 \alias{modavg.AICunmarkedFitMPois}
 \alias{modavg.AICunmarkedFitGMM}
 \alias{modavg.AICunmarkedFitGPC}
+\alias{modavg.AICunmarkedFitOccuMulti}
 \alias{print.modavg}
 
 \title{
@@ -87,6 +90,11 @@ modavg(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
         conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
         gamdisp = NULL, \dots)
 
+\method{modavg}{AICglmmTMB}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        \dots)
+
 \method{modavg}{AICgls}(cand.set, parm, modnames = NULL, second.ord =
            TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
            exclude = NULL, warn = TRUE, \dots)
@@ -128,6 +136,10 @@ modavg(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
         \dots)
+
+\method{modavg}{AICnegbin.glm.lm}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, \dots)
 
 \method{modavg}{AICpolr}(cand.set, parm, modnames = NULL, second.ord
         = TRUE, nobs = NULL, uncond.se = "revised", conf.level = 0.95,
@@ -200,6 +212,11 @@ modavg(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
        parm.type = NULL, \dots)
 
 \method{modavg}{AICunmarkedFitGPC}(cand.set, parm, modnames =
+        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitOccuMulti}(cand.set, parm, modnames =
         NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
         parm.type = NULL, \dots)
@@ -296,19 +313,20 @@ to apply the same value to each model.
   \code{unmarkedFitOccuFP}, \code{unmarkedFitOccuRN}, 
   \code{unmarkedFitMPois}, \code{unmarkedFitPCount},
   \code{unmarkedFitPCO}, \code{unmarkedFitDS}, \code{unmarkedFitGDS}, 
-  \code{unmarkedFitGMM}, and \code{unmarkedFitGPC} classes.  The
-  character strings supported vary with the type of model fitted. 
-  For \code{unmarkedFitOccu} objects, either \code{psi} or \code{detect}
-  can be supplied to indicate whether the parameter is on occupancy or
-  detectability, respectively.  For \code{unmarkedFitColExt}, possible
-  values  are \code{psi}, \code{gamma}, \code{epsilon}, and
-  \code{detect}, for parameters on occupancy in the inital year,
-  colonization, extinction, and detectability, respectively.  For
-  \code{unmarkedFitOccuFP} objects, one can specify \code{psi},
-  \code{detect}, \code{falsepos}, and \code{certain}, for occupancy,
-  detectability, probability of assigning false-positives, and
-  probability detections are certain, respectively.  For
-  \code{unmarkedFitOccuRN} objects, either \code{lambda} or
+  \code{unmarkedFitGMM}, \code{unmarkedFitGPC}, and
+  \code{unmarkedFitOccuMulti} classes.  The character strings supported
+  vary with the type of model fitted.  For \code{unmarkedFitOccu} and
+  \code{unmarkedFitOccuMulti} objects, either \code{psi} or
+  \code{detect} can be supplied to indicate whether the parameter is on
+  occupancy or detectability, respectively.  For
+  \code{unmarkedFitColExt}, possible values are \code{psi},
+  \code{gamma}, \code{epsilon}, and \code{detect}, for parameters on
+  occupancy in the inital year, colonization, extinction, and
+  detectability, respectively.  For \code{unmarkedFitOccuFP} objects,
+  one can specify \code{psi}, \code{detect}, \code{falsepos}, and
+  \code{certain}, for occupancy, detectability, probability of assigning
+  false-positives, and probability detections are certain, respectively.
+  For \code{unmarkedFitOccuRN} objects, either \code{lambda} or
   \code{detect} can be entered for abundance and detectability
   parameters, respectively.  For \code{unmarkedFitPCount} and
   \code{unmarkedFitMPois} objects, \code{lambda} or \code{detect} denote
@@ -319,10 +337,10 @@ to apply the same value to each model.
   and detectability, respectively.  For \code{unmarkedFitDS} objects,
   \code{lambda} and \code{detect} are supported.  For
   \code{unmarkedFitGDS}, \code{lambda}, \code{phi}, and \code{detect}
-  denote abundance, availability, and detectability, respectively.  For \code{unmarkedFitGMM} and
-  \code{unmarkedFitGPC} objects, \code{lambda}, \code{phi}, and
-  \code{detect} denote abundance, availability, and detectability,
-  respectively.
+  denote abundance, availability, and detectability, respectively.  For
+  \code{unmarkedFitGMM} and \code{unmarkedFitGPC} objects,
+  \code{lambda}, \code{phi}, and \code{detect} denote abundance,
+  availability, and detectability, respectively.
 }
 \item{\dots}{
   additional arguments passed to the function.
@@ -374,11 +392,11 @@ inference on beta estimates or to focus on model-averaged effect sizes
 
 \code{modavg} is implemented for a list containing objects of
 \code{aov}, \code{betareg}, \code{clm}, \code{clmm}, \code{clogit},
-\code{coxme}, \code{coxph}, \code{glm}, \code{gls}, \code{hurdle},
-\code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
-\code{glmerMod}, \code{lmerMod}, \code{multinom}, \code{polr},
-\code{rlm}, \code{survreg}, \code{vglm}, \code{zeroinfl} classes as well
-as various models of \code{unmarkedFit} classes.
+\code{coxme}, \code{coxph}, \code{glm}, \code{glmmTMB}, \code{gls},
+\code{hurdle}, \code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit},
+\code{mer}, \code{glmerMod}, \code{lmerMod}, \code{multinom},
+\code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, \code{zeroinfl}
+classes as well as various models of \code{unmarkedFit} classes.
 }
 \value{
 \code{modavg} creates an object of class \code{modavg} with the following

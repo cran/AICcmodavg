@@ -12,6 +12,7 @@
 \alias{bictab.AICfitdist}
 \alias{bictab.AICfitdistr}
 \alias{bictab.AICglm.lm}
+\alias{bictab.AICglmmTMB}
 \alias{bictab.AICgls}
 \alias{bictab.AICgnls.gls}
 \alias{bictab.AIChurdle}
@@ -41,6 +42,7 @@
 \alias{bictab.AICunmarkedFitMPois}
 \alias{bictab.AICunmarkedFitGMM}
 \alias{bictab.AICunmarkedFitGPC}
+\alias{bictab.AICunmarkedFitOccuMulti}
 \alias{bictab.AICvglm}
 \alias{bictab.AICzeroinfl}
 \alias{print.bictab}
@@ -57,12 +59,13 @@ selects the appropriate function to create the model selection table
 based on the object class.  The current version works with lists
 containing objects of \code{aov}, \code{betareg}, \code{clm},
 \code{clmm}, \code{clogit}, \code{coxme}, \code{coxph}, \code{fitdist},
-\code{fitdistr}, \code{glm}, \code{gls}, \code{gnls}, \code{hurdle},
-\code{lavaan}, \code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit},
-\code{mer}, \code{merMod}, \code{multinom}, \code{nlme}, \code{nls},
-\code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, and
-\code{zeroinfl} classes as well as various models of \code{unmarkedFit}
-classes but does not yet allow mixing of different classes.
+\code{fitdistr}, \code{glm}, \code{glmmTMB}, \code{gls}, \code{gnls},
+\code{hurdle}, \code{lavaan}, \code{lm}, \code{lme}, \code{lmekin},
+\code{maxlikeFit}, \code{mer}, \code{merMod}, \code{multinom},
+\code{nlme}, \code{nls}, \code{polr}, \code{rlm}, \code{survreg},
+\code{vglm}, and \code{zeroinfl} classes as well as various models of
+\code{unmarkedFit} classes but does not yet allow mixing of different
+classes.
 }
 
 \usage{
@@ -97,6 +100,9 @@ bictab(cand.set, modnames = NULL, nobs = NULL,
         nobs = NULL, sort = TRUE, \dots)
 
 \method{bictab}{AICglm.lm}(cand.set, modnames = NULL,
+        nobs = NULL, sort = TRUE, c.hat = 1, \dots)  
+
+\method{bictab}{AICglmmTMB}(cand.set, modnames = NULL,
         nobs = NULL, sort = TRUE, c.hat = 1, \dots)  
 
 \method{bictab}{AICgls}(cand.set, modnames = NULL,
@@ -186,6 +192,9 @@ bictab(cand.set, modnames = NULL, nobs = NULL,
 \method{bictab}{AICunmarkedFitGPC}(cand.set, modnames = NULL,
          nobs = NULL, sort = TRUE, c.hat = 1, \dots)
 
+\method{bictab}{AICunmarkedFitOccuMulti}(cand.set, modnames = NULL,
+         nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
 \method{bictab}{AICvglm}(cand.set, modnames = NULL,
          nobs = NULL, sort = TRUE, c.hat = 1, \dots)
 
@@ -251,13 +260,13 @@ approximates truth.
 \code{bictab} internally creates a new class for the \code{cand.set}
 list of candidate models, according to the contents of the list.  The
 current function is implemented for \code{clogit}, \code{coxme},
-\code{coxph}, \code{fitdist}, \code{fitdistr}, \code{glm}, \code{gls},
-\code{gnls}, \code{hurdle}, \code{lavaan}, \code{lm}, \code{lme},
-\code{lmekin}, \code{maxlikeFit}, \code{mer}, \code{merMod},
-\code{multinom}, \code{nlme}, \code{nls}, \code{polr}, \code{rlm},
-\code{survreg}, \code{vglm}, and \code{zeroinfl} classes as well as
-various \code{unmarkedFit} classes.  The function constructs a model
-selection table based on BIC.
+\code{coxph}, \code{fitdist}, \code{fitdistr}, \code{glm},
+\code{glmmTMB}, \code{gls}, \code{gnls}, \code{hurdle}, \code{lavaan},
+\code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
+\code{merMod}, \code{multinom}, \code{nlme}, \code{nls}, \code{polr},
+\code{rlm}, \code{survreg}, \code{vglm}, and \code{zeroinfl} classes as
+well as various \code{unmarkedFit} classes.  The function constructs a
+model selection table based on BIC.
 }
 \value{
 \code{bictab} creates an object of class \code{bictab} with the

@@ -162,6 +162,35 @@ useBIC.glm <-
 
 
 
+##glmmTMB
+useBIC.glmmTMB <-
+    function(mod, return.K = FALSE, nobs = NULL, c.hat = 1, ...){
+    
+        if(is.null(nobs)) {
+            n <- nrow(mod$frame)
+            names(n) <- NULL
+        } else {n <- nobs}
+        
+        LL <- logLik(mod)[1]
+        K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model - this includes LM
+      
+        if(c.hat == 1) {
+            BIC <- -2*LL + K * log(n)
+        }
+        if(c.hat > 1 && c.hat <= 4) {
+            K <- K+1
+            BIC <- -2*LL/c.hat + K * log(n)
+        }
+
+        if(c.hat > 4) stop("High overdispersion and model fit is questionable\n")
+        if(c.hat < 1) stop("You should set \'c.hat\' to 1 if < 1, but values << 1 might also indicate lack of fit\n")
+
+        if(return.K == TRUE) BIC[1] <- K #attributes the first element of BIC to K
+        BIC
+    }
+
+
+
 ##gls objects
 useBIC.gls <-
     function(mod, return.K = FALSE, nobs = NULL, ...){

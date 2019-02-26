@@ -88,6 +88,54 @@ c_hat.glm <- function(mod, method = "pearson", ...){
 
 
 ##function to compute c-hat from Poisson or binomial GLM with success/total syntax
+c_hat.glmmTMB <- function(mod, method = "pearson", ...){
+
+    ##determine family of model
+    fam <- family(mod)$family
+
+    ##extract response
+    
+    ##if binomial, check if n > 1 for each case
+    if(fam == "binomial") {
+        resp <- mod$frame[, mod$modelInfo$respCol]
+        if(!is.matrix(resp)) {
+            if(!any(names(mod$frame) == "(weights)")) {
+                stop("\nWith a binomial distribution, the number of successes must be summarized for valid computation of c-hat\n")
+            }
+        }
+    }
+
+    ##Poisson or binomial
+    if(!any(fam == c("poisson", "binomial"))) {
+        stop("\nEstimation of c-hat only valid for Poisson or binomial distributions\n")
+    }
+
+    ##number of parameters estimated
+    n.parms <- attr(logLik(mod), "df")
+  
+    ##total number of observations
+    n.obs <- nrow(model.frame(mod))
+
+    ##residual df
+    res.df <- n.obs - n.parms
+    
+    ##Pearson chi-square
+    chisq <- sum(residuals(mod, type = "pearson")^2)
+
+    ##return estimate based on Pearson chi-square
+    if(method == "pearson") {
+        c_hat.est <- chisq/res.df
+        attr(c_hat.est, "method") <- "pearson estimator"
+        
+    } else {stop("\nOnly Pearson estimator is currently supported for this model class\n")}
+
+    class(c_hat.est) <- "c_hat"
+    return(c_hat.est)
+}
+
+
+
+##function to compute c-hat from Poisson or binomial GLM with success/total syntax
 c_hat.vglm <- function(mod, method = "pearson", ...){
 
   ##determine family of model
@@ -173,7 +221,7 @@ c_hat.merMod <- function(mod, method = "pearson", ...) {
 
   ##if binomial, check if n > 1 for each case
   if(fam == "binomial") {
-    if(identical(unique(mod@resp$n), 1)) {
+    if(identical(unique(mod@resp$weights), 1)) {
       stop("\nWith a binomial distribution, the number of successes must be summarized for valid computation of c-hat\n")
     }
   }

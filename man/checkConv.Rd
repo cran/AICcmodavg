@@ -6,6 +6,7 @@
 \alias{checkConv.clm}
 \alias{checkConv.clmm}
 \alias{checkConv.glm}
+\alias{checkConv.glmmTMB}
 \alias{checkConv.hurdle}
 \alias{checkConv.lavaan}
 \alias{checkConv.maxlikeFit}
@@ -33,6 +34,8 @@ checkConv(mod, \dots)
 \method{checkConv}{clmm}(mod, \dots)
 
 \method{checkConv}{glm}(mod, \dots)
+
+\method{checkConv}{glmmTMB}(mod, \dots)
 
 \method{checkConv}{hurdle}(mod, \dots)
 
@@ -68,12 +71,12 @@ checkConv(mod, \dots)
   This function checks the element of a model object that contains the
   convergence information from the optimization function.  The function
   is currently implemented for models of classes \code{betareg},
-  \code{clm}, \code{clmm}, \code{glm}, \code{hurdle}, \code{lavaan},
-  \code{maxlikeFit}, \code{merMod}, \code{multinom}, \code{nls},
-  \code{polr}, \code{unmarkedFit}, and \code{zeroinfl}.  The function is
-  particularly useful for functions with several groups of parameters,
-  such as those of the \code{unmarked} package (Fiske and Chandler,
-  2011).
+  \code{clm}, \code{clmm}, \code{glm}, \code{glmmTMB}, \code{hurdle},
+  \code{lavaan}, \code{maxlikeFit}, \code{merMod}, \code{multinom},
+  \code{nls}, \code{polr}, \code{unmarkedFit}, and \code{zeroinfl}.  The
+  function is particularly useful for functions with several groups of
+  parameters, such as those of the \code{unmarked} package (Fiske and
+  Chandler, 2011).
 }
 \value{
   \code{checkConv} returns a list with the following components:

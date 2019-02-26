@@ -4,19 +4,22 @@
 \alias{mb.gof.test.default}
 \alias{mb.gof.test.unmarkedFitOccu}
 \alias{mb.gof.test.unmarkedFitColExt}
+\alias{mb.gof.test.unmarkedFitOccuRN}
 \alias{mb.chisq}
 \alias{mb.chisq.default}
 \alias{mb.chisq.unmarkedFitOccu}
 \alias{mb.chisq.unmarkedFitColExt}
+\alias{mb.chisq.unmarkedFitOccuRN}
 \alias{print.mb.chisq}
 \title{
-Compute MacKenzie and Bailey Goodness-of-fit Test for Single Season
-and Dynamic Occupancy Models
+Compute MacKenzie and Bailey Goodness-of-fit Test for Single Season,
+Dynamic, and Royle-Nichols Occupancy Models
 }
 \description{
 These functions compute the MacKenzie and Bailey (2004) goodness-of-fit
 test for single season occupancy models based on Pearson's chi-square
-and extend it to dynamic (multiple season) occupancy models.
+and extend it to dynamic (multiple season) and Royle-Nichols (2003)
+occupancy models.
 }
 \usage{
 mb.chisq(mod, print.table = TRUE, \dots)
@@ -25,13 +28,21 @@ mb.chisq(mod, print.table = TRUE, \dots)
 
 \method{mb.chisq}{unmarkedFitColExt}(mod, print.table = TRUE, \dots)
 
-mb.gof.test(mod, nsim = 5, plot.hist = TRUE, report = NULL, \dots)
+\method{mb.chisq}{unmarkedFitOccuRN}(mod, print.table = TRUE, maxK = 50, \dots)
+
+mb.gof.test(mod, nsim = 5, plot.hist = TRUE, report = NULL,
+            parallel = TRUE, \dots)
 
 \method{mb.gof.test}{unmarkedFitOccu}(mod, nsim = 5, plot.hist = TRUE,
-                     report = NULL, \dots)
+                     report = NULL, parallel = TRUE, \dots)
 
 \method{mb.gof.test}{unmarkedFitColExt}(mod, nsim = 5, plot.hist = TRUE,
-                     report = NULL, plot.seasons = FALSE, \dots)
+                     report = NULL, parallel = TRUE,
+                     plot.seasons = FALSE, \dots) 
+
+\method{mb.gof.test}{unmarkedFitOccuRN}(mod, nsim = 5, plot.hist = TRUE,
+                     report = NULL, parallel = TRUE, maxK = 50, \dots)
+
 }
 \arguments{
   \item{mod}{
@@ -53,9 +64,16 @@ the model for which a goodness-of-fit test is required.
   the same line.  For example, if \code{report = 3}, the values of the
   test statistic for three iterations are reported on each line.
 }
+\item{parallel}{logical.  If \code{TRUE}, requests that \code{parboot}
+  use multiple cores to accelerate computations of the bootstrap.
+}
 \item{plot.seasons}{logical.  For dynamic occupancy models, specifies
   that a histogram of the bootstrapped test statistic for each primary
   period (season) is to be included in the output. 
+}
+\item{maxK}{the number of support points used as the summation index in
+  the likelihood of the Royle-Nichols model (2003). This should match
+  the value used to estimate the parameters with \code{occuRN}.
 }
 \item{\dots}{
   additional arguments passed to the function.
@@ -125,8 +143,8 @@ indicate lack-of-fit and that an alternative model should be investigated.
 
 }
 \value{
-  \code{mb.chisq} returns the following components for single-season
-  occupancy models:
+  \code{mb.chisq} returns the following components for single-season and
+  Royle-Nichols occupancy models:
   
   \item{chisq.table}{the table of observed and expected values for each
     detection history and its chi-square component (if \code{print.table
@@ -139,7 +157,8 @@ indicate lack-of-fit and that an alternative model should be investigated.
     instead of the theoretical chi-square distribution because low
     expected frequencies invalidate the chi-square assumption.
   }
-  \item{model.type}{the model type, either \code{single-season} or \code{dynamic}.
+  \item{model.type}{the model type, either \code{single-season},
+    \code{royle-nichols}, or \code{dynamic}. 
   }
 
   \code{mb.chisq} returns the following additional components for dynamic
@@ -155,7 +174,7 @@ indicate lack-of-fit and that an alternative model should be investigated.
 
 
   \code{mb.gof.test} returns the following components for single-season
-  occupancy models:
+  and Royle-Nichols occupancy models:
   
   \item{chisq.table}{the table of observed and expected values for each
     detection history and its chi-square component.
@@ -225,6 +244,10 @@ MacKenzie, D. I., Nichols, J. D., Royle, J. A., Pollock, K. H., Bailey,
 L. L., Hines, J. E. (2006) \emph{Occupancy estimation and
   modeling: inferring patterns and dynamics of species
   occurrence}. Academic Press: New York.
+
+Royle, J. A., Nichols, J. D. (2003) Estimating abundance from repeated
+     presence-absence data or point counts. \emph{Ecology} \bold{84},
+     777--790.
 }
 \author{
 Marc J. Mazerolle

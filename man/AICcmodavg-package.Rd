@@ -18,16 +18,16 @@ relative variable importance, evidence ratios, and confidence sets for
 the best model.  The present version works with Cox proportional hazards
 models and conditional logistic regression (\code{coxph} and
 \code{coxme} classes), linear models (\code{lm} class), generalized
-linear models (\code{glm}, \code{vglm}, \code{hurdle}, and
-\code{zeroinfl} classes), linear models fit by generalized least squares
-(\code{gls} class), linear mixed models (\code{lme} class), generalized
-linear mixed models (\code{mer} and \code{merMod} classes), multinomial
-and ordinal logistic regressions (\code{multinom}, \code{polr},
-\code{clm}, and \code{clmm} classes), robust regression models
-(\code{rlm} class), beta regression models (\code{betareg} class),
-parametric survival models (\code{survreg} class), nonlinear models
-(\code{nls} and \code{gnls} classes), nonlinear mixed models
-(\code{nlme} and \code{nlmerMod} classes), univariate models
+linear models (\code{glm}, \code{glm.nb}, \code{vglm}, \code{hurdle},
+and \code{zeroinfl} classes), linear models fit by generalized least
+squares (\code{gls} class), linear mixed models (\code{lme} class),
+generalized linear mixed models (\code{mer}, \code{merMod}, and
+\code{glmmTMB} classes), multinomial and ordinal logistic regressions
+(\code{multinom}, \code{polr}, \code{clm}, and \code{clmm} classes),
+robust regression models (\code{rlm} class), beta regression models
+(\code{betareg} class), parametric survival models (\code{survreg}
+class), nonlinear models (\code{nls} and \code{gnls} classes), nonlinear
+mixed models (\code{nlme} and \code{nlmerMod} classes), univariate models
 (\code{fitdist} and \code{fitdistr} classes), and certain types of
 latent variable models (\code{lavaan} class).  The package also supports
 various models of \code{unmarkedFit} and \code{maxLikeFit} classes
@@ -43,8 +43,8 @@ in the package.
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 2.1-1\cr
-Date: \tab 2016-06-19\cr
+Version: \tab 2.2-0\cr
+Date: \tab 2019-02-13\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -118,6 +118,8 @@ A number of functions for model diagnostics are available:
 
 Other utility functions include:
 \itemize{
+\item{\code{\link{anovaOD}}}  {Computes likelihood-ratio test statistic
+  corrected for overdispersion between two models.}
 \item{\code{\link{extractLL}}}  {Extracts log-likelihood from
   models of certain classes.}
 \item{\code{\link{extractSE}}}  {Extracts standard errors from models of
@@ -129,6 +131,8 @@ Other utility functions include:
   and \code{merMod}.}
 \item{\code{\link{predictSE}}}  {Computes predictions and associated 
   standard errors models of certain classes.}
+\item{\code{\link{summaryOD}}}  {Displays summary of model output
+  adjusted for overdispersion.}
 \item{\code{\link{xtable}}}  {Formats various objects resulting from
   model selection and multimodel inference to LaTeX or HTML tables.}
 }
@@ -187,6 +191,9 @@ c_hat(Cand.mod[[1]], method = "pearson") #uses Pearson's chi-square/df
 ##note the very low overdispersion: in this case, the analysis could be
 ##conducted without correcting for c-hat as its value is reasonably close
 ##to 1  
+
+##output of model corrected for overdispersion
+summaryOD(Cand.mod[[1]], c.hat = 1.04)
 
 ##assign names to each model
 Modnames <- c("type + logperim + invertpred", "type + logperim",

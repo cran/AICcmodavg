@@ -11,6 +11,7 @@
 \alias{importance.AICcoxme}
 \alias{importance.AICcoxph}
 \alias{importance.AICglm.lm}
+\alias{importance.AICglmmTMB}
 \alias{importance.AICglmerMod}
 \alias{importance.AICgls}
 \alias{importance.AIChurdle}
@@ -20,6 +21,7 @@
 \alias{importance.AICmaxlikeFit.list}
 \alias{importance.AICmer}
 \alias{importance.AICmultinom.nnet}
+\alias{importance.AICnegbin.glm.lm}
 \alias{importance.AICnlmerMod}
 \alias{importance.AICpolr}
 \alias{importance.AICrlm.lm}
@@ -34,6 +36,8 @@
 \alias{importance.AICunmarkedFitGDS}
 \alias{importance.AICunmarkedFitMPois}
 \alias{importance.AICunmarkedFitGMM}
+\alias{importance.AICunmarkedFitGPC}
+\alias{importance.AICunmarkedFitOccuMulti}
 \alias{importance.AICvglm}
 \alias{importance.AICzeroinfl}
 \alias{print.importance}
@@ -81,6 +85,9 @@ importance(cand.set, parm, modnames = NULL, second.ord = TRUE,
 \method{importance}{AICglmerMod}(cand.set, parm, modnames = NULL,
            second.ord = TRUE, nobs = NULL, ...)
 
+\method{importance}{AICglmmTMB}(cand.set, parm, modnames = NULL,
+           second.ord = TRUE, nobs = NULL, c.hat = 1, ...)
+
 \method{importance}{AICgls}(cand.set, parm, modnames = NULL,
            second.ord = TRUE, nobs = NULL, ...)
 
@@ -101,6 +108,9 @@ importance(cand.set, parm, modnames = NULL, second.ord = TRUE,
 
 \method{importance}{AICmultinom.nnet}(cand.set, parm, modnames = NULL,
            second.ord = TRUE, nobs = NULL, c.hat = 1, ...)
+
+\method{importance}{AICnegbin.glm.lm}(cand.set, parm, modnames = NULL,
+           second.ord = TRUE, nobs = NULL, ...)
 
 \method{importance}{AICnlmerMod}(cand.set, parm, modnames = NULL,
            second.ord = TRUE, nobs = NULL, ...)
@@ -142,6 +152,12 @@ importance(cand.set, parm, modnames = NULL, second.ord = TRUE,
            second.ord = TRUE, nobs = NULL, c.hat = 1, parm.type = NULL, ...)
 
 \method{importance}{AICunmarkedFitGMM}(cand.set, parm, modnames = NULL,
+           second.ord = TRUE, nobs = NULL, c.hat = 1, parm.type = NULL, ...)
+
+\method{importance}{AICunmarkedFitGPC}(cand.set, parm, modnames = NULL,
+           second.ord = TRUE, nobs = NULL, c.hat = 1, parm.type = NULL, ...)
+
+\method{importance}{AICunmarkedFitOccuMulti}(cand.set, parm, modnames = NULL,
            second.ord = TRUE, nobs = NULL, c.hat = 1, parm.type = NULL, ...)
 
 \method{importance}{AICvglm}(cand.set, parm, modnames = NULL, 
@@ -198,30 +214,31 @@ linear mixed models of the \code{mer} or \code{merMod} classes.
   \code{unmarkedFitOccu}, \code{unmarkedFitColExt},
   \code{unmarkedFitOccuFP}, \code{unmarkedFitOccuRN},
   \code{unmarkedFitMPois}, \code{unmarkedFitGPC},
-  \code{unmarkedFitPCount}, \code{unmarkedFitPCO}, \code{unmarkedFitDS},
-  \code{unmarkedFitGDS}, and \code{unmarkedFitGMM} classes.  The
-  character strings supported vary with the type of model fitted.  For
-  \code{unmarkedFitOccu} objects, either \code{psi} or \code{detect} can
-  be supplied to indicate whether the parameter is on occupancy or
-  detectability, respectively.  For \code{unmarkedFitColExt}, possible
-  values are \code{psi}, \code{gamma}, \code{epsilon}, and
-  \code{detect}, for parameters on occupancy in the inital year,
-  colonization, extinction, and detectability, respectively.  For
-  \code{unmarkedFitOccuFP} objects, one can specify \code{psi},
-  \code{detect}, or \code{fp}, for occupancy, detectability, and
-  probability of assigning false-positives, respectively.  For
-  \code{unmarkedFitOccuRN} objects, either \code{lambda} or
-  \code{detect} can be entered for abundance and detectability
-  parameters, respectively.  For \code{unmarkedFitPCount} and
-  \code{unmarkedFitMPois} objects, \code{lambda} or \code{detect} denote
-  parameters on abundance and detectability, respectively.  For
+  \code{unmarkedFitPCount}, \code{unmarkedFitPCO}, \code{unmarkedFitDS}, 
+  \code{unmarkedFitGDS}, \code{unmarkedFitGMM}, and
+  \code{unmarkedFitOccuMulti} classes.  The character strings supported
+  vary with the type of model fitted.  For \code{unmarkedFitOccu}
+  and \code{unmarkedFitOccuMulti} objects, either \code{psi} or
+  \code{detect} can be supplied to indicate whether the parameter is on
+  occupancy or detectability, respectively.  For
+  \code{unmarkedFitColExt}, possible values are \code{psi},
+  \code{gamma}, \code{epsilon}, and \code{detect}, for parameters on
+  occupancy in the inital year, colonization, extinction, and
+  detectability, respectively.  For \code{unmarkedFitOccuFP} objects,
+  one can specify \code{psi}, \code{detect}, or \code{fp}, for
+  occupancy, detectability, and probability of assigning
+  false-positives, respectively.  For \code{unmarkedFitOccuRN} objects,
+  either \code{lambda} or \code{detect} can be entered for abundance and
+  detectability parameters, respectively.  For \code{unmarkedFitPCount}
+  and \code{unmarkedFitMPois} objects, \code{lambda} or \code{detect}
+  denote parameters on abundance and detectability, respectively.  For
   \code{unmarkedFitPCO} objects, one can enter \code{lambda}, 
   \code{gamma}, \code{omega}, or \code{detect}, to specify parameters on
   abundance, recruitment, apparent survival, and detectability,
   respectively.  For \code{unmarkedFitDS} objects, only \code{lambda} is
-  supported for the moment. For \code{unmarkedFitGDS} objects, \code{lambda}
-  and \code{phi} denote abundance and availability, respectively.  For
-  \code{unmarkedFitGMM} and \code{unmarkedFitGPC} objects,
+  supported for the moment. For \code{unmarkedFitGDS} objects,
+  \code{lambda} and \code{phi} denote abundance and availability,
+  respectively.  For \code{unmarkedFitGMM} and \code{unmarkedFitGPC} objects,
   \code{lambda}, \code{phi}, and \code{detect} denote abundance,
   availability, and detectability, respectively.
 }
@@ -234,7 +251,8 @@ linear mixed models of the \code{mer} or \code{merMod} classes.
 \code{importance} returns an object of class \code{importance}
 consisting of the following components:
 \item{parm}{the parameter for which an importance value is required.} 
-\item{w.plus}{the parameter for which an importance value is required.} 
+\item{w.plus}{the sum of Akaike weights for the models that include the
+  parameter of interest.}
 \item{w.minus}{the sum of Akaike weights for the models that exclude the
   parameter of interest} 
 }
@@ -327,6 +345,81 @@ importance(cand.set = Cand.mods, modnames = Modnames, parm = "sitevar1",
 ##compute importance value for 'obsvar1' on detectability
 importance(cand.set = Cand.mods, modnames = Modnames, parm = "obsvar1",
            parm.type = "detect")
+
+
+##example with multispecies occupancy modify from ?occuMulti
+##Simulate 3 species data
+N <- 80
+nspecies <- 3
+J <- 4
+     
+occ_covs <- as.data.frame(matrix(rnorm(N * 10),ncol=10))
+names(occ_covs) <- paste('par',1:10,sep='')
+
+det_covs <- list()
+for (i in 1:nspecies){
+    det_covs[[i]] <- matrix(rnorm(N*J),nrow=N)
+}
+names(det_covs) <- paste('par',1:nspecies,sep='')
+
+##True vals
+beta <- c(0.5,0.2,0.4,0.5,-0.1,-0.3,0.2,0.1,-1,0.1)
+f1 <- beta[1] + beta[2]*occ_covs$par1
+f2 <- beta[3] + beta[4]*occ_covs$par2
+f3 <- beta[5] + beta[6]*occ_covs$par3
+f4 <- beta[7]
+f5 <- beta[8]
+f6 <- beta[9]
+f7 <- beta[10]
+f <- cbind(f1,f2,f3,f4,f5,f6,f7)
+z <- expand.grid(rep(list(1:0),nspecies))[,nspecies:1]
+colnames(z) <- paste('sp',1:nspecies,sep='')
+dm <- model.matrix(as.formula(paste0("~.^",nspecies,"-1")),z)
+
+psi <- exp(f %*% t(dm))
+psi <- psi/rowSums(psi)
+
+##True state
+ztruth <- matrix(NA,nrow=N,ncol=nspecies)
+for (i in 1:N){
+    ztruth[i,] <- as.matrix(z[sample(8,1,prob=psi[i,]),])
+}
+     
+p_true <- c(0.6,0.7,0.5)
+
+## fake y data
+y <- list()
+     
+for (i in 1:nspecies){
+    y[[i]] <- matrix(NA,N,J)
+    for (j in 1:N){
+        for (k in 1:J){
+            y[[i]][j,k] <- rbinom(1,1,ztruth[j,i]*p_true[i])
+        }
+    }
+}
+names(y) <- c('coyote','tiger','bear')
+     
+##Create the unmarked data object
+data <- unmarkedFrameOccuMulti(y=y,siteCovs=occ_covs,obsCovs=det_covs)
+
+## Formulas for state and detection processes
+## Length should match number/order of columns in fDesign
+occFormulas <- c('~par1 + par2','~par2','~par3','~1','~1','~1','~1')
+occFormulas2 <- c('~par1 + par3','~par1 + par2','~par1 + par2 + par3',
+                  "~ 1", "~1", "~ 1", "~1")
+
+##Length should match number/order of species in data@ylist
+detFormulas <- c('~1','~1','~1')
+     
+fit <- occuMulti(detFormulas,occFormulas,data)
+fit2 <- occuMulti(detFormulas,occFormulas2,data)
+
+##importance
+importance(cand.set = list(fit, fit2), parm = "[coyote] par2",
+           parm.type = "psi")
+
+
 detach(package:unmarked)
 }
 }

@@ -239,6 +239,20 @@ isREML <- function(mod){
 }
 
 
+##function to extract formula name
+formulaShort <- function(mod, unmarked.type = NULL) {
+
+    ##extract estimates
+    formEst <- names(mod@estimates@estimates[[unmarked.type]]@estimates)
+    form.noInt <- formEst[formEst != "(Intercept)"]
+    if(length(form.noInt) == 0) {
+        form.noInt <- "." }
+
+    ##print formula
+    return(paste(form.noInt, collapse = "+"))
+}
+
+    
 ##extract ranef function
 #ranef <- function (mod){
 #  ##if from lme4

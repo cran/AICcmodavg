@@ -4,6 +4,36 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+
+
+####################################################################
+##revision 2.2-0 (25 February 2019)
+##- added 'summaryOD' to compute confidence intervals around estimates or
+##  hypothesis tests adjusted for overdispersion (request by M. Kéry)
+##- added methods for objects of 'glm.nb' class
+##- added methods for glmmTMB models (request by Y. Paillet)
+##- added 'parallel' argument in 'Nmix.gof.test' and 'mb.gof.test' for
+##  new 'parallel' argument in 'parboot'
+##- included support of goodness-of-fit statistics of 'mb.chisq' and
+##  'mb.gof.test' for Royle-Nichols models fit with 'occuRN' (thanks to
+##  Dan Linden)
+##- included support for multispecies occupancy data and models of classes
+##  'unmarkedFrameOccuMulti' and 'unmarkedFitOccuMulti'
+##- added 'anovaOD' function to compute likelihood ratio tests corrected
+##  for overdispersion for models of various classes that use the Poisson or
+##  binomial distributions
+##- modified 'covDiag' to handle missing values in data set
+##- updated man page of 'modavgShrink' to include method for 'coxme' class
+##- updated man page of 'importance' to correct typo (thanks to J. Carlisle)
+##- corrected bug in modavg for parameter "b" in false-positive occupancy models
+##- modified sort in 'aictab' and 'bictab' based on delta AIC instead
+##  of Akaike weight
+##- modified printing of NA to "." to save space and improve alignment in
+##  detHist, countDist, xtable, and mb.chisq methods
+##- modified 'modavgPred' and 'modavgEffect' to use 'predict' for
+##  ZIP models fit with 'pcount'
+
+####################################################################
 ##revision 2.1-1 (19 June 2017)
 ##- created 'extractX' generic function to extract all predictors that appear
 ##  in a given list of candidate models and provide info on these variables

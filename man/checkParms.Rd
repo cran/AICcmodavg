@@ -9,6 +9,7 @@
 \alias{checkParms.coxme}
 \alias{checkParms.coxph}
 \alias{checkParms.glm}
+\alias{checkParms.glmmTMB}
 \alias{checkParms.gls}
 \alias{checkParms.gnls}
 \alias{checkParms.hurdle}
@@ -51,6 +52,8 @@ checkParms(mod, se.max = 25, simplify = TRUE, \dots)
 \method{checkParms}{coxph}(mod, se.max = 25, \dots)
 
 \method{checkParms}{glm}(mod, se.max = 25, \dots)
+
+\method{checkParms}{glmmTMB}(mod, se.max = 25, \dots)
 
 \method{checkParms}{gls}(mod, se.max = 25, \dots)
 

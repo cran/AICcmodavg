@@ -8,6 +8,7 @@
 \alias{multComp.lm}
 \alias{multComp.lme}
 \alias{multComp.mer}
+\alias{multComp.negbin}
 \alias{multComp.merMod}
 \alias{multComp.rlm}
 \alias{multComp.survreg}
@@ -21,54 +22,64 @@ tests in designed experiments.  It creates a model selection table based
 on different grouping patterns of a factor and computes model-averaged
 predictions for each of the factor levels.  The current version works
 with objects of \code{aov}, \code{glm}, \code{gls}, \code{lm},
-\code{lme}, \code{mer}, \code{merMod}, and \code{rlm}, \code{survreg}
-classes.
+\code{lme}, \code{mer}, \code{merMod}, \code{negbin}, and \code{rlm},
+\code{survreg} classes.
 }
 
 \usage{
-multComp(mod, factor.id, letter.labels = TRUE, second.ord = TRUE, nobs =
-         NULL, sort = TRUE, newdata = NULL, uncond.se = "revised",
+multComp(mod, factor.id, letter.labels = TRUE, second.ord = TRUE,
+         nobs = NULL, sort = TRUE, newdata = NULL, uncond.se = "revised", 
          conf.level = 0.95, correction = "none", \dots)
 
-\method{multComp}{aov}(mod, factor.id, letter.labels = TRUE, second.ord =
-        TRUE, nobs = NULL, sort = TRUE, newdata = NULL, uncond.se =
-        "revised", conf.level = 0.95, correction = "none", \dots)
+\method{multComp}{aov}(mod, factor.id, letter.labels = TRUE,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, newdata = NULL,
+        uncond.se = "revised", conf.level = 0.95, correction = "none",
+        \dots) 
 
-\method{multComp}{lm}(mod, factor.id, letter.labels = TRUE, second.ord =
-        TRUE, nobs = NULL, sort = TRUE, newdata = NULL, uncond.se =
-        "revised", conf.level = 0.95, correction = "none", \dots) 
+\method{multComp}{lm}(mod, factor.id, letter.labels = TRUE,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, newdata = NULL,
+        uncond.se = "revised", conf.level = 0.95, correction = "none",
+        \dots)
 
-\method{multComp}{gls}(mod, factor.id, letter.labels = TRUE, second.ord
-        = TRUE, nobs = NULL, sort = TRUE, newdata = NULL, uncond.se =
-        "revised", conf.level = 0.95, correction = "none", \dots) 
+\method{multComp}{gls}(mod, factor.id, letter.labels = TRUE,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, newdata = NULL,
+        uncond.se = "revised", conf.level = 0.95, correction = "none",
+        \dots) 
 
-\method{multComp}{glm}(mod, factor.id, letter.labels = TRUE, second.ord
-        = TRUE, nobs = NULL, sort = TRUE, newdata = NULL, uncond.se =
-        "revised", conf.level = 0.95, correction = "none", type =
-        "response", c.hat = 1, gamdisp = NULL, \dots)
+\method{multComp}{glm}(mod, factor.id, letter.labels = TRUE,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, newdata = NULL,
+        uncond.se = "revised", conf.level = 0.95, correction = "none",
+        type = "response", c.hat = 1, gamdisp = NULL, \dots)
 
-\method{multComp}{lme}(mod, factor.id, letter.labels = TRUE, second.ord
-        = TRUE, nobs = NULL, sort = TRUE, newdata = NULL, uncond.se =
-        "revised", conf.level = 0.95, correction = "none", \dots)
+\method{multComp}{lme}(mod, factor.id, letter.labels = TRUE,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, newdata = NULL,
+        uncond.se = "revised", conf.level = 0.95, correction = "none",
+        \dots)
 
-\method{multComp}{rlm}(mod, factor.id, letter.labels = TRUE, second.ord
-        = TRUE, nobs = NULL, sort = TRUE, newdata = NULL, uncond.se =
-        "revised", conf.level = 0.95, correction = "none", \dots)
+\method{multComp}{negbin}(mod, factor.id, letter.labels = TRUE,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, newdata = NULL,
+        uncond.se = "revised", conf.level = 0.95, correction = "none",
+        type = "response", \dots)
 
-\method{multComp}{survreg}(mod, factor.id, letter.labels = TRUE, second.ord
-        = TRUE, nobs = NULL, sort = TRUE, newdata = NULL, uncond.se =
-        "revised", conf.level = 0.95, correction = "none", type =
-        "response", \dots)
+\method{multComp}{rlm}(mod, factor.id, letter.labels = TRUE,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, newdata = NULL,
+        uncond.se = "revised", conf.level = 0.95, correction = "none",
+        \dots)
 
-\method{multComp}{mer}(mod, factor.id, letter.labels = TRUE, second.ord
-        = TRUE, nobs = NULL, sort = TRUE, newdata = NULL, uncond.se =
-        "revised", conf.level = 0.95, correction = "none", type =
-        "response", \dots)
+\method{multComp}{survreg}(mod, factor.id, letter.labels = TRUE,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, newdata = NULL,
+        uncond.se = "revised", conf.level = 0.95, correction = "none",
+        type = "response", \dots)
+
+\method{multComp}{mer}(mod, factor.id, letter.labels = TRUE,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, newdata = NULL,
+        uncond.se = "revised", conf.level = 0.95, correction = "none",
+        type = "response", \dots)
 
 \method{multComp}{merMod}(mod, factor.id, letter.labels = TRUE,
         second.ord = TRUE, nobs = NULL, sort = TRUE, newdata = NULL,
-        uncond.se = "revised", conf.level = 0.95, correction =
-        "none", type = "response", \dots)
+        uncond.se = "revised", conf.level = 0.95,
+        correction = "none", type = "response", \dots)
 }
 
 %- maybe also 'usage' for other objects documented here.

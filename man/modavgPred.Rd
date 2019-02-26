@@ -10,6 +10,7 @@
 \alias{modavgPred.AICglmerMod}
 \alias{modavgPred.AIClmerMod}
 \alias{modavgPred.AICmer}
+\alias{modavgPred.AICnegbin.glm.lm}
 \alias{modavgPred.AICrlm.lm}
 \alias{modavgPred.AICsurvreg}
 \alias{modavgPred.AICunmarkedFitOccu}
@@ -32,8 +33,8 @@ This function computes the model-averaged predictions, unconditional
 standard errors, and confidence intervals  based on the entire candidate
 model set.  The function is currently implemented for \code{glm},
 \code{gls}, \code{lm}, \code{lme}, \code{mer}, \code{merMod},
-\code{rlm}, \code{survreg} object classes that are stored in a list as
-well as various models of \code{unmarkedFit} classes.
+\code{negbin}, \code{rlm}, \code{survreg} object classes that are stored
+in a list as well as various models of \code{unmarkedFit} classes.
 }
 \usage{
 modavgPred(cand.set, modnames = NULL, newdata, second.ord = TRUE,
@@ -71,6 +72,10 @@ modavgPred(cand.set, modnames = NULL, newdata, second.ord = TRUE,
 \method{modavgPred}{AIClmerMod}(cand.set, modnames = NULL, newdata,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
+
+\method{modavgPred}{AICnegbin.glm.lm}(cand.set, modnames = NULL,
+        newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, type = "response", \dots)
 
 \method{modavgPred}{AICrlm.lm}(cand.set, modnames = NULL, newdata,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",

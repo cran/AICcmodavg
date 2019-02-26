@@ -10,6 +10,7 @@
 \alias{modavgEffect.AICmer}
 \alias{modavgEffect.AICglmerMod}
 \alias{modavgEffect.AIClmerMod}
+\alias{modavgEffect.AICnegbin.glm.lm}
 \alias{modavgEffect.AICrlm.lm}
 \alias{modavgEffect.AICsurvreg}
 \alias{modavgEffect.AICunmarkedFitOccu}
@@ -76,6 +77,10 @@ modavgEffect(cand.set, modnames = NULL, newdata, second.ord = TRUE,
 \method{modavgEffect}{AIClmerMod}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
+
+\method{modavgEffect}{AICnegbin.glm.lm}(cand.set, modnames = NULL,
+        newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, type = "response", \dots)
 
 \method{modavgEffect}{AICrlm.lm}(cand.set, modnames = NULL, newdata,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",

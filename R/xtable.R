@@ -515,9 +515,9 @@ xtable.mb.chisq <- function(x, caption = NULL, label = NULL, align = NULL,
     colnames(chisq.table)[1] <- "Detection history"
     ##extract rownames
     rows <- rownames(x$chisq.table)
-    ##replace NA by "-", here " -" to avoid creating endash in LaTeX
+    ##replace NA by ".", here "" to avoid creating endash in LaTeX
     ##also possible to use {} between consecutive dashes - this requires sanitization in print( )
-    new.rows <- gsub(pattern = "NA", replacement = " -", rows)
+    new.rows <- gsub(pattern = "NA", replacement = ".", rows)
     chisq.table[, "Detection history"] <- new.rows
     rownames(chisq.table) <- new.rows
   }
@@ -559,8 +559,8 @@ xtable.detHist <- function(x, caption = NULL, label = NULL, align = NULL,
                            digits = NULL, display = NULL, 
                            nice.names = TRUE, table.detHist = "freq",
                            ...) {
-  ##for single season, display frequencies in a single matrix
-  if(x$n.seasons == 1) {
+  ##for single season single species, display frequencies in a single matrix
+  if(x$n.seasons == 1 && x$n.species == 1) {
 
     ##display detection histories
     if(identical(table.detHist, "hist")){
@@ -569,7 +569,7 @@ xtable.detHist <- function(x, caption = NULL, label = NULL, align = NULL,
       
       if(nice.names) {
         det.names <- names(det.hist)
-        new.names <- gsub(pattern = "NA", replacement = " -", det.names)
+        new.names <- gsub(pattern = "NA", replacement = ".", det.names)
         colnames(det.mat) <- new.names
         rownames(det.mat) <- "Season-1"
       }
@@ -590,55 +590,88 @@ xtable.detHist <- function(x, caption = NULL, label = NULL, align = NULL,
       n.cols <- ncol(det.frame)
     }
        
-  } else {
+  }
 
-      ##display entire detection histories
-      if(identical(table.detHist, "hist")) {
-        det.hist <- x$hist.table.full
-        det.mat <- matrix(det.hist, nrow = 1)
+    ##for single season multiple species, display frequencies in a single matrix
+    if(x$n.seasons == 1 && x$n.species > 1) {
+
+        ##display detection histories
+        if(identical(table.detHist, "hist")){
+            det.hist <- x$hist.table.full
+            det.mat <- matrix(det.hist, nrow = 1)
       
-        if(nice.names) {
-          det.names <- names(det.hist)
-          new.names <- gsub(pattern = "NA", replacement = " -", det.names)
-          colnames(det.mat) <- new.names
-          rownames(det.mat) <- "All seasons"
+            if(nice.names) {
+                det.names <- names(det.hist)
+                new.names <- gsub(pattern = "NA", replacement = ".", det.names)
+                colnames(det.mat) <- new.names
+                rownames(det.mat) <- "Season-1"
+            }
+      
+            det.frame <- as.data.frame(det.mat)
+            n.cols <- ncol(det.frame)
         }
+
+        ##display frequencies
+        if(identical(table.detHist, "freq")) {
+            det.frame <- as.data.frame(x$out.freqs)
+            n.cols <- ncol(det.frame)
+        }
+
+        ##display proportions
+        if(identical(table.detHist, "prop")){
+            det.frame <- as.data.frame(x$out.props)
+            n.cols <- ncol(det.frame)
+        }
+       
+    }
+    
+    if(x$n.seasons > 1 && x$n.species == 1) {
+          
+        ##display entire detection histories
+        if(identical(table.detHist, "hist")) {
+            det.hist <- x$hist.table.full
+            det.mat <- matrix(det.hist, nrow = 1)
+      
+            if(nice.names) {
+                det.names <- names(det.hist)
+                new.names <- gsub(pattern = "NA", replacement = ".", det.names)
+                colnames(det.mat) <- new.names
+                rownames(det.mat) <- "All seasons"
+            }
         
-        det.frame <- as.data.frame(det.mat)
-        n.cols <- ncol(det.frame)
-      }
+            det.frame <- as.data.frame(det.mat)
+            n.cols <- ncol(det.frame)
+        }
 
-      ##display frequencies
-      if(identical(table.detHist, "freq")) {
-        det.frame <- as.data.frame(x$out.freqs)
-        #det.frame[1, 3:6] <- "."
-        n.cols <- ncol(det.frame)
-      }
+        ##display frequencies
+        if(identical(table.detHist, "freq")) {
+            det.frame <- as.data.frame(x$out.freqs)
+            n.cols <- ncol(det.frame)
+        }
 
-      ##display proportions
-      if(identical(table.detHist, "prop")) {
-        det.frame <- as.data.frame(x$out.props)
-#        det.frame[1, 2:4] <- "."
-        n.cols <- ncol(det.frame)
-      }
+        ##display proportions
+        if(identical(table.detHist, "prop")) {
+            det.frame <- as.data.frame(x$out.props)
+            n.cols <- ncol(det.frame)
+        }
     }
 
     
-  ##format to data.frame
-  class(det.frame) <- c("xtable","data.frame")
+    ##format to data.frame
+    class(det.frame) <- c("xtable","data.frame")
   
-  align(det.frame) <- switch(1+is.null(align), align, c("l", rep("r", n.cols)))
-
-  if(identical(table.detHist, "prop")) {
-    digits(det.frame) <- switch(1+is.null(digits), digits, c(0, rep(2, n.cols)))
-  } else {
-    digits(det.frame) <- switch(1+is.null(digits), digits, c(0, rep(0, n.cols)))
-  }
-  display(det.frame) <- switch(1+is.null(display), display, c("s", rep("f", n.cols)))
+    align(det.frame) <- switch(1+is.null(align), align, c("l", rep("r", n.cols)))
+    
+    if(identical(table.detHist, "prop")) {
+        digits(det.frame) <- switch(1+is.null(digits), digits, c(0, rep(2, n.cols)))
+    } else {
+        digits(det.frame) <- switch(1+is.null(digits), digits, c(0, rep(0, n.cols)))
+    }
+    display(det.frame) <- switch(1+is.null(display), display, c("s", rep("f", n.cols)))
   
-  caption(det.frame) <- caption
-  label(det.frame) <- label
-  return(det.frame)
+    caption(det.frame) <- caption
+    label(det.frame) <- label
+    return(det.frame)
 }
 
 
@@ -658,7 +691,7 @@ xtable.countHist <- function(x, caption = NULL, label = NULL, align = NULL,
       
       if(nice.names) {
         det.names <- names(det.hist)
-        new.names <- gsub(pattern = "NA", replacement = " -", det.names)
+        new.names <- gsub(pattern = "NA", replacement = ".", det.names)
         colnames(det.mat) <- new.names
         rownames(det.mat) <- "Season-1"
       }
@@ -701,7 +734,7 @@ xtable.countHist <- function(x, caption = NULL, label = NULL, align = NULL,
       
         if(nice.names) {
           det.names <- names(det.hist)
-          new.names <- gsub(pattern = "NA", replacement = " -", det.names)
+          new.names <- gsub(pattern = "NA", replacement = ".", det.names)
           colnames(det.mat) <- new.names
           rownames(det.mat) <- "All seasons"
         }
@@ -1043,3 +1076,82 @@ xtable.checkParms <- function(x, caption = NULL, label = NULL, align = NULL,
     label(x) <- label
     return(x)
 }
+
+
+
+##summaryOD
+xtable.summaryOD <- function(x, caption = NULL, label = NULL, align = NULL,
+                             digits = NULL, display = NULL, 
+                             nice.names = TRUE, ...) {
+
+    ##extract model table
+    summaryOD.table <- data.frame(x$outMat, check.names = FALSE)
+
+    ##change to nicer names
+    if(nice.names) {
+        if(identical(x$out.type, "interval")) {
+            names(summaryOD.table)[1] <- "Estimate"
+            names(summaryOD.table)[2] <- "Standard error"
+            lowLab <- paste("Lower ", x$conf.level * 100, "%", " CL", sep = "")
+            uppLab <- paste("Upper ", x$conf.level * 100, "%", " CL", sep = "")
+            names(summaryOD.table)[3] <- lowLab
+            names(summaryOD.table)[4] <- uppLab
+        }
+        if(identical(x$out.type, "nhst")) {
+            names(summaryOD.table)[1] <- "Estimate"
+            names(summaryOD.table)[2] <- "Standard error"
+            names(summaryOD.table)[3] <- "Wald Z"
+            names(summaryOD.table)[4] <- "P value"
+        }
+    }
+
+    ##format to data.frame
+    class(summaryOD.table) <- c("xtable","data.frame")
+
+    align(summaryOD.table) <- switch(1+is.null(align), align, c("l","r","r","r", "r"))
+    digits(summaryOD.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2))
+    display(summaryOD.table) <- switch(1+is.null(display), display, c("s","f","f","f","f"))
+
+    caption(summaryOD.table) <- caption
+    label(summaryOD.table) <- label
+    return(summaryOD.table)
+}
+
+
+
+##anovaOD
+xtable.anovaOD <- function(x, caption = NULL, label = NULL, align = NULL,
+                           digits = NULL, display = NULL, 
+                           nice.names = TRUE, ...) {
+
+    ##extract model selection table
+    anovaOD.table <- data.frame(x$devMat, check.names = FALSE)
+
+    ##change to nicer names
+    if(nice.names) {
+
+        rownames(anovaOD.table) <- c("Model 1", "Model 2")
+        names(anovaOD.table)[2] <- "log-likelihood"
+        names(anovaOD.table)[3] <- "Delta K"
+        names(anovaOD.table)[4] <- "-2(Delta log-likelihoods)"
+        names(anovaOD.table)[6] <- "P value"
+        
+        if(x$c.hat == 1) {
+            names(anovaOD.table)[5] <- "Chi-square"
+        } else {
+            names(anovaOD.table)[5] <- "F"
+        }
+    }
+
+    ##format to data.frame
+    class(anovaOD.table) <- c("xtable","data.frame")
+
+    align(anovaOD.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
+    digits(anovaOD.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2,2,2))
+    display(anovaOD.table) <- switch(1+is.null(display), display, c("s","f","f","f","f","f","f"))
+
+    caption(anovaOD.table) <- caption
+    label(anovaOD.table) <- label
+    return(anovaOD.table)
+}
+

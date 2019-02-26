@@ -14,40 +14,44 @@ countHist.default <- function(object, plot.freq = TRUE, ...){
 ##for unmarkedFramePCount 
 countHist.unmarkedFramePCount <- function(object, plot.freq = TRUE, ...) {
 
-  ##extract data
-  yMat <- object@y
-  nsites <- nrow(yMat)
-  n.seasons <- 1
-  nvisits <- ncol(yMat)
-  ##visits per season
-  n.visits.season <- nvisits/n.seasons
-
-  ##collapse yMat into a single vector
-  yVec <- as.vector(yMat)
-  
-  ##summarize detection histories
-  if(plot.freq) {
+    ##extract data
+    yMat <- object@y
+    nsites <- nrow(yMat)
+    n.seasons <- 1
+    nvisits <- ncol(yMat)
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+    seasonNames <- paste("season", 1:n.seasons, sep = "")
     
-    ##create histogram
-    barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-         main = "Distribution of raw counts", cex.lab = 1.2)
-  }
+    ##collapse yMat into a single vector
+    yVec <- as.vector(yMat)
+  
+    ##summarize detection histories
+    if(plot.freq) {
+    
+        ##create histogram
+        barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
+                main = "Distribution of raw counts", cex.lab = 1.2)
+    }
 
-  ##raw counts
-  count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
-  count.table.seasons <- list(count.table.full)
+    ##raw counts
+    count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
+    count.table.seasons <- list(count.table.full)
+    names(count.table.seasons) <- seasonNames
 
-  ##summarize count histories
-  hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
-  hist.table.full <- table(hist.full, deparse.level = 0)
+    ##summarize count histories
+    hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
+    hist.table.full <- table(hist.full, deparse.level = 0)
 
-  ##for each season, determine frequencies
-  hist.table.seasons <- vector(mode = "list", length = n.seasons)
-  out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected")
-  rownames(out.freqs) <- "Season-1"
+    ##for each season, determine frequencies
+    hist.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(hist.table.seasons) <- seasonNames
 
-  hist.table.seasons[[1]]$hist.table <- hist.table.full
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- "Season-1"
+
+    hist.table.seasons[[1]] <- hist.table.full
     
   ##determine proportion of sites with at least 1 detection
   det.sum <- apply(X = yMat, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
@@ -84,16 +88,17 @@ countHist.unmarkedFramePCount <- function(object, plot.freq = TRUE, ...) {
 ##for unmarkedFitPCount 
 countHist.unmarkedFitPCount <- function(object, plot.freq = TRUE, ...) {
 
-  ##extract data
-  yMat <- object@data@y
-  nsites <- nrow(yMat)
-  n.seasons <- 1
-  nvisits <- ncol(yMat)
-  ##visits per season
-  n.visits.season <- nvisits/n.seasons
+    ##extract data
+    yMat <- object@data@y
+    nsites <- nrow(yMat)
+    n.seasons <- 1
+    nvisits <- ncol(yMat)
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+    seasonNames <- paste("season", 1:n.seasons, sep = "")
 
-  ##collapse yMat into a single vector
-  yVec <- as.vector(yMat)
+    ##collapse yMat into a single vector
+    yVec <- as.vector(yMat)
   
   ##summarize detection histories
   if(plot.freq) {
@@ -103,21 +108,24 @@ countHist.unmarkedFitPCount <- function(object, plot.freq = TRUE, ...) {
          main = "Distribution of raw counts", cex.lab = 1.2)
   }
 
-  ##raw counts
-  count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
-  count.table.seasons <- list(count.table.full)
-  
-  ##count histories
-  hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
-  hist.table.full <- table(hist.full, deparse.level = 0)
+    ##raw counts
+    count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
+    count.table.seasons <- list(count.table.full)
+    names(count.table.seasons) <- seasonNames
+    
+    ##count histories
+    hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
+    hist.table.full <- table(hist.full, deparse.level = 0)
 
-  ##for each season, determine frequencies
-  hist.table.seasons <- vector(mode = "list", length = n.seasons)
-  out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected")
-  rownames(out.freqs) <- "Season-1"
+    ##for each season, determine frequencies
+    hist.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(hist.table.seasons) <- seasonNames
+    
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- "Season-1"
 
-  hist.table.seasons[[1]]$hist.table <- hist.table.full
+    hist.table.seasons[[1]] <- hist.table.full
     
   ##determine proportion of sites with at least 1 detection
   det.sum <- apply(X = yMat, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
@@ -154,40 +162,45 @@ countHist.unmarkedFitPCount <- function(object, plot.freq = TRUE, ...) {
 ##for unmarkedFrameGPC 
 countHist.unmarkedFrameGPC <- function(object, plot.freq = TRUE, ...) {
 
-  ##extract data
-  yMat <- object@y
-  nsites <- nrow(yMat)
-  n.seasons <- 1
-  nvisits <- ncol(yMat)
-  ##visits per season
-  n.visits.season <- nvisits/n.seasons
+    ##extract data
+    yMat <- object@y
+    nsites <- nrow(yMat)
+    n.seasons <- 1
+    nvisits <- ncol(yMat)
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+    seasonNames <- paste("season", 1:n.seasons, sep = "")
 
-  ##collapse yMat into a single vector
-  yVec <- as.vector(yMat)
-  
-  ##summarize detection histories
-  if(plot.freq) {
     
-    ##create histogram
-    barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-         main = "Distribution of raw counts", cex.lab = 1.2)
-  }
+    ##collapse yMat into a single vector
+    yVec <- as.vector(yMat)
+  
+    ##summarize detection histories
+    if(plot.freq) {
+    
+        ##create histogram
+        barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
+                main = "Distribution of raw counts", cex.lab = 1.2)
+    }
 
-  ##raw counts
-  count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
-  count.table.seasons <- list(count.table.full)
+    ##raw counts
+    count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
+    count.table.seasons <- list(count.table.full)
+    names(count.table.seasons) <- seasonNames
 
-  ##summarize count histories
-  hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
-  hist.table.full <- table(hist.full, deparse.level = 0)
+    ##summarize count histories
+    hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
+    hist.table.full <- table(hist.full, deparse.level = 0)
 
-  ##for each season, determine frequencies
-  hist.table.seasons <- vector(mode = "list", length = n.seasons)
-  out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected")
-  rownames(out.freqs) <- "Season-1"
+    ##for each season, determine frequencies
+    hist.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(hist.table.seasons) <- seasonNames
+    
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- "Season-1"
 
-  hist.table.seasons[[1]]$hist.table <- hist.table.full
+    hist.table.seasons[[1]] <- hist.table.full
     
   ##determine proportion of sites with at least 1 detection
   det.sum <- apply(X = yMat, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
@@ -224,40 +237,45 @@ countHist.unmarkedFrameGPC <- function(object, plot.freq = TRUE, ...) {
 ##for unmarkedFitGPC 
 countHist.unmarkedFitGPC <- function(object, plot.freq = TRUE, ...) {
 
-  ##extract data
-  yMat <- object@data@y
-  nsites <- nrow(yMat)
-  n.seasons <- 1
-  nvisits <- ncol(yMat)
-  ##visits per season
-  n.visits.season <- nvisits/n.seasons
+    ##extract data
+    yMat <- object@data@y
+    nsites <- nrow(yMat)
+    n.seasons <- 1
+    nvisits <- ncol(yMat)
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+    seasonNames <- paste("season", 1:n.seasons, sep = "")
 
-  ##collapse yMat into a single vector
-  yVec <- as.vector(yMat)
-  
-  ##summarize detection histories
-  if(plot.freq) {
     
-    ##create histogram
-    barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-         main = "Distribution of raw counts", cex.lab = 1.2)
-  }
+    ##collapse yMat into a single vector
+    yVec <- as.vector(yMat)
+    
+    ##summarize detection histories
+    if(plot.freq) {
+    
+        ##create histogram
+        barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
+                main = "Distribution of raw counts", cex.lab = 1.2)
+    }
 
-  ##raw counts
-  count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
-  count.table.seasons <- list(count.table.full)
-  
-  ##count histories
-  hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
-  hist.table.full <- table(hist.full, deparse.level = 0)
+    ##raw counts
+    count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
+    count.table.seasons <- list(count.table.full)
+    names(count.table.seasons) <- seasonNames
+    
+    ##count histories
+    hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
+    hist.table.full <- table(hist.full, deparse.level = 0)
 
-  ##for each season, determine frequencies
-  hist.table.seasons <- vector(mode = "list", length = n.seasons)
-  out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected")
-  rownames(out.freqs) <- "Season-1"
+    ##for each season, determine frequencies
+    hist.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(hist.table.seasons) <- seasonNames
+        
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- "Season-1"
 
-  hist.table.seasons[[1]]$hist.table <- hist.table.full
+    hist.table.seasons[[1]] <- hist.table.full
     
   ##determine proportion of sites with at least 1 detection
   det.sum <- apply(X = yMat, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
@@ -294,40 +312,44 @@ countHist.unmarkedFitGPC <- function(object, plot.freq = TRUE, ...) {
 ##for unmarkedFrameMPois 
 countHist.unmarkedFrameMPois <- function(object, plot.freq = TRUE, ...) {
 
-  ##extract data
-  yMat <- object@y
-  nsites <- nrow(yMat)
-  n.seasons <- 1
-  nvisits <- ncol(yMat)
-  ##visits per season
-  n.visits.season <- nvisits/n.seasons
-
-  ##collapse yMat into a single vector
-  yVec <- as.vector(yMat)
-  
-  ##summarize detection histories
-  if(plot.freq) {
+    ##extract data
+    yMat <- object@y
+    nsites <- nrow(yMat)
+    n.seasons <- 1
+    nvisits <- ncol(yMat)
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+    seasonNames <- paste("season", 1:n.seasons, sep = "")
     
-    ##create histogram
-    barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-         main = "Distribution of raw counts", cex.lab = 1.2)
-  }
+    ##collapse yMat into a single vector
+    yVec <- as.vector(yMat)
+    
+    ##summarize detection histories
+    if(plot.freq) {
+    
+        ##create histogram
+        barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
+                main = "Distribution of raw counts", cex.lab = 1.2)
+    }
 
-  ##raw counts
-  count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
-  count.table.seasons <- list(count.table.full)
+    ##raw counts
+    count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
+    count.table.seasons <- list(count.table.full)
+    names(count.table.seasons) <- seasonNames
+    
+    ##summarize count histories
+    hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
+    hist.table.full <- table(hist.full, deparse.level = 0)
 
-  ##summarize count histories
-  hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
-  hist.table.full <- table(hist.full, deparse.level = 0)
+    ##for each season, determine frequencies
+    hist.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(hist.table.seasons) <- seasonNames
+    
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- "Season-1"
 
-  ##for each season, determine frequencies
-  hist.table.seasons <- vector(mode = "list", length = n.seasons)
-  out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected")
-  rownames(out.freqs) <- "Season-1"
-
-  hist.table.seasons[[1]]$hist.table <- hist.table.full
+    hist.table.seasons[[1]] <- hist.table.full
     
   ##determine proportion of sites with at least 1 detection
   det.sum <- apply(X = yMat, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
@@ -364,40 +386,44 @@ countHist.unmarkedFrameMPois <- function(object, plot.freq = TRUE, ...) {
 ##for unmarkedFitMPois 
 countHist.unmarkedFitMPois <- function(object, plot.freq = TRUE, ...) {
 
-  ##extract data
-  yMat <- object@data@y
-  nsites <- nrow(yMat)
-  n.seasons <- 1
-  nvisits <- ncol(yMat)
-  ##visits per season
-  n.visits.season <- nvisits/n.seasons
-
-  ##collapse yMat into a single vector
-  yVec <- as.vector(yMat)
-  
-  ##summarize detection histories
-  if(plot.freq) {
+    ##extract data
+    yMat <- object@data@y
+    nsites <- nrow(yMat)
+    n.seasons <- 1
+    nvisits <- ncol(yMat)
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+    seasonNames <- paste("season", 1:n.seasons, sep = "")
     
-    ##create histogram
-    barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-         main = "Distribution of raw counts", cex.lab = 1.2)
-  }
+    ##collapse yMat into a single vector
+    yVec <- as.vector(yMat)
+    
+    ##summarize detection histories
+    if(plot.freq) {
+    
+        ##create histogram
+        barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
+                main = "Distribution of raw counts", cex.lab = 1.2)
+    }
+    
+    ##raw counts
+    count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
+    count.table.seasons <- list(count.table.full)
+    names(count.table.seasons) <- seasonNames
+    
+    ##summarize count histories
+    hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
+    hist.table.full <- table(hist.full, deparse.level = 0)
 
-  ##raw counts
-  count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
-  count.table.seasons <- list(count.table.full)
+    ##for each season, determine frequencies
+    hist.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(hist.table.seasons) <- seasonNames
+    
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- "Season-1"
 
-  ##summarize count histories
-  hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
-  hist.table.full <- table(hist.full, deparse.level = 0)
-
-  ##for each season, determine frequencies
-  hist.table.seasons <- vector(mode = "list", length = n.seasons)
-  out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected")
-  rownames(out.freqs) <- "Season-1"
-
-  hist.table.seasons[[1]]$hist.table <- hist.table.full
+    hist.table.seasons[[1]] <- hist.table.full
     
   ##determine proportion of sites with at least 1 detection
   det.sum <- apply(X = yMat, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
@@ -434,147 +460,152 @@ countHist.unmarkedFitMPois <- function(object, plot.freq = TRUE, ...) {
 ##for unmarkedFramePCO
 countHist.unmarkedFramePCO <- function(object, plot.freq = TRUE, plot.seasons = FALSE, ...) {
 
-  ##extract data
-  yMat <- object@y
-  nsites <- nrow(yMat)
-  n.seasons <- object@numPrimary
-  n.seasons.adj <- n.seasons #total number of plots fixed to 11 or 12, depending on plots requested
-  nvisits <- ncol(yMat)
-  ##visits per season
-  n.visits.season <- nvisits/n.seasons
-
-  ##collapse yMat into a single vector
-  yVec.full <- as.vector(yMat)
+    ##extract data
+    yMat <- object@y
+    nsites <- nrow(yMat)
+    n.seasons <- object@numPrimary
+    n.seasons.adj <- n.seasons #total number of plots fixed to 11 or 12, depending on plots requested
+    nvisits <- ncol(yMat)
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+    seasonNames <- paste("season", 1:n.seasons, sep = "")
+    
+    ##collapse yMat into a single vector
+    yVec.full <- as.vector(yMat)
   
-  ##if only season-specific plots are requested
-  if(!plot.freq && plot.seasons) {
-    ##determine arrangement of plots in matrix
-    if(plot.seasons && n.seasons > 12) {
-      n.seasons.adj <- 12
-      warning("\nOnly first 12 seasons are plotted\n")
-    }
-    
-    if(plot.seasons && n.seasons.adj <= 12) {
-
-      ##if n.seasons < 12
-      ##if 12, 11, 10 <- 4 x 3
-      ##if 9, 8, 7 <- 3 x 3
-      ##if 6, 5 <- 3 x 2
-      ##if 4 <- 2 x 2
-      ##if 3 <- 3 x 1
-      ##if 2 <- 2 x 1
-    
-      if(n.seasons.adj >= 10) {
-        par(mfrow = c(4, 3))
-      } else {
-
-        if(n.seasons.adj >= 7) {
-          par(mfrow = c(3, 3))
-        } else {
-
-          if(n.seasons.adj >= 5) {
-            par(mfrow = c(3, 2))
-          } else {
-            if(n.seasons.adj == 4) {
-              par(mfrow = c(2, 2))
-            } else {
-              if(n.seasons.adj == 3) {
-                par(mfrow = c(3, 1))
-              } else {
-                par(mfrow = c(2, 1))
-              }
-            }
-          }
+    ##if only season-specific plots are requested
+    if(!plot.freq && plot.seasons) {
+        ##determine arrangement of plots in matrix
+        if(plot.seasons && n.seasons > 12) {
+            n.seasons.adj <- 12
+            warning("\nOnly first 12 seasons are plotted\n")
         }
-      }
-    }
-  }
+        
+        if(plot.seasons && n.seasons.adj <= 12) {
 
-
-  ##if both plots for seasons and combined are requested
-  ##summarize detection histories
-  if(plot.freq) {
-
-    if(plot.seasons && n.seasons > 12) {
-      n.seasons.adj <- 11
-      warning("\nOnly first 11 seasons are plotted\n")
-    }
-
-    if(plot.seasons && n.seasons.adj <= 11) {
-
-      if(n.seasons.adj >= 9) {
-        par(mfrow = c(4, 3))
-      } else {
-
-        if(n.seasons.adj >= 6) {
-          par(mfrow = c(3, 3))
-        } else {
-
-          if(n.seasons.adj >= 4) {
-            par(mfrow = c(3, 2))
-          } else {
-            if(n.seasons.adj == 3) {
-              par(mfrow = c(2, 2))
-            } else {
-              if(n.seasons.adj == 2) {
-                par(mfrow = c(3, 1))
-              }
-            }
-          }
-        }
-      }
-    }
+            ##if n.seasons < 12
+            ##if 12, 11, 10 <- 4 x 3
+            ##if 9, 8, 7 <- 3 x 3
+            ##if 6, 5 <- 3 x 2
+            ##if 4 <- 2 x 2
+            ##if 3 <- 3 x 1
+            ##if 2 <- 2 x 1
     
-    ##histogram for data combined across seasons
-    barplot(table(yVec.full), ylab = "Frequency", xlab = "Counts of individuals",
-            main = paste("Distribution of raw counts (", n.seasons, " seasons combined)", sep = ""),
-            cex.lab = 1.2)
-  }
+            if(n.seasons.adj >= 10) {
+                par(mfrow = c(4, 3))
+            } else {
 
-  ##raw counts
-  count.table.full <- table(yVec.full, exclude = NULL, deparse.level = 0)
+                if(n.seasons.adj >= 7) {
+                    par(mfrow = c(3, 3))
+                } else {
+
+                    if(n.seasons.adj >= 5) {
+                        par(mfrow = c(3, 2))
+                    } else {
+                        if(n.seasons.adj == 4) {
+                            par(mfrow = c(2, 2))
+                        } else {
+                            if(n.seasons.adj == 3) {
+                                par(mfrow = c(3, 1))
+                            } else {
+                                par(mfrow = c(2, 1))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    ##if both plots for seasons and combined are requested
+    ##summarize detection histories
+    if(plot.freq) {
+        
+        if(plot.seasons && n.seasons > 12) {
+            n.seasons.adj <- 11
+            warning("\nOnly first 11 seasons are plotted\n")
+        }
+
+        if(plot.seasons && n.seasons.adj <= 11) {
+            
+            if(n.seasons.adj >= 9) {
+                par(mfrow = c(4, 3))
+            } else {
+                
+                if(n.seasons.adj >= 6) {
+                    par(mfrow = c(3, 3))
+                } else {
+                    
+                    if(n.seasons.adj >= 4) {
+                        par(mfrow = c(3, 2))
+                    } else {
+                        if(n.seasons.adj == 3) {
+                            par(mfrow = c(2, 2))
+                        } else {
+                            if(n.seasons.adj == 2) {
+                                par(mfrow = c(3, 1))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    
+        ##histogram for data combined across seasons
+        barplot(table(yVec.full), ylab = "Frequency", xlab = "Counts of individuals",
+                main = paste("Distribution of raw counts (", n.seasons, " seasons combined)", sep = ""),
+                cex.lab = 1.2)
+    }
+
+    ##raw counts
+    count.table.full <- table(yVec.full, exclude = NULL, deparse.level = 0)
   
-  ##summarize count histories
-  hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
-  hist.table.full <- table(hist.full, deparse.level = 0)
-
-  ##for each season, determine frequencies
-  yVectors <- vector(mode = "list", length = n.seasons)
-  out.seasons <- vector(mode = "list", length = n.seasons)
-  count.table.seasons <- vector(mode = "list", length = n.seasons)
-  hist.table.seasons <- vector(mode = "list", length = n.seasons)
-  out.freqs <- matrix(data = NA, ncol = 6, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected", "colonized",
-                           "extinct", "static", "common")
-  rownames(out.freqs) <- paste("Season-", 1:n.seasons, sep = "")
-
-  ##sequence of visits
-  vis.seq <- seq(from = 1, to = nvisits, by = n.visits.season)
-  for(i in 1:n.seasons) {
-    col.start <- vis.seq[i]
-    col.end <- col.start + (n.visits.season - 1)
-    ySeason <- yMat[, col.start:col.end]
     ##summarize count histories
-    if(is.null(ncol(ySeason))){
-      ySeason <- as.matrix(ySeason)
-    }
-    yVec.season <- as.vector(ySeason)
-    yVectors[[i]] <- yVec.season
-    
-    det.hist <- apply(X = ySeason, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
-    hist.table.seasons[[i]]$hist.table <- table(det.hist, deparse.level = 0)
-    count.table.seasons[[i]]$count.table <- table(yVec.season, exclude = NULL)
+    hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
+    hist.table.full <- table(hist.full, deparse.level = 0)
 
-    ##determine proportion of sites with at least 1 detection
-    det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
+    ##for each season, determine frequencies
+    yVectors <- vector(mode = "list", length = n.seasons)
+    out.seasons <- vector(mode = "list", length = n.seasons)
+    count.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(count.table.seasons) <- seasonNames
 
-    ##check sites with observed detections and deal with NA's
-    sum.rows <- rowSums(ySeason, na.rm = TRUE)
-    is.na(sum.rows) <- rowSums(is.na(ySeason)) == ncol(ySeason)
+    hist.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(hist.table.seasons) <- seasonNames
     
-    ##number of sites sampled
-    out.freqs[i, 1] <- sum(!is.na(sum.rows))
-    out.freqs[i, 2] <- sum(det.sum)
+    out.freqs <- matrix(data = NA, ncol = 6, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected", "colonized",
+                             "extinct", "static", "common")
+    rownames(out.freqs) <- paste("Season-", 1:n.seasons, sep = "")
+
+    ##sequence of visits
+    vis.seq <- seq(from = 1, to = nvisits, by = n.visits.season)
+    for(i in 1:n.seasons) {
+        col.start <- vis.seq[i]
+        col.end <- col.start + (n.visits.season - 1)
+        ySeason <- yMat[, col.start:col.end]
+        ##summarize count histories
+        if(is.null(ncol(ySeason))){
+            ySeason <- as.matrix(ySeason)
+        }
+        yVec.season <- as.vector(ySeason)
+        yVectors[[i]] <- yVec.season
+        
+        det.hist <- apply(X = ySeason, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
+        hist.table.seasons[[i]] <- table(det.hist, deparse.level = 0)
+        count.table.seasons[[i]] <- table(yVec.season, exclude = NULL)
+
+        ##determine proportion of sites with at least 1 detection
+        det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
+
+        ##check sites with observed detections and deal with NA's
+        sum.rows <- rowSums(ySeason, na.rm = TRUE)
+        is.na(sum.rows) <- rowSums(is.na(ySeason)) == ncol(ySeason)
+    
+        ##number of sites sampled
+        out.freqs[i, 1] <- sum(!is.na(sum.rows))
+        out.freqs[i, 2] <- sum(det.sum)
 
 
     #sites without detections
@@ -638,27 +669,28 @@ countHist.unmarkedFramePCO <- function(object, plot.freq = TRUE, plot.seasons = 
 ##for unmarkedFitPCO
 countHist.unmarkedFitPCO <- function(object, plot.freq = TRUE, plot.seasons = FALSE, ...) {
 
-  ##extract data
-  yMat <- object@data@y
-  nsites <- nrow(yMat)
-  n.seasons <- object@data@numPrimary
-  n.seasons.adj <- n.seasons #total number of plots fixed to 11 or 12, depending on plots requested
-  nvisits <- ncol(yMat)
-  ##visits per season
-  n.visits.season <- nvisits/n.seasons
+    ##extract data
+    yMat <- object@data@y
+    nsites <- nrow(yMat)
+    n.seasons <- object@data@numPrimary
+    n.seasons.adj <- n.seasons #total number of plots fixed to 11 or 12, depending on plots requested
+    nvisits <- ncol(yMat)
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+    seasonNames <- paste("season", 1:n.seasons, sep = "")
 
-  ##collapse yMat into a single vector
-  yVec.full <- as.vector(yMat)
+    ##collapse yMat into a single vector
+    yVec.full <- as.vector(yMat)
   
-  ##if only season-specific plots are requested
-  if(!plot.freq && plot.seasons) {
-    ##determine arrangement of plots in matrix
-    if(plot.seasons && n.seasons > 12) {
-      n.seasons.adj <- 12
-      warning("\nOnly first 12 seasons are plotted\n")
-    }
+    ##if only season-specific plots are requested
+    if(!plot.freq && plot.seasons) {
+        ##determine arrangement of plots in matrix
+        if(plot.seasons && n.seasons > 12) {
+            n.seasons.adj <- 12
+            warning("\nOnly first 12 seasons are plotted\n")
+        }
     
-    if(plot.seasons && n.seasons.adj <= 12) {
+        if(plot.seasons && n.seasons.adj <= 12) {
 
       ##if n.seasons < 12
       ##if 12, 11, 10 <- 4 x 3
@@ -742,15 +774,19 @@ countHist.unmarkedFitPCO <- function(object, plot.freq = TRUE, plot.seasons = FA
   hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
   hist.table.full <- table(hist.full, deparse.level = 0)
 
-  ##for each season, determine frequencies
-  yVectors <- vector(mode = "list", length = n.seasons)
-  out.seasons <- vector(mode = "list", length = n.seasons)
-  count.table.seasons <- vector(mode = "list", length = n.seasons)
-  hist.table.seasons <- vector(mode = "list", length = n.seasons)
-  out.freqs <- matrix(data = NA, ncol = 6, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected", "colonized",
-                           "extinct", "static", "common")
-  rownames(out.freqs) <- paste("Season-", 1:n.seasons, sep = "")
+    ##for each season, determine frequencies
+    yVectors <- vector(mode = "list", length = n.seasons)
+    out.seasons <- vector(mode = "list", length = n.seasons)
+    count.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(count.table.seasons) <- seasonNames
+
+    hist.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(hist.table.seasons) <- seasonNames
+    
+    out.freqs <- matrix(data = NA, ncol = 6, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected", "colonized",
+                             "extinct", "static", "common")
+    rownames(out.freqs) <- paste("Season-", 1:n.seasons, sep = "")
 
   ##sequence of visits
   vis.seq <- seq(from = 1, to = nvisits, by = n.visits.season)
@@ -766,8 +802,8 @@ countHist.unmarkedFitPCO <- function(object, plot.freq = TRUE, plot.seasons = FA
     yVectors[[i]] <- yVec.season
     
     det.hist <- apply(X = ySeason, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
-    hist.table.seasons[[i]]$hist.table <- table(det.hist, deparse.level = 0)
-    count.table.seasons[[i]]$count.table <- table(yVec.season, exclude = NULL)
+    hist.table.seasons[[i]] <- table(det.hist, deparse.level = 0)
+    count.table.seasons[[i]] <- table(yVec.season, exclude = NULL)
 
     ##determine proportion of sites with at least 1 detection
     det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
@@ -842,17 +878,18 @@ countHist.unmarkedFitPCO <- function(object, plot.freq = TRUE, plot.seasons = FA
 ##for unmarkedFrameGMM
 countHist.unmarkedFrameGMM <- function(object, plot.freq = TRUE, plot.seasons = FALSE, ...) {
 
-  ##extract data
-  yMat <- object@y
-  nsites <- nrow(yMat)
-  n.seasons <- object@numPrimary
-  n.seasons.adj <- n.seasons #total number of plots fixed to 11 or 12, depending on plots requested
-  nvisits <- ncol(yMat)
-  ##visits per season
-  n.visits.season <- nvisits/n.seasons
-
-  ##collapse yMat into a single vector
-  yVec.full <- as.vector(yMat)
+    ##extract data
+    yMat <- object@y
+    nsites <- nrow(yMat)
+    n.seasons <- object@numPrimary
+    n.seasons.adj <- n.seasons #total number of plots fixed to 11 or 12, depending on plots requested
+    nvisits <- ncol(yMat)
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+    seasonNames <- paste("season", 1:n.seasons, sep = "")
+    
+    ##collapse yMat into a single vector
+    yVec.full <- as.vector(yMat)
   
   ##if only season-specific plots are requested
   if(!plot.freq && plot.seasons) {
@@ -946,15 +983,19 @@ countHist.unmarkedFrameGMM <- function(object, plot.freq = TRUE, plot.seasons = 
   hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
   hist.table.full <- table(hist.full, deparse.level = 0)
 
-  ##for each season, determine frequencies
-  yVectors <- vector(mode = "list", length = n.seasons)
-  out.seasons <- vector(mode = "list", length = n.seasons)
-  count.table.seasons <- vector(mode = "list", length = n.seasons)
-  hist.table.seasons <- vector(mode = "list", length = n.seasons)
-  out.freqs <- matrix(data = NA, ncol = 6, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected", "colonized",
-                           "extinct", "static", "common")
-  rownames(out.freqs) <- paste("Season-", 1:n.seasons, sep = "")
+    ##for each season, determine frequencies
+    yVectors <- vector(mode = "list", length = n.seasons)
+    out.seasons <- vector(mode = "list", length = n.seasons)
+    count.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(count.table.seasons) <- seasonNames
+    
+    hist.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(hist.table.seasons) <- seasonNames
+    
+    out.freqs <- matrix(data = NA, ncol = 6, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected", "colonized",
+                             "extinct", "static", "common")
+    rownames(out.freqs) <- paste("Season-", 1:n.seasons, sep = "")
 
   ##sequence of visits
   vis.seq <- seq(from = 1, to = nvisits, by = n.visits.season)
@@ -970,8 +1011,8 @@ countHist.unmarkedFrameGMM <- function(object, plot.freq = TRUE, plot.seasons = 
     yVectors[[i]] <- yVec.season
     
     det.hist <- apply(X = ySeason, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
-    hist.table.seasons[[i]]$hist.table <- table(det.hist, deparse.level = 0)
-    count.table.seasons[[i]]$count.table <- table(yVec.season, exclude = NULL)
+    hist.table.seasons[[i]] <- table(det.hist, deparse.level = 0)
+    count.table.seasons[[i]] <- table(yVec.season, exclude = NULL)
 
     ##determine proportion of sites with at least 1 detection
     det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
@@ -1046,17 +1087,18 @@ countHist.unmarkedFrameGMM <- function(object, plot.freq = TRUE, plot.seasons = 
 ##for unmarkedFitGMM
 countHist.unmarkedFitGMM <- function(object, plot.freq = TRUE, plot.seasons = FALSE, ...) {
 
-  ##extract data
-  yMat <- object@data@y
-  nsites <- nrow(yMat)
-  n.seasons <- object@data@numPrimary
-  n.seasons.adj <- n.seasons #total number of plots fixed to 11 or 12, depending on plots requested
-  nvisits <- ncol(yMat)
-  ##visits per season
-  n.visits.season <- nvisits/n.seasons
-
-  ##collapse yMat into a single vector
-  yVec.full <- as.vector(yMat)
+    ##extract data
+    yMat <- object@data@y
+    nsites <- nrow(yMat)
+    n.seasons <- object@data@numPrimary
+    n.seasons.adj <- n.seasons #total number of plots fixed to 11 or 12, depending on plots requested
+    nvisits <- ncol(yMat)
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+    seasonNames <- paste("season", 1:n.seasons, sep = "")
+    
+    ##collapse yMat into a single vector
+    yVec.full <- as.vector(yMat)
   
   ##if only season-specific plots are requested
   if(!plot.freq && plot.seasons) {
@@ -1150,18 +1192,22 @@ countHist.unmarkedFitGMM <- function(object, plot.freq = TRUE, plot.seasons = FA
   hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
   hist.table.full <- table(hist.full, deparse.level = 0)
 
-  ##for each season, determine frequencies
-  yVectors <- vector(mode = "list", length = n.seasons)
-  out.seasons <- vector(mode = "list", length = n.seasons)
-  count.table.seasons <- vector(mode = "list", length = n.seasons)
-  hist.table.seasons <- vector(mode = "list", length = n.seasons)
-  out.freqs <- matrix(data = NA, ncol = 6, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected", "colonized",
-                           "extinct", "static", "common")
-  rownames(out.freqs) <- paste("Season-", 1:n.seasons, sep = "")
+    ##for each season, determine frequencies
+    yVectors <- vector(mode = "list", length = n.seasons)
+    out.seasons <- vector(mode = "list", length = n.seasons)
+    count.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(count.table.seasons) <- seasonNames
+    
+    hist.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(hist.table.seasons) <- seasonNames
 
-  ##sequence of visits
-  vis.seq <- seq(from = 1, to = nvisits, by = n.visits.season)
+    out.freqs <- matrix(data = NA, ncol = 6, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected", "colonized",
+                             "extinct", "static", "common")
+    rownames(out.freqs) <- paste("Season-", 1:n.seasons, sep = "")
+
+    ##sequence of visits
+    vis.seq <- seq(from = 1, to = nvisits, by = n.visits.season)
   for(i in 1:n.seasons) {
     col.start <- vis.seq[i]
     col.end <- col.start + (n.visits.season - 1)
@@ -1174,8 +1220,8 @@ countHist.unmarkedFitGMM <- function(object, plot.freq = TRUE, plot.seasons = FA
     yVectors[[i]] <- yVec.season
     
     det.hist <- apply(X = ySeason, MARGIN = 1, FUN = function(i) paste(i, collapse = "|"))
-    hist.table.seasons[[i]]$hist.table <- table(det.hist, deparse.level = 0)
-    count.table.seasons[[i]]$count.table <- table(yVec.season, exclude = NULL)
+    hist.table.seasons[[i]] <- table(det.hist, deparse.level = 0)
+    count.table.seasons[[i]] <- table(yVec.season, exclude = NULL)
 
     ##determine proportion of sites with at least 1 detection
     det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
@@ -1249,12 +1295,19 @@ countHist.unmarkedFitGMM <- function(object, plot.freq = TRUE, plot.seasons = FA
 
 ##print method
 print.countHist <- function(x, digits = 2, ...) {
-  if(identical(x$n.seasons, 1)) {
-    cat("\nSummary of counts:\n")
-    count.mat <- matrix(x$count.table.full, nrow = 1)
-    colnames(count.mat) <- names(x$count.table.full)
-    rownames(count.mat) <- "Frequency"
-    print(count.mat)
+    if(identical(x$n.seasons, 1)) {
+
+        ##convert NA to . for nicer printing
+        hist.names <- names(x$hist.table.full)
+        names(x$hist.table.full) <- gsub(pattern = "NA",
+                                          replacement = ".",
+                                          x = hist.names)
+        
+        cat("\nSummary of counts:\n")
+        count.mat <- matrix(x$count.table.full, nrow = 1)
+        colnames(count.mat) <- names(x$count.table.full)
+        rownames(count.mat) <- "Frequency"
+        print(count.mat)
     
     cat("\nSummary of count histories:\n")
     ##account for number of visits, number of unique histories, number of separators
@@ -1298,15 +1351,17 @@ print.countHist <- function(x, digits = 2, ...) {
     }
     
     cat("\nSeason-specific counts: \n")
+    cat("\n")
     for(i in 1:x$n.seasons) {
       cat("Season", i, "\n")
-      temp.tab <- x$count.table.seasons[[i]]$count.table
+      temp.tab <- x$count.table.seasons[[i]]
       out.mat <- matrix(temp.tab, nrow = 1)
       colnames(out.mat) <- names(temp.tab)
       rownames(out.mat) <- "Frequency"
       print(out.mat)
-      cat("\n")
+      cat("--------\n\n")
     }
+    
     cat("Frequencies of sites with detections, extinctions, and colonizations:\n")
     ##add matrix of frequencies
     print(x$out.freqs)

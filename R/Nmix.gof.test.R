@@ -181,20 +181,20 @@ Nmix.chisq.unmarkedFitGMM <- function(mod, ...) {
 
 ##generic
 Nmix.gof.test <- function(mod, nsim = 5, plot.hist = TRUE,
-                          report = NULL, ...){
+                          report = NULL, parallel = TRUE, ...){
   UseMethod("Nmix.gof.test", mod)
 }
 
 
 Nmix.gof.test.default <- function(mod, nsim = 5, plot.hist = TRUE,
-                                  report = NULL, ...){
+                                  report = NULL, parallel = TRUE, ...){
   stop("\nFunction not yet defined for this object class\n")
 }
 
 
 ##PCount
 Nmix.gof.test.unmarkedFitPCount <- function(mod, nsim = 5, plot.hist = TRUE,
-                                            report = NULL, ...){
+                                            report = NULL, parallel = TRUE, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -204,12 +204,12 @@ Nmix.gof.test.unmarkedFitPCount <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim)
+                     nsim = nsim, parallel = parallel)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report)
+                     nsim = nsim, report = report, parallel = parallel)
 
   }
   
@@ -243,7 +243,7 @@ Nmix.gof.test.unmarkedFitPCount <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##PCO
 Nmix.gof.test.unmarkedFitPCO <- function(mod, nsim = 5, plot.hist = TRUE,
-                                         report = NULL, ...){
+                                         report = NULL, parallel = TRUE, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -253,12 +253,12 @@ Nmix.gof.test.unmarkedFitPCO <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim)
+                     nsim = nsim, parallel = parallel)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report)
+                     nsim = nsim, report = report, parallel = parallel)
       
   }
   
@@ -292,7 +292,7 @@ Nmix.gof.test.unmarkedFitPCO <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##DS
 Nmix.gof.test.unmarkedFitDS <- function(mod, nsim = 5, plot.hist = TRUE,
-                                        report = NULL, ...){
+                                        report = NULL, parallel = TRUE, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -302,12 +302,12 @@ Nmix.gof.test.unmarkedFitDS <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim)
+                     nsim = nsim, parallel = parallel)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report)
+                     nsim = nsim, report = report, parallel = parallel)
 
   }
 
@@ -341,7 +341,7 @@ Nmix.gof.test.unmarkedFitDS <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##GDS
 Nmix.gof.test.unmarkedFitGDS <- function(mod, nsim = 5, plot.hist = TRUE,
-                                         report = NULL, ...){
+                                         report = NULL, parallel = TRUE, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -351,12 +351,12 @@ Nmix.gof.test.unmarkedFitGDS <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim)
+                     nsim = nsim, parallel = parallel)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report)
+                     nsim = nsim, report = report, parallel = parallel)
 
   }
   
@@ -390,7 +390,7 @@ Nmix.gof.test.unmarkedFitGDS <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##GMM
 Nmix.gof.test.unmarkedFitGMM <- function(mod, nsim = 5, plot.hist = TRUE,
-                                         report = NULL, ...){
+                                         report = NULL, parallel = TRUE, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -400,12 +400,12 @@ Nmix.gof.test.unmarkedFitGMM <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim)
+                     nsim = nsim, parallel = parallel)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report)
+                     nsim = nsim, report = report, parallel = parallel)
 
   }
   
@@ -439,7 +439,7 @@ Nmix.gof.test.unmarkedFitGMM <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##GPC
 Nmix.gof.test.unmarkedFitGPC <- function(mod, nsim = 5, plot.hist = TRUE,
-                                         report = NULL, ...){
+                                         report = NULL, parallel = TRUE, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -449,12 +449,12 @@ Nmix.gof.test.unmarkedFitGPC <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim)
+                     nsim = nsim, parallel = parallel)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report)
+                     nsim = nsim, report = report, parallel = parallel)
 
   }
   
@@ -488,7 +488,7 @@ Nmix.gof.test.unmarkedFitGPC <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##MPois
 Nmix.gof.test.unmarkedFitMPois <- function(mod, nsim = 5, plot.hist = TRUE,
-                                           report = NULL, ...){
+                                           report = NULL, parallel = TRUE, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -498,12 +498,12 @@ Nmix.gof.test.unmarkedFitMPois <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim)
+                     nsim = nsim, parallel = parallel)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report)
+                     nsim = nsim, report = report, parallel = parallel)
 
   }
   

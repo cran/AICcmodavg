@@ -11,6 +11,7 @@
 \alias{AICc.fitdist}
 \alias{AICc.fitdistr}
 \alias{AICc.glm}
+\alias{AICc.glmmTMB}
 \alias{AICc.gls}
 \alias{AICc.gnls}
 \alias{AICc.hurdle}
@@ -22,6 +23,7 @@
 \alias{AICc.mer}
 \alias{AICc.merMod}
 \alias{AICc.multinom}
+\alias{AICc.negbin}
 \alias{AICc.nlme}
 \alias{AICc.nls}
 \alias{AICc.polr}
@@ -34,7 +36,7 @@
   Computing AIC, AICc, QAIC, and QAICc
 }
 \description{
-  Functions to computes Akaike's information criterion (AIC), the
+  Functions to compute Akaike's information criterion (AIC), the
   second-order AIC (AICc), as well as their quasi-likelihood counterparts
   (QAIC, QAICc).
 }
@@ -66,6 +68,9 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
      nobs = NULL, \dots)
 
 \method{AICc}{glm}(mod, return.K = FALSE, second.ord = TRUE,
+     nobs = NULL, c.hat = 1, \dots)
+
+\method{AICc}{glmmTMB}(mod, return.K = FALSE, second.ord = TRUE,
      nobs = NULL, c.hat = 1, \dots)
 
 \method{AICc}{gls}(mod, return.K = FALSE, second.ord = TRUE,
@@ -101,6 +106,9 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
 \method{AICc}{multinom}(mod, return.K = FALSE, second.ord = TRUE,
      nobs = NULL, c.hat = 1, \dots)
 
+\method{AICc}{negbin}(mod, return.K = FALSE, second.ord = TRUE,
+     nobs = NULL, \dots)
+
 \method{AICc}{nlme}(mod, return.K = FALSE, second.ord = TRUE,
      nobs = NULL, \dots)
 
@@ -130,13 +138,14 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
   \item{mod}{
     an object of class \code{aov}, \code{betareg}, \code{clm},
     \code{clmm}, \code{clogit}, \code{coxme}, \code{coxph},
-    \code{fitdist}, \code{fitdistr}, \code{glm}, \code{gls},
-    \code{gnls}, \code{hurdle}, \code{lavaan}, \code{lm}, \code{lme},
-    \code{lmekin}, \code{maxlikeFit}, \code{mer}, \code{merMod},
-    \code{multinom}, \code{nlme}, \code{nls}, \code{polr}, \code{rlm},
-    \code{survreg}, \code{vglm}, \code{zeroinfl}, and various
-    \code{unmarkedFit} classes containing the output of a model.
-}
+    \code{fitdist}, \code{fitdistr}, \code{glm}, \code{glmmTMB},
+    \code{gls}, \code{gnls}, \code{hurdle}, \code{lavaan}, \code{lm},
+    \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
+    \code{merMod}, \code{multinom}, \code{negbin}, \code{nlme},
+    \code{nls}, \code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, 
+    \code{zeroinfl}, and various \code{unmarkedFit} classes containing
+    the output of a model.
+  }
   
   \item{return.K}{
     logical.  If \code{FALSE}, the function returns the information

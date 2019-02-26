@@ -11,6 +11,7 @@
 \alias{useBIC.fitdist}
 \alias{useBIC.fitdistr}
 \alias{useBIC.glm}
+\alias{useBIC.glmmTMB}
 \alias{useBIC.gls}
 \alias{useBIC.gnls}
 \alias{useBIC.hurdle}
@@ -57,6 +58,9 @@ useBIC(mod, return.K = FALSE, nobs = NULL, \dots)
 \method{useBIC}{fitdistr}(mod, return.K = FALSE, nobs = NULL, \dots)
 
 \method{useBIC}{glm}(mod, return.K = FALSE, nobs = NULL, c.hat = 1,
+\dots)
+
+\method{useBIC}{glmmTMB}(mod, return.K = FALSE, nobs = NULL, c.hat = 1,
 \dots)
 
 \method{useBIC}{gls}(mod, return.K = FALSE, nobs = NULL, \dots)
@@ -106,12 +110,13 @@ useBIC(mod, return.K = FALSE, nobs = NULL, \dots)
   \item{mod}{
     an object of class \code{aov}, \code{betareg}, \code{clm},
     \code{clmm}, \code{clogit}, \code{coxme}, \code{coxph},
-    \code{fitdist}, \code{fitdistr}, \code{glm}, \code{gls},
-    \code{gnls}, \code{hurdle}, \code{lavaan}, \code{lm}, \code{lme},
-    \code{lmekin}, \code{maxlikeFit}, \code{mer}, \code{merMod},
-    \code{multinom}, \code{nlme}, \code{nls}, \code{polr}, \code{rlm},
-    \code{survreg}, \code{vglm}, \code{zeroinfl}, and various
-    \code{unmarkedFit} classes containing the output of a model.
+    \code{fitdist}, \code{fitdistr}, \code{glm}, \code{glmmTMB},
+    \code{gls}, \code{gnls}, \code{hurdle}, \code{lavaan}, \code{lm},
+    \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
+    \code{merMod}, \code{multinom}, \code{nlme}, \code{nls},
+    \code{polr}, \code{rlm}, \code{survreg}, \code{vglm},
+    \code{zeroinfl}, and various \code{unmarkedFit} classes containing
+    the output of a model. 
 }
   
   \item{return.K}{

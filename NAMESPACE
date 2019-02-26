@@ -4,6 +4,7 @@
 ##export methods
 export(AICc,
        aictab,
+       anovaOD,
        bictab,
        boot.wt,
        c_hat,
@@ -26,9 +27,11 @@ export(AICc,
        Nmix.chisq,
        Nmix.gof.test,
        predictSE,
+       summaryOD,
        useBIC,
        
        ##utility functions
+       formulaShort,
        formatCands,
        reverse.parm,
        reverse.exclude,
@@ -75,6 +78,8 @@ S3method(print, modavgPred)
 S3method(print, modavgShrink)
 S3method(print, multComp)
 S3method(print, Nmix.chisq)
+S3method(print, summaryOD)
+S3method(print, anovaOD)
 
 
 ##AICc
@@ -88,6 +93,7 @@ S3method(AICc, coxph)
 S3method(AICc, fitdist)
 S3method(AICc, fitdistr)
 S3method(AICc, glm)
+S3method(AICc, glmmTMB)
 S3method(AICc, gls)
 S3method(AICc, gnls)
 S3method(AICc, hurdle)
@@ -99,6 +105,7 @@ S3method(AICc, maxlikeFit)
 S3method(AICc, mer)
 S3method(AICc, merMod)
 S3method(AICc, multinom)
+S3method(AICc, negbin)
 S3method(AICc, nlme)
 S3method(AICc, nls)
 S3method(AICc, polr)
@@ -123,6 +130,7 @@ S3method(aictab, AICcoxph)
 S3method(aictab, AICfitdist)
 S3method(aictab, AICfitdistr)
 S3method(aictab, AICglm.lm)
+S3method(aictab, AICglmmTMB)
 S3method(aictab, AICgls)
 S3method(aictab, AICgnls.gls)
 S3method(aictab, AIChurdle)
@@ -136,6 +144,7 @@ S3method(aictab, AIClmerMod)
 S3method(aictab, AICglmerMod)
 S3method(aictab, AICnlmerMod)
 S3method(aictab, AICmultinom.nnet)
+S3method(aictab, AICnegbin.glm.lm)
 S3method(aictab, AICnlme.lme)
 S3method(aictab, AICnls)
 S3method(aictab, AICpolr)
@@ -152,8 +161,31 @@ S3method(aictab, AICunmarkedFitOccuFP)
 S3method(aictab, AICunmarkedFitMPois)
 S3method(aictab, AICunmarkedFitGMM)
 S3method(aictab, AICunmarkedFitGPC)
+S3method(aictab, AICunmarkedFitOccuMulti)
 S3method(aictab, AICvglm)
 S3method(aictab, AICzeroinfl)
+
+
+##anovaOD
+S3method(anovaOD, default)
+S3method(anovaOD, glm)
+S3method(anovaOD, glmmTMB)
+S3method(anovaOD, unmarkedFitOccu)
+S3method(anovaOD, unmarkedFitColExt)
+S3method(anovaOD, unmarkedFitOccuRN)
+S3method(anovaOD, unmarkedFitPCount)
+S3method(anovaOD, unmarkedFitPCO)
+S3method(anovaOD, unmarkedFitDS)
+S3method(anovaOD, unmarkedFitGDS)
+S3method(anovaOD, unmarkedFitOccuFP)
+S3method(anovaOD, unmarkedFitMPois)
+S3method(anovaOD, unmarkedFitGMM)
+S3method(anovaOD, unmarkedFitGPC)
+S3method(anovaOD, unmarkedFitOccuMulti)
+S3method(anovaOD, glmerMod)
+S3method(anovaOD, maxlikeFit)
+S3method(anovaOD, multinom)
+S3method(anovaOD, vglm)
 
 
 ##bictab
@@ -168,6 +200,7 @@ S3method(bictab, AICcoxph)
 S3method(bictab, AICfitdist)
 S3method(bictab, AICfitdistr)
 S3method(bictab, AICglm.lm)
+S3method(bictab, AICglmmTMB)
 S3method(bictab, AICgls)
 S3method(bictab, AICgnls.gls)
 S3method(bictab, AIChurdle)
@@ -181,6 +214,7 @@ S3method(bictab, AIClmerMod)
 S3method(bictab, AICglmerMod)
 S3method(bictab, AICnlmerMod)
 S3method(bictab, AICmultinom.nnet)
+S3method(bictab, AICnegbin.glm.lm)
 S3method(bictab, AICnlme.lme)
 S3method(bictab, AICnls)
 S3method(bictab, AICpolr)
@@ -197,6 +231,7 @@ S3method(bictab, AICunmarkedFitOccuFP)
 S3method(bictab, AICunmarkedFitMPois)
 S3method(bictab, AICunmarkedFitGMM)
 S3method(bictab, AICunmarkedFitGPC)
+S3method(bictab, AICunmarkedFitOccuMulti)
 S3method(bictab, AICvglm)
 S3method(bictab, AICzeroinfl)
 
@@ -220,7 +255,9 @@ S3method(boot.wt, AICzeroinfl)
 ##c_hat
 S3method(c_hat, default)
 S3method(c_hat, glm)
+S3method(c_hat, glmmTMB)
 S3method(c_hat, merMod)
+S3method(c_hat, vglm)
 
 
 ##checkConv
@@ -229,6 +266,7 @@ S3method(checkConv, betareg)
 S3method(checkConv, clm)
 S3method(checkConv, clmm)
 S3method(checkConv, glm)
+S3method(checkConv, glmmTMB)
 S3method(checkConv, hurdle)
 S3method(checkConv, lavaan)
 S3method(checkConv, maxlikeFit)
@@ -248,6 +286,7 @@ S3method(checkParms, clmm)
 S3method(checkParms, coxme)
 S3method(checkParms, coxph)
 S3method(checkParms, glm)
+S3method(checkParms, glmmTMB)
 S3method(checkParms, gls)
 S3method(checkParms, gnls)
 S3method(checkParms, hurdle)
@@ -292,6 +331,7 @@ S3method(countHist, unmarkedFitGMM)
 ##covDiag
 S3method(covDiag, default)
 S3method(covDiag, unmarkedFitPCount)
+S3method(covDiag, unmarkedFramePCount)
 
 
 ##detHist
@@ -303,6 +343,8 @@ S3method(detHist, unmarkedFitOccuRN)
 S3method(detHist, unmarkedFrameOccu)
 S3method(detHist, unmarkedFrameOccuFP)
 S3method(detHist, unmarkedMultFrame)
+S3method(detHist, unmarkedFitOccuMulti)
+S3method(detHist, unmarkedFrameOccuMulti)
 
 
 ##DIC
@@ -344,6 +386,7 @@ S3method(extractSE, merMod)
 S3method(extractX, default)
 S3method(extractX, AICaov.lm)
 S3method(extractX, AICglm.lm)
+S3method(extractX, AICglmmTMB)
 S3method(extractX, AICgls)
 S3method(extractX, AIClm)
 S3method(extractX, AIClme)
@@ -362,6 +405,7 @@ S3method(extractX, AICunmarkedFitOccuFP)
 S3method(extractX, AICunmarkedFitMPois)
 S3method(extractX, AICunmarkedFitGMM)
 S3method(extractX, AICunmarkedFitGPC)
+S3method(extractX, AICunmarkedFitOccuMulti)
 
 
 ##importance
@@ -375,6 +419,7 @@ S3method(importance, AICclogit.coxph)
 S3method(importance, AICcoxme)
 S3method(importance, AICcoxph)
 S3method(importance, AICglm.lm)
+S3method(importance, AICglmmTMB)
 S3method(importance, AICglmerMod)
 S3method(importance, AICgls)
 S3method(importance, AIChurdle)
@@ -384,6 +429,7 @@ S3method(importance, AIClmekin)
 S3method(importance, AICmaxlikeFit.list)
 S3method(importance, AICmer)
 S3method(importance, AICmultinom.nnet)
+S3method(importance, AICnegbin.glm.lm)
 S3method(importance, AICnlmerMod)
 S3method(importance, AICpolr)
 S3method(importance, AICrlm.lm)
@@ -398,6 +444,8 @@ S3method(importance, AICunmarkedFitDS)
 S3method(importance, AICunmarkedFitGDS)
 S3method(importance, AICunmarkedFitMPois)
 S3method(importance, AICunmarkedFitGMM)
+S3method(importance, AICunmarkedFitGPC)
+S3method(importance, AICunmarkedFitOccuMulti)
 S3method(importance, AICvglm)
 S3method(importance, AICzeroinfl)
 
@@ -406,12 +454,14 @@ S3method(importance, AICzeroinfl)
 S3method(mb.chisq, default)
 S3method(mb.chisq, unmarkedFitOccu)
 S3method(mb.chisq, unmarkedFitColExt)
+S3method(mb.chisq, unmarkedFitOccuRN)
 
 
 ##mb.gof.test
 S3method(mb.gof.test, default)
 S3method(mb.gof.test, unmarkedFitOccu)
 S3method(mb.gof.test, unmarkedFitColExt)
+S3method(mb.gof.test, unmarkedFitOccuRN)
 
 
 ##modavg
@@ -424,6 +474,7 @@ S3method(modavg, AICclmm)
 S3method(modavg, AICcoxme)
 S3method(modavg, AICcoxph)
 S3method(modavg, AICglm.lm)
+S3method(modavg, AICglmmTMB)
 S3method(modavg, AICgls)
 S3method(modavg, AIChurdle)
 S3method(modavg, AIClm)
@@ -434,6 +485,7 @@ S3method(modavg, AICmer)
 S3method(modavg, AIClmerMod)
 S3method(modavg, AICglmerMod)
 S3method(modavg, AICmultinom.nnet)
+S3method(modavg, AICnegbin.glm.lm)
 S3method(modavg, AICpolr)
 S3method(modavg, AICrlm.lm)
 S3method(modavg, AICsurvreg)
@@ -450,6 +502,7 @@ S3method(modavg, AICunmarkedFitOccuFP)
 S3method(modavg, AICunmarkedFitMPois)
 S3method(modavg, AICunmarkedFitGMM)
 S3method(modavg, AICunmarkedFitGPC)
+S3method(modavg, AICunmarkedFitOccuMulti)
 
 
 ##modavgEffect
@@ -462,6 +515,7 @@ S3method(modavgEffect, AIClme)
 S3method(modavgEffect, AICmer)
 S3method(modavgEffect, AICglmerMod)
 S3method(modavgEffect, AIClmerMod)
+S3method(modavgEffect, AICnegbin.glm.lm)
 S3method(modavgEffect, AICrlm.lm)
 S3method(modavgEffect, AICsurvreg)
 S3method(modavgEffect, AICunmarkedFitOccu)
@@ -487,6 +541,7 @@ S3method(modavgPred, AIClme)
 S3method(modavgPred, AICglmerMod)
 S3method(modavgPred, AIClmerMod)
 S3method(modavgPred, AICmer)
+S3method(modavgPred, AICnegbin.glm.lm)
 S3method(modavgPred, AICrlm.lm)
 S3method(modavgPred, AICsurvreg)
 S3method(modavgPred, AICunmarkedFitOccu)
@@ -512,6 +567,7 @@ S3method(modavgShrink, AICclmm)
 S3method(modavgShrink, AICcoxme)
 S3method(modavgShrink, AICcoxph)
 S3method(modavgShrink, AICglm.lm)
+S3method(modavgShrink, AICglmmTMB)
 S3method(modavgShrink, AICgls)
 S3method(modavgShrink, AIChurdle)
 S3method(modavgShrink, AIClm)
@@ -522,6 +578,7 @@ S3method(modavgShrink, AICmer)
 S3method(modavgShrink, AICglmerMod)
 S3method(modavgShrink, AIClmerMod)
 S3method(modavgShrink, AICmultinom.nnet)
+S3method(modavgShrink, AICnegbin.glm.lm)
 S3method(modavgShrink, AICpolr)
 S3method(modavgShrink, AICrlm.lm)
 S3method(modavgShrink, AICsurvreg)
@@ -538,6 +595,7 @@ S3method(modavgShrink, AICunmarkedFitOccuFP)
 S3method(modavgShrink, AICunmarkedFitMPois)
 S3method(modavgShrink, AICunmarkedFitGMM)
 S3method(modavgShrink, AICunmarkedFitGPC)
+S3method(modavgShrink, AICunmarkedFitOccuMulti)
 
 
 ##multComp
@@ -549,6 +607,7 @@ S3method(multComp, lm)
 S3method(multComp, lme)
 S3method(multComp, mer)
 S3method(multComp, merMod)
+S3method(multComp, negbin)
 S3method(multComp, rlm)
 S3method(multComp, survreg)
 
@@ -585,6 +644,30 @@ S3method(predictSE, unmarkedFitPCount)
 S3method(predictSE, unmarkedFitPCO)
 
 
+##summaryOD
+S3method(summaryOD, default)
+S3method(summaryOD, glm)
+S3method(summaryOD, glmmTMB)
+S3method(summaryOD, unmarkedFitOccu)
+S3method(summaryOD, unmarkedFitColExt)
+S3method(summaryOD, unmarkedFitOccuRN)
+S3method(summaryOD, unmarkedFitPCount)
+S3method(summaryOD, unmarkedFitPCO)
+S3method(summaryOD, unmarkedFitDS)
+S3method(summaryOD, unmarkedFitGDS)
+S3method(summaryOD, unmarkedFitOccuFP)
+S3method(summaryOD, unmarkedFitMPois)
+S3method(summaryOD, unmarkedFitGMM)
+S3method(summaryOD, unmarkedFitGPC)
+S3method(summaryOD, unmarkedFitOccuMulti)
+S3method(summaryOD, glmerMod)
+S3method(summaryOD, maxlikeFit)
+S3method(summaryOD, multinom)
+S3method(summaryOD, vglm)
+
+
+
+
 ##useBIC
 S3method(useBIC, default)
 S3method(useBIC, aov)
@@ -596,6 +679,7 @@ S3method(useBIC, coxph)
 S3method(useBIC, fitdist)
 S3method(useBIC, fitdistr)
 S3method(useBIC, glm)
+S3method(useBIC, glmmTMB)
 S3method(useBIC, gls)
 S3method(useBIC, gnls)
 S3method(useBIC, hurdle)
@@ -632,6 +716,8 @@ S3method(xtable, modavgEffect)
 S3method(xtable, modavgPred)
 S3method(xtable, modavgShrink)
 S3method(xtable, multComp)
+S3method(xtable, summaryOD)
+S3method(xtable, anovaOD)
 
 
 ##defunct functions
@@ -646,13 +732,15 @@ importFrom(unmarked,
            parboot,
            obsCovs,
            siteCovs,
+           vcov,
            yearlySiteCovs)
 importFrom(VGAM,
            formula,
            logLik,
            coefficients,
            residuals,
-           fitted)
+           fitted,
+           vcov)
 importFrom(graphics,
            barplot,
            hist,

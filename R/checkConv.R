@@ -68,6 +68,20 @@ checkConv.glm <- function(mod, ...) {
 
 
 
+##glmmTMB
+checkConv.glmmTMB <- function(mod, ...) {
+    if(mod$fit$convergence == 0) {
+        conv <- TRUE
+    } else {conv <- FALSE}
+
+    msg <- mod$fit$message ##object does not include a message from IWLS algorithm
+    out <- list(converged = conv, message = msg)
+    class(out) <- "checkConv"
+    return(out)
+}
+
+
+
 ##hurdle
 checkConv.hurdle <- function(mod, ...) {
     if(mod$converged) {

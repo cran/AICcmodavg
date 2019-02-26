@@ -32,7 +32,8 @@ based on Pearson's chi-square.
 ##'unmarkedFitGPC', and 'unmarkedFitMPois' classes
 Nmix.chisq(mod, \dots)
 
-Nmix.gof.test(mod, nsim = 5, plot.hist = TRUE, report = NULL, \dots)
+Nmix.gof.test(mod, nsim = 5, plot.hist = TRUE, report = NULL,
+parallel = TRUE, \dots)
 
 }
 \arguments{
@@ -52,6 +53,9 @@ Nmix.gof.test(mod, nsim = 5, plot.hist = TRUE, report = NULL, \dots)
   number of values of the test statistic that should be printed on
   the same line.  For example, if \code{report = 3}, the values of the
   test statistic for three iterations are reported on each line.
+}
+\item{parallel}{logical.  If \code{TRUE}, requests that \code{parboot}
+  use multiple cores to accelerate computations of the bootstrap.
 }
 \item{\dots}{
   additional arguments passed to the function.

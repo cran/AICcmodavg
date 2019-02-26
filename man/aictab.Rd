@@ -12,6 +12,7 @@
 \alias{aictab.AICfitdist}
 \alias{aictab.AICfitdistr}
 \alias{aictab.AICglm.lm}
+\alias{aictab.AICglmmTMB}
 \alias{aictab.AICgls}
 \alias{aictab.AICgnls.gls}
 \alias{aictab.AIChurdle}
@@ -25,6 +26,7 @@
 \alias{aictab.AICglmerMod}
 \alias{aictab.AICnlmerMod}
 \alias{aictab.AICmultinom.nnet}
+\alias{aictab.AICnegbin.glm.lm}
 \alias{aictab.AICnlme.lme}
 \alias{aictab.AICnls}
 \alias{aictab.AICpolr}
@@ -41,6 +43,7 @@
 \alias{aictab.AICunmarkedFitMPois}
 \alias{aictab.AICunmarkedFitGMM}
 \alias{aictab.AICunmarkedFitGPC}
+\alias{aictab.AICunmarkedFitOccuMulti}
 \alias{aictab.AICvglm}
 \alias{aictab.AICzeroinfl}
 \alias{print.aictab}
@@ -56,12 +59,12 @@ appropriate function to create the model selection table based on the
 object class.  The current version works with lists containing objects
 of \code{aov}, \code{betareg}, \code{clm}, \code{clmm}, \code{clogit},
 \code{coxme}, \code{coxph}, \code{fitdist}, \code{fitdistr}, \code{glm},
-\code{gls}, \code{gnls}, \code{hurdle}, \code{lavaan}, \code{lm},
-\code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer}, \code{merMod},
-\code{multinom}, \code{nlme}, \code{nls}, \code{polr}, \code{rlm},
-\code{survreg}, \code{vglm}, and \code{zeroinfl} classes as well as
-various models of \code{unmarkedFit} classes but does not yet allow
-mixing of different classes.
+\code{glmmTMB}, \code{gls}, \code{gnls}, \code{hurdle}, \code{lavaan},
+\code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
+\code{merMod}, \code{multinom}, \code{negbin}, \code{nlme}, \code{nls},
+\code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, and
+\code{zeroinfl} classes as well as various models of \code{unmarkedFit}
+classes but does not yet allow mixing of different classes.
 }
 \usage{
 aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
@@ -95,6 +98,9 @@ aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
 \method{aictab}{AICglm.lm}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)  
+
+\method{aictab}{AICglmmTMB}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)  
 
 \method{aictab}{AICgls}(cand.set, modnames = NULL,
@@ -135,6 +141,9 @@ aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
 
 \method{aictab}{AICmultinom.nnet}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICnegbin.glm.lm}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots) 
 
 \method{aictab}{AICnlme.lme}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, \dots) 
@@ -182,6 +191,9 @@ aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
 
 \method{aictab}{AICunmarkedFitGPC}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitOccuMulti}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
 
 \method{aictab}{AICvglm}(cand.set, modnames = NULL,
@@ -242,14 +254,14 @@ linear mixed models of the \code{mer} or \code{merMod} classes.
 \code{aictab} internally creates a new class for the \code{cand.set}
 list of candidate models, according to the contents of the list. The
 current function is implemented for \code{clogit}, \code{coxme},
-\code{coxph}, \code{fitdist}, \code{fitdistr}, \code{glm}, \code{gls},
-\code{gnls}, \code{hurdle}, \code{lavaan}, \code{lm}, \code{lme},
-\code{lmekin}, \code{maxlikeFit}, \code{mer}, \code{merMod},
-\code{multinom}, \code{nlme}, \code{nls}, \code{polr}, \code{rlm},
-\code{survreg}, \code{vglm}, and \code{zeroinfl} classes as well as
-various \code{unmarkedFit} classes.  The function constructs a model
-selection table based on one of the four information criteria:  AIC,
-AICc, QAIC, and QAICc.
+\code{coxph}, \code{fitdist}, \code{fitdistr}, \code{glm},
+\code{glmmTMB}, \code{gls}, \code{gnls}, \code{hurdle}, \code{lavaan},
+\code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
+\code{merMod}, \code{multinom}, \code{negbin}, \code{nlme}, \code{nls},
+\code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, and
+\code{zeroinfl} classes as well as various \code{unmarkedFit} classes.
+The function constructs a model selection table based on one of the four
+information criteria: AIC, AICc, QAIC, and QAICc.
 
 Ten guidelines for model selection:
 

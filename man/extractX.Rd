@@ -4,6 +4,7 @@
 \alias{extractX.default}
 \alias{extractX.AICaov.lm}
 \alias{extractX.AICglm.lm}
+\alias{extractX.AICglmmTMB}
 \alias{extractX.AICgls}
 \alias{extractX.AIClm}
 \alias{extractX.AIClme}
@@ -22,16 +23,17 @@
 \alias{extractX.AICunmarkedFitMPois}
 \alias{extractX.AICunmarkedFitGMM}
 \alias{extractX.AICunmarkedFitGPC}
+\alias{extractX.AICunmarkedFitOccuMulti}
 \alias{print.extractX}
 \title{
 Extract Predictors from Candidate Model List
 }
 \description{
 This function extracts the predictors used in candidate models.  The
-function is currently implemented for \code{glm}, \code{gls}, \code{lm},
-\code{lme}, \code{merMod}, \code{rlm}, \code{survreg} object
-classes that are stored in a list as well as various models of
-\code{unmarkedFit} classes. 
+function is currently implemented for \code{glm}, \code{glmmTMB},
+\code{gls}, \code{lm}, \code{lme}, \code{merMod}, \code{rlm},
+\code{survreg} object classes that are stored in a list as well as
+various models of \code{unmarkedFit} classes. 
 }
 \usage{
 extractX(cand.set, \dots)
@@ -39,6 +41,8 @@ extractX(cand.set, \dots)
 \method{extractX}{AICaov.lm}(cand.set, \dots) 
 
 \method{extractX}{AICglm.lm}(cand.set, \dots)
+
+\method{extractX}{AICglmmTMB}(cand.set, \dots)
 
 \method{extractX}{AIClm}(cand.set, \dots) 
 
@@ -86,6 +90,9 @@ extractX(cand.set, \dots)
 
 \method{extractX}{AICunmarkedFitGPC}(cand.set,
         parm.type = NULL, \dots)
+
+\method{extractX}{AICunmarkedFitOccuMulti}(cand.set,
+        parm.type = NULL, \dots)
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -96,34 +103,35 @@ extractX(cand.set, \dots)
   \item{parm.type}{  this argument specifies the parameter type on which the effect size 
     will be computed and is only relevant for models of
     \code{unmarkedFitOccu}, \code{unmarkedFitColExt}, 
-    \code{unmarkedFitOccuFP}, \code{unmarkedFitOccuRN}, 
-    \code{unmarkedFitMPois}, \code{unmarkedFitPCount},
-    \code{unmarkedFitPCO}, \code{unmarkedFitDS}, \code{unmarkedFitGDS}, 
-    \code{unmarkedFitGMM}, and \code{unmarkedFitGPC} classes.  The
-    character strings supported vary with the type of model fitted. 
-    For \code{unmarkedFitOccu} objects, either \code{psi} or \code{detect}
-    can be supplied to indicate whether the parameter is on occupancy or
-    detectability, respectively.  For \code{unmarkedFitColExt}, possible
-    values  are \code{psi}, \code{gamma}, \code{epsilon}, and
-    \code{detect}, for parameters on occupancy in the inital year,
-    colonization, extinction, and detectability, respectively.  For
-    \code{unmarkedFitOccuFP} objects, one can specify \code{psi},
-    \code{detect}, \code{falsepos}, and \code{certain}, for occupancy,
-    detectability, probability of assigning false-positives, and
-    probability detections are certain, respectively.  For
-    \code{unmarkedFitOccuRN} objects, either \code{lambda} or
-    \code{detect} can be entered for abundance and detectability
-    parameters, respectively.  For \code{unmarkedFitPCount} and
-    \code{unmarkedFitMPois} objects, \code{lambda} or \code{detect} denote
-    parameters on abundance and detectability, respectively.  For
-    \code{unmarkedFitPCO} objects, one can enter \code{lambda},
-    \code{gamma}, \code{omega}, \code{iota}, or \code{detect}, to
-    specify parameters on abundance, recruitment, apparent survival,
-    immigration, and detectability, respectively.  For
-    \code{unmarkedFitDS} objects, \code{lambda} and \code{detect} are
-    supported.  For \code{unmarkedFitGDS}, \code{lambda}, \code{phi},
-    and \code{detect} denote abundance, availability, and detection
-    probability, respectively.  For \code{unmarkedFitGMM} and
+    \code{unmarkedFitOccuFP}, \code{unmarkedFitOccuMulti},
+    \code{unmarkedFitOccuRN},  \code{unmarkedFitMPois},
+    \code{unmarkedFitPCount}, \code{unmarkedFitPCO},
+    \code{unmarkedFitDS}, \code{unmarkedFitGDS}, \code{unmarkedFitGMM},
+    and \code{unmarkedFitGPC} classes.  The character strings supported
+    vary with the type of model fitted.  For \code{unmarkedFitOccu} and
+    \code{unmarkedFitOccuMulti} objects, either \code{psi} or
+    \code{detect} can be supplied to indicate whether the parameter is
+    on occupancy or detectability, respectively.  For
+    \code{unmarkedFitColExt}, possible values  are \code{psi},
+    \code{gamma}, \code{epsilon}, and \code{detect}, for parameters on
+    occupancy in the inital year, colonization, extinction, and
+    detectability, respectively.  For \code{unmarkedFitOccuFP} objects,
+    one can specify \code{psi}, \code{detect}, \code{falsepos}, and
+    \code{certain}, for occupancy, detectability, probability of
+    assigning false-positives, and probability detections are certain,
+    respectively.  For \code{unmarkedFitOccuRN} objects, either
+    \code{lambda} or \code{detect} can be entered for abundance and
+    detectability parameters, respectively.  For
+    \code{unmarkedFitPCount} and \code{unmarkedFitMPois} objects,
+    \code{lambda} or \code{detect} denote parameters on abundance and
+    detectability, respectively.  For \code{unmarkedFitPCO} objects, one
+    can enter \code{lambda}, \code{gamma}, \code{omega}, \code{iota}, or
+    \code{detect}, to specify parameters on abundance, recruitment,
+    apparent survival, immigration, and detectability, respectively.
+    For \code{unmarkedFitDS} objects, \code{lambda} and \code{detect}
+    are supported.  For \code{unmarkedFitGDS}, \code{lambda},
+    \code{phi}, and \code{detect} denote abundance, availability, and
+    detection probability, respectively.  For \code{unmarkedFitGMM} and
     \code{unmarkedFitGPC} objects, \code{lambda}, \code{phi}, and
     \code{detect} denote abundance, availability, and detectability, 
     respectively.

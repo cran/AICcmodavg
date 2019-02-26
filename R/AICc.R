@@ -163,9 +163,43 @@ AICc.glm <-
     if(identical(family(mod)$family, "Gamma") && c.hat > 1) stop("You should not use the c.hat argument with the gamma")
       
     ##an extra condition must be added to avoid adding a parameter for theta with negative binomial when glm.nb( ) is fit which estimates the correct number of parameters
-    if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
+      if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
     AICc
   }
+
+
+
+##glmmTMB objects
+AICc.glmmTMB <-
+    function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, c.hat = 1, ...){
+ 
+        if(is.null(nobs)) {
+            n <- nrow(mod$frame)
+            names(n) <- NULL
+        } else {n <- nobs}
+    
+        LL <- logLik(mod)[1]
+        K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model
+
+        if(c.hat == 1) {
+            if(second.ord == TRUE) {AICc <- -2*LL+2*K*(n/(n-K-1))} else{AICc <- -2*LL+2*K}
+        }
+
+        if(c.hat > 1 && c.hat <= 4) {
+            K <- K+1
+            if(second.ord==TRUE) {
+                AICc <- (-2*LL/c.hat)+2*K*(n/(n-K-1))
+                ##adjust parameter count to include estimation of dispersion parameter
+            } else{
+                AICc <- (-2*LL/c.hat)+2*K}
+        }
+
+        if(c.hat > 4) stop("High overdispersion and model fit is questionable\n")
+        if(c.hat < 1) stop("You should set \'c.hat\' to 1 if < 1, but values << 1 might also indicate lack of fit\n")
+        
+        if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
+        AICc
+    }
 
 
 
@@ -355,6 +389,20 @@ AICc.multinom <-
     if(return.K==TRUE) AICc[1]<-K #attributes the first element of AICc to K
     AICc
   }
+
+
+
+##glm.nb
+AICc.negbin <-
+    function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
+    
+        if(identical(nobs, NULL)) {n <- length(mod$fitted)} else {n <- nobs}
+        LL <- logLik(mod)[1]
+        K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model - this includes LM
+        if(second.ord == TRUE) {AICc <- -2*LL+2*K*(n/(n-K-1))}  else{AICc <- -2*LL+2*K}
+        if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
+        AICc
+    }
 
 
 

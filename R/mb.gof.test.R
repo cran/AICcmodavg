@@ -734,23 +734,253 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
 
 
 
+##Royle-Nichols count model of class unmarkedFitOccuRN - modified by Dan Linden
+mb.chisq.unmarkedFitOccuRN <- function (mod, print.table = TRUE, maxK = 50, ...){
+    y.raw <- mod@data@y
+    N.raw <- nrow(y.raw)
+    na.raw <- apply(X = y.raw, MARGIN = 1, FUN = function(i) all(is.na(i)))
+    y.data <- y.raw[!na.raw, ]
+    N <- N.raw - sum(na.raw)
+
+###################
+###modified by Dan Linden
+    T <- ncol(y.data)
+    K <- 0:maxK
+################
+    
+    det.hist <- apply(X = y.data, MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
+    preds.lam <- predict(mod, type = "state")$Predicted
+    
+    preds.p <- matrix(data = predict(mod, type = "det")$Predicted, 
+                      ncol = T, byrow = TRUE)
+    out.hist <- data.frame(det.hist, preds.lam)
+    
+    un.hist <- unique(det.hist)
+    n.un.hist <- length(un.hist)
+    
+    na.vals <- length(grep(pattern = "NA", x = un.hist)) > 0
+
+    if (na.vals) {
+        
+        id.na <- grep(pattern = "NA", x = un.hist)
+        id.det.hist.na <- grep(pattern = "NA", x = det.hist)
+
+        cohort.na <- sort(un.hist[id.na])
+        n.cohort.na <- length(cohort.na)
+
+        unique.na <- gsub(pattern = "NA", replacement = "N", 
+                          x = cohort.na)
+        na.visits <- sapply(strsplit(x = unique.na, split = ""), 
+                            FUN = function(i) paste(ifelse(i == "N", 1, 0), collapse = ""))
+        names(cohort.na) <- na.visits
+        n.hist.missing.cohorts <- table(na.visits)
+        n.missing.cohorts <- length(n.hist.missing.cohorts)
+        out.hist.na <- out.hist[id.det.hist.na, ]
+        out.hist.na$det.hist <- droplevels(out.hist.na$det.hist)
+        
+        just.na <- sapply(X = out.hist.na$det.hist,
+                          FUN = function(i) gsub(pattern = "1", replacement = "0", x = i))
+        out.hist.na$coh <- sapply(X = just.na,
+                                  FUN = function(i) gsub(pattern = "NA", replacement = "1", x = i))
+
+        freqs.missing.cohorts <- table(out.hist.na$coh)
+        
+        na.freqs <- table(det.hist[id.det.hist.na])
+        preds.p.na <- preds.p[id.det.hist.na, ]
+
+        cohort.not.na <- sort(un.hist[-id.na])
+        out.hist.not.na <- out.hist[-id.det.hist.na, , drop = FALSE]
+        out.hist.not.na$det.hist <- droplevels(out.hist.not.na$det.hist)
+        n.cohort.not.na <- length(cohort.not.na)
+        n.sites.not.na <- length(det.hist) - length(id.det.hist.na)
+        preds.p.not.na <- preds.p[-id.det.hist.na, ]
+
+    } else {
+    cohort.not.na <- sort(un.hist)
+    out.hist.not.na <- out.hist
+    preds.p.not.na <- preds.p
+    n.cohort.not.na <- length(cohort.not.na)
+    n.sites.not.na <- length(det.hist)
+    }
+    
+    if (n.cohort.not.na > 0) {
+        exp.freqs <- rep(NA, n.cohort.not.na)
+        names(exp.freqs) <- cohort.not.na
+
+        for (i in 1:n.cohort.not.na) {
+            eq.solved <- rep(NA, n.sites.not.na)
+            select.hist <- cohort.not.na[i]
+            strip.hist <- unlist(strsplit(select.hist, split = ""))
+
+#######################
+###modified by Dan Linden
+            hist.mat <- new.hist.mat <- new.hist.mat1 <- new.hist.mat0 <- matrix(NA, nrow = n.sites.not.na, ncol = T)
+#######################
+            
+            for (j in 1:n.sites.not.na) {
+                
+                if (n.sites.not.na == 1) {
+                    
+#######################
+###modified by Dan Linden
+                    hist.mat[j,] <- preds.p.not.na              
+                } else {
+                    hist.mat[j,] <- preds.p.not.na[j,]}
+                
+                ##Pr(y.ij=1|K)
+                p.k.mat <- sapply(hist.mat[j,], function(r) {1 - (1 - r)^K})
+        
+                new.hist.mat1[j,] <- dpois(K,out.hist.not.na[j, "preds.lam"]) %*% p.k.mat
+                new.hist.mat0[j,] <- dpois(K,out.hist.not.na[j, "preds.lam"]) %*% (1 - p.k.mat)
+        
+                new.hist.mat[j,] <- ifelse(strip.hist == "1", 
+                                           new.hist.mat1[j,], ifelse(strip.hist == "0", 
+                                                                     new.hist.mat0[j,], 0))
+                combo.lam.p <- paste(new.hist.mat[j, ], collapse = "*")
+                eq.solved[j] <- eval(parse(text = as.expression(combo.lam.p)))
+            }
+            exp.freqs[i] <- sum(eq.solved, na.rm = TRUE)
+        }
+#######################
+       
+        ##for each detection history, compute observed frequencies
+        freqs <- table(out.hist.not.na$det.hist)
+        
+        out.freqs <- matrix(NA, nrow = n.cohort.not.na, ncol = 4)
+        colnames(out.freqs) <- c("Cohort", "Observed", "Expected", 
+                                 "Chi-square")
+        rownames(out.freqs) <- names(freqs)
+        ##cohort
+        out.freqs[, 1] <- 0
+        ##observed
+        out.freqs[, 2] <- freqs
+        ##expected
+        out.freqs[, 3] <- exp.freqs
+        ##chi-square
+        out.freqs[, 4] <- ((out.freqs[, "Observed"] - out.freqs[, 
+                                                                "Expected"])^2)/out.freqs[, "Expected"]
+    }
+
+    ##if missing values
+    if (na.vals) {
+        missing.cohorts <- list()
+        if (!is.matrix(preds.p.na)) {
+            preds.p.na <- matrix(data = preds.p.na, nrow = 1)
+        }
+        
+        for (m in 1:n.missing.cohorts) {
+            select.cohort <- out.hist.na[which(out.hist.na$coh == 
+                                               names(freqs.missing.cohorts)[m]), ]
+            select.preds.p.na <- preds.p.na[which(out.hist.na$coh == 
+                                                  names(freqs.missing.cohorts)[m]), ]
+            if (!is.matrix(select.preds.p.na)) {
+                select.preds.p.na <- matrix(data = select.preds.p.na, 
+                                            nrow = 1)
+            }
+            
+            select.preds.p.na[, gregexpr(pattern = "N",
+                                         text = gsub(pattern = "NA", 
+                                                     replacement = "N", x = select.cohort$det.hist[1]))[[1]]] <- 1
+            n.total.sites <- nrow(select.cohort)
+            freqs.na <- table(droplevels(select.cohort$det.hist))
+            cohort.na.un <- sort(unique(select.cohort$det.hist))
+            n.hist.na <- length(freqs.na)
+            exp.na <- rep(NA, n.hist.na)
+            names(exp.na) <- cohort.na.un
+            
+            for (i in 1:n.hist.na) {
+                n.sites.hist <- freqs.na[i]
+                eq.solved <- rep(NA, n.total.sites)
+                select.hist <- gsub(pattern = "NA", replacement = "N", 
+                                    x = cohort.na.un[i])
+                strip.hist <- unlist(strsplit(select.hist, split = ""))
+                
+#######################
+###modified by Dan Linden
+                hist.mat <- new.hist.mat <- new.hist.mat1 <-new.hist.mat0 <- matrix(NA, nrow = n.total.sites, ncol = T)
+                for (j in 1:n.total.sites) {
+                    
+                    hist.mat[j, ] <- select.preds.p.na[j, ]
+          
+                    ##Pr(y.ij=1|K)
+                    p.k.mat <- sapply(hist.mat[j,],function(r){1 - (1 - r)^K})
+          
+                    new.hist.mat1[j,] <- dpois(K,select.cohort[j, "preds.lam"]) %*% p.k.mat
+                    new.hist.mat0[j,] <- dpois(K,select.cohort[j, "preds.lam"]) %*% (1-p.k.mat)
+          
+                    new.hist.mat[j,] <- ifelse(strip.hist == "1", 
+                                               new.hist.mat1[j,], ifelse(strip.hist == "0", 
+                                                                         new.hist.mat0[j,], 1))
+                    combo.lam.p <- paste(new.hist.mat[j, ], collapse = "*")
+                    eq.solved[j] <- eval(parse(text = as.expression(combo.lam.p)))
+                }
+                exp.na[i] <- sum(eq.solved, na.rm = TRUE)
+            }
+#######################
+
+            out.freqs.na <- matrix(NA, nrow = n.hist.na, ncol = 4)
+            colnames(out.freqs.na) <- c("Cohort", "Observed", 
+                                        "Expected", "Chi-square")
+            rownames(out.freqs.na) <- cohort.na.un
+            out.freqs.na[, 1] <- m
+            out.freqs.na[, 2] <- freqs.na
+            out.freqs.na[, 3] <- exp.na
+            out.freqs.na[, 4] <- ((out.freqs.na[, "Observed"] - 
+                                   out.freqs.na[, "Expected"])^2)/out.freqs.na[, 
+                                                                               "Expected"]
+            missing.cohorts[[m]] <- list(out.freqs.na = out.freqs.na)
+        }
+    }
+    
+    if (na.vals) {
+        chisq.missing <- do.call("rbind", lapply(missing.cohorts, 
+                                                 FUN = function(i) i$out.freqs.na))
+        if (n.cohort.not.na > 0) {
+            chisq.unobs.det <- N - sum(out.freqs[, "Expected"]) - 
+                sum(chisq.missing[, "Expected"])
+            chisq.table <- rbind(out.freqs, chisq.missing)
+        } else {
+            chisq.unobs.det <- N - sum(chisq.missing[, "Expected"])
+            chisq.table <- chisq.missing
+        }
+    } else {
+        chisq.unobs.det <- N - sum(out.freqs[, "Expected"])
+        chisq.na <- 0
+        chisq.table <- out.freqs
+    }
+    
+    chisq <- sum(chisq.table[, "Chi-square"]) + chisq.unobs.det
+
+    if(print.table) {
+        out <- list(chisq.table = chisq.table, chi.square = chisq, 
+                    model.type = "royle-nichols")
+    } else {
+        out <- list(chi.square = chisq, model.type = "royle-nichols")
+    }
+    
+    class(out) <- "mb.chisq"
+    return(out)
+}
+
+
+
 
 ##simulating data from model to compute P-value of test statistic
 ##create generic mb.gof.test 
 mb.gof.test <- function(mod, nsim = 5, plot.hist = TRUE,
-                        report = NULL, ...){
+                        report = NULL, parallel = TRUE, ...){
   UseMethod("mb.gof.test", mod)
 }
 
 mb.gof.test.default <- function(mod, nsim = 5, plot.hist = TRUE,
-                                report = NULL, ...){
+                                report = NULL, parallel = TRUE, ...){
   stop("\nFunction not yet defined for this object class\n")
 }
 
 
 ##for single-season occupancy models of class unmarkedFitOccu
 mb.gof.test.unmarkedFitOccu <- function(mod, nsim = 5, plot.hist = TRUE,
-                                        report = NULL, ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
+                                        report = NULL, parallel = TRUE, ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract table from fitted model
   mod.table <- mb.chisq(mod)
@@ -759,12 +989,12 @@ mb.gof.test.unmarkedFitOccu <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) mb.chisq(i)$chi.square,
-                     nsim = nsim)
+                     nsim = nsim, parallel = parallel)
   } else {
 
   ##compute GOF P-value
   out <- parboot(mod, statistic = function(i) mb.chisq(i)$chi.square,
-                 nsim = nsim, report = report)
+                 nsim = nsim, report = report, parallel = parallel)
 }
   
   ##determine significance
@@ -797,8 +1027,8 @@ gof.out <- list(model.type = mod.table$model.type, chisq.table = mod.table$chisq
 
 ##dynamic occupancy models of class unmarkedFitColExt
 mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
-                                          report = NULL, plot.seasons = FALSE,
-                                          ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
+                                          report = NULL, parallel = TRUE,
+                                          plot.seasons = FALSE, ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract table from fitted model
   mod.table <- mb.chisq(mod)
@@ -809,12 +1039,12 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) mb.chisq(i)$all.chisq,
-                     nsim = nsim)
+                     nsim = nsim, parallel = parallel)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) mb.chisq(i)$all.chisq, #extract chi-square for each year
-                     nsim = nsim, report = report)
+                     nsim = nsim, report = report, parallel = parallel)
   }
   
   ##list to hold results
@@ -968,47 +1198,119 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
 
 
 
+##Royle-Nichols count models of class unmarkedFitOccuRN
+mb.gof.test.unmarkedFitOccuRN <- function (mod, nsim = 5, plot.hist = TRUE,
+                                           report = NULL, parallel = TRUE,
+                                           maxK = 50, ...){
+
+    ##extract table from fitted model
+    mod.table <- mb.chisq(mod)
+
+    if(is.null(report)) {
+        ##compute GOF P-value
+        out <- parboot(mod, statistic = function(i) mb.chisq(i, maxK = maxK)$chi.square,
+                       nsim = nsim, parallel = parallel)
+    } else {
+        
+        out <- parboot(mod, statistic = function(i) mb.chisq(i, maxK = maxK)$chi.square, 
+                       nsim = nsim, report = report, parallel = parallel)
+    }
+
+    ##determine significance
+    p.value <- sum(out@t.star >= out@t0)/nsim
+    if (p.value == 0) {
+        p.display <- paste("<", 1/nsim)
+    } else {
+        p.display = paste("=", round(p.value, digits = 4))
+    }
+
+  ##create plot
+    if(plot.hist) {
+        hist(out@t.star, main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples)", sep = ""),
+             xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ",
+                                                               round(out@t0, digits = 2), ")", sep = ""))
+        title(main = bquote(paste(italic(P), " ", .(p.display))), line = 0.5)
+        abline(v = out@t0, lty = "dashed", col = "red")
+    }
+    
+    ##estimate c-hat
+    c.hat.est <- out@t0/mean(out@t.star)
+
+    gof.out <- list(model.type = mod.table$model.type, chisq.table = mod.table$chisq.table, 
+                    chi.square = mod.table$chi.square, t.star = out@t.star, 
+                    p.value = p.value, c.hat.est = c.hat.est, nsim = nsim)
+    class(gof.out) <- "mb.chisq"
+    return(gof.out)
+}
+
+
+
 ##print function
 print.mb.chisq <- function(x, digits.vals = 2, digits.chisq = 4, ...) {
-  ##single-season occupancy models
-  if(identical(x$model.type, "single-season")) {
-    cat("\nMacKenzie and Bailey goodness-of-fit for single-season occupancy model\n")
-    if(any(names(x) == "chisq.table")) {
-      cat("\nPearson chi-square table:\n\n")
-      print(round(x$chisq.table, digits = digits.vals))
+    ##single-season occupancy models
+    if(identical(x$model.type, "single-season")) {
+        cat("\nMacKenzie and Bailey goodness-of-fit for single-season occupancy model\n")
+        if(any(names(x) == "chisq.table")) {
+            cat("\nPearson chi-square table:\n\n")
+            ##replace NA with "." for nicer printing
+            nice.rows <- gsub(pattern = "NA", replacement = ".", rownames(x$chisq.table))
+            rownames(x$chisq.table) <- nice.rows
+            print(round(x$chisq.table, digits = digits.vals))
+        }
+        cat("\nChi-square statistic =", round(x$chi.square, digits = digits.chisq), "\n")
+        if(any(names(x) == "c.hat.est")) {
+            cat("Number of bootstrap samples =", x$nsim)
+            cat("\nP-value =", x$p.value)
+            cat("\n\nQuantiles of bootstrapped statistics:\n")
+            print(quantile(x$t.star), digits = digits.vals)
+            cat("\nEstimate of c-hat =", round(x$c.hat.est, digits = digits.vals), "\n")
+        }
+        cat("\n")
     }
-    cat("\nChi-square statistic =", round(x$chi.square, digits = digits.chisq), "\n")
-    if(any(names(x) == "c.hat.est")) {
-      cat("Number of bootstrap samples =", x$nsim)
-      cat("\nP-value =", x$p.value)
-      cat("\n\nQuantiles of bootstrapped statistics:\n")
-      print(quantile(x$t.star), digits = digits.vals)
-      cat("\nEstimate of c-hat =", round(x$c.hat.est, digits = digits.vals), "\n")
-    }
-    cat("\n")
-  }
 
+    ##single-season Royle-Nichols occupancy models
+    if(identical(x$model.type, "royle-nichols")) {
+        cat("\nMacKenzie and Bailey goodness-of-fit for Royle-Nichols occupancy model\n")
+        if(any(names(x) == "chisq.table")) {
+            cat("\nPearson chi-square table:\n\n")
+            ##replace NA with "." for nicer printing
+            nice.rows <- gsub(pattern = "NA", replacement = ".", rownames(x$chisq.table))
+            rownames(x$chisq.table) <- nice.rows
+            print(round(x$chisq.table, digits = digits.vals))
+        }
+        cat("\nChi-square statistic =", round(x$chi.square, digits = digits.chisq), "\n")
+        if(any(names(x) == "c.hat.est")) {
+            cat("Number of bootstrap samples =", x$nsim)
+            cat("\nP-value =", x$p.value)
+            cat("\n\nQuantiles of bootstrapped statistics:\n")
+            print(quantile(x$t.star), digits = digits.vals)
+            cat("\nEstimate of c-hat =", round(x$c.hat.est, digits = digits.vals), "\n")
+        }
+        cat("\n")
+    }
+
+    
     ##dynamic occupancy models
     if(identical(x$model.type, "dynamic")) {
-      cat("\nGoodness-of-fit for dynamic occupancy model\n")
-      cat("\nNumber of seasons: ",  x$n.seasons, "\n")
-      ##cat("\nPearson chi-square table:\n\n")
-      ##print(round(x$chisq.table, digits = digits.vals))
-      ##x$chisq.table
-      cat("\nChi-square statistic:\n")
-      if(any(names(x) == "all.chisq")) {
-      print(round(x$all.chisq, digits = digits.chisq))
-      cat("\nTotal chi-square =", round(sum(x$all.chisq), digits = digits.chisq), "\n")
-    } else {
-      print(round(x$chisq.table$all.chisq, digits = digits.chisq))
-      cat("\nTotal chi-square =", round(sum(x$chi.square), digits = digits.chisq), "\n")
-      cat("Number of bootstrap samples =", x$nsim)
-      cat("\nP-value =", x$p.global)
-      cat("\n\nQuantiles of bootstrapped statistics:\n")
-      print(quantile(x$t.star), digits = digits.vals)
-      cat("\nEstimate of c-hat =", round(x$c.hat.est, digits = digits.vals), "\n")
-    }
-      cat("\n")
+        cat("\nGoodness-of-fit for dynamic occupancy model\n")
+        cat("\nNumber of seasons: ",  x$n.seasons, "\n")
+        ##cat("\nPearson chi-square table:\n\n")
+        ##print(round(x$chisq.table, digits = digits.vals))
+        ##x$chisq.table
+        cat("\nChi-square statistic:\n")
+        if(any(names(x) == "all.chisq")) {
+            print(round(x$all.chisq, digits = digits.chisq))
+            cat("\nTotal chi-square =", round(sum(x$all.chisq), digits = digits.chisq), "\n")
+        } else {
+            print(round(x$chisq.table$all.chisq, digits = digits.chisq))
+            cat("\nTotal chi-square =", round(sum(x$chi.square), digits = digits.chisq), "\n")
+            cat("Number of bootstrap samples =", x$nsim)
+            cat("\nP-value =", x$p.global)
+            cat("\n\nQuantiles of bootstrapped statistics:\n")
+            print(quantile(x$t.star), digits = digits.vals)
+            cat("\nEstimate of c-hat =", round(x$c.hat.est, digits = digits.vals), "\n")
+        }
+        cat("\n")
     }
 }
 

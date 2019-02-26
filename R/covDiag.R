@@ -27,7 +27,7 @@ covDiag.unmarkedFramePCount <- function(object, ...){
       ct <- ct+1
     }
   }
-  cov.diag <- mean(p1)/ct-mean(yMat)^2
+  cov.diag <- mean(p1, na.rm = TRUE)/ct-mean(yMat, na.rm = TRUE)^2
 
   if(cov.diag <= 0) {
       msg <- "Warning: lambda is infinite, data too sparse"
@@ -53,7 +53,7 @@ covDiag.unmarkedFitPCount <- function(object, ...){
       ct <- ct+1
     }
   }
-  cov.diag <- mean(p1)/ct-mean(yMat)^2
+  cov.diag <- mean(p1, na.rm = TRUE)/ct-mean(yMat, na.rm = TRUE)^2
 
   if(cov.diag <= 0) {
       msg <- "Warning: lambda is infinite, data too sparse"

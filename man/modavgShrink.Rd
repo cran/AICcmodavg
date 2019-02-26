@@ -10,6 +10,7 @@
 \alias{modavgShrink.AICcoxme}
 \alias{modavgShrink.AICcoxph}
 \alias{modavgShrink.AICglm.lm}
+\alias{modavgShrink.AICglmmTMB}
 \alias{modavgShrink.AICgls}
 \alias{modavgShrink.AIChurdle}
 \alias{modavgShrink.AIClm}
@@ -20,6 +21,7 @@
 \alias{modavgShrink.AICglmerMod}
 \alias{modavgShrink.AIClmerMod}
 \alias{modavgShrink.AICmultinom.nnet}
+\alias{modavgShrink.AICnegbin.glm.lm}
 \alias{modavgShrink.AICpolr}
 \alias{modavgShrink.AICrlm.lm}
 \alias{modavgShrink.AICsurvreg}
@@ -36,6 +38,7 @@
 \alias{modavgShrink.AICunmarkedFitMPois}
 \alias{modavgShrink.AICunmarkedFitGMM}
 \alias{modavgShrink.AICunmarkedFitGPC}
+\alias{modavgShrink.AICunmarkedFitOccuMulti}
 \alias{print.modavgShrink}
 
 \title{
@@ -75,6 +78,10 @@ modavgShrink(cand.set, parm, modnames = NULL, second.ord = TRUE,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
 
+\method{modavgShrink}{AICcoxme}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots)
+
 \method{modavgShrink}{AICcoxph}(cand.set, parm, modnames = NULL,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
@@ -86,6 +93,10 @@ modavgShrink(cand.set, parm, modnames = NULL, second.ord = TRUE,
 \method{modavgShrink}{AICgls}(cand.set, parm, modnames = NULL,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
+
+\method{modavgShrink}{AICglmmTMB}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, c.hat = 1, \dots)
 
 \method{modavgShrink}{AIChurdle}(cand.set, parm, modnames = NULL,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
@@ -122,6 +133,10 @@ modavgShrink(cand.set, parm, modnames = NULL, second.ord = TRUE,
 \method{modavgShrink}{AICmultinom.nnet}(cand.set, parm, modnames =
         NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, c.hat = 1, \dots)
+
+\method{modavgShrink}{AICnegbin.glm.lm}(cand.set, parm, modnames = NULL, 
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots)
 
 \method{modavgShrink}{AICpolr}(cand.set, parm, modnames = NULL,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
@@ -186,6 +201,10 @@ modavgShrink(cand.set, parm, modnames = NULL, second.ord = TRUE,
 
 \method{modavgShrink}{AICunmarkedFitGPC}(cand.set, parm, modnames
         = NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, c.hat = 1, parm.type = NULL, \dots)
+
+\method{modavgShrink}{AICunmarkedFitOccuMulti}(cand.set, parm, modnames =
+        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, c.hat = 1, parm.type = NULL, \dots)
 }
 
@@ -263,19 +282,20 @@ to apply the same value to each model.
   \code{unmarkedFitOccuFP}, \code{unmarkedFitOccuRN}, 
   \code{unmarkedFitMPois}, \code{unmarkedFitPCount},
   \code{unmarkedFitPCO}, \code{unmarkedFitDS}, \code{unmarkedFitGDS},
-  \code{unmarkedFitGMM}, and \code{unmarkedFitGPC} classes.  The
-  character strings supported vary with the type of model fitted.  For
-  \code{unmarkedFitOccu} objects, either \code{psi} or \code{detect} can
-  be supplied to indicate whether the parameter is on occupancy or
-  detectability, respectively.  For \code{unmarkedFitColExt}, possible
-  values  are \code{psi}, \code{gamma}, \code{epsilon}, and
-  \code{detect}, for parameters on occupancy in the inital year,
-  colonization, extinction, and detectability, respectively.  For
-  \code{unmarkedFitOccuFP} objects, one can specify \code{psi},
-  \code{detect}, \code{falsepos}, and \code{certain}, for occupancy,
-  detectability, probability of assigning false-positives, and
-  probability detections are certain, respectively.  For
-  \code{unmarkedFitOccuRN} objects, either \code{lambda} or
+  \code{unmarkedFitGMM}, \code{unmarkedFitGPC}, and
+  \code{unmarkedFitOccuMulti} classes.  The character strings supported
+  vary with the type of model fitted.  For \code{unmarkedFitOccu} and
+  \code{unmarkedFitOccuMulti} objects, either \code{psi} or
+  \code{detect} can be supplied to indicate whether the parameter is on
+  occupancy or detectability, respectively.  For
+  \code{unmarkedFitColExt}, possible values  are \code{psi},
+  \code{gamma}, \code{epsilon}, and \code{detect}, for parameters on
+  occupancy in the inital year, colonization, extinction, and
+  detectability, respectively.  For \code{unmarkedFitOccuFP} objects,
+  one can specify \code{psi}, \code{detect}, \code{falsepos}, and
+  \code{certain}, for occupancy, detectability, probability of assigning
+  false-positives, and probability detections are certain, respectively.
+  For \code{unmarkedFitOccuRN} objects, either \code{lambda} or
   \code{detect} can be entered for abundance and detectability
   parameters, respectively.  For \code{unmarkedFitPCount} and
   \code{unmarkedFitMPois} objects, \code{lambda} or \code{detect} denote
@@ -288,9 +308,8 @@ to apply the same value to each model.
   \code{unmarkedFitGDS}, \code{lambda}, \code{phi}, and \code{detect}
   denote abundance, availability, and detectability, respectively.  For
   \code{unmarkedFitGMM} and \code{unmarkedFitGPC} objects,
-  \code{lambda}, \code{phi}, and 
-  \code{detect} denote abundance, availability, and detectability,
-  respectively.
+  \code{lambda}, \code{phi}, and \code{detect} denote abundance,
+  availability, and detectability, respectively.
 }
 \item{\dots}{
   additional arguments passed to the function.
@@ -311,11 +330,11 @@ interaction terms or polynomial terms are not supported by
 
 \code{modavgShrink} is implemented for a list containing objects of
 \code{aov}, \code{betareg}, \code{clm}, \code{clmm}, \code{clogit},
-\code{coxme}, \code{coxph}, \code{glm}, \code{gls}, \code{hurdle},
-\code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
-\code{glmerMod}, \code{lmerMod}, \code{multinom}, \code{polr},
-\code{rlm}, \code{survreg}, \code{vglm}, \code{zeroinfl} classes as well
-as various models of \code{unmarkedFit} classes.
+\code{coxme}, \code{coxph}, \code{glm}, \code{glmmTMB}, \code{gls},
+\code{hurdle}, \code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit},
+\code{mer}, \code{glmerMod}, \code{lmerMod}, \code{multinom},
+\code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, \code{zeroinfl}
+classes as well as various models of \code{unmarkedFit} classes.
 }
 \value{
 \code{modavgShrink} creates an object of class \code{modavgShrink}
