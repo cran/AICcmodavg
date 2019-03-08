@@ -1,6 +1,7 @@
 \name{xtable}
 \Rdversion{1.1}
 \alias{xtable.aictab}
+\alias{xtable.anovaOD}
 \alias{xtable.bictab}
 \alias{xtable.boot.wt}
 \alias{xtable.checkParms}
@@ -8,14 +9,16 @@
 \alias{xtable.countHist}
 \alias{xtable.detHist}
 \alias{xtable.dictab}
+\alias{xtable.ictab}
 \alias{xtable.mb.chisq}
 \alias{xtable.modavg}
-\alias{xtable.modavgShrink}
-\alias{xtable.modavgPred}
+\alias{xtable.modavgCustom}
 \alias{xtable.modavgEffect}
+\alias{xtable.modavgIC}
+\alias{xtable.modavgPred}
+\alias{xtable.modavgShrink}
 \alias{xtable.multComp}
 \alias{xtable.summaryOD}
-\alias{xtable.anovaOD}
 
 \title{
   Format Objects to LaTeX or HTML
@@ -30,6 +33,10 @@
         digits = NULL, display = NULL, nice.names = TRUE,
         include.AICc = TRUE, include.LL = TRUE, include.Cum.Wt = FALSE,
         \dots)
+
+\method{xtable}{anovaOD}(x, caption = NULL, label = NULL, align = NULL,
+                         digits = NULL, display = NULL, 
+                         nice.names = TRUE, \dots)
 
 \method{xtable}{bictab}(x, caption = NULL, label = NULL, align = NULL, 
         digits = NULL, display = NULL, nice.names = TRUE,
@@ -61,6 +68,10 @@
         digits = NULL, display = NULL, nice.names = TRUE,
         include.DIC = TRUE, include.Cum.Wt = FALSE, \dots)
 
+\method{xtable}{ictab}(x, caption = NULL, label = NULL, align = NULL,
+        digits = NULL, display = NULL, nice.names = TRUE,
+        include.IC = TRUE, include.Cum.Wt = FALSE, \dots)
+
 \method{xtable}{mb.chisq}(x, caption = NULL, label = NULL, align = NULL,
         digits = NULL, display = NULL, nice.names = TRUE,
         include.detection.histories = TRUE, \dots)
@@ -69,8 +80,16 @@
         digits = NULL, display = NULL, nice.names = TRUE,
         print.table = FALSE, \dots)
 
+\method{xtable}{modavgCustom}(x, caption = NULL, label = NULL,
+        align = NULL, digits = NULL, display = NULL, nice.names = TRUE,
+        print.table = FALSE, \dots)
+
 \method{xtable}{modavgEffect}(x, caption = NULL, label = NULL,
         align = NULL, digits = NULL, display = NULL, nice.names = TRUE, 
+        print.table = FALSE, \dots)
+
+\method{xtable}{modavgIC}(x, caption = NULL, label = NULL, align = NULL,
+        digits = NULL, display = NULL, nice.names = TRUE,
         print.table = FALSE, \dots)
 
 \method{xtable}{modavgPred}(x, caption = NULL, label = NULL,
@@ -88,18 +107,17 @@
 \method{xtable}{summaryOD}(x, caption = NULL, label = NULL, align = NULL,
                            digits = NULL, display = NULL, 
                            nice.names = TRUE, \dots)
-\method{xtable}{anovaOD}(x, caption = NULL, label = NULL, align = NULL,
-                         digits = NULL, display = NULL, 
-                         nice.names = TRUE, \dots)
+
 }
 
 \arguments{
   \item{x}{
-    an object of class \code{aictab}, \code{bictab}, \code{boot.wt},
-    \code{checkParms}, \code{countDist}, \code{countHist},
-    \code{detHist}, \code{dictab}, \code{mb.chisq}, \code{modavg},
-    \code{modavgEffect}, \code{modavgPred}, \code{modavgShrink}, 
-    \code{multComp}, \code{summaryOD}, \code{anovaOD}.
+    an object of class \code{aictab}, \code{anovaOD}, \code{bictab},
+    \code{boot.wt}, \code{checkParms}, \code{countDist}, \code{countHist},
+    \code{detHist}, \code{dictab}, \code{ictab}, \code{mb.chisq},
+    \code{modavg}, \code{modavgEffect}, \code{modavgCustom},
+    \code{modavgIC}, \code{modavgPred}, \code{modavgShrink},
+    \code{multComp}, or \code{summaryOD}.
   }
   
   \item{caption}{
@@ -157,6 +175,11 @@
     the table.  If \code{FALSE}, the column is suppressed.
   }
   
+  \item{include.IC}{logical.  If \code{TRUE}, the column containing
+    the information criterion of each model is printed in the table.  If
+    \code{FALSE}, the column is suppressed.
+  }
+
   \item{include.LL}{logical.  If \code{TRUE}, the column containing the
     log-likelihood of each model is printed in the table.  If
     \code{FALSE}, the column is suppressed.
@@ -264,10 +287,11 @@
 
 \seealso{
 \code{\link{aictab}}, \code{\link{boot.wt}}, \code{\link{dictab}},
-\code{\link{formatC}}, \code{\link{mb.chisq}}, \code{\link{modavg}},
-\code{\link{modavgEffect}}, \code{\link{modavgPred}},
-\code{\link{modavgShrink}}, \code{\link{multComp}},
-\code{\link{summaryOD}}, \code{\link{anovaOD}},
+\code{\link{formatC}}, \code{\link{ictab}}, \code{\link{mb.chisq}},
+\code{\link{modavg}}, \code{\link{modavgCustom}},
+\code{\link{modavgIC}}, \code{\link{modavgEffect}},
+\code{\link{modavgPred}}, \code{\link{modavgShrink}},
+\code{\link{multComp}}, \code{\link{summaryOD}}, \code{\link{anovaOD}},
 \code{\link[xtable]{xtable}}, \code{\link[xtable]{print.xtable}}
 }
 

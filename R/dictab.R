@@ -39,7 +39,7 @@ dictab.AICbugs <- function(cand.set, modnames = NULL, sort = TRUE, ...) {
   if(length(unique(Results$DIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
     
   if(sort)  {
-    Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -74,13 +74,48 @@ dictab.AICrjags <- function(cand.set, modnames = NULL, sort = TRUE, ...) {
     if(length(unique(Results$DIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
     
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
     class(Results) <- c("dictab", "data.frame")
     return(Results)
   }
+
+
+
+##jagsUI
+dictab.AICjagsUI <- function(cand.set, modnames = NULL, sort = TRUE, ...) {
+    
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+      if(is.null(names(cand.set))) {
+        modnames <- paste("Mod", 1:length(cand.set), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+      }
+      modnames <- names(cand.set)
+    }
+    
+    Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+    Results$pD <- unlist(lapply(cand.set, DIC, return.pD = TRUE))     #extract number of parameters
+    Results$DIC <- unlist(lapply(cand.set, DIC, return.pD = FALSE))  #extract DIC                                      #
+    Results$Delta_DIC <- Results$DIC - min(Results$DIC)            #compute delta DIC
+    Results$ModelLik <- exp(-0.5*Results$Delta_DIC)                #compute model likelihood required to compute Akaike weights
+    Results$DICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights
+    Results$Deviance <- unlist(lapply(X = cand.set, FUN = function(i) i$mean$deviance))
+    
+    ##check if some models are redundant
+    if(length(unique(Results$DIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+    
+    if(sort)  {
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
+    } else {Results$Cum.Wt <- NULL}
+   
+    class(Results) <- c("dictab", "data.frame")
+    return(Results)
+  }
+
 
 
 print.dictab <-

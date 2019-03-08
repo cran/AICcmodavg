@@ -327,7 +327,7 @@ the entire model set.
 \code{aictab} creates an object of class \code{aictab} with the
 following components:
 
-\item{Modname}{the names of each model of the candidate model set.}
+\item{Modname}{the name of each model of the candidate model set.}
 \item{K }{the number of estimated parameters for each model.}
 \item{(Q)AIC(c) }{the information criterion requested for each model
   (AIC, AICc, QAIC, QAICc).}

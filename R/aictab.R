@@ -57,7 +57,7 @@ aictab.AICaov.lm <-
 
     
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -112,7 +112,7 @@ aictab.AICbetareg <-
 
                 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -159,7 +159,7 @@ aictab.AICsclm.clm <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -206,7 +206,7 @@ aictab.AICclm <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -254,7 +254,7 @@ aictab.AICclmm <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -304,7 +304,7 @@ aictab.AICcoxme <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs =
   }
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
     
@@ -353,7 +353,7 @@ aictab.AICcoxph <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs =
   }
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
     
@@ -406,7 +406,7 @@ aictab.AICfitdist <-
 
     
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -460,7 +460,7 @@ aictab.AICfitdistr <-
 
     
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -532,7 +532,7 @@ aictab.AICglm.lm <-
 
     
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -604,7 +604,7 @@ aictab.AICglmmTMB <-
       }
       
       if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -674,7 +674,7 @@ aictab.AICgls <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -720,7 +720,7 @@ aictab.AICgnls.gls <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -769,7 +769,7 @@ aictab.AIChurdle <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -825,7 +825,7 @@ aictab.AIClavaan <-
 
     
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -878,7 +878,7 @@ aictab.AIClm <-
 
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -948,7 +948,7 @@ aictab.AIClme <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -1018,7 +1018,7 @@ aictab.AIClmekin <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -1067,7 +1067,7 @@ aictab.AICmaxlikeFit.list <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -1137,7 +1137,7 @@ aictab.AICmer <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -1210,7 +1210,7 @@ aictab.AIClmerMod <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -1261,7 +1261,7 @@ aictab.AICglmerMod <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -1316,7 +1316,7 @@ aictab.AICnegbin.glm.lm <-
         }
     
         if(sort)  {
-            Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+            Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
             Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
         } else {Results$Cum.Wt <- NULL}
         
@@ -1385,7 +1385,7 @@ aictab.AICnlme.lme <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -1434,7 +1434,7 @@ aictab.AICnlmerMod <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -1506,7 +1506,7 @@ aictab.AICmultinom.nnet <-
 
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -1578,7 +1578,7 @@ aictab.AIClme <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -1624,7 +1624,7 @@ aictab.AICnls <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -1675,7 +1675,7 @@ aictab.AICpolr <-
 
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -1725,7 +1725,7 @@ aictab.AICrlm.lm <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    
@@ -1778,7 +1778,7 @@ aictab.AICsurvreg <-
 
       
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -1845,7 +1845,7 @@ aictab.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, second.ord = TR
 
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -1910,7 +1910,7 @@ aictab.AICunmarkedFitColExt <- function(cand.set, modnames = NULL, second.ord = 
 
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -1977,7 +1977,7 @@ aictab.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, second.ord = 
 
   
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -2043,7 +2043,7 @@ aictab.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, second.ord = 
 
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -2108,7 +2108,7 @@ aictab.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, second.ord = TRU
 
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -2170,7 +2170,7 @@ aictab.AICunmarkedFitDS <- function(cand.set, modnames = NULL, second.ord = TRUE
   }
   
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -2238,7 +2238,7 @@ aictab.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, second.ord = TRU
 
   
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -2284,7 +2284,7 @@ aictab.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, second.ord = 
   }  
   
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -2330,7 +2330,7 @@ aictab.AICunmarkedFitOccuMulti <- function(cand.set, modnames = NULL, second.ord
   }  
   
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -2398,7 +2398,7 @@ aictab.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, second.ord = T
 
   
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -2466,7 +2466,7 @@ aictab.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, second.ord = TRU
 
 
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -2534,7 +2534,7 @@ aictab.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, second.ord = TRU
 
   
   if(sort)  {
-    Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -2604,7 +2604,7 @@ aictab.AICvglm <-
 
     
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -2653,7 +2653,7 @@ aictab.AICzeroinfl <-
     }
 
     if(sort)  {
-      Results <- Results[rev(order(Results[, 4])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
    

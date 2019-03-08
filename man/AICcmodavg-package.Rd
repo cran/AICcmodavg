@@ -15,7 +15,7 @@ model averaging (multimodel inference) for a given parameter of interest
 or predicted values, as well as a shrinkage version of model averaging
 parameter estimates.  Other handy functions enable the computation of
 relative variable importance, evidence ratios, and confidence sets for
-the best model.  The present version works with Cox proportional hazards
+the best model.  The present version supports Cox proportional hazards
 models and conditional logistic regression (\code{coxph} and
 \code{coxme} classes), linear models (\code{lm} class), generalized
 linear models (\code{glm}, \code{glm.nb}, \code{vglm}, \code{hurdle},
@@ -43,20 +43,25 @@ in the package.
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 2.2-0\cr
-Date: \tab 2019-02-13\cr
+Version: \tab 2.2-1\cr
+Date: \tab 2019-03-07\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
 
+Many functions of the package require a list of models as the input to
+conduct model selection and multimodel inference.  Thus, you should
+start by organizing the output of the models in a list  (See 'Examples'
+below).
+
 This package contains several useful functions for model selection and
-multimodel inference:
+multimodel inference for several model classes:
 \itemize{
 \item{\code{\link{AICc}}}  {Computes AIC, AICc, and their
   quasi-likelihood counterparts (QAIC, QAICc).}
 \item{\code{\link{aictab}}}  {Constructs model selection tables with
   number of parameters, AIC, delta AIC, Akaike weights or variants based
-  on other AICc, QAIC, and QAICc for a set of candidate models.}
+  on AICc, QAIC, and QAICc for a set of candidate models.}
 \item{\code{\link{bictab}}}  {Constructs model selection tables with
   number of parameters, BIC, delta BIC, BIC weights for a set of
   candidate models.}
@@ -90,6 +95,33 @@ multimodel inference:
 \item{\code{\link{useBIC}}}  {Computes BIC or a quasi-likelihood
   counterparts (QBIC).}
 }
+
+For models not yet supported by the functions above, the following
+can be useful for model selection and multimodel inference conducted
+from input values supplied by the user:
+\itemize{
+  \item{\code{AICcCustom}} {Computes AIC, AICc, QAIC, and QAICc from
+    user-supplied input values of log-likelihood and number of
+    parameters.}
+  \item{\code{aictabCustom}} {Creates model selection tables based on
+    (Q)AIC(c) from user-supplied input values of log-likelihood and
+    number of parameters.}
+  \item{\code{bictabCustom}} {Creates model selection tables based on
+    (Q)BIC from user-supplied input values of log-likelihood and number
+    of parameters.}
+  \item{\code{ictab}} {Creates model selection tables from user-supplied
+    values of an information criterion.}
+  \item{\code{modavgCustom}} {Computes model-averaged parameter estimate
+    based on (Q)AIC(c) from user-supplied input values of
+    log-likelihood, number of parameters, parameter estimates, and
+    standard errors.}
+  \item{\code{modavgIC}} {Computes model-averaged parameter estimate
+    from user-supplied values of information criterion, parameter
+    estimates, and standard errors.}
+  \item{\code{useBICCustom}} {Computes BIC and QBIC from user-supplied
+    input values of log-likelihoods and number of parameters.}
+}
+
 
 A number of functions for model diagnostics are available:
 \itemize{
@@ -159,12 +191,13 @@ Other utility functions include:
 }
 
 \examples{
-##anuran larvae example from Mazerolle (2006) - Poisson GLM with offset
+##Example 1:  Poisson GLM with offset
+##anuran larvae example from Mazerolle (2006) 
 data(min.trap)
 ##assign "UPLAND" as the reference level as in Mazerolle (2006)          
 min.trap$Type <- relevel(min.trap$Type, ref = "UPLAND") 
 
-##set up candidate models          
+##set up candidate models in a list
 Cand.mod <- list()
 ##global model          
 Cand.mod[[1]] <- glm(Num_anura ~ Type + log.Perimeter + Num_ranatra,
@@ -214,15 +247,15 @@ confset(cand.set = Cand.mod, modnames = Modnames, second.ord = TRUE,
 ##with vs without variable
 importance(cand.set = Cand.mod, modnames = Modnames, parm = "TypeBOG") 
 
-##compute model-averaged estimate of "TypeBOG"
+##compute model-averaged estimate of "TypeBOG" using the natural average
 modavg(cand.set = Cand.mod, modnames = Modnames, parm = "TypeBOG")
 
-##compute model-averaged estimate of "TypeBOG" with shrinkage
+##compute model-averaged estimate of "TypeBOG" using shrinkage estimator
 ##same number of models with vs without variable
 modavgShrink(cand.set = Cand.mod, modnames = Modnames,
              parm = "TypeBOG")
 
-##compute model-average predictions for two types of ponds
+##compute model-averaged predictions for two types of ponds
 ##create a data set for predictions
 dat.pred <- data.frame(Type = factor(c("BOG", "UPLAND")),
                        log.Perimeter = mean(min.trap$log.Perimeter),
@@ -234,13 +267,13 @@ modavgPred(cand.set = Cand.mod, modnames = Modnames,
            newdata = dat.pred, type = "response")
 
 ##compute model-averaged effect size between two groups
-##works when data set has two rows
+##'newdata' data frame must be limited to two rows
 modavgEffect(cand.set = Cand.mod, modnames = Modnames,
              newdata = dat.pred, type = "link")
 
 
-##single-season occupancy model example modified from ?occu
 \dontrun{
+##Example 2:  single-season occupancy model example modified from ?occu
 require(unmarked)
 ##single season
 data(frogs)
@@ -265,36 +298,56 @@ fm2 <- occu(~ 1 ~ sitevar1, pferUMF)
 fm3 <- occu(~ obsvar1 ~ sitevar2, pferUMF)
 fm4 <- occu(~ 1 ~ sitevar2, pferUMF)
 Cand.models <- list(fm1, fm2, fm3, fm4)
-Modnames <- c("fm1", "fm2", "fm3", "fm4")
+
+##assign names to elements in list
+##alternative to using 'modnames' argument
+names(Cand.models) <- c("fm1", "fm2", "fm3", "fm4")
+
+##check GOF of global model and estimate c-hat
+mb.gof.test(fm4, nsim = 100) #nsim should be > 1000
+
+##check for high SE's in models
+lapply(Cand.models, checkParms, simplify = FALSE)
 
 ##compute table
-print(aictab(cand.set = Cand.models, modnames = Modnames,
-       second.ord = TRUE), digits = 4)
+print(aictab(cand.set = Cand.models,
+             second.ord = TRUE), digits = 4)
+
+##export as LaTeX table
+if(require(xtable)) {
+xtable(aictab(cand.set = Cand.models,
+              second.ord = TRUE))
+}
 
 ##compute evidence ratio
-evidence(aictab(cand.set = Cand.models, modnames = Modnames))
+evidence(aictab(cand.set = Cand.models))
 ##evidence ratio between top model vs lowest-ranked model
-evidence(aictab(cand.set = Cand.models, modnames = Modnames), model.high = "fm2", model.low = "fm3")
+evidence(aictab(cand.set = Cand.models), model.high = "fm2", model.low = "fm3")
 
 ##compute confidence set based on 'raw' method
-confset(cand.set = Cand.models, modnames = Modnames, second.ord = TRUE,
+confset(cand.set = Cand.models, second.ord = TRUE,
         method = "raw")  
 
 ##compute importance value for "sitevar1" on occupancy
 ##same number of models with vs without variable
-importance(cand.set = Cand.models, modnames = Modnames, parm = "sitevar1",
+importance(cand.set = Cand.models, parm = "sitevar1",
            parm.type = "psi") 
 
 ##compute model-averaged estimate of "sitevar1" on occupancy
-modavg(cand.set = Cand.models, modnames = Modnames, parm = "sitevar1",
+##(natural average)
+modavg(cand.set = Cand.models, parm = "sitevar1",
        parm.type = "psi")
 
-##compute model-averaged estimate of "sitevar1" with shrinkage
+##compute model-averaged estimate of "sitevar1"
+##(shrinkage estimator)
 ##same number of models with vs without variable
-modavgShrink(cand.set = Cand.models, modnames = Modnames,
+modavgShrink(cand.set = Cand.models,
              parm = "sitevar1", parm.type = "psi")
 
-##compute model-average predictions for two types of ponds
+##compute model-average predictions
+##check explanatory variables appearing in models
+extractX(Cand.models, parm.type = "psi")
+
 ##create a data set for predictions
 dat.pred <- data.frame(sitevar1 = seq(from = min(siteCovs(pferUMF)$sitevar1),
                          to = max(siteCovs(pferUMF)$sitevar1), by = 0.5),
@@ -302,9 +355,86 @@ dat.pred <- data.frame(sitevar1 = seq(from = min(siteCovs(pferUMF)$sitevar1),
 
 ##model-averaged predictions of psi across range of values
 ##of sitevar1 and entire model set
-modavgPred(cand.set = Cand.models, modnames = Modnames,
-           newdata = dat.pred, parm.type = "psi")
+modavgPred(cand.set = Cand.models, newdata = dat.pred,
+           parm.type = "psi")
 detach(package:unmarked)
+}
+
+\dontrun{
+##Example 3:  example with user-supplied values of log-likelihoods and
+##number of parameters
+
+##vector with model LL's
+LL <- c(-38.8876, -35.1783, -64.8970)
+     
+##vector with number of parameters
+Ks <- c(7, 9, 4)
+     
+##create a vector of names to trace back models in set
+Modnames <- c("Cm1", "Cm2", "Cm3")
+
+##generate AICc table
+aictabCustom(logL = LL, K = Ks, modnames = Modnames, nobs = 121,
+             sort = TRUE) 
+##generate AIC table
+aictabCustom(logL = LL, K = Ks, modnames = Modnames,
+             second.ord = FALSE, nobs = 121, sort = TRUE)
+
+##model averaging parameter estimate
+##vector of beta estimates for a parameter of interest
+model.ests <- c(0.0478, 0.0480, 0.0478)
+     
+##vector of SE's of beta estimates for a parameter of interest
+model.se.ests <- c(0.0028, 0.0028, 0.0034)
+     
+##compute model-averaged estimate and unconditional SE based on AICc
+modavgCustom(logL = LL, K = Ks, modnames = Modnames, 
+             estimate = model.ests, se = model.se.ests, nobs = 121)
+##compute model-averaged estimate and unconditional SE based on BIC
+modavgCustom(logL = LL, K = Ks, modnames = Modnames, 
+             estimate = model.ests, se = model.se.ests, nobs = 121,
+             useBIC = TRUE)
+}
+
+\dontrun{
+##Example 4:  example with user-supplied values of information criterion
+##model selection based on WAIC
+
+##WAIC values
+waic <- c(105.74, 107.36, 108.24, 100.57)
+##number of effective parameters
+effK <- c(7.45, 5.61, 6.14, 6.05)
+
+##create a vector of names to trace back models in set
+Modnames <- c("global model", "interactive model",
+              "additive model", "invertpred model")
+
+##generate WAIC model selection table
+ictab(ic = waic, K = effK, modnames = Modnames,
+      sort = TRUE, ic.name = "WAIC")
+
+##compute model-averaged estimate
+##vector of predictions
+Preds <- c(0.106, 0.137, 0.067, 0.050)
+##vector of SE's for prediction
+Ses <- c(0.128, 0.159, 0.054, 0.039)
+
+##compute model-averaged estimate and unconditional SE based on WAIC
+modavgIC(ic = waic, K = effK, modnames = Modnames, 
+         estimate = Preds, se = Ses,
+         ic.name = "WAIC")
+
+##export as LaTeX table
+if(require(xtable)) {
+##model-averaged estimate and confidence interval
+xtable(modavgIC(ic = waic, K = effK, modnames = Modnames, 
+       estimate = Preds, se = Ses,
+       ic.name = "WAIC"))
+##model selection table with estimate and SE's from each model
+xtable(modavgIC(ic = waic, K = effK, modnames = Modnames, 
+       estimate = Preds, se = Ses,
+       ic.name = "WAIC"), print.table = TRUE)
+}
 }
 }
 

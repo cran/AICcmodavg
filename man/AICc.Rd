@@ -37,8 +37,8 @@
 }
 \description{
   Functions to compute Akaike's information criterion (AIC), the
-  second-order AIC (AICc), as well as their quasi-likelihood counterparts
-  (QAIC, QAICc).
+  second-order AIC (AICc), as well as their quasi-likelihood
+  counterparts (QAIC, QAICc).
 }
 \usage{
 AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots) 

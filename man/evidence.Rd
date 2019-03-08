@@ -10,8 +10,8 @@ This function compares two models of a candidate model set based on
 their evidence ratio (i.e., ratio of model weights).  The default
 computes the evidence ratio of the model weights between the top-ranked
 model and the second-ranked model.  You must supply a model selection
-table of class 'aictab', 'bictab', 'boot.wt', or 'dictab' as the first
-argument.
+table of class \code{aictab}, \code{bictab}, \code{boot.wt},
+\code{dictab}, \code{ictab} as the first argument.
 }
 \usage{
 evidence(aic.table, model.high = "top", model.low = "second.ranked")
@@ -19,9 +19,9 @@ evidence(aic.table, model.high = "top", model.low = "second.ranked")
 \arguments{
   \item{aic.table}{
 a model selection table of class \code{aictab} such as that produced by 
-\code{aictab} or of classes \code{bictab}, \code{boot.wt}, or
-\code{dictab}.  The table may be sorted or not, as the function sorts
-the table internally.
+\code{aictab} or of classes \code{bictab}, \code{boot.wt},
+\code{dictab}, or \code{ictab}.  The table may be sorted or not, as the
+function sorts the table internally.
 }
   \item{model.high}{
 the top-ranked model (default), or alternatively, the name of another

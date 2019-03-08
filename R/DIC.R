@@ -30,3 +30,14 @@ DIC.rjags <- function(mod, return.pD = FALSE, ...){
   } else {DIC <- mod$BUGSoutput$pD}
   return(DIC)
 }
+
+
+
+##jagsUI
+DIC.jagsUI <- function(mod, return.pD = FALSE, ...){
+  ##  DIC = posterior mean of the deviance + pD, where pD is the effective number of parameters
+  if(return.pD == FALSE){
+    DIC <- mod$DIC
+  } else {DIC <- mod$pD}
+  return(DIC)
+}

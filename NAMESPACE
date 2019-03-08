@@ -46,7 +46,9 @@ export(AICc,
        ##custom functions
        AICcCustom,
        aictabCustom,
+       ictab,
        modavgCustom,
+       modavgIC,
        useBICCustom,
        bictabCustom)
 
@@ -65,15 +67,17 @@ S3method(print, countDist)
 S3method(print, countHist)
 S3method(print, covDiag)
 S3method(print, detHist)
-S3method(print, modavgCustom)
 S3method(print, dictab)
 S3method(print, extractCN)
 S3method(print, extractX)
 S3method(print, evidence)
+S3method(print, ictab)
 S3method(print, importance)
 S3method(print, mb.chisq)
 S3method(print, modavg)
+S3method(print, modavgCustom)
 S3method(print, modavgEffect)
+S3method(print, modavgIC)
 S3method(print, modavgPred)
 S3method(print, modavgShrink)
 S3method(print, multComp)
@@ -351,12 +355,14 @@ S3method(detHist, unmarkedFrameOccuMulti)
 S3method(DIC, default)
 S3method(DIC, bugs)
 S3method(DIC, rjags)
+S3method(DIC, jagsUI)
 
 
 ##dictab
 S3method(dictab, default)
 S3method(dictab, AICbugs)
 S3method(dictab, AICrjags)
+S3method(dictab, AICjagsUI)
 
 
 ##extractCN
@@ -703,6 +709,7 @@ S3method(useBIC, zeroinfl)
 
 ##xtable
 S3method(xtable, aictab)
+S3method(xtable, anovaOD)
 S3method(xtable, bictab)
 S3method(xtable, boot.wt)
 S3method(xtable, checkParms)
@@ -710,14 +717,20 @@ S3method(xtable, countDist)
 S3method(xtable, countHist)
 S3method(xtable, detHist)
 S3method(xtable, dictab)
+S3method(xtable, ictab)
 S3method(xtable, mb.chisq)
 S3method(xtable, modavg)
+S3method(xtable, modavgCustom)
 S3method(xtable, modavgEffect)
+S3method(xtable, modavgIC)
 S3method(xtable, modavgPred)
 S3method(xtable, modavgShrink)
 S3method(xtable, multComp)
 S3method(xtable, summaryOD)
-S3method(xtable, anovaOD)
+
+
+
+
 
 
 ##defunct functions

@@ -4,6 +4,7 @@
 \alias{DIC.default}
 \alias{DIC.bugs}
 \alias{DIC.rjags}
+\alias{DIC.jagsUI}
 \title{
 Computing DIC
 }
@@ -16,12 +17,14 @@ DIC(mod, return.pD = FALSE, \dots)
 \method{DIC}{bugs}(mod, return.pD = FALSE, \dots)
 
 \method{DIC}{rjags}(mod, return.pD = FALSE, \dots)
+
+\method{DIC}{jagsUI}(mod, return.pD = FALSE, \dots)
 }
 
 \arguments{
   \item{mod}{
-    an object of class \code{bugs} or \code{rjags} containing the output
-    of a model.
+    an object of class \code{bugs}, \code{rjags}, or \code{jagsUI}
+    containing the output of a model.
   }
   
   \item{return.pD}{
@@ -34,10 +37,10 @@ DIC(mod, return.pD = FALSE, \dots)
   }
 }
 \details{
-\code{DIC} is implemented for \code{bugs} and \code{rjags} classes.  The 
-    function extracts the deviance information criterion (DIC,
-    Spiegelhalter et al. 2002) or the effective number of parameters
-    (pD).
+\code{DIC} is implemented for \code{bugs}, \code{rjags}, and
+    \code{jagsUI} classes.  The function extracts the deviance
+    information criterion (DIC, Spiegelhalter et al. 2002) or the
+    effective number of parameters (pD).
 }
 \value{
 \code{DIC} the DIC or pD depending on the values of the arguments.

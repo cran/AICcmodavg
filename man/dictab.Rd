@@ -4,6 +4,7 @@
 \alias{dictab.default}
 \alias{dictab.AICbugs}
 \alias{dictab.AICrjags}
+\alias{dictab.AICjagsUI}
 \alias{print.dictab}
 \title{
 Create Model Selection Tables from Bayesian Analyses
@@ -13,8 +14,8 @@ This function creates a model selection table based on the deviance
 information criterion (DIC).  The table ranks the models based on the
 DIC and also provides delta DIC and DIC weights.  \code{dictab} selects
 the appropriate function to create the model selection table based on
-the object class.  The current version works with objects of \code{bugs}
-and \code{rjags} classes.
+the object class.  The current version works with objects of \code{bugs},
+\code{rjags}, \code{jagsUI} classes.
 }
 \usage{
 dictab(cand.set, modnames = NULL, sort = TRUE, \dots)
@@ -22,6 +23,8 @@ dictab(cand.set, modnames = NULL, sort = TRUE, \dots)
 \method{dictab}{AICbugs}(cand.set, modnames = NULL, sort = TRUE, \dots)
 
 \method{dictab}{AICrjags}(cand.set, modnames = NULL, sort = TRUE, \dots)
+
+\method{dictab}{AICjagsUI}(cand.set, modnames = NULL, sort = TRUE, \dots)
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -48,17 +51,18 @@ to the DIC values.
 \details{
 \code{dictab} internally creates a new class for the \code{cand.set}
 list of candidate models, according to the contents of the list.  The
-current function is implemented for \code{bugs} and \code{jags}
-classes. The function constructs a model selection table based on the
-DIC (Spiegelhalter et al. 2002).  Note that DIC might not be appropriate
-to select among a set of hierarchical models and that modifications to
-the information criterion have been proposed (Millar 2009). 
+current function is implemented for \code{bugs}, \code{jags},
+\code{jagsUI} classes. The function constructs a model selection table
+based on the DIC (Spiegelhalter et al. 2002).  Note that DIC might not
+be appropriate to select among a set of hierarchical models and that
+modifications to the information criterion have been proposed (Millar
+2009).
 }
 \value{
 \code{dictab} creates an object of class \code{dictab} with the
 following components:
 
-\item{Modname}{the names of each model of the candidate model set.}
+\item{Modname}{the name of each model of the candidate model set.}
 \item{pD}{the effective number of estimated parameters for each
   model.}
 \item{DIC}{the deviance information criterion for each model.}

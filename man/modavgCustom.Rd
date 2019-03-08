@@ -4,8 +4,8 @@
 \alias{print.modavgCustom}
 
 \title{
-Compute Model-averaged Parameter Estimate (Multimodel Inference) from
-User-supplied Input
+Compute Model-averaged Parameter Estimate from User-supplied Input Based
+on (Q)AIC(c)
 }
 \description{
 This function model-averages the estimate of a parameter of interest
@@ -156,7 +156,8 @@ Marc J. Mazerolle
 \seealso{
 \code{\link{AICcCustom}}, \code{\link{aictabCustom}},
 \code{\link{bictabCustom}}, \code{\link{modavg}},
-\code{\link{modavgShrink}}, \code{\link{modavgPred}}
+\code{\link{modavgIC}}, \code{\link{modavgShrink}},
+\code{\link{modavgPred}}
 }
 \examples{
 \dontrun{

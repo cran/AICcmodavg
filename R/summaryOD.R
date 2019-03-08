@@ -1,13 +1,13 @@
-##generic#
+##generic
 summaryOD <- function(mod, c.hat = 1, conf.level = 0.95, 
-                      out.type = "interval", ...){
+                      out.type = "confint", ...){
     UseMethod("summaryOD", mod)
 }
 
 
 
 summaryOD.default <- function(mod, c.hat = 1, conf.level = 0.95, 
-                              out.type = "interval", ...){
+                              out.type = "confint", ...){
     stop("\nFunction not yet defined for this object class\n")
 }
 
@@ -16,7 +16,7 @@ summaryOD.default <- function(mod, c.hat = 1, conf.level = 0.95,
 ##summaryOD: summary with overdispersion to display CI or P-values
 summaryOD.glm <- function(mod, c.hat = 1,
                           conf.level = 0.95,
-                          out.type = "interval", ...){
+                          out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -50,7 +50,7 @@ summaryOD.glm <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -87,7 +87,7 @@ summaryOD.glm <- function(mod, c.hat = 1,
 ##occu
 summaryOD.unmarkedFitOccu <- function(mod, c.hat = 1,
                                          conf.level = 0.95,
-                                         out.type = "interval", ...){
+                                         out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -110,7 +110,7 @@ summaryOD.unmarkedFitOccu <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -147,7 +147,7 @@ summaryOD.unmarkedFitOccu <- function(mod, c.hat = 1,
 ##colext
 summaryOD.unmarkedFitColExt <- function(mod, c.hat = 1,
                                         conf.level = 0.95,
-                                        out.type = "interval", ...){
+                                        out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -170,7 +170,7 @@ summaryOD.unmarkedFitColExt <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -207,7 +207,7 @@ summaryOD.unmarkedFitColExt <- function(mod, c.hat = 1,
 ##occuRN
 summaryOD.unmarkedFitOccuRN <- function(mod, c.hat = 1,
                                         conf.level = 0.95,
-                                        out.type = "interval", ...){
+                                        out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -230,7 +230,7 @@ summaryOD.unmarkedFitOccuRN <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -267,7 +267,7 @@ summaryOD.unmarkedFitOccuRN <- function(mod, c.hat = 1,
 ##pcount
 summaryOD.unmarkedFitPCount <- function(mod, c.hat = 1,
                                         conf.level = 0.95,
-                                        out.type = "interval", ...){
+                                        out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -296,7 +296,7 @@ summaryOD.unmarkedFitPCount <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -333,7 +333,7 @@ summaryOD.unmarkedFitPCount <- function(mod, c.hat = 1,
 ##pcountOpen
 summaryOD.unmarkedFitPCO <- function(mod, c.hat = 1,
                                      conf.level = 0.95,
-                                     out.type = "interval", ...){
+                                     out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -362,7 +362,7 @@ summaryOD.unmarkedFitPCO <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -399,7 +399,7 @@ summaryOD.unmarkedFitPCO <- function(mod, c.hat = 1,
 ##distsamp
 summaryOD.unmarkedFitDS <- function(mod, c.hat = 1,
                                     conf.level = 0.95,
-                                    out.type = "interval", ...){
+                                    out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -422,7 +422,7 @@ summaryOD.unmarkedFitDS <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -459,7 +459,7 @@ summaryOD.unmarkedFitDS <- function(mod, c.hat = 1,
 ##gdistsamp
 summaryOD.unmarkedFitGDS <- function(mod, c.hat = 1,
                                      conf.level = 0.95,
-                                     out.type = "interval", ...){
+                                     out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -488,7 +488,7 @@ summaryOD.unmarkedFitGDS <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -525,7 +525,7 @@ summaryOD.unmarkedFitGDS <- function(mod, c.hat = 1,
 ##occuFP
 summaryOD.unmarkedFitOccuFP <- function(mod, c.hat = 1,
                                         conf.level = 0.95,
-                                        out.type = "interval", ...){
+                                        out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -548,7 +548,7 @@ summaryOD.unmarkedFitOccuFP <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -585,7 +585,7 @@ summaryOD.unmarkedFitOccuFP <- function(mod, c.hat = 1,
 ##multinomPois
 summaryOD.unmarkedFitMPois <- function(mod, c.hat = 1,
                                        conf.level = 0.95,
-                                       out.type = "interval", ...){
+                                       out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -608,7 +608,7 @@ summaryOD.unmarkedFitMPois <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -645,7 +645,7 @@ summaryOD.unmarkedFitMPois <- function(mod, c.hat = 1,
 ##gmultmix
 summaryOD.unmarkedFitGMM <- function(mod, c.hat = 1,
                                      conf.level = 0.95,
-                                     out.type = "interval", ...){
+                                     out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -674,7 +674,7 @@ summaryOD.unmarkedFitGMM <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -711,7 +711,7 @@ summaryOD.unmarkedFitGMM <- function(mod, c.hat = 1,
 ##gpcount
 summaryOD.unmarkedFitGPC <- function(mod, c.hat = 1,
                                      conf.level = 0.95,
-                                     out.type = "interval", ...){
+                                     out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -740,7 +740,7 @@ summaryOD.unmarkedFitGPC <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -777,7 +777,7 @@ summaryOD.unmarkedFitGPC <- function(mod, c.hat = 1,
 ##glmer
 summaryOD.glmerMod <- function(mod, c.hat = 1,
                                conf.level = 0.95,
-                               out.type = "interval", ...){
+                               out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -811,7 +811,7 @@ summaryOD.glmerMod <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -848,7 +848,7 @@ summaryOD.glmerMod <- function(mod, c.hat = 1,
 ##occuMulti
 summaryOD.unmarkedFitOccuMulti <- function(mod, c.hat = 1,
                                            conf.level = 0.95,
-                                           out.type = "interval", ...){
+                                           out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -871,7 +871,7 @@ summaryOD.unmarkedFitOccuMulti <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -908,7 +908,7 @@ summaryOD.unmarkedFitOccuMulti <- function(mod, c.hat = 1,
 ##glmmTMB
 summaryOD.glmmTMB <- function(mod, c.hat = 1,
                               conf.level = 0.95,
-                              out.type = "interval", ...){
+                              out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -953,7 +953,7 @@ summaryOD.glmmTMB <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -990,7 +990,7 @@ summaryOD.glmmTMB <- function(mod, c.hat = 1,
 ##maxlike
 summaryOD.maxlikeFit <- function(mod, c.hat = 1,
                                  conf.level = 0.95,
-                                 out.type = "interval", ...){
+                                 out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -1013,7 +1013,7 @@ summaryOD.maxlikeFit <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -1050,7 +1050,7 @@ summaryOD.maxlikeFit <- function(mod, c.hat = 1,
 ##multinom
 summaryOD.multinom <- function(mod, c.hat = 1,
                                conf.level = 0.95,
-                               out.type = "interval", ...){
+                               out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -1075,7 +1075,7 @@ summaryOD.multinom <- function(mod, c.hat = 1,
     rownames(outMat) <- parm.names
       
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -1112,7 +1112,7 @@ summaryOD.multinom <- function(mod, c.hat = 1,
 ##vglm
 summaryOD.vglm <- function(mod, c.hat = 1,
                            conf.level = 0.95,
-                           out.type = "interval", ...){
+                           out.type = "confint", ...){
 
     if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
     if(c.hat < 1) {
@@ -1144,7 +1144,7 @@ summaryOD.vglm <- function(mod, c.hat = 1,
     rownames(outMat) <- names(coefs)
     
     ##if interval
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         
         ##compute confidence intervals
         zstat <- qnorm(p = conf.level)
@@ -1186,7 +1186,7 @@ print.summaryOD <- function(x, digits = 4, ...) {
     out.type <- x$out.type
     outMat <- x$outMat
 
-    if(identical(out.type, "interval")) {
+    if(identical(out.type, "confint")) {
         ##label for confidence limit
         lowLab <- paste("Lower ", conf.level * 100, "%", " CL", sep = "")
         uppLab <- paste("Upper ", conf.level * 100, "%", " CL", sep = "")

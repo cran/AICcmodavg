@@ -272,7 +272,7 @@ model selection table based on BIC.
 \code{bictab} creates an object of class \code{bictab} with the
 following components:
 
-\item{Modname}{the names of each model of the candidate model set.}
+\item{Modname}{the name of each model of the candidate model set.}
 \item{K }{the number of estimated parameters for each model.}
 \item{(Q)BIC}{the Bayesian information criterion for each model.}
 \item{Delta_(Q)BIC}{the delta BIC component.}

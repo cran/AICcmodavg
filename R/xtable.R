@@ -5,7 +5,7 @@ xtable.aictab <- function(x, caption = NULL, label = NULL, align = NULL,
                           digits = NULL, display = NULL, nice.names = TRUE,
                           include.AICc = TRUE, include.LL = TRUE,
                           include.Cum.Wt = FALSE, ...) {
-
+ 
   ##change to nicer names
   if(nice.names) {
     new.delta <- names(x)[4]
@@ -28,7 +28,7 @@ xtable.aictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:4, 6:7)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f"))
   }
 
   ##with AICc, but not LL and Cum.Wt
@@ -36,7 +36,7 @@ xtable.aictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:4, 6)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
   }
 
   ##without AICc, but with LL but not Cum.Wt
@@ -44,7 +44,7 @@ xtable.aictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:2, 4, 6:7)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
   }
 
   ##without AICc and LL and Cum.Wt
@@ -52,7 +52,7 @@ xtable.aictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:2, 4, 6)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f"))
   }
 
   ##with AICc and LL and Cum.Wt
@@ -60,7 +60,7 @@ xtable.aictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:4, 6:8)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f","f"))
   }
 
   ##with AICc, but not LL but with Cum.Wt
@@ -68,7 +68,7 @@ xtable.aictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:4, 6, 8)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f"))
   }
 
   ##without AICc, but with LL and Cum.Wt
@@ -76,7 +76,7 @@ xtable.aictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:2, 4, 6:8)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f"))
   }
 
   ##without AICc and LL but with Cum.Wt
@@ -84,7 +84,7 @@ xtable.aictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:2, 4, 6, 8)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
   }
 
   caption(x) <- caption
@@ -99,56 +99,113 @@ xtable.modavg <- function(x, caption = NULL, label = NULL, align = NULL,
                           digits = NULL, display = NULL,
                           nice.names = TRUE, print.table = FALSE, ...) {
 
-  if(print.table) {
-    ##extract model selection table
-    modavg.table <- data.frame(x$Mod.avg.table[, c(1:4, 6, 8:9)], check.names = FALSE)
+    ##different format for models of class multinom
+    if(length(x$Mod.avg.beta) == 1){
+        if(print.table) {
+            ##extract model selection table
+            modavg.table <- data.frame(x$Mod.avg.table[, c(1:4, 6, 8:9)], check.names = FALSE)
+            
+            ##change to nicer names
+            if(nice.names) {
+                new.delta <- names(modavg.table)[4]
+                new.weight <- names(modavg.table)[5]
+                names(modavg.table)[1] <- "Model"
+                names(modavg.table)[2] <- "K"
+                ##names(x)[4] <- paste("$\\delta$", unlist(strsplit(new.delta, "_"))[2], collapse = " ") #requires sanitize.text.function( )
+                names(modavg.table)[4] <- paste(unlist(strsplit(new.delta, "_")), collapse = " ")
+                names(modavg.table)[5] <- paste(unlist(strsplit(new.weight, "Wt")), "weight", collapse = " ")
+                names(modavg.table)[6] <- paste("Beta(", x$Parameter, ")", sep = "")
+                names(modavg.table)[7] <- paste("SE(", x$Parameter, ")", sep = "")
+            }
 
-    ##change to nicer names
-    if(nice.names) {
-      new.delta <- names(modavg.table)[4]
-      new.weight <- names(modavg.table)[5]
-      names(modavg.table)[1] <- "Model"
-      names(modavg.table)[2] <- "K"
-      ##names(x)[4] <- paste("$\\delta$", unlist(strsplit(new.delta, "_"))[2], collapse = " ") #requires sanitize.text.function( )
-      names(modavg.table)[4] <- paste(unlist(strsplit(new.delta, "_")), collapse = " ")
-      names(modavg.table)[5] <- paste(unlist(strsplit(new.weight, "Wt")), "weight", collapse = " ")
-      names(modavg.table)[6] <- paste("Beta(", x$Parameter, ")", sep = "")
-      names(modavg.table)[7] <- paste("SE(", x$Parameter, ")", sep = "")
-    }
-
-    ##format to data.frame
-    class(modavg.table) <- c("xtable","data.frame")
-
-    align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
-    digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2,2,2,2))
-    display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f","f","f","f"))
-  }  
+            ##format to data.frame
+            class(modavg.table) <- c("xtable","data.frame")
+            
+            align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
+            digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2,2))
+            display(modavg.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f","f"))
+        }  
     
 
-    ##print model-averaged estimate, unconditional SE, CI
-    if(!print.table) {
+        ##print model-averaged estimate, unconditional SE, CI
+        if(!print.table) {
       
-      ##model-averaged estimate                          
-      modavg.table <- data.frame(Mod.avg.beta = x$Mod.avg.beta, Uncond.SE = x$Uncond.SE,
-                                 Lower.CL = x$Lower.CL, Upper.CL = x$Upper.CL, check.names = FALSE)
-      rownames(modavg.table) <- x$Parameter
-    
-      ##change to nicer names
-      if(nice.names) {
-        names(modavg.table)[1] <- "Model-averaged beta estimate" 
-        names(modavg.table)[2] <- "Unconditional SE"
-        names(modavg.table)[3] <- paste(100*x$Conf.level, "%", " lower limit", sep = "")
-        names(modavg.table)[4] <- paste(100*x$Conf.level, "%", " upper limit", sep = "")
-      }
+            ##model-averaged estimate                          
+            modavg.table <- data.frame(Mod.avg.beta = x$Mod.avg.beta, Uncond.SE = x$Uncond.SE,
+                                       Lower.CL = x$Lower.CL, Upper.CL = x$Upper.CL, check.names = FALSE)
+            rownames(modavg.table) <- x$Parameter
+            
+            ##change to nicer names
+            if(nice.names) {
+                names(modavg.table)[1] <- "Model-averaged beta estimate" 
+                names(modavg.table)[2] <- "Unconditional SE"
+                names(modavg.table)[3] <- paste(100*x$Conf.level, "%", " lower limit", sep = "")
+                names(modavg.table)[4] <- paste(100*x$Conf.level, "%", " upper limit", sep = "")
+            }
   
-      ##format to data.frame
-      class(modavg.table) <- c("xtable","data.frame")
+            ##format to data.frame
+            class(modavg.table) <- c("xtable","data.frame")
 
-      align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
-      digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2))
-      display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f"))
+            align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
+            digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2))
+            display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f"))
+        }
     }
 
+    if(length(x$Mod.avg.beta) > 1){
+        if(print.table) {
+            ##extract model selection table
+            modavg.table <- data.frame(x$Mod.avg.table[, c(1:4, 6)], check.names = FALSE)
+            
+            ##change to nicer names
+            if(nice.names) {
+                new.delta <- names(modavg.table)[4]
+                new.weight <- names(modavg.table)[5]
+                names(modavg.table)[1] <- "Model"
+                names(modavg.table)[2] <- "K"
+                ##names(x)[4] <- paste("$\\delta$", unlist(strsplit(new.delta, "_"))[2], collapse = " ") #requires sanitize.text.function( )
+                names(modavg.table)[4] <- paste(unlist(strsplit(new.delta, "_")), collapse = " ")
+                names(modavg.table)[5] <- paste(unlist(strsplit(new.weight, "Wt")), "weight", collapse = " ")
+                ##names(modavg.table)[6] <- paste("Beta(", x$Parameter, ")", sep = "")
+                ##names(modavg.table)[7] <- paste("SE(", x$Parameter, ")", sep = "")
+            }
+
+            ##format to data.frame
+            class(modavg.table) <- c("xtable","data.frame")
+            
+            align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
+            digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
+            display(modavg.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
+        }
+    
+
+        ##print model-averaged estimate, unconditional SE, CI
+        if(!print.table) {
+      
+            ##model-averaged estimate                          
+            modavg.table <- data.frame(Mod.avg.beta = x$Mod.avg.beta, Uncond.SE = x$Uncond.SE,
+                                       Lower.CL = x$Lower.CL, Upper.CL = x$Upper.CL, check.names = FALSE)
+            rownames(modavg.table) <- names(x$Mod.avg.beta)
+            
+            ##change to nicer names
+            if(nice.names) {
+                names(modavg.table)[1] <- "Model-averaged beta estimate" 
+                names(modavg.table)[2] <- "Unconditional SE"
+                names(modavg.table)[3] <- paste(100*x$Conf.level, "%", " lower limit", sep = "")
+                names(modavg.table)[4] <- paste(100*x$Conf.level, "%", " upper limit", sep = "")
+            }
+  
+            ##format to data.frame
+            class(modavg.table) <- c("xtable","data.frame")
+
+            align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
+            digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2))
+            display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f"))
+        }
+
+    }
+    
+        
   caption(modavg.table) <- caption
   label(modavg.table) <- label
   return(modavg.table)
@@ -182,8 +239,8 @@ xtable.modavgShrink <- function(x, caption = NULL, label = NULL, align = NULL,
     class(modavg.table) <- c("xtable","data.frame")
 
     align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
-    digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2,2,2,2))
-    display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f","f","f","f"))
+    digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2,2))
+    display(modavg.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f","f"))
   }  
 
 
@@ -330,8 +387,8 @@ xtable.modavgEffect <- function(x, caption = NULL, label = NULL, align = NULL,
     class(modavg.table) <- c("xtable","data.frame")
 
     align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
-    digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2,2,2,2))
-    display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f","f","f","f"))
+    digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2,2))
+    display(modavg.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f","f"))
   }  
 
 
@@ -389,8 +446,8 @@ xtable.multComp <- function(x, caption = NULL, label = NULL, align = NULL,
     class(modavg.table) <- c("xtable","data.frame")
 
     align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
-    digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2,2))
-    display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f","f"))
+    digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
+    display(modavg.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
   }  
 
   
@@ -451,7 +508,7 @@ xtable.boot.wt <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:4, 7)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
   }
 
   ##with AICc and AICc.Wt
@@ -459,7 +516,7 @@ xtable.boot.wt <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:4, 6:7)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f"))
   }
 
   ##without AICc, but with AICc.Wt
@@ -467,7 +524,7 @@ xtable.boot.wt <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:2, 4, 6:7)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
   }
 
   ##without AICc and AICc.Wt
@@ -475,7 +532,7 @@ xtable.boot.wt <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:2, 4, 7)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f"))
   }
 
   caption(x) <- caption
@@ -532,8 +589,8 @@ xtable.mb.chisq <- function(x, caption = NULL, label = NULL, align = NULL,
     chisq.table <- chisq.table[, 2:5]
     
     align(chisq.table) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
-    digits(chisq.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2))
-    display(chisq.table) <- switch(1+is.null(display), display, c("s","f","f","f","f"))
+    digits(chisq.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2))
+    display(chisq.table) <- switch(1+is.null(display), display, c("s","s","d","f","f")) #2 columns as integers
   }
 
   ##include detection history as a column
@@ -544,7 +601,7 @@ xtable.mb.chisq <- function(x, caption = NULL, label = NULL, align = NULL,
     
     align(chisq.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
     digits(chisq.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
-    display(chisq.table) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+    display(chisq.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f")) #2 columns as integers
   }
 
   caption(chisq.table) <- caption
@@ -931,7 +988,7 @@ xtable.bictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:4, 6:7)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f"))
   }
 
   ##with BIC, but not LL and Cum.Wt
@@ -939,7 +996,7 @@ xtable.bictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:4, 6)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
   }
 
   ##without BIC, but with LL but not Cum.Wt
@@ -947,7 +1004,7 @@ xtable.bictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:2, 4, 6:7)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
   }
 
   ##without BIC and LL and Cum.Wt
@@ -955,7 +1012,7 @@ xtable.bictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:2, 4, 6)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f"))
   }
 
   ##with BIC and LL and Cum.Wt
@@ -963,7 +1020,7 @@ xtable.bictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:4, 6:8)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f","f"))
   }
 
   ##with BIC, but not LL but with Cum.Wt
@@ -971,7 +1028,7 @@ xtable.bictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:4, 6, 8)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f"))
   }
 
   ##without BIC, but with LL and Cum.Wt
@@ -979,7 +1036,7 @@ xtable.bictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:2, 4, 6:8)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f"))
   }
 
   ##without BIC and LL but with Cum.Wt
@@ -987,7 +1044,7 @@ xtable.bictab <- function(x, caption = NULL, label = NULL, align = NULL,
     x <- x[, c(1:2, 4, 6, 8)]
     align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
     digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
-    display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+    display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
   }
 
   caption(x) <- caption
@@ -1148,10 +1205,212 @@ xtable.anovaOD <- function(x, caption = NULL, label = NULL, align = NULL,
 
     align(anovaOD.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
     digits(anovaOD.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2,2,2))
-    display(anovaOD.table) <- switch(1+is.null(display), display, c("s","f","f","f","f","f","f"))
+    display(anovaOD.table) <- switch(1+is.null(display), display, c("s","d","f","d","f","f","f"))
 
     caption(anovaOD.table) <- caption
     label(anovaOD.table) <- label
     return(anovaOD.table)
 }
 
+
+##ictab
+xtable.ictab <- function(x, caption = NULL, label = NULL, align = NULL,
+                         digits = NULL, display = NULL, nice.names = TRUE,
+                         include.IC = TRUE, include.Cum.Wt = FALSE, ...) {
+ 
+  ##change to nicer names
+  if(nice.names) {
+    new.delta <- names(x)[4]
+    new.weight <- names(x)[6]
+    names(x)[1] <- "Model"
+    names(x)[2] <- "K"
+    #names(x)[4] <- paste("$\\delta$", unlist(strsplit(new.delta, "_"))[2], collapse = " ") #requires sanitize.text.function( )
+    names(x)[4] <- paste(unlist(strsplit(new.delta, "_")), collapse = " ")
+    names(x)[6] <- paste(unlist(strsplit(new.weight, "Wt")), "weight", collapse = " ")
+    names(x)[7] <- "Cumulative weight"
+  }
+
+  #format to data.frame
+  x <- data.frame(x, check.names = FALSE)
+  class(x) <- c("xtable","data.frame")
+  
+  ##with IC but not Cum.Wt
+  if(include.IC && !include.Cum.Wt) {
+    x <- x[, c(1:4, 6)]
+    align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
+    digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
+    if(all(x[, 2] %% 1 == 0)) {
+        display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
+    } else {
+        display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+    }
+  }
+
+  ##without IC and Cum.Wt
+  if(!include.IC && !include.Cum.Wt) {
+    x <- x[, c(1:2, 4, 6)]
+    align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
+    digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2))
+    if(all(x[, 2] %% 1 == 0)) {
+        display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f"))
+    } else {
+        display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f"))
+    }
+  }
+
+  ##with IC and Cum.Wt
+  if(include.IC && include.Cum.Wt) {
+    x <- x[, c(1:4, 6:7)]
+    align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r"))
+    digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2))
+    if(all(x[, 2] %% 1 == 0)) {
+        display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f"))
+    } else {
+        display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f"))
+    }
+  }
+
+  ##without IC, but with Cum.Wt
+  if(!include.IC && include.Cum.Wt) {
+    x <- x[, c(1:2, 4, 6:7)]
+    align(x) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
+    digits(x) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
+    if(all(x[, 2] %% 1 == 0)) {
+        display(x) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
+    } else {
+        display(x) <- switch(1+is.null(display), display, c("s","s","f","f","f","f"))
+    }
+  }
+
+  caption(x) <- caption
+  label(x) <- label
+  return(x)
+}
+
+
+
+##modavgIC
+xtable.modavgIC <- function(x, caption = NULL, label = NULL, align = NULL,
+                            digits = NULL, display = NULL,
+                            nice.names = TRUE, print.table = FALSE, ...) {
+
+  if(print.table) {
+    ##extract model selection table
+    modavg.table <- data.frame(x$Mod.avg.table[, c(1:4, 6:8)], check.names = FALSE)
+
+    ##change to nicer names
+    if(nice.names) {
+      new.delta <- names(modavg.table)[4]
+      new.weight <- names(modavg.table)[5]
+      names(modavg.table)[1] <- "Model"
+      names(modavg.table)[2] <- "K"
+      ##names(x)[4] <- paste("$\\delta$", unlist(strsplit(new.delta, "_"))[2], collapse = " ") #requires sanitize.text.function( )
+      names(modavg.table)[4] <- paste(unlist(strsplit(new.delta, "_")), collapse = " ")
+      names(modavg.table)[5] <- paste(unlist(strsplit(new.weight, "Wt")), "weight", collapse = " ")
+      names(modavg.table)[6] <- "Estimate"
+      names(modavg.table)[7] <- "SE"
+    }
+
+    ##format to data.frame
+    class(modavg.table) <- c("xtable","data.frame")
+
+    align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
+    digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2,2))
+      if(all(modavg.table$K %% 1 == 0)) {
+          display(modavg.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f","f"))
+      } else {
+          display(modavg.table) <- switch(1+is.null(display), display, c("s","s","f","f","f","f","f","f"))
+      }
+  }  
+    
+
+    ##print model-averaged estimate, unconditional SE, CI
+    if(!print.table) {
+      
+      ##model-averaged estimate                          
+      modavg.table <- data.frame(Mod.avg.est = x$Mod.avg.est, Uncond.SE = x$Uncond.SE,
+                                 Lower.CL = x$Lower.CL, Upper.CL = x$Upper.CL, check.names = FALSE)
+      rownames(modavg.table) <- "Parameter"
+    
+      ##change to nicer names
+      if(nice.names) {
+        names(modavg.table)[1] <- "Model-averaged estimate" 
+        names(modavg.table)[2] <- "Unconditional SE"
+        names(modavg.table)[3] <- paste(100*x$Conf.level, "%", " lower limit", sep = "")
+        names(modavg.table)[4] <- paste(100*x$Conf.level, "%", " upper limit", sep = "")
+      }
+  
+      ##format to data.frame
+      class(modavg.table) <- c("xtable","data.frame")
+
+      align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
+      digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2))
+      display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f"))
+    }
+
+  caption(modavg.table) <- caption
+  label(modavg.table) <- label
+  return(modavg.table)
+}
+
+
+
+##modavgCustom
+xtable.modavgCustom <- function(x, caption = NULL, label = NULL, align = NULL,
+                                digits = NULL, display = NULL,
+                                nice.names = TRUE, print.table = FALSE, ...) {
+
+    if(print.table) {
+        ##extract model selection table
+        modavg.table <- data.frame(x$Mod.avg.table[, c(1:4, 6, 8:9)], check.names = FALSE)
+
+        ##change to nicer names
+        if(nice.names) {
+            new.delta <- names(modavg.table)[4]
+            new.weight <- names(modavg.table)[5]
+            names(modavg.table)[1] <- "Model"
+            names(modavg.table)[2] <- "K"
+            ##names(x)[4] <- paste("$\\delta$", unlist(strsplit(new.delta, "_"))[2], collapse = " ") #requires sanitize.text.function( )
+            names(modavg.table)[4] <- paste(unlist(strsplit(new.delta, "_")), collapse = " ")
+            names(modavg.table)[5] <- paste(unlist(strsplit(new.weight, "Wt")), "weight", collapse = " ")
+            names(modavg.table)[6] <- "Estimate"
+            names(modavg.table)[7] <- "SE"
+        }
+
+    ##format to data.frame
+    class(modavg.table) <- c("xtable","data.frame")
+
+    align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
+    digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2,2))
+    display(modavg.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f","f"))
+  }  
+    
+
+    ##print model-averaged estimate, unconditional SE, CI
+    if(!print.table) {
+      
+      ##model-averaged estimate                          
+      modavg.table <- data.frame(Mod.avg.beta = x$Mod.avg.est, Uncond.SE = x$Uncond.SE,
+                                 Lower.CL = x$Lower.CL, Upper.CL = x$Upper.CL, check.names = FALSE)
+      rownames(modavg.table) <- "Parameter"
+    
+      ##change to nicer names
+      if(nice.names) {
+        names(modavg.table)[1] <- "Model-averaged estimate" 
+        names(modavg.table)[2] <- "Unconditional SE"
+        names(modavg.table)[3] <- paste(100*x$Conf.level, "%", " lower limit", sep = "")
+        names(modavg.table)[4] <- paste(100*x$Conf.level, "%", " upper limit", sep = "")
+      }
+  
+      ##format to data.frame
+      class(modavg.table) <- c("xtable","data.frame")
+
+      align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
+      digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2))
+      display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f"))
+    }
+
+  caption(modavg.table) <- caption
+  label(modavg.table) <- label
+  return(modavg.table)
+}

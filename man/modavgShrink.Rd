@@ -341,16 +341,16 @@ classes as well as various models of \code{unmarkedFit} classes.
 with the following components:
 
 \item{Parameter}{the parameter for which a model-averaged estimate with
-  shrinkage was obtained} 
+  shrinkage was obtained.} 
 \item{Mod.avg.table}{the model selection table based on models including
-  the parameter of interest} 
-\item{Mod.avg.beta}{the model-averaged estimate based on all models}
+  the parameter of interest.} 
+\item{Mod.avg.beta}{the model-averaged estimate based on all models.}
 \item{Uncond.SE}{the unconditional standard error for the model-averaged
-  estimate (as opposed to the conditional SE based on a single model)}
+  estimate (as opposed to the conditional SE based on a single model).}
 \item{Conf.level}{the confidence level used to compute the confidence
-  interval} 
-\item{Lower.CL}{the lower confidence limit}
-\item{Upper.CL}{the upper confidence limit}
+  interval.} 
+\item{Lower.CL}{the lower confidence limit.}
+\item{Upper.CL}{the upper confidence limit.}
 
 }
 \references{

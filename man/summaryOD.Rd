@@ -31,55 +31,55 @@ or Wald hypothesis tests corrected for overdispersion.
 }
 \usage{
 summaryOD(mod, c.hat = 1, conf.level = 0.95, 
-          out.type = "interval", \dots)
+          out.type = "confint", \dots)
 
 \method{summaryOD}{glm}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitOccu}(mod, c.hat = 1, conf.level = 0.95,
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitColExt}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitOccuRN}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitPCount}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitPCO}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitDS}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitGDS}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitOccuFP}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitMPois}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitGMM}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitGPC}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{glmerMod}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{maxlikeFit}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{multinom}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 
 \method{summaryOD}{vglm}(mod, c.hat = 1, conf.level = 0.95, 
-     out.type = "interval", \dots)
+     out.type = "confint", \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -103,7 +103,7 @@ summaryOD(mod, c.hat = 1, conf.level = 0.95,
 
   \item{out.type}{
     the type of summary requested for each parameter estimate. If
-    \code{out.type = "interval"}, computes confidence intervals corrected
+    \code{out.type = "confint"}, computes confidence intervals corrected
     for overdispersion, whereas \code{out.type = "nhst"} conducts
     null-hypothesis statistical testing corrected for overdispersion.
   }
@@ -125,7 +125,7 @@ summaryOD(mod, c.hat = 1, conf.level = 0.95,
   \code{summaryOD}.
 
   Depending on the type of summary requested, i.e.,
-  \code{out.type = "interval"} or \code{out.type = "nhst"},
+  \code{out.type = "confint"} or \code{out.type = "nhst"},
   \code{summaryOD} will return either confidence intervals based on the
   normal approximation or Wald tests for each parameter estimate
   (Agresti 1990).

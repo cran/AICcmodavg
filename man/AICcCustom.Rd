@@ -2,8 +2,7 @@
 \Rdversion{1.1}
 \alias{AICcCustom}
 \title{
-  Custom Computation of AIC, AICc, QAIC, and QAICc from User-supplied
-  Input
+  Compute AIC, AICc, QAIC, and QAICc from User-supplied Input
 }
 \description{
   This function computes Akaike's information criterion (AIC), the

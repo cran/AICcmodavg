@@ -26,6 +26,12 @@ evidence <-
       class(aic.table) <- c("aictab", "data.frame")
     }
 
+    ##if ictab result
+    if(identical(class(aic.table)[1], "ictab")) {
+      ##coerce to aictab
+      class(aic.table) <- c("aictab", "data.frame")
+    }
+
     if(!identical(class(aic.table)[1], "aictab")) {stop("\nThe input object must be of class 'aictab'\n")}
 
     ##sort model table in case it is not

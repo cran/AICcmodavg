@@ -97,7 +97,7 @@ aictabCustom <-
 
     
     if(sort)  {
-      Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
       Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
     } else {Results$Cum.Wt <- NULL}
 
@@ -186,7 +186,7 @@ bictabCustom <-
 
     
         if(sort)  {
-            Results <- Results[rev(order(Results[, 6])),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+            Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
             Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
         } else {Results$Cum.Wt <- NULL}
 
@@ -232,9 +232,9 @@ modavgCustom <-
                                   nobs = nobs, sort = FALSE, c.hat = c.hat)  #recompute AIC table and associated measures
     }
 
-    new_table$Beta_est <- estimate
+    new_table$Estimate <- estimate
     new_table$SE <- se
-    
+        
     ##if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
     if(c.hat > 1) {
         new_table$SE <-new_table$SE*sqrt(c.hat)
@@ -245,16 +245,16 @@ modavgCustom <-
         ##AICc
         ##compute model-averaged estimates, unconditional SE, and 95% CL
         if(c.hat == 1 && second.ord == TRUE) {
-            Modavg_beta <- sum(new_table$AICcWt*new_table$Beta_est)
+            Modavg_estimate <- sum(new_table$AICcWt*new_table$Estimate)
             
             ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
             if(identical(uncond.se, "old")) {
-                Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+                Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2))
             }
       
             ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
             if(identical(uncond.se, "revised")) {
-                Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+                Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2)))
             }
         }
 
@@ -262,16 +262,16 @@ modavgCustom <-
     
         ##QAICc
         if(c.hat > 1 && second.ord == TRUE) {
-            Modavg_beta <- sum(new_table$QAICcWt*new_table$Beta_est)
+            Modavg_estimate <- sum(new_table$QAICcWt*new_table$Estimate)
             
             ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
             if(identical(uncond.se, "old")) {      
-                Uncond_SE <- sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+                Uncond_SE <- sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2))
             }
             
             ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
             if(identical(uncond.se, "revised")) {
-                Uncond_SE <- sqrt(sum(new_table$QAICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+                Uncond_SE <- sqrt(sum(new_table$QAICcWt*(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2)))
             }
         }     
         
@@ -279,16 +279,16 @@ modavgCustom <-
 
         ##AIC
         if(c.hat == 1 && second.ord == FALSE) {
-            Modavg_beta <- sum(new_table$AICWt*new_table$Beta_est)
+            Modavg_estimate <- sum(new_table$AICWt*new_table$Estimate)
             
             ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
             if(identical(uncond.se, "old")) {
-                Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+                Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2))
             }
       
             ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
             if(identical(uncond.se, "revised")) {
-                Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+                Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2)))
             }
         }
         
@@ -296,16 +296,16 @@ modavgCustom <-
 
         ##QAIC
         if(c.hat > 1 && second.ord == FALSE) {
-            Modavg_beta <- sum(new_table$QAICWt*new_table$Beta_est)
+            Modavg_estimate <- sum(new_table$QAICWt*new_table$Estimate)
             
             ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
             if(identical(uncond.se, "old")) {
-                Uncond_SE <- sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+                Uncond_SE <- sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2))
             }
             
             ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
             if(identical(uncond.se, "revised")) {
-                Uncond_SE <- sqrt(sum(new_table$QAICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+                Uncond_SE <- sqrt(sum(new_table$QAICWt*(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2)))
             }  
         }     
     }
@@ -313,16 +313,16 @@ modavgCustom <-
     if(useBIC){
         ##BIC
         if(c.hat == 1) {
-            Modavg_beta <- sum(new_table$BICWt*new_table$Beta_est)
+            Modavg_estimate <- sum(new_table$BICWt*new_table$Estimate)
             
             ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
             if(identical(uncond.se, "old")) {
-                Uncond_SE <- sum(new_table$BICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+                Uncond_SE <- sum(new_table$BICWt*sqrt(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2))
             }
       
             ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
             if(identical(uncond.se, "revised")) {
-                Uncond_SE <- sqrt(sum(new_table$BICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+                Uncond_SE <- sqrt(sum(new_table$BICWt*(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2)))
             }
         }
         
@@ -330,25 +330,25 @@ modavgCustom <-
 
         ##QBIC
         if(c.hat > 1) {
-            Modavg_beta <- sum(new_table$QBICWt*new_table$Beta_est)
+            Modavg_estimate <- sum(new_table$QBICWt*new_table$Estimate)
             
             ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
             if(identical(uncond.se, "old")) {
-                Uncond_SE <- sum(new_table$QBICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+                Uncond_SE <- sum(new_table$QBICWt*sqrt(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2))
             }
             
             ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
             if(identical(uncond.se, "revised")) {
-                Uncond_SE <- sqrt(sum(new_table$QBICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+                Uncond_SE <- sqrt(sum(new_table$QBICWt*(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2)))
             }  
         }     
         
     }
         
     zcrit <- qnorm(p = (1-conf.level)/2, lower.tail = FALSE)
-    Lower_CL <- Modavg_beta - zcrit*Uncond_SE
-    Upper_CL <- Modavg_beta + zcrit*Uncond_SE
-    out.modavg <- list("Mod.avg.table" = new_table, "Mod.avg.est" = Modavg_beta,
+    Lower_CL <- Modavg_estimate - zcrit*Uncond_SE
+    Upper_CL <- Modavg_estimate + zcrit*Uncond_SE
+    out.modavg <- list("Mod.avg.table" = new_table, "Mod.avg.est" = Modavg_estimate,
                        "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level,
                        "Lower.CL"= Lower_CL, "Upper.CL" = Upper_CL)
   
@@ -381,6 +381,143 @@ cat("\nModel-averaged estimate:", eval(round(x$Mod.avg.est, digits = digits)), "
 cat("Unconditional SE:", eval(round(x$Uncond.SE, digits = digits)), "\n")
 cat("",x$Conf.level*100, "% Unconditional confidence interval:", round(x$Lower.CL, digits = digits),
     ",", round(x$Upper.CL, digits = digits), "\n\n")
-cat("\n")
+}
+
+
+
+##function for generic information criteria
+ictab <- function(ic, K, modnames = NULL, sort = TRUE, ic.name = NULL){
+
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+        modnames <- paste("Mod", 1:length(ic), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+    }
+      
+    ##check that logL, K, estimate, se are vectors of same length
+    nic <- length(ic)
+    nK <- length(K)
+
+    if(!all(nic == c(nic, nK))) stop("\nArguments 'ic' and 'K' must be of equal length\n")
+
+    Results <- NULL
+    Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+    Results$K <- K
+    Results$IC <- ic
+    Results$Delta_IC <- Results$IC - min(Results$IC)            #compute delta IC
+    Results$ModelLik <- exp(-0.5*Results$Delta_IC)                #compute model likelihood required to compute Akaike weights
+    Results$ICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights
+    
+    ##check if some models are redundant
+    if(length(unique(Results$IC)) != length(K)) warning("\nCheck model structure carefully as some models may be redundant\n")
+
+    ##check if name of IC is specified
+    if(!is.null(ic.name)) {
+        ##replace IC with ic.name
+        names(Results) <- gsub(pattern = "IC", replacement = ic.name,
+                               x = names(Results))
+    }
+    
+    if(sort)  {
+        Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on delta IC
+        Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
+    } else {Results$Cum.Wt <- NULL}
+
+    
+    class(Results) <- c("ictab", "data.frame")
+    return(Results)
+}
+
+
+
+print.ictab <- function(x, digits = 2, ...) {
+    cat("\nModel selection based on ", colnames(x)[3], ":\n", sep = "")
+    cat("\n")
+
+    #check if Cum.Wt should be printed
+    if(any(names(x) == "Cum.Wt")) {
+        nice.tab <- cbind(x[, c(2:4, 6:7)])
+        colnames(nice.tab) <- colnames(x)[c(2:4, 6:7)]
+        rownames(nice.tab) <- x[, 1]
+    } else {
+        nice.tab <- cbind(x[, c(2:4, 6)])
+        colnames(nice.tab) <- colnames(x)[c(2:4, 6)]
+        rownames(nice.tab) <- x[, 1]
+    }
+    
+    print(round(nice.tab, digits = digits)) #select rounding off with digits argument
+    cat("\n")
+  }
+
+
+
+##model averaging for generic IC where user inputs estimates and SE's manually
+modavgIC <- function(ic, K, modnames = NULL, estimate, se,
+                     uncond.se = "revised", conf.level = 0.95, ic.name = NULL){
+
+    ##check if modnames are not supplied
+    if(is.null(modnames)) {
+        modnames <- paste("Mod", 1:length(ic), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+    }
+    
+
+    ##check that logL, K, estimate, se are vectors of same length
+    nic <- length(ic)
+    nK <- length(K)
+    nestimate <- length(estimate)
+    nse <- length(se)
+
+    if(!all(nic == c(nic, nK, nestimate, nse))) stop("\nArguments 'ic', 'K', 'estimate', and 'se' must be of equal length\n")
+
+    ##compute table
+    new_table <- ictab(ic = ic, K = K, modnames = modnames,
+                       sort = FALSE, ic.name = ic.name)
+
+    new_table$Estimate <- estimate
+    new_table$SE <- se
+    
+    ##compute model-averaged estimates, unconditional SE, and 95% CL
+    Modavg_estimate <- sum(new_table[, 6] * new_table$Estimate)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+        Uncond_SE <- sum(new_table[, 6] * sqrt(new_table$SE^2 + (new_table$Estimate- Modavg_estimate)^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table[, 6] * (new_table$SE^2 + (new_table$Estimate - Modavg_estimate)^2)))
+    }
+        
+    zcrit <- qnorm(p = (1-conf.level)/2, lower.tail = FALSE)
+    Lower_CL <- Modavg_estimate - zcrit*Uncond_SE
+    Upper_CL <- Modavg_estimate + zcrit*Uncond_SE
+    out.modavg <- list("Mod.avg.table" = new_table, "Mod.avg.est" = Modavg_estimate,
+                       "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level,
+                       "Lower.CL"= Lower_CL, "Upper.CL" = Upper_CL)
+  
+    class(out.modavg) <- c("modavgIC", "list")
+    return(out.modavg)
+}
+
+
+
+##print method
+print.modavgIC <- function(x, digits = 2, ...) {
+    ic <- colnames(x$Mod.avg.table)[3]
+    cat("\nMultimodel inference on manually-supplied parameter based on", ic, "\n")
+    cat("\n", ic, "table used to obtain model-averaged estimate:\n")
+    oldtab <- x$Mod.avg.table
+    cat("\n")
+    nice.tab <- cbind(oldtab[, c(2:4, 6:8)])
+    
+    colnames(nice.tab) <- colnames(oldtab)[c(2:4, 6:8)]
+    rownames(nice.tab) <- oldtab[, 1]
+    print(round(nice.tab, digits = digits))
+    cat("\nModel-averaged estimate:", eval(round(x$Mod.avg.est, digits = digits)), "\n")
+    cat("Unconditional SE:", eval(round(x$Uncond.SE, digits = digits)), "\n")
+    cat("",x$Conf.level*100, "% Unconditional confidence interval:", round(x$Lower.CL, digits = digits),
+        ",", round(x$Upper.CL, digits = digits), "\n\n")
 }
 

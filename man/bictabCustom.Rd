@@ -2,8 +2,7 @@
 \Rdversion{1.1}
 \alias{bictabCustom}
 \title{
-Custom Creation of Model Selection Tables from User-supplied Input Based
-on (Q)BIC
+Create Model Selection Tables from User-supplied Input Based on (Q)BIC
 }
 \description{
   This function creates a model selection table from model input
@@ -67,7 +66,7 @@ bictabCustom(logL, K, modnames = NULL, nobs = NULL, sort = TRUE,
     \code{bictabCustom} creates an object of class \code{bictab} with the
     following components:
 
-    \item{Modname}{the names of each model of the candidate model set.}
+    \item{Modname}{the name of each model of the candidate model set.}
     \item{K }{the number of estimated parameters for each model.}
     \item{(Q)BIC }{the information criteria requested for each model
       (BIC, QBIC).}
@@ -133,8 +132,9 @@ Schwarz, G. (1978) Estimating the dimension of a model. \emph{Annals of
 Marc J. Mazerolle
 }
 \seealso{
-\code{\link{AICcCustom}}, \code{\link{confset}}, \code{\link{c_hat}},
-\code{\link{evidence}}, \code{\link{modavgCustom}}
+\code{\link{AICcCustom}}, \code{\link{aictabCustom}},
+  \code{\link{confset}}, \code{\link{c_hat}}, \code{\link{evidence}},
+  \code{\link{ictab}}, \code{\link{modavgCustom}}
 }
 \examples{
 ##vector with model LL's

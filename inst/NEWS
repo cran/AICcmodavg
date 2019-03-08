@@ -4,6 +4,20 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 2.2-1 (7 March 2019)
+##- added 'DIC' and 'dictab' methods for objects of classes 'jagsUI'
+##- added new functions 'ictab' and 'modavgIC' for generic information
+##  criteria, and added 'print' and 'xtable' methods for these classes
+##- modified 'evidence' to include 'ictab' objects
+##- modified sorting of models in 'aictab', 'bictab', 'dictab',
+##  'aictabCustom', and 'bictabCustom' based on values of delta AIC
+##  instead of Akaike weights to avoid rounding error with low values
+##- modified 'xtable' for nicer printing of K for 'aictab', 'bictab',
+##  and 'anovaOD'
+##- modified value of 'out.type' argument to 'confint' in 'summaryOD'
+##- added 'xtable' method for 'modavgCustom' class and modified 'xtable'
+##  method for 'modavg' when working with models of 'multinom' class
+##- added examples in 'AICcmodavg-package' Rd file
 
 
 ####################################################################
@@ -32,6 +46,7 @@
 ##  detHist, countDist, xtable, and mb.chisq methods
 ##- modified 'modavgPred' and 'modavgEffect' to use 'predict' for
 ##  ZIP models fit with 'pcount'
+
 
 ####################################################################
 ##revision 2.1-1 (19 June 2017)

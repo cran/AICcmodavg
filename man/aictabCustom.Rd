@@ -2,8 +2,7 @@
 \Rdversion{1.1}
 \alias{aictabCustom}
 \title{
-Custom Creation of Model Selection Tables from User-supplied Input Based
-on (Q)AIC(c)
+Create Model Selection Tables from User-supplied Input Based on (Q)AIC(c)
 }
 \description{
   This function creates a model selection table from model input
@@ -72,7 +71,7 @@ aictabCustom(logL, K, modnames = NULL, second.ord = TRUE, nobs = NULL,
     \code{aictabCustom} creates an object of class \code{aictab} with the
     following components:
 
-    \item{Modname}{the names of each model of the candidate model set.}
+    \item{Modname}{the name of each model of the candidate model set.}
     \item{K }{the number of estimated parameters for each model.}
     \item{(Q)AIC(c) }{the information criteria requested for each model
       (AICc, AICc, QAIC, QAICc).}
@@ -135,8 +134,9 @@ size from spatially replicated counts. \emph{Biometrics} \bold{60},
 Marc J. Mazerolle
 }
 \seealso{
-\code{\link{AICcCustom}}, \code{\link{confset}}, \code{\link{c_hat}},
-\code{\link{evidence}}, \code{\link{modavgCustom}}
+\code{\link{AICcCustom}}, \code{\link{bictabCustom}},
+\code{\link{confset}}, \code{\link{c_hat}}, \code{\link{evidence}},
+\code{\link{ictab}}, \code{\link{modavgCustom}}
 }
 \examples{
 ##vector with model LL's

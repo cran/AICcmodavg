@@ -254,7 +254,7 @@ consisting of the following components:
 \item{w.plus}{the sum of Akaike weights for the models that include the
   parameter of interest.}
 \item{w.minus}{the sum of Akaike weights for the models that exclude the
-  parameter of interest} 
+  parameter of interest.} 
 }
 \references{
 Burnham, K. P., and Anderson, D. R. (2002) \emph{Model Selection and

@@ -308,21 +308,21 @@ The result is an object of class \code{modavgEffect} with the following
 components: 
 
 \item{Group.variable}{the grouping variable defining the two groups
-  compared} 
-\item{Group1}{the first group considered in the comparison}
-\item{Group2}{the second group considered in the comparison}
+  compared.} 
+\item{Group1}{the first group considered in the comparison.}
+\item{Group2}{the second group considered in the comparison.}
 \item{Type}{the scale on which the model-averaged effect size was
-  computed (e.g., response or link)}
+  computed (e.g., response or link).}
 \item{Mod.avg.table}{the full model selection table including the
-entire set of candidate models}
+entire set of candidate models.}
 \item{Mod.avg.eff}{the model-averaged effect size based on the entire
-  candidate model set}
+  candidate model set.}
 \item{Uncond.SE}{the unconditional standard error for the model-averaged
-  effect size}
+  effect size.}
 \item{Conf.level}{the confidence level used to compute the confidence
-  interval} 
-\item{Lower.CL}{the lower confidence limit}
-\item{Upper.CL}{the upper confidence limit}
+  interval.} 
+\item{Lower.CL}{the lower confidence limit.}
+\item{Upper.CL}{the upper confidence limit.}
 }
 \references{
 Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:
