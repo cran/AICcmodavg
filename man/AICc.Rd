@@ -22,6 +22,7 @@
 \alias{AICc.maxlikeFit}
 \alias{AICc.mer}
 \alias{AICc.merMod}
+\alias{AICc.lmerModLmerTest}
 \alias{AICc.multinom}
 \alias{AICc.negbin}
 \alias{AICc.nlme}
@@ -103,6 +104,9 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
 \method{AICc}{merMod}(mod, return.K = FALSE, second.ord = TRUE,
      nobs = NULL, \dots) 
 
+\method{AICc}{lmerModLmerTest}(mod, return.K = FALSE, second.ord = TRUE,
+     nobs = NULL, \dots) 
+
 \method{AICc}{multinom}(mod, return.K = FALSE, second.ord = TRUE,
      nobs = NULL, c.hat = 1, \dots)
 
@@ -141,10 +145,10 @@ AICc(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, \dots)
     \code{fitdist}, \code{fitdistr}, \code{glm}, \code{glmmTMB},
     \code{gls}, \code{gnls}, \code{hurdle}, \code{lavaan}, \code{lm},
     \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
-    \code{merMod}, \code{multinom}, \code{negbin}, \code{nlme},
-    \code{nls}, \code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, 
-    \code{zeroinfl}, and various \code{unmarkedFit} classes containing
-    the output of a model.
+    \code{merMod}, \code{lmerModLmerTest}, \code{multinom},
+    \code{negbin}, \code{nlme}, \code{nls}, \code{polr}, \code{rlm},
+    \code{survreg}, \code{vglm}, \code{zeroinfl}, and various
+    \code{unmarkedFit} classes containing the output of a model.
   }
   
   \item{return.K}{

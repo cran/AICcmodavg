@@ -53,3 +53,15 @@ extractSE.merMod <- function(mod, ...){
   names(se) <- fixed.labels
   return(se)
 }
+
+
+
+##lmerModLmerTest objects
+extractSE.lmerModLmerTest <- function(mod, ...){
+  ##extract vcov matrix
+  vcov.mat <- as.matrix(vcov(mod))
+  se <- sqrt(diag(vcov.mat))
+  fixed.labels <- names(fixef(mod))
+  names(se) <- fixed.labels
+  return(se)
+}

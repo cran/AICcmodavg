@@ -6,14 +6,14 @@
 \alias{extractSE.lmekin}
 \alias{extractSE.mer}
 \alias{extractSE.merMod}
+\alias{extractSE.lmerModLmerTest}
 \title{
-Extract SE of Fixed Effects of \code{coxme}, \code{glmer}, and
-\code{lmekin} Fit
+Extract SE of Fixed Effects
 }
 \description{
 This function extracts the standard errors (SE) of the fixed effects of
-a mixed model fit with \code{coxme}, \code{glmer}, \code{lmer}, and
-\code{lmekin} and adds the appropriate labels.
+a mixed model fit with \code{coxme}, \code{glmer}, \code{lmer},
+\code{lmerModLmerTest}, and \code{lmekin} and adds the appropriate labels.
 }
 \usage{
 
@@ -26,20 +26,22 @@ extractSE(mod, \dots)
 \method{extractSE}{mer}(mod, \dots)
 
 \method{extractSE}{merMod}(mod, \dots)
+
+\method{extractSE}{lmerModLmerTest}(mod, \dots)
 }
 
 \arguments{
   \item{mod}{
-    an object of \code{coxme}, \code{lmekin}, \code{mer} or \code{merMod}
-    class.
+    an object of \code{coxme}, \code{lmekin}, \code{mer}, \code{merMod},
+    or \code{lmerModTest} class.
 }
 \item{\dots}{additional arguments passed to the function.}
 }
 \details{
-These are extractor functions that use \code{vcov.coxme},
-  \code{vcov.lmekin}, \code{vcov.mer}, and \code{vcov.merMod}. Some of
-  these functions are called by \code{modavg}, depending on the class of
-  the objects.
+These extractor functions use \code{vcov.coxme}, \code{vcov.lmekin},
+  \code{vcov.mer}, and \code{vcov.merMod}. Some of these functions are
+  called by \code{modavg} and \code{modavgShrink}, depending on the
+  class of the objects. 
 }
 \value{
 Returns the SE's of the fixed effects with the appropriate labels for each.

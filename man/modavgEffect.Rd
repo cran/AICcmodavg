@@ -10,6 +10,7 @@
 \alias{modavgEffect.AICmer}
 \alias{modavgEffect.AICglmerMod}
 \alias{modavgEffect.AIClmerMod}
+\alias{modavgEffect.AIClmerModLmerTest}
 \alias{modavgEffect.AICnegbin.glm.lm}
 \alias{modavgEffect.AICrlm.lm}
 \alias{modavgEffect.AICsurvreg}
@@ -75,6 +76,10 @@ modavgEffect(cand.set, modnames = NULL, newdata, second.ord = TRUE,
         conf.level = 0.95, type = "response", \dots)
 
 \method{modavgEffect}{AIClmerMod}(cand.set, modnames = NULL,
+        newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots)
+
+\method{modavgEffect}{AIClmerModLmerTest}(cand.set, modnames = NULL,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
 
@@ -296,12 +301,13 @@ set is used instead of being restricted to a single model.  See
 \code{modavgEffect} calls the appropriate method depending on the class
 of objects in the list.  The current classes supported include
 \code{aov}, \code{glm}, \code{gls}, \code{lm}, \code{lme}, \code{mer},
-\code{glmerMod}, \code{lmerMod}, \code{rlm}, \code{survreg}, as well as
-\code{unmarkedFitOccu}, \code{unmarkedFitColExt},
-\code{unmarkedFitOccuFP}, \code{unmarkedFitOccuRN},
-\code{unmarkedFitPCount}, \code{unmarkedFitPCO}, \code{unmarkedFitDS},
-\code{unmarkedFitGDS}, \code{unmarkedFitMPois}, \code{unmarkedFitGMM},
-and \code{unmarkedFitGPC} classes.
+\code{glmerMod}, \code{lmerMod}, \code{lmerModLmerTest}, \code{rlm},
+\code{survreg}, as well as \code{unmarkedFitOccu},
+\code{unmarkedFitColExt}, \code{unmarkedFitOccuFP},
+\code{unmarkedFitOccuRN}, \code{unmarkedFitPCount},
+\code{unmarkedFitPCO}, \code{unmarkedFitDS}, \code{unmarkedFitGDS},
+\code{unmarkedFitMPois}, \code{unmarkedFitGMM}, and
+\code{unmarkedFitGPC} classes.
 }
 \value{
 The result is an object of class \code{modavgEffect} with the following

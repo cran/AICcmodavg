@@ -13,6 +13,7 @@
 \alias{importance.AICglm.lm}
 \alias{importance.AICglmmTMB}
 \alias{importance.AICglmerMod}
+\alias{importance.AIClmerModLmerTest}
 \alias{importance.AICgls}
 \alias{importance.AIChurdle}
 \alias{importance.AIClm}
@@ -83,6 +84,9 @@ importance(cand.set, parm, modnames = NULL, second.ord = TRUE,
            second.ord = TRUE, nobs = NULL, c.hat = 1, ...)
 
 \method{importance}{AICglmerMod}(cand.set, parm, modnames = NULL,
+           second.ord = TRUE, nobs = NULL, ...)
+
+\method{importance}{AIClmerModLmerTest}(cand.set, parm, modnames = NULL,
            second.ord = TRUE, nobs = NULL, ...)
 
 \method{importance}{AICglmmTMB}(cand.set, parm, modnames = NULL,

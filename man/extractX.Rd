@@ -10,6 +10,7 @@
 \alias{extractX.AIClme}
 \alias{extractX.AICglmerMod}
 \alias{extractX.AIClmerMod}
+\alias{extractX.AIClmerModLmerTest}
 \alias{extractX.AICrlm.lm}
 \alias{extractX.AICsurvreg}
 \alias{extractX.AICunmarkedFitOccu}
@@ -31,9 +32,10 @@ Extract Predictors from Candidate Model List
 \description{
 This function extracts the predictors used in candidate models.  The
 function is currently implemented for \code{glm}, \code{glmmTMB},
-\code{gls}, \code{lm}, \code{lme}, \code{merMod}, \code{rlm},
-\code{survreg} object classes that are stored in a list as well as
-various models of \code{unmarkedFit} classes. 
+\code{gls}, \code{lm}, \code{lme}, \code{merMod},
+\code{lmerModLmerTest}, \code{rlm}, \code{survreg} object classes that
+are stored in a list as well as various models of \code{unmarkedFit}
+classes.
 }
 \usage{
 extractX(cand.set, \dots)
@@ -53,6 +55,8 @@ extractX(cand.set, \dots)
 \method{extractX}{AICglmerMod}(cand.set, \dots)
 
 \method{extractX}{AIClmerMod}(cand.set, \dots)
+
+\method{extractX}{AIClmerModLmerTest}(cand.set, \dots)
 
 \method{extractX}{AICrlm.lm}(cand.set, \dots) 
 

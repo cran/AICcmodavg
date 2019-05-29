@@ -10,6 +10,7 @@
 \alias{multComp.mer}
 \alias{multComp.negbin}
 \alias{multComp.merMod}
+\alias{multComp.lmerModLmerTest}
 \alias{multComp.rlm}
 \alias{multComp.survreg}
 \alias{print.multComp}
@@ -22,8 +23,8 @@ tests in designed experiments.  It creates a model selection table based
 on different grouping patterns of a factor and computes model-averaged
 predictions for each of the factor levels.  The current version works
 with objects of \code{aov}, \code{glm}, \code{gls}, \code{lm},
-\code{lme}, \code{mer}, \code{merMod}, \code{negbin}, and \code{rlm},
-\code{survreg} classes.
+\code{lme}, \code{mer}, \code{merMod}, \code{lmerModLmerTest},
+\code{negbin}, and \code{rlm}, \code{survreg} classes.
 }
 
 \usage{
@@ -80,6 +81,11 @@ multComp(mod, factor.id, letter.labels = TRUE, second.ord = TRUE,
         second.ord = TRUE, nobs = NULL, sort = TRUE, newdata = NULL,
         uncond.se = "revised", conf.level = 0.95,
         correction = "none", type = "response", \dots)
+
+\method{multComp}{lmerModLmerTest}(mod, factor.id, letter.labels = TRUE,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, newdata = NULL,
+        uncond.se = "revised", conf.level = 0.95,
+        correction = "none", \dots)
 }
 
 %- maybe also 'usage' for other objects documented here.

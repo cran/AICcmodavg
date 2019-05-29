@@ -11,6 +11,7 @@
 \alias{checkConv.lavaan}
 \alias{checkConv.maxlikeFit}
 \alias{checkConv.merMod}
+\alias{checkConv.lmerModLmerTest}
 \alias{checkConv.multinom}
 \alias{checkConv.nls}
 \alias{checkConv.polr}
@@ -45,6 +46,8 @@ checkConv(mod, \dots)
 
 \method{checkConv}{merMod}(mod, \dots)
 
+\method{checkConv}{lmerModLmerTest}(mod, \dots)
+
 \method{checkConv}{multinom}(mod, \dots)
 
 \method{checkConv}{nls}(mod, \dots)
@@ -72,11 +75,11 @@ checkConv(mod, \dots)
   convergence information from the optimization function.  The function
   is currently implemented for models of classes \code{betareg},
   \code{clm}, \code{clmm}, \code{glm}, \code{glmmTMB}, \code{hurdle},
-  \code{lavaan}, \code{maxlikeFit}, \code{merMod}, \code{multinom},
-  \code{nls}, \code{polr}, \code{unmarkedFit}, and \code{zeroinfl}.  The
-  function is particularly useful for functions with several groups of
-  parameters, such as those of the \code{unmarked} package (Fiske and
-  Chandler, 2011).
+  \code{lavaan}, \code{maxlikeFit}, \code{merMod},
+  \code{lmerModLmerTest}, \code{multinom}, \code{nls}, \code{polr},
+  \code{unmarkedFit}, and \code{zeroinfl}.  The function is particularly
+  useful for functions with several groups of parameters, such as those
+  of the \code{unmarked} package (Fiske and Chandler, 2011).
 }
 \value{
   \code{checkConv} returns a list with the following components:

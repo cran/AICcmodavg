@@ -138,6 +138,20 @@ checkConv.merMod <- function(mod, ...) {
 
 
 
+##lmerModLmerTest
+checkConv.lmerModLmerTest <- function(mod, ...) {
+    if(mod@optinfo$conv$opt == 0) {
+        conv <- TRUE
+    } else {conv <- FALSE}
+
+    msg <- NULL ##object does not include a message from IWLS algorithm
+    out <- list(converged = conv, message = msg)
+    class(out) <- "checkConv"
+    return(out)
+}
+
+
+
 ##multinom
 checkConv.multinom <- function(mod, ...) {
     if(mod$convergence == 0) {

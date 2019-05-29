@@ -1062,6 +1062,72 @@ bictab.AIClmerMod <-
 
 
 
+##lmerModLmerTest
+bictab.AIClmerModLmerTest <-
+  function(cand.set, modnames = NULL, nobs = NULL, sort = TRUE, ...){  #specify whether table should be sorted or not by delta BIC
+
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+      if(is.null(names(cand.set))) {
+        modnames <- paste("Mod", 1:length(cand.set), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+      } else {
+        modnames <- names(cand.set)
+      }
+    }
+    
+    ##check for subclass of object
+    sub.class <- lapply(X = cand.set, FUN = class)
+
+    ##add check to see whether response variable is the same for all models
+    check.resp <- lapply(X = cand.set, FUN = function(b) formula(b)[2])
+    if(length(unique(check.resp)) > 1) stop("\nYou must use the same response variable for all models\n")
+
+    Results <- NULL
+    ##check if models were fit with same method (REML or ML)
+    check_REML <- unlist(lapply(cand.set, FUN = function(i) isREML(i)))
+    check_ML <- ifelse(check_REML, "REML", "ML")
+    
+    if (any(check_REML)) {
+      warning("\nModel selection for fixed effects is only appropriate with ML estimation:", "\n",
+                    "REML (default) should only be used to select random effects for a constant set of fixed effects\n")
+    }
+
+    check.method <- unique(check_ML)
+    if(length(check.method) > 1) {
+      stop("\nYou should not have models fit with REML and ML in the same candidate model set\n")
+    }
+    
+    Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+    Results$K <- unlist(lapply(cand.set, useBIC, return.K = TRUE, nobs = nobs))     #extract number of parameters
+    Results$BIC <- unlist(lapply(cand.set, useBIC, return.K = FALSE, nobs = nobs))  #extract BIC                          
+    Results$Delta_BIC <- Results$BIC - min(Results$BIC)            #compute delta BIC
+    Results$ModelLik <- exp(-0.5*Results$Delta_BIC)                #compute model likelihood required to compute BIC weights
+    Results$BICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute BIC weights
+
+    ##check if some models are redundant
+    if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n") 
+    
+    #check if ML or REML used and add column accordingly
+    if(identical(check.method, "ML")) {
+      Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))      
+    }
+
+    if(identical(check.method, "REML")) {
+      Results$Res.LL <- unlist(lapply(X = cand.set, FUN = function(i) logLik(i)[1]))      
+    }
+
+    if(sort)  {
+      Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on BIC weights
+      Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
+    } else {Results$Cum.Wt <- NULL}
+    
+    class(Results) <- c("bictab", "data.frame")
+    return(Results)
+  }
+
+
+
 ##glmerMod
 bictab.AICglmerMod <-
   function(cand.set, modnames = NULL, nobs = NULL, sort = TRUE, ...){  #specify whether table should be sorted or not by delta BIC

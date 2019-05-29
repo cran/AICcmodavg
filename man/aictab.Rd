@@ -23,6 +23,7 @@
 \alias{aictab.AICmaxlikeFit.list}
 \alias{aictab.AICmer}
 \alias{aictab.AIClmerMod}
+\alias{aictab.AIClmerModLmerTest}
 \alias{aictab.AICglmerMod}
 \alias{aictab.AICnlmerMod}
 \alias{aictab.AICmultinom.nnet}
@@ -61,10 +62,11 @@ of \code{aov}, \code{betareg}, \code{clm}, \code{clmm}, \code{clogit},
 \code{coxme}, \code{coxph}, \code{fitdist}, \code{fitdistr}, \code{glm},
 \code{glmmTMB}, \code{gls}, \code{gnls}, \code{hurdle}, \code{lavaan},
 \code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
-\code{merMod}, \code{multinom}, \code{negbin}, \code{nlme}, \code{nls},
-\code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, and
-\code{zeroinfl} classes as well as various models of \code{unmarkedFit}
-classes but does not yet allow mixing of different classes.
+\code{merMod}, \code{lmerModLmerTest}, \code{multinom}, \code{negbin},
+\code{nlme}, \code{nls}, \code{polr}, \code{rlm}, \code{survreg},
+\code{vglm}, and \code{zeroinfl} classes as well as various models of
+\code{unmarkedFit} classes but does not yet allow mixing of different
+classes.
 }
 \usage{
 aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
@@ -131,6 +133,9 @@ aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
 \method{aictab}{AIClmerMod}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
+
+\method{aictab}{AIClmerModLmerTest}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, \dots)
 
 \method{aictab}{AICglmerMod}(cand.set, modnames = NULL,
@@ -257,9 +262,11 @@ current function is implemented for \code{clogit}, \code{coxme},
 \code{coxph}, \code{fitdist}, \code{fitdistr}, \code{glm},
 \code{glmmTMB}, \code{gls}, \code{gnls}, \code{hurdle}, \code{lavaan},
 \code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
-\code{merMod}, \code{multinom}, \code{negbin}, \code{nlme}, \code{nls},
-\code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, and
-\code{zeroinfl} classes as well as various \code{unmarkedFit} classes.
+\code{merMod}, \code{lmerModLmerTest}, \code{multinom}, \code{negbin},
+\code{nlme}, \code{nls}, \code{polr}, \code{rlm}, \code{survreg},
+\code{vglm}, and \code{zeroinfl} classes as well as various
+\code{unmarkedFit} classes.
+
 The function constructs a model selection table based on one of the four
 information criteria: AIC, AICc, QAIC, and QAICc.
 

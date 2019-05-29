@@ -342,6 +342,25 @@ useBIC.merMod <-
   }
 
 
+##lmerModLmerTest objects
+useBIC.lmerModLmerTest <-
+  function(mod, return.K = FALSE, nobs = NULL, ...){
+ 
+    if(is.null(nobs)) {
+      n <- mod@devcomp$dims["n"]
+      names(n) <- NULL
+    } else {n <- nobs}
+    
+    LL <- logLik(mod)[1]
+    K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model
+      
+    BIC <- -2*LL + K * log(n)
+                    
+    if(return.K == TRUE) BIC[1] <- K #attributes the first element of BIC to K
+    BIC
+  }
+
+
 ##mult objects
 useBIC.multinom <-
   function(mod, return.K = FALSE, nobs = NULL, c.hat = 1, ...){

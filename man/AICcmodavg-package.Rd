@@ -43,15 +43,15 @@ in the package.
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 2.2-1\cr
-Date: \tab 2019-03-07\cr
+Version: \tab 2.2-2\cr
+Date: \tab 2019-05-29\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
 
 Many functions of the package require a list of models as the input to
 conduct model selection and multimodel inference.  Thus, you should
-start by organizing the output of the models in a list  (See 'Examples'
+start by organizing the output of the models in a list (See 'Examples'
 below).
 
 This package contains several useful functions for model selection and

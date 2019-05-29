@@ -19,6 +19,7 @@
 \alias{modavg.AICmaxlikeFit.list}
 \alias{modavg.AICmer}
 \alias{modavg.AIClmerMod}
+\alias{modavg.AIClmerModLmerTest}
 \alias{modavg.AICglmerMod}
 \alias{modavg.AICmultinom.nnet}
 \alias{modavg.AICnegbin.glm.lm}
@@ -125,6 +126,10 @@ modavg(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
         exclude = NULL, warn = TRUE, \dots)
 
 \method{modavg}{AIClmerMod}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, \dots)
+
+\method{modavg}{AIClmerModLmerTest}(cand.set, parm, modnames = NULL,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, exclude = NULL, warn = TRUE, \dots)
 
@@ -394,9 +399,10 @@ inference on beta estimates or to focus on model-averaged effect sizes
 \code{aov}, \code{betareg}, \code{clm}, \code{clmm}, \code{clogit},
 \code{coxme}, \code{coxph}, \code{glm}, \code{glmmTMB}, \code{gls},
 \code{hurdle}, \code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit},
-\code{mer}, \code{glmerMod}, \code{lmerMod}, \code{multinom},
-\code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, \code{zeroinfl}
-classes as well as various models of \code{unmarkedFit} classes.
+\code{mer}, \code{glmerMod}, \code{lmerMod}, \code{lmerModLmerTest},
+\code{multinom}, \code{polr}, \code{rlm}, \code{survreg}, \code{vglm},
+\code{zeroinfl} classes as well as various models of \code{unmarkedFit}
+classes.
 }
 \value{
 \code{modavg} creates an object of class \code{modavg} with the following

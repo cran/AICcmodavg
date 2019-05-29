@@ -4,6 +4,14 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 2.2-2 (5 May 2019)
+##- added methods for 'lmerTest' objects
+##- corrected bug when model names are NULL in 'modavgEffect' for
+##  certain model types
+
+
+
+####################################################################
 ##revision 2.2-1 (7 March 2019)
 ##- added 'DIC' and 'dictab' methods for objects of classes 'jagsUI'
 ##- added new functions 'ictab' and 'modavgIC' for generic information
@@ -18,6 +26,7 @@
 ##- added 'xtable' method for 'modavgCustom' class and modified 'xtable'
 ##  method for 'modavg' when working with models of 'multinom' class
 ##- added examples in 'AICcmodavg-package' Rd file
+
 
 
 ####################################################################
@@ -48,6 +57,7 @@
 ##  ZIP models fit with 'pcount'
 
 
+
 ####################################################################
 ##revision 2.1-1 (19 June 2017)
 ##- created 'extractX' generic function to extract all predictors that appear
@@ -70,6 +80,7 @@
 ##- added "detect" as a value for the 'parm.type' argument of 'modavgPred',
 ##  'modavgEffect', 'modavgShrink', and 'modavg' methods for objects of
 ##  'unmarkedFitGDS' class
+
 
 
 ####################################################################
@@ -104,6 +115,7 @@
 ##- added new 'useBIC' argument to 'modavgCustom' to conduct multimodel inference
 ##  based on BIC from user-supplied inputs
 ##- removed functions that were moved to defunct during previous cycle of package
+
 
 
 ####################################################################

@@ -20,6 +20,7 @@
 \alias{modavgShrink.AICmer}
 \alias{modavgShrink.AICglmerMod}
 \alias{modavgShrink.AIClmerMod}
+\alias{modavgShrink.AIClmerModLmerTest}
 \alias{modavgShrink.AICmultinom.nnet}
 \alias{modavgShrink.AICnegbin.glm.lm}
 \alias{modavgShrink.AICpolr}
@@ -123,6 +124,10 @@ modavgShrink(cand.set, parm, modnames = NULL, second.ord = TRUE,
         conf.level = 0.95, \dots)
 
 \method{modavgShrink}{AIClmerMod}(cand.set, parm, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, \dots)
+
+\method{modavgShrink}{AIClmerModLmerTest}(cand.set, parm, modnames = NULL,
         second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, \dots)
 
@@ -332,9 +337,10 @@ interaction terms or polynomial terms are not supported by
 \code{aov}, \code{betareg}, \code{clm}, \code{clmm}, \code{clogit},
 \code{coxme}, \code{coxph}, \code{glm}, \code{glmmTMB}, \code{gls},
 \code{hurdle}, \code{lm}, \code{lme}, \code{lmekin}, \code{maxlikeFit},
-\code{mer}, \code{glmerMod}, \code{lmerMod}, \code{multinom},
-\code{polr}, \code{rlm}, \code{survreg}, \code{vglm}, \code{zeroinfl}
-classes as well as various models of \code{unmarkedFit} classes.
+\code{mer}, \code{glmerMod}, \code{lmerMod}, \code{lmerModLmerTest},
+\code{multinom}, \code{polr}, \code{rlm}, \code{survreg}, \code{vglm},
+\code{zeroinfl} classes as well as various models of \code{unmarkedFit}
+classes.
 }
 \value{
 \code{modavgShrink} creates an object of class \code{modavgShrink}

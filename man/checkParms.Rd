@@ -18,6 +18,7 @@
 \alias{checkParms.lmekin}
 \alias{checkParms.maxlikeFit}
 \alias{checkParms.merMod}
+\alias{checkParms.lmerModLmerTest}
 \alias{checkParms.multinom}
 \alias{checkParms.nlme}
 \alias{checkParms.nls}
@@ -70,6 +71,8 @@ checkParms(mod, se.max = 25, simplify = TRUE, \dots)
 \method{checkParms}{maxlikeFit}(mod, se.max = 25, \dots)
 
 \method{checkParms}{merMod}(mod, se.max = 25, \dots)
+
+\method{checkParms}{lmerModLmerTest}(mod, se.max = 25, \dots)
 
 \method{checkParms}{multinom}(mod, se.max = 25, \dots)
 

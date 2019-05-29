@@ -666,6 +666,113 @@ extractX.AIClmerMod <- function(cand.set, ...) {
 
 
 
+##lmerModLmerTest
+extractX.AIClmerModLmerTest <- function(cand.set, ...) {
+    
+    ##extract predictors from list
+    form.list <- as.character(lapply(cand.set, FUN = function(x) formula(x)[[3]]))
+    ##extract based on "+"
+    form.noplus <- unlist(sapply(form.list, FUN = function(i) strsplit(i, split = "\\+")))
+    ##remove extra white space
+    form.clean <- gsub("(^ +)|( +$)", "", form.noplus)
+    unique.clean <- unique(form.clean)
+    ##exclude empty strings and intercept
+    unique.predictors <- unique.clean[nchar(unique.clean) != 0 & unique.clean != "1"]
+
+    ##extract response
+    resp <- unique(as.character(sapply(cand.set, FUN = function(x) formula(x)[[2]])))
+    ##check if different response used
+    if(length(resp) > 1) stop("\nThe response variable should be identical in all models\n")
+
+
+    ##check for | in variance terms
+    pipe.id <- which(regexpr("\\|", unique.predictors) != -1)
+
+    ##remove variance terms from string of predictors
+    if(length(pipe.id) > 0) {unique.predictors <- unique.predictors[-pipe.id]}
+    
+    
+    ##extract data from model objects
+    dsets <- lapply(cand.set, FUN = function(i) i@frame)
+
+    ##remove model names from list
+    names(dsets) <- NULL
+
+    ##combine data sets
+    combo <- do.call(what = "cbind", dsets)
+    dframe <- combo[, unique(names(combo))]
+
+    ##remove response from data frame
+    dframe <- dframe[, names(dframe) != resp]
+
+
+    ##check for interactions specified with *
+    inter.star <- any(regexpr("\\*", unique.predictors) != -1)
+    
+    ##check for interaction terms
+    inter.id <- any(regexpr("\\:", unique.predictors) != -1)
+    
+    ##inter.star and inter.id
+    if(inter.star && inter.id) {
+        ##separate terms in interaction
+        terms.nostar <- unlist(sapply(unique.predictors, FUN = function(i) strsplit(i, split = "\\*")))
+        ##remove extra white space
+        terms.nostar.clean <- gsub("(^ +)|( +$)", "", terms.nostar)
+        ##separate terms in interaction
+        terms.nointer <- unlist(sapply(terms.nostar.clean, FUN = function(i) strsplit(i, split = "\\:")))
+        ##remove extra white space
+        terms.clean <- gsub("(^ +)|( +$)", "", terms.nointer)
+    }
+
+
+    ##inter.star
+    if(inter.star && !inter.id) {
+        ##separate terms in interaction
+        terms.nostar <- unlist(sapply(unique.predictors, FUN = function(i) strsplit(i, split = "\\*")))
+        ##remove extra white space
+        terms.clean <- gsub("(^ +)|( +$)", "", terms.nostar)
+    }
+    
+        
+    ##inter.id
+    if(!inter.star && inter.id) {
+        ##separate terms in interaction
+        terms.nointer <- unlist(sapply(unique.predictors, FUN = function(i) strsplit(i, split = "\\:")))
+        ##remove extra white space
+        terms.clean <- gsub("(^ +)|( +$)", "", terms.nointer)
+    }
+        
+
+    ##none
+    if(!inter.star && !inter.id) {
+        ##remove extra white space
+        terms.clean <- unique.predictors
+    }
+
+        
+    ##combine in single character vector
+    final.predictors <- unique(terms.clean)
+        
+    ##check for I( ) custom variables in formula
+    I.id <- which(regexpr("I\\(", final.predictors) != -1)
+        
+    ##if I( ) used
+    if(length(I.id) > 0) {
+        dframe <- dframe[, final.predictors[-I.id], drop = FALSE]
+    } else {
+        dframe <- dframe[, final.predictors, drop = FALSE]            
+    }
+
+    
+    ##assemble results
+    result <- list("predictors" = unique.predictors,
+                   "data" = dframe)
+    class(result) <- "extractX"
+    return(result)
+}
+
+
+
 ##rlm
 extractX.AICrlm.lm <- function(cand.set, ...) {
     

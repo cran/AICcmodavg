@@ -22,6 +22,7 @@
 \alias{useBIC.maxlikeFit}
 \alias{useBIC.mer}
 \alias{useBIC.merMod}
+\alias{useBIC.lmerModLmerTest}
 \alias{useBIC.multinom}
 \alias{useBIC.nlme}
 \alias{useBIC.nls}
@@ -84,6 +85,8 @@ useBIC(mod, return.K = FALSE, nobs = NULL, \dots)
 
 \method{useBIC}{merMod}(mod, return.K = FALSE, nobs = NULL, \dots)  
 
+\method{useBIC}{lmerModLmerTest}(mod, return.K = FALSE, nobs = NULL, \dots)  
+
 \method{useBIC}{multinom}(mod, return.K = FALSE, nobs = NULL, c.hat = 1,
 \dots)
 
@@ -113,8 +116,8 @@ useBIC(mod, return.K = FALSE, nobs = NULL, \dots)
     \code{fitdist}, \code{fitdistr}, \code{glm}, \code{glmmTMB},
     \code{gls}, \code{gnls}, \code{hurdle}, \code{lavaan}, \code{lm},
     \code{lme}, \code{lmekin}, \code{maxlikeFit}, \code{mer},
-    \code{merMod}, \code{multinom}, \code{nlme}, \code{nls},
-    \code{polr}, \code{rlm}, \code{survreg}, \code{vglm},
+    \code{merMod}, \code{lmerModLmerTest}, \code{multinom}, \code{nlme},
+    \code{nls}, \code{polr}, \code{rlm}, \code{survreg}, \code{vglm},
     \code{zeroinfl}, and various \code{unmarkedFit} classes containing
     the output of a model. 
 }

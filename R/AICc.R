@@ -287,6 +287,26 @@ AICc.lme <-
 
 
 
+##lmerModLmerTest objects
+AICc.lmerModLmerTest <-
+  function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
+ 
+    if(is.null(nobs)) {
+      n <- mod@devcomp$dims["n"]
+      names(n) <- NULL
+    } else {n <- nobs}
+    
+    LL <- logLik(mod)[1]
+    K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model
+      
+    if(second.ord == TRUE) {AICc <- -2*LL+2*K*(n/(n-K-1))} else{AICc <- -2*LL+2*K}
+                    
+    if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
+    AICc
+  }
+
+
+
 ##lmekin objects
 AICc.lmekin <-
   function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){

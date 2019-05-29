@@ -6,6 +6,7 @@
 \alias{predictSE.lme}
 \alias{predictSE.mer}
 \alias{predictSE.merMod}
+\alias{predictSE.lmerModLmerTest}
 \alias{predictSE.unmarkedFitPCount}
 \alias{predictSE.unmarkedFitPCO}
 
@@ -31,6 +32,9 @@ predictSE(mod, newdata, se.fit = TRUE, print.matrix = FALSE, \dots)
 \method{predictSE}{merMod}(mod, newdata, se.fit = TRUE, print.matrix =
         FALSE, level = 0, type = "response", \dots)
 
+\method{predictSE}{lmerModLmerTest}(mod, newdata, se.fit = TRUE, print.matrix =
+        FALSE, level = 0, \dots)
+
 \method{predictSE}{unmarkedFitPCount}(mod, newdata, se.fit = TRUE,
         print.matrix = FALSE, type = "response", c.hat = 1, parm.type =
         "lambda", \dots)
@@ -42,8 +46,8 @@ predictSE(mod, newdata, se.fit = TRUE, print.matrix = FALSE, \dots)
 \arguments{
   \item{mod}{
     an object of class \code{gls}, \code{lme}, \code{mer},
-        \code{merMod}, \code{unmarkedFitPCount}, or
-        \code{unmarkedFitPCO} containing the output of a model.
+        \code{merMod}, \code{lmerModLmerTest}, \code{unmarkedFitPCount},
+        or \code{unmarkedFitPCO} containing the output of a model.
   }
   \item{newdata}{
     a data frame with the same structure as that of the original data
@@ -89,11 +93,11 @@ predictSE(mod, newdata, se.fit = TRUE, print.matrix = FALSE, \dots)
 }
 \details{
   \code{predictSE} computes predicted values and associated standard
-    errors.  Standard errors are approximated using the delta method
-    (Oehlert 1992).  Predictions and standard errors for objects of
-    \code{gls} class and mixed models of \code{lme}, \code{mer},
-    \code{merMod} classes exclude the correlation or variance structure
-    of the model.
+  errors.  Standard errors are approximated using the delta method
+  (Oehlert 1992).  Predictions and standard errors for objects of
+  \code{gls} class and mixed models of \code{lme}, \code{mer},
+  \code{merMod}, \code{lmerModLmerTest} classes exclude the
+  correlation or variance structure of the model.
 
   \code{predictSE} computes predicted values on abundance and standard
   errors based on the estimates from an \code{unmarkedFitPCount} or
