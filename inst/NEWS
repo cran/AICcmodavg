@@ -4,6 +4,22 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
 ##
 ####################################################################
+##revision 2.3-0 (3 July 2020)
+##- added support for models of classes 'unmarkedFitOccuMS', 'unmarkedFitOccuTTD'
+##  'unmarkedFitMMO, 'unmarkedFitDSO'
+##- created new function 'detTime' to summarize time to detection data for
+##  models of class 'unmarkedFitOccuTTD'
+##- addedd 'modavgPred' method for 'unmarkedFitOccuMulti' and 'unmarkedFitOccuMS'
+##  objects
+##- modified default plotting parameters in functions 'countHist', 'countDist',
+##  'detTime', 'mb.gof.test', and 'Nmix.gof.test'
+##- modified 'mb.chisq' methods to allow for new default behavior of R to use
+##  stringsAsFactors = FALSE for characters in data frames
+##- correction bug for GOF Royle-Nichols model (thanks to Ken Kellner)
+
+
+
+####################################################################
 ##revision 2.2-2 (5 May 2019)
 ##- added methods for 'lmerTest' objects
 ##- corrected bug when model names are NULL in 'modavgEffect' for

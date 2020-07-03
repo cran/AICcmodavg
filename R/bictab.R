@@ -1981,14 +1981,12 @@ bictab.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, nobs = NULL, 
     }
   }
     
-  ##add check for use of c-hat
-  if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for false-positive occupancy models\n")
-
+  
   Results <- data.frame(Modnames = modnames)                    #assign model names to first column
   Results$K <- unlist(lapply(cand.set, useBIC, return.K = TRUE,
                              nobs = nobs, c.hat = c.hat))     #extract number of parameters
   Results$BIC <- unlist(lapply(cand.set, useBIC, return.K = FALSE,
-                                nobs = nobs, c.hat = c.hat))  #extract BIC
+                                nobs = nobs, c.hat = c.hat))  #extract BIC                                      #
   Results$Delta_BIC <- Results$BIC - min(Results$BIC)            #compute delta BIC
   Results$ModelLik <- exp(-0.5*Results$Delta_BIC)                #compute model likelihood required to compute BIC weights
   Results$BICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute BIC weights
@@ -1996,8 +1994,20 @@ bictab.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, nobs = NULL, 
   ##check if some models are redundant
   if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
 
-  Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
-    
+
+  ##check if BIC and c.hat = 1
+  if(c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
+  
+  ##rename correctly to QBIC and add column for c-hat
+  if(c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QBIC", "Delta_QBIC", "ModelLik", "QBICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
+
   if(sort)  {
     Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
@@ -2022,14 +2032,15 @@ bictab.AICunmarkedFitOccuMulti <- function(cand.set, modnames = NULL, nobs = NUL
     }
   }
     
+    
   ##add check for use of c-hat
-  if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for multispecies occupancy models\n")
+  #if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for multinomial Poisson models\n")
 
   Results <- data.frame(Modnames = modnames)                    #assign model names to first column
   Results$K <- unlist(lapply(cand.set, useBIC, return.K = TRUE,
                              nobs = nobs, c.hat = c.hat))     #extract number of parameters
   Results$BIC <- unlist(lapply(cand.set, useBIC, return.K = FALSE,
-                                nobs = nobs, c.hat = c.hat))  #extract BIC
+                                nobs = nobs, c.hat = c.hat))  #extract BIC                                      #
   Results$Delta_BIC <- Results$BIC - min(Results$BIC)            #compute delta BIC
   Results$ModelLik <- exp(-0.5*Results$Delta_BIC)                #compute model likelihood required to compute BIC weights
   Results$BICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute BIC weights
@@ -2037,10 +2048,22 @@ bictab.AICunmarkedFitOccuMulti <- function(cand.set, modnames = NULL, nobs = NUL
   ##check if some models are redundant
   if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
 
-  Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
-    
+
+  ##check if BIC and c.hat = 1
+  if(c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
+  
+  ##rename correctly to QBIC and add column for c-hat
+  if(c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QBIC", "Delta_QBIC", "ModelLik", "QBICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
+
   if(sort)  {
-    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on delta BIC
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
   } else {Results$Cum.Wt <- NULL}
   
@@ -2198,6 +2221,222 @@ bictab.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, nobs = NULL, sor
     Results$c_hat <- c.hat
   }      
   
+  if(sort)  {
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
+  } else {Results$Cum.Wt <- NULL}
+  
+  class(Results) <- c("bictab", "data.frame")
+  return(Results)
+}
+
+
+
+##occuMS
+bictab.AICunmarkedFitOccuMS <- function(cand.set, modnames = NULL, nobs = NULL, sort = TRUE, c.hat = 1, ...){  #specify whether table should be sorted or not by delta BIC
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+    
+  ##add check for use of c-hat
+  #if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for multinomial Poisson models\n")
+
+  Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+  Results$K <- unlist(lapply(cand.set, useBIC, return.K = TRUE,
+                             nobs = nobs, c.hat = c.hat))     #extract number of parameters
+  Results$BIC <- unlist(lapply(cand.set, useBIC, return.K = FALSE,
+                                nobs = nobs, c.hat = c.hat))  #extract BIC                                      #
+  Results$Delta_BIC <- Results$BIC - min(Results$BIC)            #compute delta BIC
+  Results$ModelLik <- exp(-0.5*Results$Delta_BIC)                #compute model likelihood required to compute BIC weights
+  Results$BICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute BIC weights
+
+  ##check if some models are redundant
+  if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+
+
+  ##check if BIC and c.hat = 1
+  if(c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
+  
+  ##rename correctly to QBIC and add column for c-hat
+  if(c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QBIC", "Delta_QBIC", "ModelLik", "QBICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
+
+  if(sort)  {
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
+  } else {Results$Cum.Wt <- NULL}
+  
+  class(Results) <- c("bictab", "data.frame")
+  return(Results)
+}
+
+
+
+##occuTTD
+bictab.AICunmarkedFitOccuTTD <- function(cand.set, modnames = NULL, nobs = NULL, sort = TRUE, c.hat = 1, ...){  #specify whether table should be sorted or not by delta BIC
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+    
+  ##add check for use of c-hat
+  #if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for multinomial Poisson models\n")
+
+  Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+  Results$K <- unlist(lapply(cand.set, useBIC, return.K = TRUE,
+                             nobs = nobs, c.hat = c.hat))     #extract number of parameters
+  Results$BIC <- unlist(lapply(cand.set, useBIC, return.K = FALSE,
+                                nobs = nobs, c.hat = c.hat))  #extract BIC                                      #
+  Results$Delta_BIC <- Results$BIC - min(Results$BIC)            #compute delta BIC
+  Results$ModelLik <- exp(-0.5*Results$Delta_BIC)                #compute model likelihood required to compute BIC weights
+  Results$BICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute BIC weights
+
+  ##check if some models are redundant
+  if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+
+
+  ##check if BIC and c.hat = 1
+  if(c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
+  
+  ##rename correctly to QBIC and add column for c-hat
+  if(c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QBIC", "Delta_QBIC", "ModelLik", "QBICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
+
+  if(sort)  {
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
+  } else {Results$Cum.Wt <- NULL}
+  
+  class(Results) <- c("bictab", "data.frame")
+  return(Results)
+}
+
+
+
+##multmixOpen
+bictab.AICunmarkedFitMMO <- function(cand.set, modnames = NULL, nobs = NULL, sort = TRUE, c.hat = 1, ...){  #specify whether table should be sorted or not by delta BIC
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+    
+  ##add check for use of c-hat
+  #if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for multinomial Poisson models\n")
+
+  Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+  Results$K <- unlist(lapply(cand.set, useBIC, return.K = TRUE,
+                             nobs = nobs, c.hat = c.hat))     #extract number of parameters
+  Results$BIC <- unlist(lapply(cand.set, useBIC, return.K = FALSE,
+                                nobs = nobs, c.hat = c.hat))  #extract BIC                                      #
+  Results$Delta_BIC <- Results$BIC - min(Results$BIC)            #compute delta BIC
+  Results$ModelLik <- exp(-0.5*Results$Delta_BIC)                #compute model likelihood required to compute BIC weights
+  Results$BICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute BIC weights
+
+  ##check if some models are redundant
+  if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+
+
+  ##check if BIC and c.hat = 1
+  if(c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
+  
+  ##rename correctly to QBIC and add column for c-hat
+  if(c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QBIC", "Delta_QBIC", "ModelLik", "QBICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
+
+  if(sort)  {
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on BIC weights
+    Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights
+  } else {Results$Cum.Wt <- NULL}
+  
+  class(Results) <- c("bictab", "data.frame")
+  return(Results)
+}
+
+
+
+##distsampOpen
+bictab.AICunmarkedFitDSO <- function(cand.set, modnames = NULL, nobs = NULL, sort = TRUE, c.hat = 1, ...){  #specify whether table should be sorted or not by delta BIC
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+    
+  ##add check for use of c-hat
+  #if(c.hat > 1) stop("\nThe correction for overdispersion is not yet implemented for multinomial Poisson models\n")
+
+  Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+  Results$K <- unlist(lapply(cand.set, useBIC, return.K = TRUE,
+                             nobs = nobs, c.hat = c.hat))     #extract number of parameters
+  Results$BIC <- unlist(lapply(cand.set, useBIC, return.K = FALSE,
+                                nobs = nobs, c.hat = c.hat))  #extract BIC                                      #
+  Results$Delta_BIC <- Results$BIC - min(Results$BIC)            #compute delta BIC
+  Results$ModelLik <- exp(-0.5*Results$Delta_BIC)                #compute model likelihood required to compute BIC weights
+  Results$BICWt <- Results$ModelLik/sum(Results$ModelLik)        #compute BIC weights
+
+  ##check if some models are redundant
+  if(length(unique(Results$BIC)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+
+
+  ##check if BIC and c.hat = 1
+  if(c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
+  
+  ##rename correctly to QBIC and add column for c-hat
+  if(c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QBIC", "Delta_QBIC", "ModelLik", "QBICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
+
   if(sort)  {
     Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on BIC weights
     Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of BIC weights

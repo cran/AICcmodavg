@@ -12,6 +12,8 @@
 \alias{countHist.unmarkedFitPCO}
 \alias{countHist.unmarkedFrameGMM}
 \alias{countHist.unmarkedFitGMM}
+\alias{countHist.unmarkedFrameMMO}
+\alias{countHist.unmarkedFitMMO}
 \alias{print.countHist}
 \title{
 Compute Summary Statistics from Count Histories
@@ -47,6 +49,11 @@ countHist(object, plot.freq = TRUE, \dots)
 \method{countHist}{unmarkedFitGMM}(object, plot.freq = TRUE,
                    plot.seasons = FALSE, \dots)
 
+\method{countHist}{unmarkedFrameMMO}(object, plot.freq = TRUE,
+                   plot.seasons = FALSE, \dots)
+
+\method{countHist}{unmarkedFitMMO}(object, plot.freq = TRUE,
+                   plot.seasons = FALSE, \dots)
 
 }
 
@@ -78,11 +85,11 @@ countHist(object, plot.freq = TRUE, \dots)
   \code{countHist} can take data frames of the
   \code{unmarkedFramePCount}, \code{unmarkedFrameGPC},
   \code{unmarkedFrameMPois}, \code{unmarkedFramePCO},
-  \code{unmarkedFrameGMM} classes as input.  For convenience, the
-  function can also extract the raw data from model objects of classes
-  \code{unmarkedFitPCount}, \code{unmarkedFitGPC},
-  \code{unmarkedFitMPois}, \code{unmarkedFitPCO}, and
-  \code{unmarkedFitGMM}.  Note that different model objects using the
+  \code{unmarkedFrameGMM}, \code{unmarkedFrameMMO} classes as input.
+  For convenience, the function can also extract the raw data from model
+  objects of classes \code{unmarkedFitPCount}, \code{unmarkedFitGPC},
+  \code{unmarkedFitMPois}, \code{unmarkedFitPCO}, \code{unmarkedFitGMM},
+  and \code{unmarkedFitMMO}. Note that different model objects using the
   same data set will have identical values.
 }
 \value{
@@ -157,8 +164,9 @@ Marc J. Mazerolle
 }
 
 \seealso{
-\code{\link{covDiag}}, \code{\link{detHist}}, \code{\link{countDist}},
-\code{\link{Nmix.chisq}}, \code{\link{Nmix.gof.test}}
+\code{\link{covDiag}}, \code{\link{detHist}}, \code{\link{detTime}},
+\code{\link{countDist}}, \code{\link{Nmix.chisq}},
+\code{\link{Nmix.gof.test}}
 }
 \examples{
 ##modified example from ?pcount

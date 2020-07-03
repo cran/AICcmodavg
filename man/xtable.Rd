@@ -8,6 +8,7 @@
 \alias{xtable.countDist}
 \alias{xtable.countHist}
 \alias{xtable.detHist}
+\alias{xtable.detTime}
 \alias{xtable.dictab}
 \alias{xtable.ictab}
 \alias{xtable.mb.chisq}
@@ -64,6 +65,10 @@
         align = NULL, digits = NULL, display = NULL,
         nice.names = TRUE, table.detHist = "freq", \dots)
 
+\method{xtable}{detTime}(x, caption = NULL, label = NULL,
+        align = NULL, digits = NULL, display = NULL,
+        nice.names = TRUE, table.detTime = "freq", \dots)
+
 \method{xtable}{dictab}(x, caption = NULL, label = NULL, align = NULL, 
         digits = NULL, display = NULL, nice.names = TRUE,
         include.DIC = TRUE, include.Cum.Wt = FALSE, \dots)
@@ -113,11 +118,11 @@
 \arguments{
   \item{x}{
     an object of class \code{aictab}, \code{anovaOD}, \code{bictab},
-    \code{boot.wt}, \code{checkParms}, \code{countDist}, \code{countHist},
-    \code{detHist}, \code{dictab}, \code{ictab}, \code{mb.chisq},
-    \code{modavg}, \code{modavgEffect}, \code{modavgCustom},
-    \code{modavgIC}, \code{modavgPred}, \code{modavgShrink},
-    \code{multComp}, or \code{summaryOD}.
+    \code{boot.wt}, \code{checkParms}, \code{countDist},
+    \code{countHist}, \code{detHist}, \code{detTime}, \code{dictab},
+    \code{ictab}, \code{mb.chisq}, \code{modavg}, \code{modavgEffect},
+    \code{modavgCustom}, \code{modavgIC}, \code{modavgPred},
+    \code{modavgShrink}, \code{multComp}, or \code{summaryOD}.
   }
   
   \item{caption}{
@@ -235,7 +240,19 @@
   each observed detection history.
 }
 
-  \item{table.countDist}{character string specifying, either
+\item{table.detTime}{character string specifying, either \code{"freq"},
+  \code{"prop"}, or \code{"dist"}.  If \code{table.type = "freq"}, the
+  function returns a table of frequencies of sites sampled, of sites with
+  at least one detection, and for data with multiple primary periods,
+  the frequencies of sites with observed extinctions and colonizations.
+  If \code{table.type = "prop"}, the table returns the proportion of
+  sites with at least one detection, and for data with multiple periods,
+  the proportion of sites with observed extinctions and colonizations.
+  If \code{table.type = "dist"}, the function returns the quantiles of
+  detection times.
+}
+
+\item{table.countDist}{character string specifying, either
   \code{"distance"}, \code{"count"}, \code{"freq"}, or \code{"prop"}.  If
   \code{table.type = "distance"}, the function returns a table of counts
   summarized for each distance class.  If \code{table.type = "count"},

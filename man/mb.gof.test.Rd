@@ -28,7 +28,8 @@ mb.chisq(mod, print.table = TRUE, \dots)
 
 \method{mb.chisq}{unmarkedFitColExt}(mod, print.table = TRUE, \dots)
 
-\method{mb.chisq}{unmarkedFitOccuRN}(mod, print.table = TRUE, maxK = 50, \dots)
+\method{mb.chisq}{unmarkedFitOccuRN}(mod, print.table = TRUE,
+                  maxK = NULL, \dots)
 
 mb.gof.test(mod, nsim = 5, plot.hist = TRUE, report = NULL,
             parallel = TRUE, \dots)
@@ -41,7 +42,8 @@ mb.gof.test(mod, nsim = 5, plot.hist = TRUE, report = NULL,
                      plot.seasons = FALSE, \dots) 
 
 \method{mb.gof.test}{unmarkedFitOccuRN}(mod, nsim = 5, plot.hist = TRUE,
-                     report = NULL, parallel = TRUE, maxK = 50, \dots)
+                     report = NULL, parallel = TRUE, maxK = NULL,
+                     \dots)
 
 }
 \arguments{
@@ -72,8 +74,9 @@ the model for which a goodness-of-fit test is required.
   period (season) is to be included in the output. 
 }
 \item{maxK}{the number of support points used as the summation index in
-  the likelihood of the Royle-Nichols model (2003). This should match
-  the value used to estimate the parameters with \code{occuRN}.
+  the likelihood of the Royle-Nichols model (2003).  If \code{NULL},
+  extracts the value of \code{K} used by \code{occuRN} to fit the model
+  to the original data.
 }
 \item{\dots}{
   additional arguments passed to the function.

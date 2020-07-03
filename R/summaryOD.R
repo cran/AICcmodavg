@@ -905,6 +905,246 @@ summaryOD.unmarkedFitOccuMulti <- function(mod, c.hat = 1,
 
 
 
+##occuMS
+summaryOD.unmarkedFitOccuMS <- function(mod, c.hat = 1,
+                                        conf.level = 0.95,
+                                        out.type = "confint", ...){
+
+    if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
+    if(c.hat < 1) {
+        warning("\nUnderdispersion: c-hat is fixed to 1\n")
+        c.hat <- 1
+    }
+
+    ##extract coefs
+    coefs <- coef(mod)
+    ##extract SE's
+    ses <- sqrt(diag(vcov(mod) * c.hat))
+
+    ##number of estimated parameters
+    nparms <- length(coefs)
+    
+    ##arrange in matrix
+    outMat <- matrix(NA, nrow = nparms,
+                     ncol = 4)
+    outMat[, 1:2] <- cbind(coefs, ses)
+    rownames(outMat) <- names(coefs)
+    
+    ##if interval
+    if(identical(out.type, "confint")) {
+        
+        ##compute confidence intervals
+        zstat <- qnorm(p = conf.level)
+        outMat[, 3] <- outMat[, 1] - zstat * outMat[, 2]
+        outMat[, 4] <- outMat[, 1] + zstat * outMat[, 2]
+
+        ##add names
+        colnames(outMat) <- c("estimate", "se", "lowlim", "upplim")
+    }
+
+    ##if htest
+    if(identical(out.type, "nhst")) {
+
+        ##compute P-value
+        outMat[, 3] <- outMat[, 1]/outMat[, 2]
+        outMat[, 4] <- 2 * pnorm(abs(outMat[, 3]), lower.tail = FALSE)
+
+        ##add names
+        colnames(outMat) <- c("estimate", "se", "z", "pvalue")
+    }
+
+    ##assemble in list
+    outList <- list(out.type = out.type,
+                    c.hat = c.hat,
+                    conf.level = conf.level,
+                    outMat = outMat)
+    
+    class(outList) <- c("summaryOD", "list")
+    return(outList)
+}
+
+
+
+##occuTTD
+summaryOD.unmarkedFitOccuTTD <- function(mod, c.hat = 1,
+                                         conf.level = 0.95,
+                                         out.type = "confint", ...){
+
+    if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
+    if(c.hat < 1) {
+        warning("\nUnderdispersion: c-hat is fixed to 1\n")
+        c.hat <- 1
+    }
+
+    ##extract coefs
+    coefs <- coef(mod)
+    ##extract SE's
+    ses <- sqrt(diag(vcov(mod) * c.hat))
+
+    ##number of estimated parameters
+    nparms <- length(coefs)
+    
+    ##arrange in matrix
+    outMat <- matrix(NA, nrow = nparms,
+                     ncol = 4)
+    outMat[, 1:2] <- cbind(coefs, ses)
+    rownames(outMat) <- names(coefs)
+    
+    ##if interval
+    if(identical(out.type, "confint")) {
+        
+        ##compute confidence intervals
+        zstat <- qnorm(p = conf.level)
+        outMat[, 3] <- outMat[, 1] - zstat * outMat[, 2]
+        outMat[, 4] <- outMat[, 1] + zstat * outMat[, 2]
+
+        ##add names
+        colnames(outMat) <- c("estimate", "se", "lowlim", "upplim")
+    }
+
+    ##if htest
+    if(identical(out.type, "nhst")) {
+
+        ##compute P-value
+        outMat[, 3] <- outMat[, 1]/outMat[, 2]
+        outMat[, 4] <- 2 * pnorm(abs(outMat[, 3]), lower.tail = FALSE)
+
+        ##add names
+        colnames(outMat) <- c("estimate", "se", "z", "pvalue")
+    }
+
+    ##assemble in list
+    outList <- list(out.type = out.type,
+                    c.hat = c.hat,
+                    conf.level = conf.level,
+                    outMat = outMat)
+    
+    class(outList) <- c("summaryOD", "list")
+    return(outList)
+}
+
+
+
+##multmixOpen
+summaryOD.unmarkedFitMMO <- function(mod, c.hat = 1,
+                                     conf.level = 0.95,
+                                     out.type = "confint", ...){
+
+    if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
+    if(c.hat < 1) {
+        warning("\nUnderdispersion: c-hat is fixed to 1\n")
+        c.hat <- 1
+    }
+
+    ##extract coefs
+    coefs <- coef(mod)
+    ##extract SE's
+    ses <- sqrt(diag(vcov(mod) * c.hat))
+
+    ##number of estimated parameters
+    nparms <- length(coefs)
+    
+    ##arrange in matrix
+    outMat <- matrix(NA, nrow = nparms,
+                     ncol = 4)
+    outMat[, 1:2] <- cbind(coefs, ses)
+    rownames(outMat) <- names(coefs)
+    
+    ##if interval
+    if(identical(out.type, "confint")) {
+        
+        ##compute confidence intervals
+        zstat <- qnorm(p = conf.level)
+        outMat[, 3] <- outMat[, 1] - zstat * outMat[, 2]
+        outMat[, 4] <- outMat[, 1] + zstat * outMat[, 2]
+
+        ##add names
+        colnames(outMat) <- c("estimate", "se", "lowlim", "upplim")
+    }
+
+    ##if htest
+    if(identical(out.type, "nhst")) {
+
+        ##compute P-value
+        outMat[, 3] <- outMat[, 1]/outMat[, 2]
+        outMat[, 4] <- 2 * pnorm(abs(outMat[, 3]), lower.tail = FALSE)
+
+        ##add names
+        colnames(outMat) <- c("estimate", "se", "z", "pvalue")
+    }
+
+    ##assemble in list
+    outList <- list(out.type = out.type,
+                    c.hat = c.hat,
+                    conf.level = conf.level,
+                    outMat = outMat)
+    
+    class(outList) <- c("summaryOD", "list")
+    return(outList)
+}
+
+
+
+##distsampOpen
+summaryOD.unmarkedFitDSO <- function(mod, c.hat = 1,
+                                     conf.level = 0.95,
+                                     out.type = "confint", ...){
+
+    if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
+    if(c.hat < 1) {
+        warning("\nUnderdispersion: c-hat is fixed to 1\n")
+        c.hat <- 1
+    }
+
+    ##extract coefs
+    coefs <- coef(mod)
+    ##extract SE's
+    ses <- sqrt(diag(vcov(mod) * c.hat))
+
+    ##number of estimated parameters
+    nparms <- length(coefs)
+    
+    ##arrange in matrix
+    outMat <- matrix(NA, nrow = nparms,
+                     ncol = 4)
+    outMat[, 1:2] <- cbind(coefs, ses)
+    rownames(outMat) <- names(coefs)
+    
+    ##if interval
+    if(identical(out.type, "confint")) {
+        
+        ##compute confidence intervals
+        zstat <- qnorm(p = conf.level)
+        outMat[, 3] <- outMat[, 1] - zstat * outMat[, 2]
+        outMat[, 4] <- outMat[, 1] + zstat * outMat[, 2]
+
+        ##add names
+        colnames(outMat) <- c("estimate", "se", "lowlim", "upplim")
+    }
+
+    ##if htest
+    if(identical(out.type, "nhst")) {
+
+        ##compute P-value
+        outMat[, 3] <- outMat[, 1]/outMat[, 2]
+        outMat[, 4] <- 2 * pnorm(abs(outMat[, 3]), lower.tail = FALSE)
+
+        ##add names
+        colnames(outMat) <- c("estimate", "se", "z", "pvalue")
+    }
+
+    ##assemble in list
+    outList <- list(out.type = out.type,
+                    c.hat = c.hat,
+                    conf.level = conf.level,
+                    outMat = outMat)
+    
+    class(outList) <- c("summaryOD", "list")
+    return(outList)
+}
+
+
+
 ##glmmTMB
 summaryOD.glmmTMB <- function(mod, c.hat = 1,
                               conf.level = 0.95,

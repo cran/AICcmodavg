@@ -43,7 +43,7 @@ preds.p <- matrix(data = predict(mod, type = "det")$Predicted,
                   ncol = Ts, byrow = TRUE)
 
 ##assemble in data.frame
-out.hist <- data.frame(det.hist, preds.psi)
+out.hist <- data.frame(det.hist, preds.psi, stringsAsFactors = TRUE)
 
 ##identify unique histories
 un.hist <- unique(det.hist)
@@ -440,7 +440,7 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
     }
 
     ##assemble in data.frame
-    out.hist <- data.frame(det.hist, preds.psi)
+    out.hist <- data.frame(det.hist, preds.psi, stringsAsFactors = TRUE)
 
     ##identify unique histories
     un.hist <- unique(det.hist)
@@ -735,7 +735,14 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
 
 
 ##Royle-Nichols count model of class unmarkedFitOccuRN - modified by Dan Linden
-mb.chisq.unmarkedFitOccuRN <- function (mod, print.table = TRUE, maxK = 50, ...){
+mb.chisq.unmarkedFitOccuRN <- function (mod, print.table = TRUE, maxK = NULL, ...){
+
+    ##add a check to inform user that maxK is now extracted from model object
+    if(is.null(maxK)) {
+        maxK <- mod@K
+    }
+    
+    
     y.raw <- mod@data@y
     N.raw <- nrow(y.raw)
     na.raw <- apply(X = y.raw, MARGIN = 1, FUN = function(i) all(is.na(i)))
@@ -753,7 +760,7 @@ mb.chisq.unmarkedFitOccuRN <- function (mod, print.table = TRUE, maxK = 50, ...)
     
     preds.p <- matrix(data = predict(mod, type = "det")$Predicted, 
                       ncol = T, byrow = TRUE)
-    out.hist <- data.frame(det.hist, preds.lam)
+    out.hist <- data.frame(det.hist, preds.lam, stringsAsFactors = TRUE)
     
     un.hist <- unique(det.hist)
     n.un.hist <- length(un.hist)
@@ -830,14 +837,23 @@ mb.chisq.unmarkedFitOccuRN <- function (mod, print.table = TRUE, maxK = 50, ...)
                 ##Pr(y.ij=1|K)
                 p.k.mat <- sapply(hist.mat[j,], function(r) {1 - (1 - r)^K})
         
-                new.hist.mat1[j,] <- dpois(K,out.hist.not.na[j, "preds.lam"]) %*% p.k.mat
-                new.hist.mat0[j,] <- dpois(K,out.hist.not.na[j, "preds.lam"]) %*% (1 - p.k.mat)
+                ##new.hist.mat1[j,] <- dpois(K,out.hist.not.na[j, "preds.lam"]) %*% p.k.mat
+                ##new.hist.mat0[j,] <- dpois(K,out.hist.not.na[j, "preds.lam"]) %*% (1 - p.k.mat)
         
-                new.hist.mat[j,] <- ifelse(strip.hist == "1", 
-                                           new.hist.mat1[j,], ifelse(strip.hist == "0", 
-                                                                     new.hist.mat0[j,], 0))
-                combo.lam.p <- paste(new.hist.mat[j, ], collapse = "*")
-                eq.solved[j] <- eval(parse(text = as.expression(combo.lam.p)))
+                ##new.hist.mat[j,] <- ifelse(strip.hist == "1", 
+                ##                           new.hist.mat1[j,], ifelse(strip.hist == "0", 
+                ##                                                     new.hist.mat0[j,], 0))
+                ##combo.lam.p <- paste(new.hist.mat[j, ], collapse = "*")
+                ##eq.solved[j] <- eval(parse(text = as.expression(combo.lam.p)))
+
+###start modifications by Ken Kellner
+                obs <- as.integer(strip.hist)
+                pk <- dpois(K, out.hist.not.na[j,"preds.lam"])
+                cp <- t(p.k.mat) * obs + (1 - t(p.k.mat)) * (1 - obs)
+                prod_cp <- apply(cp, 2, prod, na.rm = TRUE)
+                eq.solved[j] <- sum(pk * prod_cp)
+###end modifications by Ken Kellner
+                
             }
             exp.freqs[i] <- sum(eq.solved, na.rm = TRUE)
         }
@@ -905,14 +921,23 @@ mb.chisq.unmarkedFitOccuRN <- function (mod, print.table = TRUE, maxK = 50, ...)
                     ##Pr(y.ij=1|K)
                     p.k.mat <- sapply(hist.mat[j,],function(r){1 - (1 - r)^K})
           
-                    new.hist.mat1[j,] <- dpois(K,select.cohort[j, "preds.lam"]) %*% p.k.mat
-                    new.hist.mat0[j,] <- dpois(K,select.cohort[j, "preds.lam"]) %*% (1-p.k.mat)
+                    ##new.hist.mat1[j,] <- dpois(K,select.cohort[j, "preds.lam"]) %*% p.k.mat
+                    ##new.hist.mat0[j,] <- dpois(K,select.cohort[j, "preds.lam"]) %*% (1-p.k.mat)
           
-                    new.hist.mat[j,] <- ifelse(strip.hist == "1", 
-                                               new.hist.mat1[j,], ifelse(strip.hist == "0", 
-                                                                         new.hist.mat0[j,], 1))
-                    combo.lam.p <- paste(new.hist.mat[j, ], collapse = "*")
-                    eq.solved[j] <- eval(parse(text = as.expression(combo.lam.p)))
+                    ##new.hist.mat[j,] <- ifelse(strip.hist == "1", 
+                    ##                           new.hist.mat1[j,], ifelse(strip.hist == "0", 
+                    ##                           new.hist.mat0[j,], 1))
+                    ##combo.lam.p <- paste(new.hist.mat[j, ], collapse = "*")
+                    ##eq.solved[j] <- eval(parse(text = as.expression(combo.lam.p)))
+
+###start modifications by Ken Kellner
+                    obs <- suppressWarnings(as.integer(strip.hist))
+                    pk <- dpois(K, select.cohort[j,"preds.lam"])
+                    cp <- t(p.k.mat) * obs + (1 - t(p.k.mat)) * (1 - obs)
+                    prod_cp <- apply(cp, 2, prod, na.rm = TRUE)
+                    eq.solved[j] <- sum(pk * prod_cp)
+###end modifications by Ken Kellner
+                    
                 }
                 exp.na[i] <- sum(eq.solved, na.rm = TRUE)
             }
@@ -1000,18 +1025,24 @@ mb.gof.test.unmarkedFitOccu <- function(mod, nsim = 5, plot.hist = TRUE,
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
-    p.display <- paste("<", 1/nsim)
+      p.display <- paste("<", round(1/nsim, digits = 4))
   } else {
-    p.display = paste("=", round(p.value, digits = 4))
+      p.display  <- paste("=", round(p.value, digits = 4))
   }
 
-  ##create plot
-  if(plot.hist) {
-  hist(out@t.star, main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples)", sep = ""),
-       xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-  title(main = bquote(paste(italic(P), " ", .(p.display))), line = 0.5)
-  abline(v = out@t0, lty = "dashed", col = "red")
-}
+    ##create plot
+    if(plot.hist) {
+        par(cex = 1.1,
+            cex.axis = 1.1,
+            cex.lab = 1.1)
+        
+        hist(out@t.star, main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples)", sep = ""),
+             xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ",
+                                                               round(out@t0, digits = 2), ")", sep = ""))
+        title(main = bquote(paste(italic(P), " ", .(p.display))), line = 0.5)
+        abline(v = out@t0, lty = "dashed", col = "red")
+    }
+    
   ##estimate c-hat
   c.hat.est <- out@t0/mean(out@t.star)
 
@@ -1050,7 +1081,15 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
   ##list to hold results
   p.vals <- list( )
 
-  
+    
+  if(plot.hist && !plot.seasons) {
+        nRows <- 1
+        nCols <- 1
+        par(mfrow = c(nRows, nCols),
+            cex = 1.1,
+            cex.axis = 1.1,
+            cex.lab = 1.1)
+    }
 
   ##if only season-specific plots are requested
   if(!plot.hist && plot.seasons) {
@@ -1071,29 +1110,40 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
       ##if 2 <- 2 x 1
     
       if(n.seasons.adj >= 10) {
-        par(mfrow = c(4, 3))
+          nRows <- 4
+          nCols <- 3
       } else {
 
         if(n.seasons.adj >= 7) {
-          par(mfrow = c(3, 3))
+            nRows <- 3
+            nCols <- 3
         } else {
 
           if(n.seasons.adj >= 5) {
-            par(mfrow = c(3, 2))
+              nRows <- 3
+              nCols <- 2
           } else {
             if(n.seasons.adj == 4) {
-              par(mfrow = c(2, 2))
+                nRows <- 2
+                nCols <- 2
             } else {
               if(n.seasons.adj == 3) {
-                par(mfrow = c(3, 1))
+                  nRows <- 3
+                  nCols <- 1
               } else {
-                par(mfrow = c(2, 1))
+                  nRows <- 2
+                  nCols <- 1
               }
             }
           }
         }
       }
     }
+
+      par(mfrow = c(nRows, nCols),
+          cex = 1.1,
+          cex.axis = 1.1,
+          cex.lab = 1.1)
   }
 
   
@@ -1108,27 +1158,37 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
     if(plot.seasons && n.seasons.adj <= 11) {
 
       if(n.seasons.adj >= 9) {
-        par(mfrow = c(4, 3))
+          nRows <- 4
+          nCols <- 3
       } else {
 
         if(n.seasons.adj >= 6) {
-          par(mfrow = c(3, 3))
+            nRows <- 3
+            nCols <- 3
         } else {
 
           if(n.seasons.adj >= 4) {
-            par(mfrow = c(3, 2))
+              nRows <- 3
+              nCols <- 2
           } else {
             if(n.seasons.adj == 3) {
-              par(mfrow = c(2, 2))
+                nRows <- 2
+                nCols <- 2
             } else {
               if(n.seasons.adj == 2) {
-                par(mfrow = c(3, 1))
+                  nRows <- 3
+                  nCols <- 1
               }
             }
           }
         }
       }
     }
+
+      par(mfrow = c(nRows, nCols),
+          cex = 1.1,
+          cex.axis = 1.1,
+          cex.lab = 1.1)
   }
 
     
@@ -1137,9 +1197,9 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
 
     p.value <- sum(out@t.star[, k] >= out@t0[k])/nsim
     if(p.value == 0) {
-      p.display <- paste("<", 1/nsim)
+        p.display <- paste("<", round(1/nsim, digits = 4))
     } else {
-      p.display = paste("=", round(p.value, digits = 4))
+        p.display  <- paste("=", round(p.value, digits = 4))
     }
     
     p.vals[[k]] <- list("p.value" = p.value, "p.display" = p.display)
@@ -1148,12 +1208,13 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
   ##create plot for first 12 plots
   if(plot.seasons) {
     for(k in 1:n.seasons.adj) {
-      hist(out@t.star[, k], main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples) - season ", k, sep = ""),
-           xlim = range(c(out@t.star[, k], out@t0[k])),
-           xlab = paste("Simulated statistic ", "(observed = ", round(out@t0[k], digits = 2), ")", sep = ""))
-      title(main = bquote(paste(italic(P), " ", .(p.vals[[k]]$p.display))), line = 0.5)
-      abline(v = out@t0[k], lty = "dashed", col = "red")
-      
+        hist(out@t.star[, k],
+             main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples) - season ", k, sep = ""),
+             xlim = range(c(out@t.star[, k], out@t0[k])),
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0[k], digits = 2), ")", sep = ""))
+        title(main = bquote(paste(italic(P), " ", .(p.vals[[k]]$p.display))), line = 0.5)
+        abline(v = out@t0[k], lty = "dashed", col = "red")
+        
     }
   }
 
@@ -1201,31 +1262,36 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
 ##Royle-Nichols count models of class unmarkedFitOccuRN
 mb.gof.test.unmarkedFitOccuRN <- function (mod, nsim = 5, plot.hist = TRUE,
                                            report = NULL, parallel = TRUE,
-                                           maxK = 50, ...){
+                                           maxK = NULL, ...){
 
     ##extract table from fitted model
-    mod.table <- mb.chisq(mod)
+    mod.table <- mb.chisq(mod, ...)
 
     if(is.null(report)) {
         ##compute GOF P-value
-        out <- parboot(mod, statistic = function(i) mb.chisq(i, maxK = maxK)$chi.square,
+        out <- parboot(mod, statistic = function(i) mb.chisq(i)$chi.square,
                        nsim = nsim, parallel = parallel)
     } else {
         
-        out <- parboot(mod, statistic = function(i) mb.chisq(i, maxK = maxK)$chi.square, 
+        out <- parboot(mod, statistic = function(i) mb.chisq(i)$chi.square, 
                        nsim = nsim, report = report, parallel = parallel)
     }
 
     ##determine significance
     p.value <- sum(out@t.star >= out@t0)/nsim
     if (p.value == 0) {
-        p.display <- paste("<", 1/nsim)
+        p.display <- paste("<", round(1/nsim, digits = 4))
     } else {
-        p.display = paste("=", round(p.value, digits = 4))
+        p.display <- paste("=", round(p.value, digits = 4))
     }
 
   ##create plot
     if(plot.hist) {
+
+        par(cex = 1.1,
+            cex.axis = 1.1,
+            cex.lab = 1.1)
+        
         hist(out@t.star, main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples)", sep = ""),
              xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ",
                                                                round(out@t0, digits = 2), ")", sep = ""))

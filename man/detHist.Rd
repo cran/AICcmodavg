@@ -7,10 +7,12 @@
 \alias{detHist.unmarkedFitOccuFP}
 \alias{detHist.unmarkedFitOccuRN}
 \alias{detHist.unmarkedFitOccuMulti}
+\alias{detHist.unmarkedFitOccuMS}
 \alias{detHist.unmarkedFrameOccu}
 \alias{detHist.unmarkedFrameOccuFP}
 \alias{detHist.unmarkedFrameOccuMulti}
 \alias{detHist.unmarkedMultFrame}
+\alias{detHist.unmarkedFrameOccuMS}
 \alias{print.detHist}
 \title{
 Compute Summary Statistics from Detection Histories
@@ -32,6 +34,8 @@ detHist(object, \dots)
 
 \method{detHist}{unmarkedFitOccuMulti}(object, \dots)
 
+\method{detHist}{unmarkedFitOccuMS}(object, \dots)
+
 \method{detHist}{unmarkedFrameOccu}(object, \dots)
 
 \method{detHist}{unmarkedFrameOccuFP}(object, \dots)
@@ -39,6 +43,8 @@ detHist(object, \dots)
 \method{detHist}{unmarkedMultFrame}(object, \dots)
 
 \method{detHist}{unmarkedFrameOccuMulti}(object, \dots)
+
+\method{detHist}{unmarkedFrameOccuMS}(object, \dots)
 
 }
 
@@ -58,24 +64,27 @@ detHist(object, \dots)
   used for single-season occupancy models (MacKenzie et al. 2002),
   dynamic occupancy models (MacKenzie et al. 2003), Royle-Nichols models
   (Royle and Nichols 2003), false-positive occupancy models (Royle
-  and Link 2006, Miller et al. 2011), and multispecies occupancy models
-  (Rota et al. 2016.
+  and Link 2006, Miller et al. 2011), multispecies occupancy models
+  (Rota et al. 2016), and multistate occupancy models (Nichols et
+  al. 2007, MacKenzie et al. 2009).
   
   \code{detHist} can take data frames of the \code{unmarkedFrameOccu},
-  \code{unmarkedFrameOccuFP}, \code{unmarkedMultFrame}, and
-  \code{unmarkedFrameOccuMulti} classes as input.  For convenience, the
-  function can also extract the raw data from model objects of classes
-  \code{unmarkedFitColExt}, \code{unmarkedFitOccu}, 
-  \code{unmarkedFitOccuFP}, \code{unmarkedFitOccuRN}, and
-  \code{unmarkedFrameOccuMulti}.  Note that different model objects
-  using the same data set will have identical values.
+  \code{unmarkedFrameOccuFP}, \code{unmarkedMultFrame},
+  \code{unmarkedFrameOccuMulti}, \code{unmarkedFrameOccuMS} classes as
+  input.  For convenience, the  function can also extract the raw data
+  from model objects of classes \code{unmarkedFitColExt},
+  \code{unmarkedFitOccu},  \code{unmarkedFitOccuFP},
+  \code{unmarkedFitOccuRN}, \code{unmarkedFrameOccuMulti}, and
+  \code{unmarkedFrameOccuMS}.  Note that different model objects using
+  the same data set will have identical values.
 }
 \value{
   For objects of classes \code{unmarkedFitOccu}, \code{unmarkedFitOccuRN},
-  \code{unmarkedFitOccuRN}, \code{unmarkedFitColExt},
-  \code{unmarkedFrameOccu}, \code{unmarkedFrameOccuFP}, and
-  \code{unmarkedMultFrame}, \code{detHist} returns a list with the
-  following components: 
+  \code{unmarkedFitOccuFP}, \code{unmarkedFitColExt},
+  \code{unmarkedFitOccuMS}, \code{unmarkedFrameOccu},
+  \code{unmarkedFrameOccuFP}, \code{unmarkedMultFrame}, and
+  \code{unmarkedFrameOccuMS}, \code{detHist} returns a list with the
+  following components:
   
   \item{hist.table.full}{a table with the frequency of each observed
     detection history.}
@@ -166,6 +175,10 @@ detHist(object, \dots)
   local extinction when a species is detected imperfectly. \emph{Ecology}
   \bold{84}, 2200--2207.  
 
+  MacKenzie, D. I., Nichols, J. D., Seamans, M. E., Gutierrez,
+  R. J. (2009) Modeling species occurrence dynamics with multiple states
+  and imperfect detection. \emph{Ecology} \bold{90}, 823--835.
+
   Mazerolle, M. J. (2015) Estimating detectability and biological
   parameters of interest with the use of the R
   environment. \emph{Journal of Herpetology} \bold{49}, 541--559.
@@ -174,6 +187,11 @@ detHist(object, \dots)
   Grant, E. H., Bailey, L. L. (2011) Improving occupancy estimation when
   two types of observational error occur: non-detection and species
   misidentification. \emph{Ecology} \bold{92}, 1422--1428.
+
+  Nichols, J. D., Hines, J. E., Mackenzie, D. I., Seamans, M. E.,
+  Gutierrez, R. J. (2007) Occupancy estimation and modeling with
+  multiple states and state uncertainty. \emph{Ecology} \bold{88},
+  1395--1400.
 
   Rota, C. T., Ferreira, M. A. R., Kays, R. W., Forrester, T. D.,
   Kalies, E. L., McShea, W. J., Parsons, A. W., Millspaugh, J. J. (2016)
@@ -197,7 +215,7 @@ Marc J. Mazerolle
 
 \seealso{
 \code{\link{covDiag}}, \code{\link{countHist}}, \code{\link{countDist}},
-\code{\link{mb.chisq}}, \code{\link{mb.gof.test}},
+\code{\link{detTime}}, \code{\link{mb.chisq}}, \code{\link{mb.gof.test}}
 }
 \examples{
 ##data from Mazerolle (2015)

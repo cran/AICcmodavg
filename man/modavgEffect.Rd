@@ -25,6 +25,11 @@
 \alias{modavgEffect.AICunmarkedFitMPois}
 \alias{modavgEffect.AICunmarkedFitGMM}
 \alias{modavgEffect.AICunmarkedFitGPC}
+\alias{modavgEffect.AICunmarkedFitOccuTTD}
+\alias{modavgEffect.AICunmarkedFitMMO}
+\alias{modavgEffect.AICunmarkedFitDSO}
+\alias{modavgEffect.AICunmarkedFitOccuMS}
+\alias{modavgEffect.AICunmarkedFitOccuMulti}
 \alias{print.modavgEffect}
 
 \title{
@@ -149,6 +154,31 @@ modavgEffect(cand.set, modnames = NULL, newdata, second.ord = TRUE,
         NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
         "revised", conf.level = 0.95, type = "response",
         c.hat = 1, parm.type = NULL, \dots)
+
+\method{modavgEffect}{AICunmarkedFitOccuTTD}(cand.set, modnames =
+        NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
+
+\method{modavgEffect}{AICunmarkedFitMMO}(cand.set, modnames =
+        NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
+
+\method{modavgEffect}{AICunmarkedFitDSO}(cand.set, modnames =
+        NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
+
+\method{modavgEffect}{AICunmarkedFitOccuMS}(cand.set, modnames =
+        NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
+
+\method{modavgEffect}{AICunmarkedFitOccuMulti}(cand.set, modnames =
+        NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
 }
 
 
@@ -235,38 +265,43 @@ to apply the same value to each model.
 }
 \item{parm.type}{
   this argument specifies the parameter type on which the effect size 
-  will be computed and is only relevant for models of
-  \code{unmarkedFitOccu}, \code{unmarkedFitColExt},
-  \code{unmarkedFitOccuFP}, \code{unmarkedFitOccuRN}, 
-  \code{unmarkedFitMPois}, \code{unmarkedFitPCount},
-  \code{unmarkedFitPCO}, \code{unmarkedFitDS}, \code{unmarkedFitGDS}, 
-  \code{unmarkedFitGMM}, and \code{unmarkedFitGPC} classes.  The
-  character strings supported vary with the type of model fitted. 
-  For \code{unmarkedFitOccu} objects, either \code{psi} or \code{detect}
-  can be supplied to indicate whether the parameter is on occupancy or
-  detectability, respectively.  For \code{unmarkedFitColExt}, possible
-  values  are \code{psi}, \code{gamma}, \code{epsilon}, and
+  will be computed and is only relevant for models of \code{unmarkedFit}
+  classes.  The character strings supported vary with the type of model
+  fitted.  For \code{unmarkedFitOccu} objects, either \code{psi} or
+  \code{detect} can be supplied to indicate whether the parameter is on
+  occupancy or detectability, respectively.  For
+  \code{unmarkedFitColExt} objects, possible values are \code{psi},
+  \code{gamma}, \code{epsilon}, and \code{detect}, for parameters on
+  occupancy in the inital year, colonization, extinction, and
+  detectability, respectively.  For \code{unmarkedFitOccuTTD} objects,
+  possible values are \code{psi}, \code{gamma}, \code{epsilon}, and
   \code{detect}, for parameters on occupancy in the inital year,
-  colonization, extinction, and detectability, respectively.  For
-  \code{unmarkedFitOccuFP} objects, one can specify \code{psi},
-  \code{detect}, \code{falsepos}, or \code{certain}, for occupancy,
-  detectability, probability of assigning false-positives, and
-  probability detections are certain, respectively.  For 
+  colonization, extinction, and time-to-dection (lambda rate parameter),
+  respectively.  For \code{unmarkedFitOccuFP} objects, one can specify
+  \code{psi}, \code{detect}, \code{falsepos}, and \code{certain}, for
+  occupancy, detectability, probability of assigning false-positives,
+  and probability detections are certain, respectively.  For
   \code{unmarkedFitOccuRN} objects, either \code{lambda} or
   \code{detect} can be entered for abundance and detectability
   parameters, respectively.  For \code{unmarkedFitPCount} and
   \code{unmarkedFitMPois} objects, \code{lambda} or \code{detect} denote
   parameters on abundance and detectability, respectively.  For
-  \code{unmarkedFitPCO} objects, one can enter \code{lambda},
+  \code{unmarkedFitPCO}, \code{unmarkedFitMMO}, and
+  \code{unmarkedFitDSO} objects, one can enter \code{lambda},
   \code{gamma}, \code{omega}, \code{iota}, or \code{detect}, to specify
   parameters on abundance, recruitment, apparent survival, immigration,
   and detectability, respectively.  For \code{unmarkedFitDS} objects,
   \code{lambda} and \code{detect} are supported.  For
   \code{unmarkedFitGDS}, \code{lambda}, \code{phi}, and \code{detect}
-  denote abundance, availability, and detectability, respectively.  For \code{unmarkedFitGMM} and
-  \code{unmarkedFitGPC} objects, \code{lambda}, \code{phi}, and
-  \code{detect} denote abundance, availability, and detectability,
-  respectively.   
+  denote abundance, availability, and detection probability,
+  respectively.  For \code{unmarkedFitGMM} and \code{unmarkedFitGPC}
+  objects, \code{lambda}, \code{phi}, and \code{detect} denote
+  abundance, availability, and detectability, respectively.  For
+  \code{unmarkedFitOccuMS} objects, \code{psi}, \code{phi}, and
+  \code{detect} denote occupancy, transition, and detection probability,
+  respectively.  For \code{unmarkedFitOccuMulti} objects, \code{psi} and
+  \code{detect} denote occupancy and detection probability,
+  respectively.
 }
 \item{\dots}{
   additional arguments passed to the function.
@@ -302,12 +337,14 @@ set is used instead of being restricted to a single model.  See
 of objects in the list.  The current classes supported include
 \code{aov}, \code{glm}, \code{gls}, \code{lm}, \code{lme}, \code{mer},
 \code{glmerMod}, \code{lmerMod}, \code{lmerModLmerTest}, \code{rlm},
-\code{survreg}, as well as \code{unmarkedFitOccu},
+\code{survreg}, as well as models of \code{unmarkedFitOccu},
 \code{unmarkedFitColExt}, \code{unmarkedFitOccuFP},
-\code{unmarkedFitOccuRN}, \code{unmarkedFitPCount},
-\code{unmarkedFitPCO}, \code{unmarkedFitDS}, \code{unmarkedFitGDS},
-\code{unmarkedFitMPois}, \code{unmarkedFitGMM}, and
-\code{unmarkedFitGPC} classes.
+\code{unmarkedFitOccuRN}, \code{unmarkedFitOccuTTD},
+\code{unmarkedFitPCount}, \code{unmarkedFitPCO}, \code{unmarkedFitDS},
+\code{unmarkedFitDSO}, \code{unmarkedFitGDS}, \code{unmarkedFitMPois},
+\code{unmarkedFitGMM}, \code{unmarkedFitMMO}, \code{unmarkedFitGPC},
+\code{unmarkedFitOccuMS}, and \code{unmarkedFitOccuMulti}.
+classes.
 }
 \value{
 The result is an object of class \code{modavgEffect} with the following
@@ -329,6 +366,9 @@ entire set of candidate models.}
   interval.} 
 \item{Lower.CL}{the lower confidence limit.}
 \item{Upper.CL}{the upper confidence limit.}
+\item{Matrix.output}{a matrix containing the model-averaged effect size,
+  the unconditional standard error, and the lower and upper confidence
+  limits.}
 }
 \references{
 Anderson, D. R. (2008) \emph{Model-based Inference in the Life Sciences:

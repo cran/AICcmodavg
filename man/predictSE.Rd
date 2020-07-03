@@ -144,7 +144,7 @@ Marc J. Mazerolle
 \seealso{
 \code{\link[nlme]{gls}}, \code{\link[nlme]{lme}}, \code{\link[lme4]{glmer}},
 \code{\link[lme4]{simulate.merMod}}, \code{\link[boot]{boot}},
-\code{\link[unmarked]{parboot}}, \code{\link[unmarked]{nonparboot}},
+\code{\link[unmarked]{parboot}}, \code{\link[unmarked:nonparboot-methods]{nonparboot}},
 \code{\link[unmarked]{pcount}}, \code{\link[unmarked]{pcountOpen}},
 \code{\link[unmarked]{unmarkedFit-class}} 
 }

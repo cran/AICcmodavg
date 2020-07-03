@@ -1858,6 +1858,12 @@ importance.AICunmarkedFitColExt <- function(cand.set, parm, modnames = NULL, sec
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
 
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+  
   
   ##psi - initial occupancy
   if(identical(parm.type, "psi")) {
@@ -1895,13 +1901,7 @@ importance.AICunmarkedFitColExt <- function(cand.set, parm, modnames = NULL, sec
   
   
     
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
-    
-  ##if (Intercept) is chosen assign (Int) - for compatibility
-  if(identical(parm, "(Intercept)")) parm <- "Int"
-  
-  
+   
   ##setup matrix to indicate presence of parm in the model
   include <- matrix(NA, nrow=length(cand.set), ncol=1)
 
@@ -1966,7 +1966,13 @@ importance.AICunmarkedFitOccu <- function(cand.set, parm, modnames = NULL, secon
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
 
-  
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+
+    
   ##psi
   if(identical(parm.type, "psi")) {
     ##extract model formula for each model in cand.set
@@ -1981,14 +1987,6 @@ importance.AICunmarkedFitOccu <- function(cand.set, parm, modnames = NULL, secon
     parm.unmarked <- "p"
     parm <- paste(parm.unmarked, "(", parm, ")", sep="")
   }
-  
-
-    
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
-    
-  ##if (Intercept) is chosen assign (Int) - for compatibility
-  if(identical(parm, "(Intercept)")) parm <- "Int"
   
   
   ##setup matrix to indicate presence of parm in the model
@@ -2054,6 +2052,14 @@ importance.AICunmarkedFitOccuFP <- function(cand.set, parm, modnames = NULL, sec
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
 
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+  
+ 
+    
   ##psi
   if(identical(parm.type, "psi")) {
     ##extract model formula for each model in cand.set
@@ -2076,13 +2082,7 @@ importance.AICunmarkedFitOccuFP <- function(cand.set, parm, modnames = NULL, sec
     parm <- paste(parm.unmarked, "(", parm, ")", sep="")
   }
   
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
-    
-  ##if (Intercept) is chosen assign (Int) - for compatibility
-  if(identical(parm, "(Intercept)")) parm <- "Int"
-  
-  
+   
   ##setup matrix to indicate presence of parm in the model
   include <- matrix(NA, nrow=length(cand.set), ncol=1)
 
@@ -2150,6 +2150,13 @@ importance.AICunmarkedFitOccuRN <- function(cand.set, parm, modnames = NULL, sec
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
 
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+  
+  
   
   ##lambda - abundance
   if(identical(parm.type, "lambda")) {
@@ -2167,12 +2174,6 @@ importance.AICunmarkedFitOccuRN <- function(cand.set, parm, modnames = NULL, sec
   }
   
 
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
-    
-  ##if (Intercept) is chosen assign (Int) - for compatibility
-  if(identical(parm, "(Intercept)")) parm <- "Int"
-  
   
   ##setup matrix to indicate presence of parm in the model
   include <- matrix(NA, nrow=length(cand.set), ncol=1)
@@ -2238,6 +2239,12 @@ importance.AICunmarkedFitPCount <- function(cand.set, parm, modnames = NULL, sec
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
 
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+   
   
   ##lambda - abundance
   if(identical(parm.type, "lambda")) {
@@ -2257,13 +2264,7 @@ importance.AICunmarkedFitPCount <- function(cand.set, parm, modnames = NULL, sec
 
   
 
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
-    
-  ##if (Intercept) is chosen assign (Int) - for compatibility
-  if(identical(parm, "(Intercept)")) parm <- "Int"
-  
-  
+   
   ##setup matrix to indicate presence of parm in the model
   include <- matrix(NA, nrow=length(cand.set), ncol=1)
 
@@ -2328,6 +2329,12 @@ importance.AICunmarkedFitPCO <- function(cand.set, parm, modnames = NULL, second
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
 
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+ 
   
   ##lambda - abundance
   if(identical(parm.type, "lambda")) {
@@ -2339,11 +2346,18 @@ importance.AICunmarkedFitPCO <- function(cand.set, parm, modnames = NULL, second
   
   ##gamma - recruitment
   if(identical(parm.type, "gamma")) {
-    ##extract model formula for each model in cand.set
-    mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$gamma)))
-    ##create label for parm
-    parm.unmarked <- "gam"
-    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$gamma)))
+
+      ##determine if same H0 on gamma (gamConst, gamAR, gamTrend)
+      strip.gam <- sapply(mod_formula, FUN = function(i) unlist(strsplit(i, "\\("))[[1]])
+      unique.gam <- unique(strip.gam)
+      if(length(unique.gam) > 1) stop("\nDifferent formulations of gamma parameter occur among models:\n
+beta estimates cannot be model-averaged\n")
+        
+      ##create label for parm
+      parm.unmarked <- unique.gam
+      parm <- paste(unique.gam, "(", parm, ")", sep="")
   }
   
   ##omega - apparent survival
@@ -2363,15 +2377,8 @@ importance.AICunmarkedFitPCO <- function(cand.set, parm, modnames = NULL, second
   }
   
 
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
-    
-  ##if (Intercept) is chosen assign (Int) - for compatibility
-  if(identical(parm, "(Intercept)")) parm <- "Int"
-  
-  
-  ##setup matrix to indicate presence of parm in the model
-  include <- matrix(NA, nrow=length(cand.set), ncol=1)
+    ##setup matrix to indicate presence of parm in the model
+    include <- matrix(NA, nrow=length(cand.set), ncol=1)
 
   ##iterate over each formula in mod_formula list
   for (i in 1:length(cand.set)) {
@@ -2434,6 +2441,12 @@ importance.AICunmarkedFitDS <- function(cand.set, parm, modnames = NULL, second.
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
 
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+  
   
   ##lambda - abundance
   if(identical(parm.type, "lambda")) {
@@ -2445,19 +2458,34 @@ importance.AICunmarkedFitDS <- function(cand.set, parm, modnames = NULL, second.
   
   ##detect
   if(identical(parm.type, "detect")) {
-    stop("\nImportance values for detection covariates not yet supported for unmarkedFitDS class\n")
+         ##check for key function used
+        keyid <- unique(sapply(cand.set, FUN = function(i) i@keyfun))
+        if(length(keyid) > 1) stop("\nDifferent key functions used across models:\n",
+                                   "cannot compute model-averaged estimate\n")
+        if(identical(keyid, "uniform")) stop("\nDetection parameter not found in models\n")
+        ##set key prefix used in coef( )
+        if(identical(keyid, "halfnorm")) {
+            parm.key <- "sigma"
+        }
+        if(identical(keyid, "hazard")) {
+            parm.key <- "shape"
+        }
+        if(identical(keyid, "exp")) {
+            parm.key <- "rate"
+        }
+
+      ##label for intercept - label different with this model type
+      if(identical(parm, "Int")) {parm <- "(Intercept)"}
+
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+      parm <- paste("p", "(", parm.key, "(", parm, "))", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", parm.key, "(", reversed.parm, "))", sep="")}
+      ##stop("\nImportance values for detection covariates not yet supported for unmarkedFitDS class\n")
   }
   
 
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
-    
-  ##if (Intercept) is chosen assign (Int) - for compatibility
-  if(identical(parm, "(Intercept)")) parm <- "Int"
-  
-  
-  ##setup matrix to indicate presence of parm in the model
-  include <- matrix(NA, nrow=length(cand.set), ncol=1)
+    ##setup matrix to indicate presence of parm in the model
+    include <- matrix(NA, nrow=length(cand.set), ncol=1)
 
   ##iterate over each formula in mod_formula list
   for (i in 1:length(cand.set)) {
@@ -2520,7 +2548,12 @@ importance.AICunmarkedFitGDS <- function(cand.set, parm, modnames = NULL, second
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
 
-  
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+      
   ##lambda - abundance
   if(identical(parm.type, "lambda")) {
     ##extract model formula for each model in cand.set
@@ -2540,15 +2573,8 @@ importance.AICunmarkedFitGDS <- function(cand.set, parm, modnames = NULL, second
   }
   
   
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
-    
-  ##if (Intercept) is chosen assign (Int) - for compatibility
-  if(identical(parm, "(Intercept)")) parm <- "Int"
-  
-  
-  ##setup matrix to indicate presence of parm in the model
-  include <- matrix(NA, nrow=length(cand.set), ncol=1)
+    ##setup matrix to indicate presence of parm in the model
+    include <- matrix(NA, nrow=length(cand.set), ncol=1)
 
   ##iterate over each formula in mod_formula list
   for (i in 1:length(cand.set)) {
@@ -2610,6 +2636,12 @@ importance.AICunmarkedFitMPois <- function(cand.set, parm, modnames = NULL, seco
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
 
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+  
   
   ##lambda - abundance
   if(identical(parm.type, "lambda")) {
@@ -2626,14 +2658,7 @@ importance.AICunmarkedFitMPois <- function(cand.set, parm, modnames = NULL, seco
     parm <- paste(parm.unmarked, "(", parm, ")", sep="")
   }
   
-  
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
     
-  ##if (Intercept) is chosen assign (Int) - for compatibility
-  if(identical(parm, "(Intercept)")) parm <- "Int"
-  
-  
   ##setup matrix to indicate presence of parm in the model
   include <- matrix(NA, nrow=length(cand.set), ncol=1)
 
@@ -2698,7 +2723,13 @@ importance.AICunmarkedFitGMM <- function(cand.set, parm, modnames = NULL, second
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
 
-  
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+
+    
   ##lambda - abundance
   if(identical(parm.type, "lambda")) {
     ##extract model formula for each model in cand.set
@@ -2720,14 +2751,7 @@ importance.AICunmarkedFitGMM <- function(cand.set, parm, modnames = NULL, second
     parm.unmarked <- "phi"
     parm <- paste(parm.unmarked, "(", parm, ")", sep="")
   }
-  
-  
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
-    
-  ##if (Intercept) is chosen assign (Int) - for compatibility
-  if(identical(parm, "(Intercept)")) parm <- "Int"
-  
+   
   
   ##setup matrix to indicate presence of parm in the model
   include <- matrix(NA, nrow=length(cand.set), ncol=1)
@@ -2792,7 +2816,12 @@ importance.AICunmarkedFitGPC <- function(cand.set, parm, modnames = NULL, second
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
 
-  
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+
   ##lambda - abundance
   if(identical(parm.type, "lambda")) {
     ##extract model formula for each model in cand.set
@@ -2814,13 +2843,6 @@ importance.AICunmarkedFitGPC <- function(cand.set, parm, modnames = NULL, second
     parm.unmarked <- "phi"
     parm <- paste(parm.unmarked, "(", parm, ")", sep="")
   }
-  
-  
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
-    
-  ##if (Intercept) is chosen assign (Int) - for compatibility
-  if(identical(parm, "(Intercept)")) parm <- "Int"
   
   
   ##setup matrix to indicate presence of parm in the model
@@ -2868,7 +2890,7 @@ importance.AICunmarkedFitGPC <- function(cand.set, parm, modnames = NULL, second
 
 ##occuMulti
 importance.AICunmarkedFitOccuMulti <- function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, c.hat = 1,
-                                             parm.type = NULL, ...){
+                                               parm.type = NULL, ...){
 
   ##check if named list if modnames are not supplied
   if(is.null(modnames)) {
@@ -2886,6 +2908,13 @@ importance.AICunmarkedFitOccuMulti <- function(cand.set, parm, modnames = NULL, 
   ##reverse parm
   reversed.parm <- reverse.parm(parm)
 
+    
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+  
   
   ##psi
   if(identical(parm.type, "psi")) {
@@ -2902,13 +2931,470 @@ importance.AICunmarkedFitOccuMulti <- function(cand.set, parm, modnames = NULL, 
     parm <- paste(parm.unmarked, "(", parm, ")", sep="")
   }
   
+ 
+  ##setup matrix to indicate presence of parm in the model
+  include <- matrix(NA, nrow=length(cand.set), ncol=1)
+
+  ##iterate over each formula in mod_formula list
+  for (i in 1:length(cand.set)) {
+    idents <- NULL
+    form <- mod_formula[[i]]
+    
+    ##iterate over each element of formula[[i]] in list
+    if(is.null(reversed.parm)) {
+      for (j in 1:length(form)) {
+        idents[j] <- identical(paste(parm), form[j])
+      }
+    } else {
+      for (j in 1:length(form)) {
+        idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+      }
+    }
+    
+    include[i] <- ifelse(any(idents==1), 1, 0)
+  }
+
+  ##add a check to determine if include always == 0
+  if (sum(include)==0) {stop("\nParameter not found in any of the candidate models\n") }
+  
+  new_table <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs,
+                      sort = FALSE, c.hat = c.hat)  
+
+  ##add a check to determine if the same number of models include and exlude parameter
+  if (length(which(include == 1)) != length(which(include != 1)) ) {
+    stop("\nImportance values are only meaningful when the number of models with and without parameter are equal\n")
+  }
+  
+  w.plus <- sum(new_table[which(include == 1), 6]) #select models including a given parameter
+  w.minus <- 1 - w.plus
+  imp <- list("parm" = parm, "w.plus" = w.plus, "w.minus" = w.minus)
+
+  
+  class(imp) <- c("importance", "list")
+  return(imp)
+}
+
+
+##occuMS
+importance.AICunmarkedFitOccuMS <- function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, c.hat = 1,
+                                            parm.type = NULL, ...){
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+  ##remove all leading and trailing white space and within parm
+  ##parm <- gsub('[[:space:]]+', "", parm)
+
+  ##reverse parm
+  reversed.parm <- reverse.parm(parm)
+
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+  
+  
+  ##psi
+  if(identical(parm.type, "psi")) {
+    ##extract model formula for each model in cand.set
+    mod_formula <- lapply(cand.set, FUN = function(x) labels(coef(x@estimates@estimates$state)))
+    parm.unmarked <- "psi"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+
+  ##detect
+  if(identical(parm.type, "detect")) {
+    mod_formula <- lapply(cand.set, FUN = function(x) labels(coef(x@estimates@estimates$det)))
+    parm.unmarked <- "p"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+
+    ##transition
+    if(identical(parm.type, "phi")) {
+        ##check that parameter appears in all models
+        nseasons <- unique(sapply(cand.set, FUN = function(i) i@data@numPrimary))
+        if(nseasons == 1) {
+            stop("\nParameter \'phi\' does not appear in single-season models\n")
+        }
+        mod_formula <- lapply(cand.set, FUN = function(x) labels(coef(x@estimates@estimates$transition)))
+        parm.unmarked <- "phi"
+        parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+    }
 
     
-  ##check for parm.type and stop if NULL
-  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+  ##setup matrix to indicate presence of parm in the model
+  include <- matrix(NA, nrow=length(cand.set), ncol=1)
+
+  ##iterate over each formula in mod_formula list
+  for (i in 1:length(cand.set)) {
+    idents <- NULL
+    form <- mod_formula[[i]]
     
-  ##if (Intercept) is chosen assign (Int) - for compatibility
-  if(identical(parm, "(Intercept)")) parm <- "Int"
+    ##iterate over each element of formula[[i]] in list
+    if(is.null(reversed.parm)) {
+      for (j in 1:length(form)) {
+        idents[j] <- identical(paste(parm), form[j])
+      }
+    } else {
+      for (j in 1:length(form)) {
+        idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+      }
+    }
+    
+    include[i] <- ifelse(any(idents==1), 1, 0)
+  }
+
+  ##add a check to determine if include always == 0
+  if (sum(include)==0) {stop("\nParameter not found in any of the candidate models\n") }
+  
+  new_table <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs,
+                      sort = FALSE, c.hat = c.hat)  
+
+  ##add a check to determine if the same number of models include and exlude parameter
+  if (length(which(include == 1)) != length(which(include != 1)) ) {
+    stop("\nImportance values are only meaningful when the number of models with and without parameter are equal\n")
+  }
+  
+  w.plus <- sum(new_table[which(include == 1), 6]) #select models including a given parameter
+  w.minus <- 1 - w.plus
+  imp <- list("parm" = parm, "w.plus" = w.plus, "w.minus" = w.minus)
+
+  
+  class(imp) <- c("importance", "list")
+  return(imp)
+}
+
+
+##occuTTD
+importance.AICunmarkedFitOccuTTD <- function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, c.hat = 1,
+                                             parm.type = NULL, ...){
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+
+  ##reverse parm
+  reversed.parm <- reverse.parm(parm)
+
+   
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+
+    
+  ##psi - initial occupancy
+  if(identical(parm.type, "psi")) {
+    ##extract model formula for each model in cand.set
+    mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$psi)))
+    ##create label for parm
+    parm.unmarked <- "psi"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+
+  ##gamma - colonization
+  if(identical(parm.type, "gamma")) {
+      nseasons <- unique(sapply(cand.set, FUN = function(i) i@data@numPrimary))
+      if(nseasons == 1) {
+          stop("\nParameter \'gamma\' does not appear in single-season models\n")
+      }
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$col)))
+      ##create label for parm
+      parm.unmarked <- "col"
+      parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+
+  ##epsilon - extinction
+  if(identical(parm.type, "epsilon")) {
+      nseasons <- unique(sapply(cand.set, FUN = function(i) i@data@numPrimary))
+      if(nseasons == 1) {
+          stop("\nParameter \'epsilon\' does not appear in single-season models\n")
+      }
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$ext)))
+      ##create label for parm
+      parm.unmarked <- "ext"
+      parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+
+  ##detect - lambda parameter is a rate of a species not detected in t to be detected at next time step
+  if(identical(parm.type, "detect")) {
+    mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+    parm.unmarked <- "lam"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+  
+  
+    ##setup matrix to indicate presence of parm in the model
+    include <- matrix(NA, nrow=length(cand.set), ncol=1)
+
+  ##iterate over each formula in mod_formula list
+  for (i in 1:length(cand.set)) {
+    idents <- NULL
+    form <- mod_formula[[i]]
+    
+    ##iterate over each element of formula[[i]] in list
+    if(is.null(reversed.parm)) {
+      for (j in 1:length(form)) {
+        idents[j] <- identical(paste(parm), form[j])
+      }
+    } else {
+      for (j in 1:length(form)) {
+        idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+      }
+    }
+    
+    include[i] <- ifelse(any(idents==1), 1, 0)
+  }
+
+  ##add a check to determine if include always == 0
+  if (sum(include)==0) {stop("\nParameter not found in any of the candidate models\n") }
+  
+  new_table <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs,
+                      sort = FALSE, c.hat = c.hat)  
+
+  ##add a check to determine if the same number of models include and exlude parameter
+  if (length(which(include == 1)) != length(which(include != 1)) ) {
+    stop("\nImportance values are only meaningful when the number of models with and without parameter are equal\n")
+  }
+  
+  w.plus <- sum(new_table[which(include == 1), 6]) #select models including a given parameter
+  w.minus <- 1 - w.plus
+  imp <- list("parm" = parm, "w.plus" = w.plus, "w.minus" = w.minus)
+
+  
+  class(imp) <- c("importance", "list")
+  return(imp)
+}
+
+
+##multmixOpen
+importance.AICunmarkedFitMMO <- function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, c.hat = 1,
+                                         parm.type = NULL, ...){
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+
+  ##reverse parm
+  reversed.parm <- reverse.parm(parm)
+
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+      
+  ##lambda - abundance
+  if(identical(parm.type, "lambda")) {
+    ##extract model formula for each model in cand.set
+    mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$lambda)))
+    parm.unmarked <- "lam"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+  
+    ##gamma - recruitment
+    if(identical(parm.type, "gamma")) {
+        ##extract model formula for each model in cand.set
+        mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$gamma)))
+
+        ##determine if same H0 on gamma (gamConst, gamAR, gamTrend)
+        strip.gam <- sapply(mod_formula, FUN = function(i) unlist(strsplit(i, "\\("))[[1]])
+        unique.gam <- unique(strip.gam)
+        if(length(unique.gam) > 1) stop("\nDifferent formulations of gamma parameter occur among models:\n
+beta estimates cannot be model-averaged\n")
+        ##create label for parm
+        parm.unmarked <- unique.gam
+        parm <- paste(unique.gam, "(", parm, ")", sep="")
+    }
+  
+  ##omega - apparent survival
+  if(identical(parm.type, "omega")) {
+    ##extract model formula for each model in cand.set
+    mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$omega)))
+    ##create label for parm
+    parm.unmarked <- "omega"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+  
+    ##iota (for immigration = TRUE with dynamics = "autoreg", "trend", "ricker", or "gompertz")
+    if(identical(parm.type, "iota")) {
+        not.include <- lapply(cand.set, FUN = function(i) i@formlist$iotaformula)
+        ##check that parameter appears in all models
+        parfreq <- sum(sapply(cand.set, FUN = function(i) any(names(i@estimates@estimates) == parm.type)))
+        if(!identical(length(cand.set), parfreq)) {
+            stop("\nParameter \'iota\' (parm.type = \"", parm.type, "\") does not appear in all models:",
+                 "\ncannot compute model-averaged estimate across all models\n")
+        }
+        ##extract model formula for each model in cand.set
+        mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$iota)))
+        ##create label for parm
+        parm.unmarked <- "iota"
+        parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+
+    }
+
+    ##detect
+    if(identical(parm.type, "detect")) {
+        mod_formula<-lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+        parm.unmarked <- "p"
+        parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+    }
+  
+
+  ##setup matrix to indicate presence of parm in the model
+  include <- matrix(NA, nrow=length(cand.set), ncol=1)
+
+  ##iterate over each formula in mod_formula list
+  for (i in 1:length(cand.set)) {
+    idents <- NULL
+    form <- mod_formula[[i]]
+    
+    ##iterate over each element of formula[[i]] in list
+    if(is.null(reversed.parm)) {
+      for (j in 1:length(form)) {
+        idents[j] <- identical(paste(parm), form[j])
+      }
+    } else {
+      for (j in 1:length(form)) {
+        idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+      }
+    }
+    
+    include[i] <- ifelse(any(idents==1), 1, 0)
+  }
+
+  ##add a check to determine if include always == 0
+  if (sum(include)==0) {stop("\nParameter not found in any of the candidate models\n") }
+  
+  new_table <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord, nobs = nobs,
+                      sort = FALSE, c.hat = c.hat)  
+
+  ##add a check to determine if the same number of models include and exlude parameter
+  if (length(which(include == 1)) != length(which(include != 1)) ) {
+    stop("\nImportance values are only meaningful when the number of models with and without parameter are equal\n")
+  }
+  
+  w.plus <- sum(new_table[which(include == 1), 6]) #select models including a given parameter
+  w.minus <- 1 - w.plus
+  imp <- list("parm" = parm, "w.plus" = w.plus, "w.minus" = w.minus)
+
+  
+  class(imp) <- c("importance", "list")
+  return(imp)
+}
+
+
+##distsampOpen
+importance.AICunmarkedFitDSO <- function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, c.hat = 1,
+                                         parm.type = NULL, ...){
+
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+        if(is.null(names(cand.set))) {
+            modnames <- paste("Mod", 1:length(cand.set), sep = "")
+            warning("\nModel names have been supplied automatically in the table\n")
+        } else {
+            modnames <- names(cand.set)
+        }
+    }
+    
+    ##remove all leading and trailing white space and within parm
+    parm <- gsub('[[:space:]]+', "", parm)
+
+    ##reverse parm
+    reversed.parm <- reverse.parm(parm)
+
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?importance for details\n")}
+    
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+
+  
+  ##lambda - abundance
+  if(identical(parm.type, "lambda")) {
+    ##extract model formula for each model in cand.set
+    mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$lambda)))
+    parm.unmarked <- "lam"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+  
+    ##gamma - recruitment
+    if(identical(parm.type, "gamma")) {
+        ##extract model formula for each model in cand.set
+        mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$gamma)))
+        ##determine if same H0 on gamma (gamConst, gamAR, gamTrend)
+        strip.gam <- sapply(mod_formula, FUN = function(i) unlist(strsplit(i, "\\("))[[1]])
+        unique.gam <- unique(strip.gam)
+        if(length(unique.gam) > 1) stop("\nDifferent formulations of gamma parameter occur among models:\n
+beta estimates cannot be model-averaged\n")
+        
+        ##create label for parm
+        parm.unmarked <- unique.gam
+        parm <- paste(unique.gam, "(", parm, ")", sep="")
+    }
+  
+  ##omega - apparent survival
+  if(identical(parm.type, "omega")) {
+    ##extract model formula for each model in cand.set
+    mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$omega)))
+    ##create label for parm
+    parm.unmarked <- "omega"
+    parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+  }
+  
+    ##iota (for immigration = TRUE with dynamics = "autoreg", "trend", "ricker", or "gompertz")
+    if(identical(parm.type, "iota")) {
+        not.include <- lapply(cand.set, FUN = function(i) i@formlist$iotaformula)
+        ##check that parameter appears in all models
+        parfreq <- sum(sapply(cand.set, FUN = function(i) any(names(i@estimates@estimates) == parm.type)))
+        if(!identical(length(cand.set), parfreq)) {
+            stop("\nParameter \'iota\' (parm.type = \"", parm.type, "\") does not appear in all models:",
+                 "\ncannot compute model-averaged estimate across all models\n")
+        }
+        ##extract model formula for each model in cand.set
+        mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$iota)))
+        ##create label for parm
+        parm.unmarked <- "iota"
+        parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+
+    }
+    
+    ##detect
+    if(identical(parm.type, "detect")) {
+        mod_formula<-lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+        parm.unmarked <- "sigma"
+        parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+    }
   
   
   ##setup matrix to indicate presence of parm in the model

@@ -9,6 +9,8 @@
 \alias{Nmix.chisq.unmarkedFitGDS}
 \alias{Nmix.chisq.unmarkedFitGPC}
 \alias{Nmix.chisq.unmarkedFitGMM}
+\alias{Nmix.chisq.unmarkedFitMMO}
+\alias{Nmix.chisq.unmarkedFitDSO}
 \alias{Nmix.gof.test}
 \alias{Nmix.gof.test.default}
 \alias{Nmix.gof.test.unmarkedFitPCount}
@@ -18,6 +20,8 @@
 \alias{Nmix.gof.test.unmarkedFitGMM}
 \alias{Nmix.gof.test.unmarkedFitGPC}
 \alias{Nmix.gof.test.unmarkedFitMPois}
+\alias{Nmix.gof.test.unmarkedFitMMO}
+\alias{Nmix.gof.test.unmarkedFitDSO}
 \alias{print.Nmix.chisq}
 \title{
 Compute Chi-square Goodness-of-fit Test for N-mixture Models
@@ -38,10 +42,12 @@ parallel = TRUE, \dots)
 }
 \arguments{
   \item{mod}{
-    the \emph{N}-mixture model of 'unmarkedFitPCount', 'unmarkedFitPCO',
-    'unmarkedFitDS', 'unmarkedFitGDS', 'unmarkedFitGMM',
-    'unmarkedFitGPC', or 'unmarkedFitMPois' classes for which a
-    goodness-of-fit test is required.
+    the \emph{N}-mixture model of \code{unmarkedFitPCount},
+    \code{unmarkedFitPCO}, \code{unmarkedFitDS}, \code{unmarkedFitGDS},
+    \code{unmarkedFitGMM}, \code{unmarkedFitGPC},
+    \code{unmarkedFitMPois}, \code{unmarkedFitMMO}, or
+    \code{unmarkedFitDSO} classes for which a goodness-of-fit test is
+    required. 
   }
 \item{nsim}{the number of bootstrapped samples.
 }

@@ -44,6 +44,10 @@
 \alias{bictab.AICunmarkedFitGMM}
 \alias{bictab.AICunmarkedFitGPC}
 \alias{bictab.AICunmarkedFitOccuMulti}
+\alias{bictab.AICunmarkedFitOccuMS}
+\alias{bictab.AICunmarkedFitOccuTTD}
+\alias{bictab.AICunmarkedFitMMO}
+\alias{bictab.AICunmarkedFitDSO}
 \alias{bictab.AICvglm}
 \alias{bictab.AICzeroinfl}
 \alias{print.bictab}
@@ -197,6 +201,18 @@ bictab(cand.set, modnames = NULL, nobs = NULL,
          nobs = NULL, sort = TRUE, c.hat = 1, \dots)
 
 \method{bictab}{AICunmarkedFitOccuMulti}(cand.set, modnames = NULL,
+         nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{bictab}{AICunmarkedFitOccuMS}(cand.set, modnames = NULL,
+         nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{bictab}{AICunmarkedFitOccuTTD}(cand.set, modnames = NULL,
+         nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{bictab}{AICunmarkedFitMMO}(cand.set, modnames = NULL,
+         nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{bictab}{AICunmarkedFitDSO}(cand.set, modnames = NULL,
          nobs = NULL, sort = TRUE, c.hat = 1, \dots)
 
 \method{bictab}{AICvglm}(cand.set, modnames = NULL,

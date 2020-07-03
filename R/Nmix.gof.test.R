@@ -179,6 +179,56 @@ Nmix.chisq.unmarkedFitGMM <- function(mod, ...) {
 
 
 
+##multmixOpen
+Nmix.chisq.unmarkedFitMMO <- function(mod, ...) {
+
+  ##extract original data from model object
+  obs <- mod@data@y
+  ##extract fitted values
+  fits <- fitted(mod)
+  ##check if sites were removed from analysis
+  sr <- mod@sitesRemoved
+  if(length(sr) > 0) {
+    obs <- obs[-sr, ]
+    fits <- fits[-sr, ]
+  }
+  
+  ##add NA's where fitted values are NA
+  #obs[is.na(fits)] <- NA
+  ##compute chi-square
+  chi.sq <- sum((obs - fits)^2/fits, na.rm = TRUE) #added argument na.rm = TRUE when NA's occur
+  result <- list(chi.square = chi.sq, model.type = class(mod)[1])
+  class(result) <- "Nmix.chisq"
+  return(result)
+}
+
+
+
+##distsampOpen
+Nmix.chisq.unmarkedFitDSO <- function(mod, ...) {
+
+  ##extract original data from model object
+  obs <- mod@data@y
+  ##extract fitted values
+  fits <- fitted(mod)
+  ##check if sites were removed from analysis
+  sr <- mod@sitesRemoved
+  if(length(sr) > 0) {
+    obs <- obs[-sr, ]
+    fits <- fits[-sr, ]
+  }
+  
+  ##add NA's where fitted values are NA
+  #obs[is.na(fits)] <- NA
+  ##compute chi-square
+  chi.sq <- sum((obs - fits)^2/fits, na.rm = TRUE) #added argument na.rm = TRUE when NA's occur
+  result <- list(chi.square = chi.sq, model.type = class(mod)[1])
+  class(result) <- "Nmix.chisq"
+  return(result)
+}
+
+
+
 ##generic
 Nmix.gof.test <- function(mod, nsim = 5, plot.hist = TRUE,
                           report = NULL, parallel = TRUE, ...){
@@ -216,19 +266,24 @@ Nmix.gof.test.unmarkedFitPCount <- function(mod, nsim = 5, plot.hist = TRUE,
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
-    p.display <- paste("<", 1/nsim)
+      p.display <- paste("<", round(1/nsim, digits = 4))
   } else {
-    p.display = paste("=", round(p.value, digits = 4))
+      p.display = paste("=", round(p.value, digits = 4))
   }
 
   ##create plot
-  if(plot.hist) {
-    hist(out@t.star, main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
-        list(nsim = nsim))),
-         xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-    title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-    abline(v = out@t0, lty = "dashed", col = "red")
-  }
+    if(plot.hist) {
+        par(cex = 1.1,
+            cex.axis = 1.1,
+            cex.lab = 1.1)
+        hist(out@t.star,
+             main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
+                                             list(nsim = nsim))),
+             xlim = range(c(out@t.star, out@t0)),
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
+        abline(v = out@t0, lty = "dashed", col = "red")
+    }
   
   ##estimate c-hat
   c.hat.est <- out@t0/mean(out@t.star)
@@ -265,19 +320,24 @@ Nmix.gof.test.unmarkedFitPCO <- function(mod, nsim = 5, plot.hist = TRUE,
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
-    p.display <- paste("<", 1/nsim)
+      p.display <- paste("<", round(1/nsim, digits = 4))
   } else {
-    p.display = paste("=", round(p.value, digits = 4))
+      p.display = paste("=", round(p.value, digits = 4))
   }
 
   ##create plot
-  if(plot.hist) {
-    hist(out@t.star, main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
-        list(nsim = nsim))),
-         xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-    title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-    abline(v = out@t0, lty = "dashed", col = "red")
-  }
+    if(plot.hist) {
+        par(cex = 1.1,
+            cex.axis = 1.1,
+            cex.lab = 1.1)
+        hist(out@t.star,
+             main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
+                                             list(nsim = nsim))),
+             xlim = range(c(out@t.star, out@t0)),
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
+        abline(v = out@t0, lty = "dashed", col = "red")
+    }
   
   ##estimate c-hat
   c.hat.est <- out@t0/mean(out@t.star)
@@ -314,19 +374,24 @@ Nmix.gof.test.unmarkedFitDS <- function(mod, nsim = 5, plot.hist = TRUE,
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
-    p.display <- paste("<", 1/nsim)
+      p.display <- paste("<", round(1/nsim, digits = 4))
   } else {
-    p.display = paste("=", round(p.value, digits = 4))
+      p.display = paste("=", round(p.value, digits = 4))
   }
 
   ##create plot
-  if(plot.hist) {
-    hist(out@t.star, main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
-        list(nsim = nsim))),
-         xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-    title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-    abline(v = out@t0, lty = "dashed", col = "red")
-  }
+    if(plot.hist) {
+        par(cex = 1.1,
+            cex.axis = 1.1,
+            cex.lab = 1.1)
+        hist(out@t.star,
+             main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
+                                             list(nsim = nsim))),
+             xlim = range(c(out@t.star, out@t0)),
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
+        abline(v = out@t0, lty = "dashed", col = "red")
+    }
   
   ##estimate c-hat
   c.hat.est <- out@t0/mean(out@t.star)
@@ -363,19 +428,24 @@ Nmix.gof.test.unmarkedFitGDS <- function(mod, nsim = 5, plot.hist = TRUE,
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
-    p.display <- paste("<", 1/nsim)
+      p.display <- paste("<", round(1/nsim, digits = 4))
   } else {
-    p.display = paste("=", round(p.value, digits = 4))
+      p.display = paste("=", round(p.value, digits = 4))
   }
 
   ##create plot
-  if(plot.hist) {
-    hist(out@t.star, main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
-        list(nsim = nsim))),
-         xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-    title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-    abline(v = out@t0, lty = "dashed", col = "red")
-  }
+    if(plot.hist) {
+        par(cex = 1.1,
+            cex.axis = 1.1,
+            cex.lab = 1.1)
+        hist(out@t.star,
+             main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
+                                             list(nsim = nsim))),
+             xlim = range(c(out@t.star, out@t0)),
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
+        abline(v = out@t0, lty = "dashed", col = "red")
+    }
   
   ##estimate c-hat
   c.hat.est <- out@t0/mean(out@t.star)
@@ -412,19 +482,25 @@ Nmix.gof.test.unmarkedFitGMM <- function(mod, nsim = 5, plot.hist = TRUE,
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
-    p.display <- paste("<", 1/nsim)
+      p.display <- paste("<", round(1/nsim, digits = 4))
   } else {
-    p.display = paste("=", round(p.value, digits = 4))
+      p.display = paste("=", round(p.value, digits = 4))
   }
 
   ##create plot
-  if(plot.hist) {
-    hist(out@t.star, main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
-        list(nsim = nsim))),
-         xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-    title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-    abline(v = out@t0, lty = "dashed", col = "red")
-  }
+    if(plot.hist) {
+        par(cex = 1.1,
+            cex.axis = 1.1,
+            cex.lab = 1.1)
+        
+        hist(out@t.star,
+             main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
+                                             list(nsim = nsim))),
+             xlim = range(c(out@t.star, out@t0)),
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
+        abline(v = out@t0, lty = "dashed", col = "red")
+    }
   
   ##estimate c-hat
   c.hat.est <- out@t0/mean(out@t.star)
@@ -461,19 +537,25 @@ Nmix.gof.test.unmarkedFitGPC <- function(mod, nsim = 5, plot.hist = TRUE,
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
-    p.display <- paste("<", 1/nsim)
+      p.display <- paste("<", round(1/nsim, digits = 4))
   } else {
-    p.display = paste("=", round(p.value, digits = 4))
+      p.display = paste("=", round(p.value, digits = 4))
   }
 
   ##create plot
-  if(plot.hist) {
-    hist(out@t.star, main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
-        list(nsim = nsim))),
-         xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-    title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-    abline(v = out@t0, lty = "dashed", col = "red")
-  }
+    if(plot.hist) {
+        par(cex = 1.1,
+            cex.axis = 1.1,
+            cex.lab = 1.1)
+        
+        hist(out@t.star,
+             main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
+                                             list(nsim = nsim))),
+             xlim = range(c(out@t.star, out@t0)),
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
+        abline(v = out@t0, lty = "dashed", col = "red")
+    }
   
   ##estimate c-hat
   c.hat.est <- out@t0/mean(out@t.star)
@@ -510,19 +592,135 @@ Nmix.gof.test.unmarkedFitMPois <- function(mod, nsim = 5, plot.hist = TRUE,
   ##determine significance
   p.value <- sum(out@t.star >= out@t0)/nsim
   if(p.value == 0) {
-    p.display <- paste("<", 1/nsim)
+      p.display <- paste("<", round(1/nsim, digits = 4))
   } else {
-    p.display = paste("=", round(p.value, digits = 4))
+      p.display = paste("=", round(p.value, digits = 4))
   }
 
   ##create plot
-  if(plot.hist) {
-    hist(out@t.star, main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
-        list(nsim = nsim))),
-         xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-    title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-    abline(v = out@t0, lty = "dashed", col = "red")
+    if(plot.hist) {
+        par(cex = 1.1,
+            cex.axis = 1.1,
+            cex.lab = 1.1)
+        
+        hist(out@t.star,
+             main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
+                                             list(nsim = nsim))),
+             xlim = range(c(out@t.star, out@t0)),
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
+        abline(v = out@t0, lty = "dashed", col = "red")
+    }
+  
+  ##estimate c-hat
+  c.hat.est <- out@t0/mean(out@t.star)
+
+  ##assemble result
+  gof.out <- list(model.type = model.type, chi.square = out@t0, t.star = out@t.star,
+                  p.value = p.value, c.hat.est = c.hat.est, nsim = nsim)
+  class(gof.out) <- "Nmix.chisq"
+  return(gof.out)  
+}
+
+
+
+##multmixOpen
+Nmix.gof.test.unmarkedFitMMO <- function(mod, nsim = 5, plot.hist = TRUE,
+                                         report = NULL, parallel = TRUE, ...){
+  ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
+
+  ##extract model type
+  model.type <- Nmix.chisq(mod)$model.type
+
+  ##if NULL, don't print test statistic at each iteration
+  if(is.null(report)) {
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim, parallel = parallel)
+  } else {
+
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim, report = report, parallel = parallel)
+      
   }
+  
+  ##determine significance
+  p.value <- sum(out@t.star >= out@t0)/nsim
+  if(p.value == 0) {
+      p.display <- paste("<", round(1/nsim, digits = 4))
+  } else {
+      p.display = paste("=", round(p.value, digits = 4))
+  }
+
+  ##create plot
+    if(plot.hist) {
+        par(cex = 1.1,
+            cex.axis = 1.1,
+            cex.lab = 1.1)
+        hist(out@t.star,
+             main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
+                                             list(nsim = nsim))),
+             xlim = range(c(out@t.star, out@t0)),
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
+        abline(v = out@t0, lty = "dashed", col = "red")
+    }
+  
+  ##estimate c-hat
+  c.hat.est <- out@t0/mean(out@t.star)
+
+  ##assemble result
+  gof.out <- list(model.type = model.type, chi.square = out@t0, t.star = out@t.star,
+                  p.value = p.value, c.hat.est = c.hat.est, nsim = nsim)
+  class(gof.out) <- "Nmix.chisq"
+  return(gof.out)  
+}
+
+
+
+##distsampOpen
+Nmix.gof.test.unmarkedFitDSO <- function(mod, nsim = 5, plot.hist = TRUE,
+                                         report = NULL, parallel = TRUE, ...){
+  ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
+
+  ##extract model type
+  model.type <- Nmix.chisq(mod)$model.type
+
+  ##if NULL, don't print test statistic at each iteration
+  if(is.null(report)) {
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim, parallel = parallel)
+  } else {
+
+      ##compute GOF P-value
+      out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
+                     nsim = nsim, report = report, parallel = parallel)
+      
+  }
+  
+  ##determine significance
+  p.value <- sum(out@t.star >= out@t0)/nsim
+  if(p.value == 0) {
+      p.display <- paste("<", round(1/nsim, digits = 4))
+  } else {
+      p.display = paste("=", round(p.value, digits = 4))
+  }
+
+  ##create plot
+    if(plot.hist) {
+        par(cex = 1.1,
+            cex.axis = 1.1,
+            cex.lab = 1.1)
+        hist(out@t.star,
+             main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
+                                             list(nsim = nsim))),
+             xlim = range(c(out@t.star, out@t0)),
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
+        abline(v = out@t0, lty = "dashed", col = "red")
+    }
   
   ##estimate c-hat
   c.hat.est <- out@t0/mean(out@t.star)

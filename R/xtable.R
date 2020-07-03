@@ -366,38 +366,66 @@ xtable.modavgEffect <- function(x, caption = NULL, label = NULL, align = NULL,
                                 digits = NULL, display = NULL, 
                                 nice.names = TRUE, print.table = FALSE, ...) {
 
-  if(print.table) {
-    ##extract model selection table
-    modavg.table <- data.frame(x$Mod.avg.table[, c(1:4, 6, 8:9)], check.names = FALSE)
+    if(print.table) {
 
-    ##change to nicer names
-    if(nice.names) {
-      new.delta <- names(modavg.table)[4]
-      new.weight <- names(modavg.table)[5]
-      names(modavg.table)[1] <- "Model"
-      names(modavg.table)[2] <- "K"
-      ##names(x)[4] <- paste("$\\delta$", unlist(strsplit(new.delta, "_"))[2], collapse = " ") #requires sanitize.text.function( )
-      names(modavg.table)[4] <- paste(unlist(strsplit(new.delta, "_")), collapse = " ")
-      names(modavg.table)[5] <- paste(unlist(strsplit(new.weight, "Wt")), "weight", collapse = " ")
-      names(modavg.table)[6] <- paste("Effect(", x$Group1, " - ", x$Group2, ")", sep = "")
-      names(modavg.table)[7] <- paste("SE(", x$Group1, " - ", x$Group2, ")", sep = "")
+        ##check if output from occuMulti or occuMS
+        if(length(x$Mod.avg.eff) > 1) {
+            warning("\nToo many effect sizes to print in table\n")
+            ##extract model selection table
+            modavg.table <- data.frame(x$Mod.avg.table[, c(1:4, 6)], check.names = FALSE)
+
+            if(nice.names) {
+                new.delta <- names(modavg.table)[4]
+                new.weight <- names(modavg.table)[5]
+                names(modavg.table)[1] <- "Model"
+                names(modavg.table)[2] <- "K"
+                ##names(x)[4] <- paste("$\\delta$", unlist(strsplit(new.delta, "_"))[2], collapse = " ") #requires sanitize.text.function( )
+                names(modavg.table)[4] <- paste(unlist(strsplit(new.delta, "_")), collapse = " ")
+                names(modavg.table)[5] <- paste(unlist(strsplit(new.weight, "Wt")), "weight", collapse = " ")
+            }
+
+            ##format to data.frame
+            class(modavg.table) <- c("xtable","data.frame")
+
+            align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r"))
+            digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2))
+            display(modavg.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f"))
+
+        } else {
+        
+        ##extract model selection table
+        modavg.table <- data.frame(x$Mod.avg.table[, c(1:4, 6, 8:9)], check.names = FALSE)
+      
+        ##change to nicer names
+        if(nice.names) {
+            new.delta <- names(modavg.table)[4]
+            new.weight <- names(modavg.table)[5]
+            names(modavg.table)[1] <- "Model"
+            names(modavg.table)[2] <- "K"
+            ##names(x)[4] <- paste("$\\delta$", unlist(strsplit(new.delta, "_"))[2], collapse = " ") #requires sanitize.text.function( )
+            names(modavg.table)[4] <- paste(unlist(strsplit(new.delta, "_")), collapse = " ")
+            names(modavg.table)[5] <- paste(unlist(strsplit(new.weight, "Wt")), "weight", collapse = " ")
+            names(modavg.table)[6] <- paste("Effect(", x$Group1, " - ", x$Group2, ")", sep = "")
+            names(modavg.table)[7] <- paste("SE(", x$Group1, " - ", x$Group2, ")", sep = "")
+        }
+
+            ##format to data.frame
+            class(modavg.table) <- c("xtable","data.frame")
+
+            align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
+            digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2,2))
+            display(modavg.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f","f"))
+        }
     }
-
-    ##format to data.frame
-    class(modavg.table) <- c("xtable","data.frame")
-
-    align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
-    digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2,2))
-    display(modavg.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f","f"))
-  }  
 
 
   ##print model-averaged estimate, unconditional SE, CI
   if(!print.table) {
-      
-    modavg.table <- data.frame(Mod.avg.beta = x$Mod.avg.eff, Uncond.SE = x$Uncond.se,
-                               Lower.CL = x$Lower.CL, Upper.CL = x$Upper.CL, check.names = FALSE)
-    rownames(modavg.table) <- x$Group.variable
+
+    modavg.table <- as.data.frame(x$Matrix.output)
+    ##modavg.table <- data.frame(Mod.avg.beta = x$Mod.avg.eff, Uncond.SE = x$Uncond.se,
+    ##                           Lower.CL = x$Lower.CL, Upper.CL = x$Upper.CL, check.names = FALSE)
+    ##rownames(modavg.table) <- x$Group.variable ##TO CHANGE LABEL TO "Effect Size"
 
     ##change to nicer names
     if(nice.names) {
@@ -405,14 +433,15 @@ xtable.modavgEffect <- function(x, caption = NULL, label = NULL, align = NULL,
       names(modavg.table)[2] <- "Unconditional SE"
       names(modavg.table)[3] <- paste(100*x$Conf.level, "%", " lower limit", sep = "")
       names(modavg.table)[4] <- paste(100*x$Conf.level, "%", " upper limit", sep = "")
+      if(length(x$Mod.avg.eff) == 1) {rownames(modavg.table) <- paste("Effect size (", x$Group.variable, ")", sep = "")}
     }
   
-    ##format to data.frame
-    class(modavg.table) <- c("xtable","data.frame")
+      ##format to data.frame
+      class(modavg.table) <- c("xtable","data.frame")
 
-    align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
-    digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2))
-    display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f"))
+      align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
+      digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2))
+      display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f"))
   }
 
   caption(modavg.table) <- caption
@@ -899,7 +928,7 @@ xtable.countDist <- function(x, caption = NULL, label = NULL, align = NULL,
       ##display counts across distance classes
       if(identical(table.countDist, "distance")) {
         ##assumes the same distance classes were used each year
-        det.dist <- matrix(unlist(x$dist.sums.seasons),
+        det.dist <- matrix(unlist(x$dist.table.seasons),
                            nrow = x$n.seasons)
         colnames(det.dist) <- names(x$dist.sums.full)
 
@@ -956,6 +985,94 @@ xtable.countDist <- function(x, caption = NULL, label = NULL, align = NULL,
   caption(det.frame) <- caption
   label(det.frame) <- label
   return(det.frame)
+}
+
+
+
+##add method for detTime class
+xtable.detTime <- function(x, caption = NULL, label = NULL, align = NULL,
+                           digits = NULL, display = NULL, 
+                           nice.names = TRUE, table.detTime = "freq",
+                           ...) {
+  ##for single season, display frequencies in a single matrix
+  if(x$n.seasons == 1) {
+
+    ##display detection histories
+    if(identical(table.detTime, "dist")){
+      det.time <- x$time.table.full
+      det.mat <- matrix(det.time, nrow = 1)
+      
+      if(nice.names) {
+        det.names <- names(det.time)
+        colnames(det.mat) <- det.names
+        rownames(det.mat) <- "Season-1"
+      }
+      
+      det.frame <- as.data.frame(det.mat)
+      n.cols <- ncol(det.frame)
+    }
+
+    ##display frequencies
+    if(identical(table.detTime, "freq")) {
+        det.frame <- as.data.frame(x$out.freqs)
+        n.cols <- ncol(det.frame)
+      }
+
+    ##display proportions
+    if(identical(table.detTime, "prop")){
+      det.frame <- as.data.frame(x$out.props)
+      n.cols <- ncol(det.frame)
+    }
+       
+  }
+
+    
+    if(x$n.seasons > 1) {
+          
+        ##display distribution of detection times across seasons
+        if(identical(table.detTime, "dist")) {
+            det.time <- x$time.table.full
+            det.mat <- matrix(det.time, nrow = 1)
+      
+            if(nice.names) {
+                det.names <- names(det.time)
+                colnames(det.mat) <- det.names
+                rownames(det.mat) <- "All seasons"
+            }
+        
+            det.frame <- as.data.frame(det.mat)
+            n.cols <- ncol(det.frame)
+        }
+
+        ##display frequencies
+        if(identical(table.detTime, "freq")) {
+            det.frame <- as.data.frame(x$out.freqs)
+            n.cols <- ncol(det.frame)
+        }
+
+        ##display proportions
+        if(identical(table.detTime, "prop")) {
+            det.frame <- as.data.frame(x$out.props)
+            n.cols <- ncol(det.frame)
+        }
+    }
+
+    
+    ##format to data.frame
+    class(det.frame) <- c("xtable","data.frame")
+  
+    align(det.frame) <- switch(1+is.null(align), align, c("l", rep("r", n.cols)))
+    
+    if(identical(table.detTime, "prop")) {
+        digits(det.frame) <- switch(1+is.null(digits), digits, c(0, rep(2, n.cols)))
+    } else {
+        digits(det.frame) <- switch(1+is.null(digits), digits, c(0, rep(0, n.cols)))
+    }
+    display(det.frame) <- switch(1+is.null(display), display, c("s", rep("f", n.cols)))
+  
+    caption(det.frame) <- caption
+    label(det.frame) <- label
+    return(det.frame)
 }
 
 
@@ -1377,40 +1494,40 @@ xtable.modavgCustom <- function(x, caption = NULL, label = NULL, align = NULL,
             names(modavg.table)[7] <- "SE"
         }
 
-    ##format to data.frame
-    class(modavg.table) <- c("xtable","data.frame")
-
-    align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
-    digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2,2))
-    display(modavg.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f","f"))
-  }  
+        ##format to data.frame
+        class(modavg.table) <- c("xtable","data.frame")
+        
+        align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r","r","r","r"))
+        digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,0,2,2,2,2,2,2))
+        display(modavg.table) <- switch(1+is.null(display), display, c("s","s","d","f","f","f","f","f"))
+    }  
     
 
     ##print model-averaged estimate, unconditional SE, CI
     if(!print.table) {
       
-      ##model-averaged estimate                          
-      modavg.table <- data.frame(Mod.avg.beta = x$Mod.avg.est, Uncond.SE = x$Uncond.SE,
-                                 Lower.CL = x$Lower.CL, Upper.CL = x$Upper.CL, check.names = FALSE)
-      rownames(modavg.table) <- "Parameter"
+        ##model-averaged estimate                          
+        modavg.table <- data.frame(Mod.avg.beta = x$Mod.avg.est, Uncond.SE = x$Uncond.SE,
+                                   Lower.CL = x$Lower.CL, Upper.CL = x$Upper.CL, check.names = FALSE)
+        rownames(modavg.table) <- "Parameter"
     
-      ##change to nicer names
-      if(nice.names) {
-        names(modavg.table)[1] <- "Model-averaged estimate" 
-        names(modavg.table)[2] <- "Unconditional SE"
-        names(modavg.table)[3] <- paste(100*x$Conf.level, "%", " lower limit", sep = "")
-        names(modavg.table)[4] <- paste(100*x$Conf.level, "%", " upper limit", sep = "")
-      }
+        ##change to nicer names
+        if(nice.names) {
+            names(modavg.table)[1] <- "Model-averaged estimate" 
+            names(modavg.table)[2] <- "Unconditional SE"
+            names(modavg.table)[3] <- paste(100*x$Conf.level, "%", " lower limit", sep = "")
+            names(modavg.table)[4] <- paste(100*x$Conf.level, "%", " upper limit", sep = "")
+        }
   
-      ##format to data.frame
-      class(modavg.table) <- c("xtable","data.frame")
+        ##format to data.frame
+        class(modavg.table) <- c("xtable","data.frame")
 
-      align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
-      digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2))
-      display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f"))
+        align(modavg.table) <- switch(1+is.null(align), align, c("l","r","r","r","r"))
+        digits(modavg.table) <- switch(1+is.null(digits), digits, c(0,2,2,2,2))
+        display(modavg.table) <- switch(1+is.null(display), display, c("s","f","f","f","f"))
     }
 
-  caption(modavg.table) <- caption
-  label(modavg.table) <- label
-  return(modavg.table)
+    caption(modavg.table) <- caption
+    label(modavg.table) <- label
+    return(modavg.table)
 }

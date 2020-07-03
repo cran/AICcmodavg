@@ -6,6 +6,8 @@
 \alias{countDist.unmarkedFitDS}
 \alias{countDist.unmarkedFrameGDS}
 \alias{countDist.unmarkedFitGDS}
+\alias{countDist.unmarkedFrameDSO}
+\alias{countDist.unmarkedFitDSO}
 \alias{print.countDist}
 \title{
 Compute Summary Statistics from Distance Sampling Data
@@ -29,6 +31,8 @@ countDist(object, plot.freq = TRUE, plot.distance = TRUE, \dots)
 \method{countDist}{unmarkedFitGDS}(object, plot.freq = TRUE,
                    plot.distance = TRUE, \dots)
 
+\method{countDist}{unmarkedFitDSO}(object, plot.freq = TRUE,
+                   plot.distance = TRUE, plot.seasons = FALSE, \dots)
 }
 
 \arguments{
@@ -41,8 +45,13 @@ countDist(object, plot.freq = TRUE, plot.distance = TRUE, \dots)
    distance classes) should  be plotted.
  }
  \item{plot.distance}{
-   logical.  Specifies if the counts in each distance class should be
-   plotted.  
+   logical.  Specifies if the counts in each distance class (pooled
+   across seasons) should be plotted.  
+ }
+ \item{plot.seasons}{
+   logical.  Specifies if the count data should be plotted for each
+   distance class and season separately.  This argument is only relevant
+   for data collected across more than a single season.
  }
  
   \item{\dots}{
@@ -52,15 +61,18 @@ countDist(object, plot.freq = TRUE, plot.distance = TRUE, \dots)
 
 \details{
   This function computes a number of summary statistics in data sets
-  used for the distance sampling models of Royle et al. (2004) and
-  Chandler et al. (2011).
+  used for the distance sampling models of Royle et al. (2004),
+  Chandler et al. (2011), and distance-sampling versions of models of Dail
+  and Madsen (2011) and Hostetler and Chandler (2015) based on Sollmann et
+  al. (2015).
   
   \code{countDist} can take data frames of the
-  \code{unmarkedFrameDS} and \code{unmarkedFrameGDS} classes as input.
-  For convenience, the function can also extract the raw data from model
-  objects of classes \code{unmarkedFitDS} and \code{unmarkedFitGDS}.
-  Note that different model objects using the same data set will have
-  identical values.
+  \code{unmarkedFrameDS}, \code{unmarkedFrameGDS},
+  \code{unmarkedFrameDSO} classes as input.  For convenience, the
+  function can also extract the raw data from model objects of classes
+  \code{unmarkedFitDS}, \code{unmarkedFitGDS}, and
+  \code{unmarkedFitDSO}.  Note that different model objects using the
+  same data set will have identical values.
 }
 \value{
   \code{countDist} returns a list with the following components:
@@ -74,8 +86,13 @@ countDist(object, plot.freq = TRUE, plot.distance = TRUE, \dots)
   \item{dist.sums.full}{a table with the frequency of counts in each
     distance class across the entire sampling seasons.}
   
-  \item{hist.table.seasons}{a list of tables with the frequency of
+  \item{dist.table.seasons}{a list of tables with the frequency of
     counts in each distance class for each primary period.}
+
+  \item{dist.names}{a character string of labels for the distance
+    classes.}
+
+  \item{n.dist.classes}{the number of distance classes.}
   
   \item{out.freqs}{a matrix where the rows correspond to each sampling
     season and where columns consist of the number of sites sampled in
@@ -116,10 +133,23 @@ countDist(object, plot.freq = TRUE, plot.distance = TRUE, \dots)
 \references{
   Chandler, R. B., Royle, J. A., King, D. I. (2011) Inference about
   density and temporary emigration in unmarked
-  populations. \emph{Ecology} \bold{92}, 1429--1435. 
+  populations. \emph{Ecology} \bold{92}, 1429--1435.
+
+  Dail, D., Madsen, L. (2011) Models for estimating abundance from
+  repeated counts of an open population. \emph{Biometrics} \bold{67},
+  577--587.
+
+  Hostetler, J. A., Chandler, R. B. (2015) Improved state-space models
+  for inference about spatial and temporal variation in abundance from
+  count data. \emph{Ecology} \bold{96}, 1713--1723.
 
   Royle, J. A., Dawson, D. K., Bates, S. (2004) Modeling abundance
   effects in distance sampling. \emph{Ecology} \bold{85}, 1591--1597.
+
+  Sollmann, R., Gardner, B., Chandler, R. B., Royle, J. A., Sillett,
+  T. S. (2015) An open-population hierarchical distance sampling
+  model. \bold{Ecology} \bold{96}, 325--331.
+    
 }
   
 \author{
@@ -127,8 +157,9 @@ Marc J. Mazerolle
 }
 
 \seealso{
-\code{\link{covDiag}}, \code{\link{detHist}}, \code{\link{countHist}},
-\code{\link{Nmix.chisq}}, \code{\link{Nmix.gof.test}}
+\code{\link{covDiag}}, \code{\link{detHist}}, \code{\link{detTime}},
+\code{\link{countHist}}, \code{\link{Nmix.chisq}},
+\code{\link{Nmix.gof.test}}
 }
 \examples{
 ##modified example from ?distsamp

@@ -14,6 +14,10 @@
 \alias{summaryOD.unmarkedFitGMM}
 \alias{summaryOD.unmarkedFitGPC}
 \alias{summaryOD.unmarkedFitOccuMulti}
+\alias{summaryOD.unmarkedFitOccuMS}
+\alias{summaryOD.unmarkedFitOccuTTD}
+\alias{summaryOD.unmarkedFitMMO}
+\alias{summaryOD.unmarkedFitDSO}
 \alias{summaryOD.glmerMod}
 \alias{summaryOD.maxlikeFit}
 \alias{summaryOD.multinom}
@@ -67,6 +71,21 @@ summaryOD(mod, c.hat = 1, conf.level = 0.95,
      out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitGPC}(mod, c.hat = 1, conf.level = 0.95, 
+     out.type = "confint", \dots)
+
+\method{summaryOD}{unmarkedFitOccuMulti}(mod, c.hat = 1, conf.level = 0.95,
+     out.type = "confint", \dots)
+
+\method{summaryOD}{unmarkedFitOccuMS}(mod, c.hat = 1, conf.level = 0.95,
+     out.type = "confint", \dots)
+
+\method{summaryOD}{unmarkedFitOccuTTD}(mod, c.hat = 1, conf.level = 0.95,
+     out.type = "confint", \dots)
+
+\method{summaryOD}{unmarkedFitMMO}(mod, c.hat = 1, conf.level = 0.95,
+     out.type = "confint", \dots)
+
+\method{summaryOD}{unmarkedFitDSO}(mod, c.hat = 1, conf.level = 0.95,
      out.type = "confint", \dots)
 
 \method{summaryOD}{glmerMod}(mod, c.hat = 1, conf.level = 0.95, 

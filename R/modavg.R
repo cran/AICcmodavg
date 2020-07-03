@@ -5554,11 +5554,11 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE,
     }
   }
     
-  ##check that link function is the same for all models
-  check.link <- unlist(lapply(X = cand.set, FUN=function(i) i@family@blurb[3])) 
+    ##check that link function is the same for all models
+    check.link <- unlist(lapply(X = cand.set, FUN=function(i) i@family@blurb[3])) 
     unique.link <- unique(x=check.link)
     if(length(unique.link) > 1) stop("\nIt is not appropriate to compute a model-averaged beta estimate\n",
-                                         "from models using different link functions\n")
+                                     "from models using different link functions\n")
     
     ##check family of vglm to avoid problems when requesting predictions with argument 'dispersion'
     fam.type <- unlist(lapply(cand.set, FUN=function(i) i@family@vfamily))
@@ -6071,15 +6071,21 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE,
 ##multiseason model:  psi, col, ext, det - USE psi, gamma, epsilon, detect
 ##RN heterogeneity model: state, det - USE lambda, detect
 ##N-mixture: state, det - USE lambda, detect
-##Open N-mixture: lambda, gamma, omega, det - USE lambda, gamma, omega, detect
+##Open N-mixture: lambda, gamma, omega, iota, det - USE lambda, gamma, omega, iota, detect
 ##distsamp: state, det - USE lambda, detect
 ##gdistsamp: state, det, phi - USE lambda, detect, phi
 ##false-positive occupancy: state, det, fp - USE psi, detect, fp
 ##gpcount: lambda, phi, det - USE lambda, phi, detect
 ##gmultmix: lambda, phi, det - USE lambda, phi, detect
 ##multinomPois: state, det - USE lambda, detect
+##occuMulti: state, det - USE lambda, detect
+##occuMS: state, det - USE psi, detect
+##occuTTD: psi, det, col, ext - USE psi, detect, gamma, epsilon
+##pcount.spHDS: state, det - USE lambda, detect
+##multmixOpen: lambda, gamma, omega, iota, det - USE lambda, gamma, epsilon, iota, detect
+##distsampOpen: lambda, gamma, omega, iota, det - USE lambda, gamma, epsilon, iota, detect
 
-##occu
+
 modavg.AICunmarkedFitOccu <-
 function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, 
          uncond.se = "revised", conf.level = 0.95, exclude = NULL, warn = TRUE,
@@ -6100,7 +6106,8 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
   
   ##check for parm.type and stop if NULL
   if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
-  
+
+    
 #####MODIFICATIONS BEGIN#######
   ##remove all leading and trailing white space and within parm
   parm <- gsub('[[:space:]]+', "", parm)
@@ -6122,7 +6129,8 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
       parm <- paste("psi", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("psi", "(", reversed.parm, ")", sep="")}
-      not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])      
+        not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
+        parm.type1 <- "state"
     }
   
     ##detect
@@ -6131,8 +6139,22 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
       parm <- paste("p", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
       not.include <- lapply(cand.set, FUN = function(i) i@formula[[2]])
+      parm.type1 <- "det"
     }
-  
+
+##################
+    ##extract link function
+    check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                 parm.type1, "@invlink",
+                                                                                 sep = ""))))
+    unique.link <- unique(check.link)
+    select.link <- unique.link[1]
+    
+    if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                          "with different link functions\n")}
+##################
+
+    
   nmods <- length(cand.set)
   
   ##setup matrix to indicate presence of parms in the model
@@ -6411,17 +6433,21 @@ modavg.AICunmarkedFitColExt <-
       ##create label for parm
       parm <- paste("psi", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("psi", "(", reversed.parm, ")", sep="")}
-      not.include <- lapply(cand.set, FUN = function(i) i@psiformula)
+        not.include <- lapply(cand.set, FUN = function(i) i@psiformula)
+        parm.type1 <- "psi"
     }
-    ##gamma - extinction
+      
+    ##gamma - colonization
     if(identical(parm.type, "gamma")) {
       ##extract model formula for each model in cand.set
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$col)))
       ##create label for parm
       parm <- paste("col", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("col", "(", reversed.parm, ")", sep="")}
-      not.include <- lapply(cand.set, FUN = function(i) i@gamformula)
+        not.include <- lapply(cand.set, FUN = function(i) i@gamformula)
+        parm.type1 <- "col"
     }
+      
     ##epsilon - extinction
     if(identical(parm.type, "epsilon")) {
       ##extract model formula for each model in cand.set
@@ -6430,15 +6456,31 @@ modavg.AICunmarkedFitColExt <-
       parm <- paste("ext", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("ext", "(", reversed.parm, ")", sep="")}
       ##for epsilon
-      not.include <- lapply(cand.set, FUN = function(i) i@epsformula) 
+        not.include <- lapply(cand.set, FUN = function(i) i@epsformula)
+        parm.type1 <- "ext"
     }
+      
     ##detect
     if(identical(parm.type, "detect")) {
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
       parm <- paste("p", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
       not.include <- lapply(cand.set, FUN = function(i) i@detformula)
+      parm.type1 <- "det"
     }
+
+      
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
+    
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
 
   nmods <- length(cand.set)
   
@@ -6715,17 +6757,34 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
     mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
     parm <- paste("lam", "(", parm, ")", sep="")
     if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
-    not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
+      not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
+      parm.type1 <- "state"
+      
   }
+    
   ##detect
   if(identical(parm.type, "detect")) {
     mod_formula<-lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
     parm <- paste("p", "(", parm, ")", sep="")
     if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
     not.include <- lapply(cand.set, FUN = function(i) i@formula[[2]])
+    parm.type1 <- "det"
   }
 
-  
+
+##################
+    ##extract link function
+    check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                 parm.type1, "@invlink",
+                                                                                 sep = ""))))
+    unique.link <- unique(check.link)
+    select.link <- unique.link[1]
+    
+    if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                      "with different link functions\n")}
+##################
+
+    
   nmods <- length(cand.set)
   
   ##setup matrix to indicate presence of parms in the model
@@ -7002,17 +7061,31 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
     ##create label for parm
     parm <- paste("lam", "(", parm, ")", sep="")
     if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
-    not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
+      not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
+      parm.type1 <- "state" 
   }
+    
   ##detect
   if(identical(parm.type, "detect")) {
     mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
     parm <- paste("p", "(", parm, ")", sep="")
     if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
     not.include <- lapply(cand.set, FUN = function(i) i@formula[[2]])
+    parm.type1 <- "det"
   }
   
+##################
+    ##extract link function
+    check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                 parm.type1, "@invlink",
+                                                                                 sep = ""))))
+    unique.link <- unique(check.link)
+    select.link <- unique.link[1]
     
+    if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                      "with different link functions\n")}
+##################
+  
   nmods <- length(cand.set)
   
   ##setup matrix to indicate presence of parms in the model
@@ -7291,7 +7364,9 @@ modavg.AICunmarkedFitPCO <-
           parm <- paste("lam", "(", parm, ")", sep="")
           if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
           not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
+          parm.type1 <- "lambda"
       }
+      
       ##gamma - recruitment
       if(identical(parm.type, "gamma")) {
           ##extract model formula for each model in cand.set
@@ -7307,7 +7382,9 @@ beta estimates cannot be model-averaged\n")
           parm <- paste(unique.gam, "(", parm, ")", sep="")
           if(!is.null(reversed.parm)) {reversed.parm <- paste(unique.gam, "(", reversed.parm, ")", sep="")}
           not.include <- lapply(cand.set, FUN = function(i) i@formlist$gammaformula)
+          parm.type1 <- "gamma"
       }
+      
       ##omega - apparent survival
       if(identical(parm.type, "omega")) {
           ##extract model formula for each model in cand.set
@@ -7316,11 +7393,11 @@ beta estimates cannot be model-averaged\n")
           parm <- paste("omega", "(", parm, ")", sep="")
           if(!is.null(reversed.parm)) {reversed.parm <- paste("omega", "(", reversed.parm, ")", sep="")}
           not.include <- lapply(cand.set, FUN = function(i) i@formlist$omegaformula)
+          parm.type1 <- "omega"
       }
+      
       ##iota (for immigration = TRUE with dynamics = "autoreg", "trend", "ricker", or "gompertz")
       if(identical(parm.type, "iota")) {
-          ##extract model formula for each model in cand.set
-          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$iota)))   
           ##create label for parm
           parm <- paste("iota", "(", parm, ")", sep="")
           if(!is.null(reversed.parm)) {reversed.parm <- paste("iota", "(", reversed.parm, ")", sep="")}
@@ -7331,15 +7408,32 @@ beta estimates cannot be model-averaged\n")
               stop("\nParameter \'iota\' (parm.type = \"", parm.type, "\") does not appear in all models:",
                    "\ncannot compute model-averaged estimate across all models\n")
           }
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$iota))) 
+          parm.type1 <- "iota"
       }
+      
       ##detect
       if(identical(parm.type, "detect")) {
           mod_formula<-lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
           parm <- paste("p", "(", parm, ")", sep="")
           if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
           not.include <- lapply(cand.set, FUN = function(i) i@formlist$pformula)
+          parm.type1 <- "det"
       }
-      
+
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
+    
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
+
   nmods <- length(cand.set)
   
   ##setup matrix to indicate presence of parms in the model
@@ -7617,8 +7711,10 @@ modavg.AICunmarkedFitDS <-
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
       parm <- paste("lam", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
-      not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
+        not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
+        parm.type1 <- "state"
     }
+      
     ##detect
     if(identical(parm.type, "detect")) {
         ##check for key function used
@@ -7636,13 +7732,29 @@ modavg.AICunmarkedFitDS <-
         if(identical(keyid, "exp")) {
             parm.key <- "rate"
         }
-        
+
+        ##label for intercept - label different with this model type
+        if(identical(parm, "Int")) {parm <- "(Intercept)"}
+
         mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
-        parm <- paste("p", "(", parm.key, parm, ")", sep="")
-        if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", parm.key, reversed.parm, ")", sep="")}
+        parm <- paste("p", "(", parm.key, "(", parm, "))", sep="")
+        if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", parm.key, "(", reversed.parm, "))", sep="")}
         not.include <- lapply(cand.set, FUN = function(i) i@formula[[2]])
+        parm.type1 <- "det"
     }
+
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
     
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
+
     nmods <- length(cand.set)
   
     ##setup matrix to indicate presence of parms in the model
@@ -7918,8 +8030,10 @@ modavg.AICunmarkedFitGDS <-
     mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$lambda)))
     parm <- paste("lambda", "(", parm, ")", sep="")
     if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
-    not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
+      not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
+      parm.type1 <- "lambda"
   }
+      
   ##detect
   if(identical(parm.type, "detect")) {
     ##check for key function used
@@ -7932,17 +8046,32 @@ modavg.AICunmarkedFitGDS <-
       parm <- paste("p", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
       not.include <- lapply(cand.set, FUN = function(i) i@formula[[2]])
+      parm.type1 <- "det"
   }
+      
   ##availability
   if(identical(parm.type, "phi")) {
     ##extract model formula for each model in cand.set
     mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$phi)))
     parm <- paste("phi", "(", parm, ")", sep="")
     if(!is.null(reversed.parm)) {reversed.parm <- paste("phi", "(", reversed.parm, ")", sep="")}
-    not.include <- lapply(cand.set, FUN = function(i) i@formlist$phiformula)
+      not.include <- lapply(cand.set, FUN = function(i) i@formlist$phiformula)
+      parm.type1 <- "phi"
   }
   
+
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
     
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
+
   nmods <- length(cand.set)
   
   ##setup matrix to indicate presence of parms in the model
@@ -8219,22 +8348,28 @@ modavg.AICunmarkedFitOccuFP <-
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
       parm <- paste("psi", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("psi", "(", reversed.parm, ")", sep="")}
-      not.include <- lapply(cand.set, FUN = function(i) i@stateformula)      
+        not.include <- lapply(cand.set, FUN = function(i) i@stateformula)
+        parm.type1 <- "state"
     }
+      
     ##detect
     if(identical(parm.type, "detect")) {
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
       parm <- paste("p", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
       not.include <- lapply(cand.set, FUN = function(i) i@detformula)
+      parm.type1 <- "det"
     }
+      
     ##false positives - fp
     if(identical(parm.type, "falsepos") || identical(parm.type, "fp")) {
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$fp)))
       parm <- paste("fp", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("fp", "(", reversed.parm, ")", sep="")}
       not.include <- lapply(cand.set, FUN = function(i) i@FPformula)
+      parm.type1 <- "fp"
     }
+      
     ##certainty of detections - b
     if(identical(parm.type, "certain")) {
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$b)))
@@ -8248,8 +8383,21 @@ modavg.AICunmarkedFitOccuFP <-
           stop("\nParameter \'b\' (parm.type = \"", parm.type, "\") does not appear in all models:",
                "\ncannot compute model-averaged estimate across all models\n")
       }
+      parm.type1 <- "b"
     } 
-  
+
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
+    
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
+
   nmods <- length(cand.set)
   
   ##setup matrix to indicate presence of parms in the model
@@ -8527,17 +8675,31 @@ modavg.AICunmarkedFitMPois <-
       ##create label for parm
       parm <- paste("lambda", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("lambda", "(", reversed.parm, ")", sep="")}
-      not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
+        not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
+        parm.type1 <- "state"
     }
+      
     ##detect
     if(identical(parm.type, "detect")) {
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
       parm <- paste("p", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
       not.include <- lapply(cand.set, FUN = function(i) i@formula[[2]])
+      parm.type1 <- "det"
     }
   
-  
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
+    
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
+
   nmods <- length(cand.set)
   
   ##setup matrix to indicate presence of parms in the model
@@ -8813,24 +8975,41 @@ modavg.AICunmarkedFitGMM <-
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$lambda)))
       parm <- paste("lambda", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("lambda", "(", reversed.parm, ")", sep="")}
-      not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
+        not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
+        parm.type1 <- "lambda"
     }
+      
     ##detect
     if(identical(parm.type, "detect")) {
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
       parm <- paste("p", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
       not.include <- lapply(cand.set, FUN = function(i) i@formlist$pformula)
+      parm.type1 <- "det"
     }
+      
     ##availability
     if(identical(parm.type, "phi")) {
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$phi)))
       parm <- paste("phi", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("phi", "(", reversed.parm, ")", sep="")}
       not.include <- lapply(cand.set, FUN = function(i) i@formlist$phiformula)
+      parm.type1 <- "phi"
     }
   
-  
+
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
+    
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
+
   nmods <- length(cand.set)
   
   ##setup matrix to indicate presence of parms in the model
@@ -9107,24 +9286,40 @@ modavg.AICunmarkedFitGPC <-
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$lambda)))
       parm <- paste("lambda", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("lambda", "(", reversed.parm, ")", sep="")}
-      not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
+        not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
+        parm.type1 <- "lambda"
     }
+      
     ##detect
     if(identical(parm.type, "detect")) {
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
       parm <- paste("p", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
       not.include <- lapply(cand.set, FUN = function(i) i@formlist$pformula)
+      parm.type1 <- "det"
     }
+      
     ##availability
     if(identical(parm.type, "phi")) {
       mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$phi)))
       parm <- paste("phi", "(", parm, ")", sep="")
       if(!is.null(reversed.parm)) {reversed.parm <- paste("phi", "(", reversed.parm, ")", sep="")}
       not.include <- lapply(cand.set, FUN = function(i) i@formlist$phiformula)
+      parm.type1 <- "phi"
     }
     
-  
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
+    
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
+
   
   nmods <- length(cand.set)
   
@@ -9401,6 +9596,7 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
         if(!is.null(reversed.parm)) {reversed.parm <- paste("psi", "(", reversed.parm, ")", sep="")}
         ##not.include <- lapply(cand.set, FUN = function(i) i@formula[[3]])
         not.include <- mod_formula
+        parm.type1 <- "state"
     }
   
     ##detect
@@ -9410,8 +9606,21 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
       if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
       ##not.include <- lapply(cand.set, FUN = function(i) i@formula[[2]])
       not.include <- mod_formula
+       parm.type1 <- "det"
     }
-  
+
+##################
+    ##extract link function
+    check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                 parm.type1, "@invlink",
+                                                                                 sep = ""))))
+    unique.link <- unique(check.link)
+    select.link <- unique.link[1]
+    
+    if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                      "with different link functions\n")}
+##################
+    
   nmods <- length(cand.set)
   
   ##setup matrix to indicate presence of parms in the model
@@ -9556,6 +9765,1372 @@ function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
 
   new_table <- aictab(cand.set = new.cand.set, modnames = new.mod.name,
                       second.ord = second.ord, nobs = nobs, sort = FALSE, c.hat = c.hat)  #recompute AIC table and associated measures
+  new_table$Beta_est <- unlist(lapply(new.cand.set, FUN = function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
+  ##if reversed.parm is not null and varies across models, potentially check for it here
+  new_table$SE <- unlist(lapply(new.cand.set, FUN = function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+  ##if reversed.parm is not null and varies across models, potentially check for it here
+
+  ##if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
+  if(c.hat > 1) {
+    new_table$SE <- new_table$SE*sqrt(c.hat)
+  } 
+
+  ##AICc
+  ##compute model-averaged estimates, unconditional SE, and 95% CL
+  if(c.hat == 1 && second.ord == TRUE) {
+    Modavg_beta <- sum(new_table$AICcWt*new_table$Beta_est)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }
+
+  ##QAICc
+  if(c.hat > 1 && second.ord == TRUE) {
+    Modavg_beta <- sum(new_table$QAICcWt*new_table$Beta_est)
+      
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {      
+      Uncond_SE <- sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+    
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$QAICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }     
+
+
+  ##AIC
+  if(c.hat == 1 && second.ord == FALSE) {
+    Modavg_beta <- sum(new_table$AICWt*new_table$Beta_est)
+      
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }
+
+
+  ##QAIC
+  if(c.hat > 1 && second.ord == FALSE) {
+    Modavg_beta <- sum(new_table$QAICWt*new_table$Beta_est)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$QAICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }  
+  }     
+
+  
+  zcrit <- qnorm(p = (1 - conf.level)/2, lower.tail = FALSE)
+  Lower_CL <- Modavg_beta - zcrit*Uncond_SE
+  Upper_CL <- Modavg_beta + zcrit*Uncond_SE
+  out.modavg <- list("Parameter"=paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta,
+                     "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level, "Lower.CL" = Lower_CL,
+                     "Upper.CL" = Upper_CL)
+  
+  class(out.modavg) <- c("modavg", "list")
+  return(out.modavg)
+}
+
+
+
+##multmixOpen
+modavg.AICunmarkedFitMMO <-
+  function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, 
+           uncond.se = "revised", conf.level = 0.95, exclude = NULL, warn = TRUE,
+           c.hat = 1, parm.type = NULL, ...){
+
+  ##note that parameter is referenced differently from unmarked object - see labels( )
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+  
+  ##check for parm.type and stop if NULL
+  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+
+  
+#####MODIFICATIONS BEGIN#######
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+  parm.strip <- parm #to use later
+  
+  ##if (Intercept) is chosen assign (Int) - for compatibility
+  if(identical(parm, "(Intercept)")) parm <- "Int"
+
+  ##reverse parm
+  reversed.parm <- reverse.parm(parm)
+  reversed.parm.strip <- reversed.parm #to use later
+  exclude <- reverse.exclude(exclude = exclude)
+#####MODIFICATIONS END######
+  
+  
+    
+      ##open version of N-mixture model
+      ##lambda - abundance
+      if(identical(parm.type, "lambda")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$lambda)))
+          parm <- paste("lam", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
+          parm.type1 <- "lambda"
+      }
+      
+      ##gamma - recruitment
+      if(identical(parm.type, "gamma")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$gamma)))
+          
+          ##determine if same H0 on gamma (gamConst, gamAR, gamTrend)
+          strip.gam <- sapply(mod_formula, FUN = function(i) unlist(strsplit(i, "\\("))[[1]])
+          unique.gam <- unique(strip.gam)
+          if(length(unique.gam) > 1) stop("\nDifferent formulations of gamma parameter occur among models:\n
+beta estimates cannot be model-averaged\n")
+    
+          ##create label for parm
+          parm <- paste(unique.gam, "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste(unique.gam, "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$gammaformula)
+          parm.type1 <- "gamma"
+      }
+      
+      ##omega - apparent survival
+      if(identical(parm.type, "omega")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$omega)))   
+          ##create label for parm
+          parm <- paste("omega", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("omega", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$omegaformula)
+          parm.type1 <- "omega"
+      }
+      
+      ##iota (for immigration = TRUE with dynamics = "autoreg", "trend", "ricker", or "gompertz")
+      if(identical(parm.type, "iota")) {
+          ##create label for parm
+          parm <- paste("iota", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("iota", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$iotaformula)
+          ##check that parameter appears in all models
+          parfreq <- sum(sapply(cand.set, FUN = function(i) any(names(i@estimates@estimates) == parm.type)))
+          if(!identical(length(cand.set), parfreq)) {
+              stop("\nParameter \'iota\' (parm.type = \"", parm.type, "\") does not appear in all models:",
+                   "\ncannot compute model-averaged estimate across all models\n")
+          }
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$iota)))
+          parm.type1 <- "iota"
+      }
+      
+      ##detect
+      if(identical(parm.type, "detect")) {
+          mod_formula<-lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+          parm <- paste("p", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$pformula)
+          parm.type1 <- "det"
+      }
+
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
+    
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
+
+  nmods <- length(cand.set)
+  
+  ##setup matrix to indicate presence of parms in the model
+  include <- matrix(NA, nrow=nmods, ncol=1)
+  ##add a check for multiple instances of same variable in given model (i.e., interactions)
+  include.check <- matrix(NA, nrow=nmods, ncol=1)
+
+##################################
+##################################
+###ADDED A NEW OBJECT TO STRIP AWAY lam( ) from parm on line 35
+###to enable search with regexpr( ) 
+  
+  
+  ##iterate over each formula in mod_formula list
+  for (i in 1:nmods) {
+    idents <- NULL
+    idents.check <- NULL
+    form <- mod_formula[[i]]
+
+
+######################################################################################################
+######################################################################################################
+###MODIFICATIONS BEGIN
+      ##iterate over each element of formula[[i]] in list
+      if(is.null(reversed.parm)) {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(parm, form[j])
+          ##added parm.strip here for regexpr( )
+          idents.check[j] <- ifelse(attr(regexpr(parm.strip, form[j], fixed=TRUE), "match.length")== "-1" , 0, 1)  
+        }
+      } else {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+          idents.check[j] <- ifelse(attr(regexpr(parm.strip, form[j], fixed=TRUE), "match.length")=="-1" & attr(regexpr(reversed.parm.strip, form[j],
+                                                                  fixed=TRUE), "match.length")=="-1" , 0, 1)  
+        }
+      }
+###MODIFICATIONS END
+######################################################################################################
+######################################################################################################
+
+    
+    include[i] <- ifelse(any(idents==1), 1, 0)
+    include.check[i] <- ifelse(sum(idents.check)>1, "duplicates", "OK")
+  }
+
+  #####################################################
+  #exclude == NULL; warn=TRUE:  warn that duplicates occur and stop
+  if(is.null(exclude) && identical(warn, TRUE)) {
+    #check for duplicates in same model
+    if(any(include.check == "duplicates")) {
+      stop("\nSome models include more than one instance of the parameter of interest. \n",
+           "This may be due to the presence of interaction/polynomial terms, or variables\n",
+             "with similar names:\n",
+             "\tsee \"?modavg\" for details on variable specification and \"exclude\" argument\n")
+      }
+
+    }
+
+    #exclude == NULL; warn=FALSE:  compute model-averaged beta estimate from models including variable of interest,
+    #assuming that the variable is not involved in interaction or higher order polynomial (x^2, x^3, etc...),
+    #warn that models were not excluded
+    if(is.null(exclude) && identical(warn, FALSE)) {
+      if(any(include.check == "duplicates")) {
+        warning("\nMultiple instances of parameter of interest in given model is presumably\n",
+                "not due to interaction or polynomial terms - these models will not be\n",
+                "excluded from the computation of model-averaged estimate\n")
+      }
+      
+    }
+
+    #warn if exclude is neither a list nor NULL
+    if(!is.null(exclude)) {
+      if(!is.list(exclude)) {stop("\nItems in \"exclude\" must be specified as a list")}
+    }
+
+
+    #if exclude is list  
+    if(is.list(exclude)) {
+
+    #determine number of elements in exclude
+      nexcl <- length(exclude)
+
+      #check each formula for presence of exclude variable in not.include list
+      #not.include <- lapply(cand.set, FUN = formula)
+
+      #set up a new list with model formula
+      forms <- list()
+      for (i in 1:nmods) {
+        form.tmp <- as.character(not.include[i]) #changed from other versions as formula returned is of different structure for unmarked objects
+        if(attr(regexpr("\\+", form.tmp), "match.length")==-1) {
+          forms[i] <- form.tmp
+        } else {forms[i] <- strsplit(form.tmp, split=" \\+ ")}
+      }
+
+      #additional check to see whether some variable names include "+"
+      check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\+", i), "match.length")>0)[[1]]))
+      if (any(check.forms==TRUE)) stop("\nPlease avoid \"+\" in variable names\n")
+
+      ##additional check to determine if intercept was removed from models
+      check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\- 1", i), "match.length")>0)[[1]]))
+      if (any(check.forms==TRUE)) stop("\nModels without intercept are not supported in this version, please use alternative parameterization\n")
+
+ 
+      #search within formula for variables to exclude
+      mod.exclude <- matrix(NA, nrow=nmods, ncol=nexcl)
+
+      #iterate over each element in exclude list
+      for (var in 1:nexcl) {
+
+      #iterate over each formula in mod_formula list
+        for (i in 1:nmods) {
+          idents <- NULL
+          form.excl <- forms[[i]]
+
+          #iterate over each element of forms[[i]]
+          for (j in 1:length(form.excl)) {
+            idents[j] <- identical(exclude[var][[1]], form.excl[j])
+          }
+          mod.exclude[i,var] <- ifelse(any(idents == 1), 1, 0)
+        }    
+        
+      }
+  
+      #determine outcome across all variables to exclude
+      to.exclude <- rowSums(mod.exclude)
+  
+  
+      #exclude models following models from model averaging  
+      include[which(to.exclude >= 1)] <- 0
+      
+      
+    }
+
+
+ 
+  ##add a check to determine if include always == 0
+  if (sum(include) == 0) {stop("\nParameter not found in any of the candidate models\n") }
+  
+  new.cand.set <- cand.set[which(include == 1)] #select models including a given parameter
+  new.mod.name <- modnames[which(include == 1)]    #update model names
+
+  new_table <- aictab(cand.set = new.cand.set, modnames = new.mod.name,
+                      second.ord = second.ord, nobs = nobs, sort = FALSE, c.hat = c.hat) #recompute AIC table and associated measures
+  new_table$Beta_est <- unlist(lapply(new.cand.set, FUN = function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
+  ##if reversed.parm is not null and varies across models, potentially check for it here
+  new_table$SE <- unlist(lapply(new.cand.set, FUN = function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+  ##if reversed.parm is not null and varies across models, potentially check for it here
+
+  ##if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
+  if(c.hat > 1) {
+    new_table$SE <- new_table$SE*sqrt(c.hat)
+  } 
+
+  ##AICc
+  ##compute model-averaged estimates, unconditional SE, and 95% CL
+  if(c.hat == 1 && second.ord == TRUE) {
+    Modavg_beta <- sum(new_table$AICcWt*new_table$Beta_est)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }
+
+  ##QAICc
+  if(c.hat > 1 && second.ord == TRUE) {
+    Modavg_beta <- sum(new_table$QAICcWt*new_table$Beta_est)
+      
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {      
+      Uncond_SE <- sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+    
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$QAICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }     
+
+
+  ##AIC
+  if(c.hat == 1 && second.ord == FALSE) {
+    Modavg_beta <- sum(new_table$AICWt*new_table$Beta_est)
+      
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }
+
+
+  ##QAIC
+  if(c.hat > 1 && second.ord == FALSE) {
+    Modavg_beta <- sum(new_table$QAICWt*new_table$Beta_est)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$QAICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }  
+  }     
+
+  
+  zcrit <- qnorm(p = (1 - conf.level)/2, lower.tail = FALSE)
+  Lower_CL <- Modavg_beta - zcrit*Uncond_SE
+  Upper_CL <- Modavg_beta + zcrit*Uncond_SE
+  out.modavg <- list("Parameter"=paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta,
+                     "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level, "Lower.CL" = Lower_CL,
+                     "Upper.CL" = Upper_CL)
+  
+  class(out.modavg) <- c("modavg", "list")
+  return(out.modavg)
+}
+
+
+
+##distsampOpen
+modavg.AICunmarkedFitDSO <-
+  function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, 
+           uncond.se = "revised", conf.level = 0.95, exclude = NULL, warn = TRUE,
+           c.hat = 1, parm.type = NULL, ...){
+
+  ##note that parameter is referenced differently from unmarked object - see labels( )
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+  
+  ##check for parm.type and stop if NULL
+  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+
+  
+#####MODIFICATIONS BEGIN#######
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+  parm.strip <- parm #to use later
+  
+  ##if (Intercept) is chosen assign (Int) - for compatibility
+  if(identical(parm, "(Intercept)")) parm <- "Int"
+
+  ##reverse parm
+  reversed.parm <- reverse.parm(parm)
+  reversed.parm.strip <- reversed.parm #to use later
+  exclude <- reverse.exclude(exclude = exclude)
+#####MODIFICATIONS END######
+  
+  
+    
+      ##open version of N-mixture model
+      ##lambda - abundance
+      if(identical(parm.type, "lambda")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$lambda)))
+          parm <- paste("lam", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$lambdaformula)
+          parm.type1 <- "lambda"
+      }
+      
+      ##gamma - recruitment
+      if(identical(parm.type, "gamma")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$gamma)))
+          
+          ##determine if same H0 on gamma (gamConst, gamAR, gamTrend)
+          strip.gam <- sapply(mod_formula, FUN = function(i) unlist(strsplit(i, "\\("))[[1]])
+          unique.gam <- unique(strip.gam)
+          if(length(unique.gam) > 1) stop("\nDifferent formulations of gamma parameter occur among models:\n
+beta estimates cannot be model-averaged\n")
+    
+          ##create label for parm
+          parm <- paste(unique.gam, "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste(unique.gam, "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$gammaformula)
+          parm.type1 <- "gamma"
+      }
+      
+      ##omega - apparent survival
+      if(identical(parm.type, "omega")) {
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$omega)))   
+          ##create label for parm
+          parm <- paste("omega", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("omega", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$omegaformula)
+          parm.type1 <- "omega"
+
+      }
+      
+      ##iota (for immigration = TRUE with dynamics = "autoreg", "trend", "ricker", or "gompertz")
+      if(identical(parm.type, "iota")) {
+          ##create label for parm
+          parm <- paste("iota", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("iota", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$iotaformula)
+          ##check that parameter appears in all models
+          parfreq <- sum(sapply(cand.set, FUN = function(i) any(names(i@estimates@estimates) == parm.type)))
+          if(!identical(length(cand.set), parfreq)) {
+              stop("\nParameter \'iota\' (parm.type = \"", parm.type, "\") does not appear in all models:",
+                   "\ncannot compute model-averaged estimate across all models\n")
+          }
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$iota)))   
+          parm.type1 <- "iota"
+      }
+      
+      ##detect
+      if(identical(parm.type, "detect")) {
+          ##check for key function used
+          keyid <- unique(sapply(cand.set, FUN = function(i) i@keyfun))
+          if(length(keyid) > 1) stop("\nDifferent key functions used across models:\n",
+                                     "cannot compute model-averaged estimate\n")
+          if(identical(keyid, "uniform")) stop("\nDetection parameter not found in models\n")
+          ##set key prefix used in coef( )
+          if(identical(keyid, "halfnorm")) {
+              parm.key <- "sigma"
+          }
+          if(identical(keyid, "hazard")) {
+              parm.key <- "shape"
+          }
+          if(identical(keyid, "exp")) {
+              parm.key <- "rate"
+          }
+          
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+          parm <- paste("sigma", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("sigma", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@formlist$pformula[[2]])
+          parm.type1 <- "det"
+          
+      }
+
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
+    
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
+
+      
+      nmods <- length(cand.set)
+  
+  ##setup matrix to indicate presence of parms in the model
+  include <- matrix(NA, nrow=nmods, ncol=1)
+  ##add a check for multiple instances of same variable in given model (i.e., interactions)
+  include.check <- matrix(NA, nrow=nmods, ncol=1)
+
+##################################
+##################################
+###ADDED A NEW OBJECT TO STRIP AWAY lam( ) from parm on line 35
+###to enable search with regexpr( ) 
+  
+  
+  ##iterate over each formula in mod_formula list
+  for (i in 1:nmods) {
+    idents <- NULL
+    idents.check <- NULL
+    form <- mod_formula[[i]]
+
+
+######################################################################################################
+######################################################################################################
+###MODIFICATIONS BEGIN
+      ##iterate over each element of formula[[i]] in list
+      if(is.null(reversed.parm)) {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(parm, form[j])
+          ##added parm.strip here for regexpr( )
+          idents.check[j] <- ifelse(attr(regexpr(parm.strip, form[j], fixed=TRUE), "match.length")== "-1" , 0, 1)  
+        }
+      } else {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+          idents.check[j] <- ifelse(attr(regexpr(parm.strip, form[j], fixed=TRUE), "match.length")=="-1" & attr(regexpr(reversed.parm.strip, form[j],
+                                                                  fixed=TRUE), "match.length")=="-1" , 0, 1)  
+        }
+      }
+###MODIFICATIONS END
+######################################################################################################
+######################################################################################################
+
+    
+    include[i] <- ifelse(any(idents==1), 1, 0)
+    include.check[i] <- ifelse(sum(idents.check)>1, "duplicates", "OK")
+  }
+
+  #####################################################
+  #exclude == NULL; warn=TRUE:  warn that duplicates occur and stop
+  if(is.null(exclude) && identical(warn, TRUE)) {
+    #check for duplicates in same model
+    if(any(include.check == "duplicates")) {
+      stop("\nSome models include more than one instance of the parameter of interest. \n",
+           "This may be due to the presence of interaction/polynomial terms, or variables\n",
+             "with similar names:\n",
+             "\tsee \"?modavg\" for details on variable specification and \"exclude\" argument\n")
+      }
+
+    }
+
+    #exclude == NULL; warn=FALSE:  compute model-averaged beta estimate from models including variable of interest,
+    #assuming that the variable is not involved in interaction or higher order polynomial (x^2, x^3, etc...),
+    #warn that models were not excluded
+    if(is.null(exclude) && identical(warn, FALSE)) {
+      if(any(include.check == "duplicates")) {
+        warning("\nMultiple instances of parameter of interest in given model is presumably\n",
+                "not due to interaction or polynomial terms - these models will not be\n",
+                "excluded from the computation of model-averaged estimate\n")
+      }
+      
+    }
+
+    #warn if exclude is neither a list nor NULL
+    if(!is.null(exclude)) {
+      if(!is.list(exclude)) {stop("\nItems in \"exclude\" must be specified as a list")}
+    }
+
+
+    #if exclude is list  
+    if(is.list(exclude)) {
+
+    #determine number of elements in exclude
+      nexcl <- length(exclude)
+
+      #check each formula for presence of exclude variable in not.include list
+      #not.include <- lapply(cand.set, FUN = formula)
+
+      #set up a new list with model formula
+      forms <- list()
+      for (i in 1:nmods) {
+        form.tmp <- as.character(not.include[i]) #changed from other versions as formula returned is of different structure for unmarked objects
+        if(attr(regexpr("\\+", form.tmp), "match.length")==-1) {
+          forms[i] <- form.tmp
+        } else {forms[i] <- strsplit(form.tmp, split=" \\+ ")}
+      }
+
+      #additional check to see whether some variable names include "+"
+      check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\+", i), "match.length")>0)[[1]]))
+      if (any(check.forms==TRUE)) stop("\nPlease avoid \"+\" in variable names\n")
+
+      ##additional check to determine if intercept was removed from models
+      check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\- 1", i), "match.length")>0)[[1]]))
+      if (any(check.forms==TRUE)) stop("\nModels without intercept are not supported in this version, please use alternative parameterization\n")
+
+ 
+      #search within formula for variables to exclude
+      mod.exclude <- matrix(NA, nrow=nmods, ncol=nexcl)
+
+      #iterate over each element in exclude list
+      for (var in 1:nexcl) {
+
+      #iterate over each formula in mod_formula list
+        for (i in 1:nmods) {
+          idents <- NULL
+          form.excl <- forms[[i]]
+
+          #iterate over each element of forms[[i]]
+          for (j in 1:length(form.excl)) {
+            idents[j] <- identical(exclude[var][[1]], form.excl[j])
+          }
+          mod.exclude[i,var] <- ifelse(any(idents == 1), 1, 0)
+        }    
+        
+      }
+  
+      #determine outcome across all variables to exclude
+      to.exclude <- rowSums(mod.exclude)
+  
+  
+      #exclude models following models from model averaging  
+      include[which(to.exclude >= 1)] <- 0
+      
+      
+    }
+
+
+ 
+  ##add a check to determine if include always == 0
+  if (sum(include) == 0) {stop("\nParameter not found in any of the candidate models\n") }
+  
+  new.cand.set <- cand.set[which(include == 1)] #select models including a given parameter
+  new.mod.name <- modnames[which(include == 1)]    #update model names
+
+  new_table <- aictab(cand.set = new.cand.set, modnames = new.mod.name,
+                      second.ord = second.ord, nobs = nobs, sort = FALSE, c.hat = c.hat) #recompute AIC table and associated measures
+  new_table$Beta_est <- unlist(lapply(new.cand.set, FUN = function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
+  ##if reversed.parm is not null and varies across models, potentially check for it here
+  new_table$SE <- unlist(lapply(new.cand.set, FUN = function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+  ##if reversed.parm is not null and varies across models, potentially check for it here
+
+  ##if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
+  if(c.hat > 1) {
+    new_table$SE <- new_table$SE*sqrt(c.hat)
+  } 
+
+  ##AICc
+  ##compute model-averaged estimates, unconditional SE, and 95% CL
+  if(c.hat == 1 && second.ord == TRUE) {
+    Modavg_beta <- sum(new_table$AICcWt*new_table$Beta_est)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }
+
+  ##QAICc
+  if(c.hat > 1 && second.ord == TRUE) {
+    Modavg_beta <- sum(new_table$QAICcWt*new_table$Beta_est)
+      
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {      
+      Uncond_SE <- sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+    
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$QAICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }     
+
+
+  ##AIC
+  if(c.hat == 1 && second.ord == FALSE) {
+    Modavg_beta <- sum(new_table$AICWt*new_table$Beta_est)
+      
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }
+
+
+  ##QAIC
+  if(c.hat > 1 && second.ord == FALSE) {
+    Modavg_beta <- sum(new_table$QAICWt*new_table$Beta_est)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$QAICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }  
+  }     
+
+  
+  zcrit <- qnorm(p = (1 - conf.level)/2, lower.tail = FALSE)
+  Lower_CL <- Modavg_beta - zcrit*Uncond_SE
+  Upper_CL <- Modavg_beta + zcrit*Uncond_SE
+  out.modavg <- list("Parameter"=paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta,
+                     "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level, "Lower.CL" = Lower_CL,
+                     "Upper.CL" = Upper_CL)
+  
+  class(out.modavg) <- c("modavg", "list")
+  return(out.modavg)
+  }
+
+
+
+##occuMS
+modavg.AICunmarkedFitOccuMS <-
+function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, 
+         uncond.se = "revised", conf.level = 0.95, exclude = NULL, warn = TRUE,
+         c.hat = 1, parm.type = NULL, ...){
+
+  ##note that parameter is referenced differently from unmarked object - see labels( )
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+  
+  ##check for parm.type and stop if NULL
+  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+  
+#####MODIFICATIONS BEGIN#######
+  ##remove all leading and trailing white space and within parm
+  #parm <- gsub('[[:space:]]+', "", parm)
+  parm.strip <- parm #to use later
+  
+  ##if (Intercept) is chosen assign (Int) - for compatibility
+  if(identical(parm, "(Intercept)")) parm <- "Int"
+
+  ##reverse parm
+  reversed.parm <- reverse.parm(parm)
+  reversed.parm.strip <- reversed.parm #to use later
+  exclude <- reverse.exclude(exclude = exclude)
+#####MODIFICATIONS END######
+  
+    ##single-season occupancy model
+    ##psi
+    if(identical(parm.type, "psi")) {
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
+      parm <- paste("psi", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("psi", "(", reversed.parm, ")", sep="")}
+        not.include <- mod_formula
+        parm.type1 <- "state"
+    }
+  
+    ##transition
+    if(identical(parm.type, "phi")) {
+        ##check that parameter appears in all models
+        nseasons <- unique(sapply(cand.set, FUN = function(i) i@data@numPrimary))
+        if(nseasons == 1) {
+            stop("\nParameter \'phi\' does not appear in single-season models\n")
+        }
+
+        mod_formula <- lapply(cand.set, FUN = function(x) labels(coef(x@estimates@estimates$transition)))
+        parm <- paste("phi", "(", parm, ")", sep="")
+        if(!is.null(reversed.parm)) {reversed.parm <- paste("phi", "(", reversed.parm, ")", sep="")}
+        not.include <- mod_formula
+        parm.type1 <- "transition"
+    }
+
+    ##detect
+    if(identical(parm.type, "detect")) {
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+      parm <- paste("p", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("p", "(", reversed.parm, ")", sep="")}
+      not.include <- mod_formula
+      parm.type1 <- "det"
+    }
+
+##################
+    ##extract link function
+    check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                 parm.type1, "@invlink",
+                                                                                 sep = ""))))
+    unique.link <- unique(check.link)
+    select.link <- unique.link[1]
+    
+    if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                      "with different link functions\n")}
+##################
+
+        
+  nmods <- length(cand.set)
+  
+  ##setup matrix to indicate presence of parms in the model
+  include <- matrix(NA, nrow=nmods, ncol=1)
+  ##add a check for multiple instances of same variable in given model (i.e., interactions)
+  include.check <- matrix(NA, nrow=nmods, ncol=1)
+
+##################################
+##################################
+###ADDED A NEW OBJECT TO STRIP AWAY lam( ) from parm on line 35
+###to enable search with regexpr( ) 
+  
+  
+  ##iterate over each formula in mod_formula list
+  for (i in 1:nmods) {
+    idents <- NULL
+    idents.check <- NULL
+    form <- mod_formula[[i]]
+
+
+######################################################################################################
+######################################################################################################
+###MODIFICATIONS BEGIN
+      ##iterate over each element of formula[[i]] in list
+      if(is.null(reversed.parm)) {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(parm, form[j])
+          ##added parm.strip here for regexpr( )
+          idents.check[j] <- ifelse(attr(regexpr(parm.strip, form[j], fixed=TRUE), "match.length")== "-1" , 0, 1)  
+        }
+      } else {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+          idents.check[j] <- ifelse(attr(regexpr(parm.strip, form[j], fixed=TRUE), "match.length")=="-1" & attr(regexpr(reversed.parm.strip, form[j],
+                                                                  fixed=TRUE), "match.length")=="-1" , 0, 1)  
+        }
+      }
+###MODIFICATIONS END
+######################################################################################################
+######################################################################################################
+
+    
+    include[i] <- ifelse(any(idents==1), 1, 0)
+    include.check[i] <- ifelse(sum(idents.check)>1, "duplicates", "OK")
+  }
+
+  #####################################################
+  #exclude == NULL; warn=TRUE:  warn that duplicates occur and stop
+  if(is.null(exclude) && identical(warn, TRUE)) {
+    #check for duplicates in same model
+    if(any(include.check == "duplicates")) {
+      stop("\nSome models include more than one instance of the parameter of interest. \n",
+           "This may be due to the presence of interaction/polynomial terms, or variables\n",
+             "with similar names:\n",
+             "\tsee \"?modavg\" for details on variable specification and \"exclude\" argument\n")
+      }
+
+    }
+
+    #exclude == NULL; warn=FALSE:  compute model-averaged beta estimate from models including variable of interest,
+    #assuming that the variable is not involved in interaction or higher order polynomial (x^2, x^3, etc...),
+    #warn that models were not excluded
+    if(is.null(exclude) && identical(warn, FALSE)) {
+      if(any(include.check == "duplicates")) {
+        warning("\nMultiple instances of parameter of interest in given model is presumably\n",
+                "not due to interaction or polynomial terms - these models will not be\n",
+                "excluded from the computation of model-averaged estimate\n")
+      }
+      
+    }
+
+    #warn if exclude is neither a list nor NULL
+    if(!is.null(exclude)) {
+      if(!is.list(exclude)) {stop("\nItems in \"exclude\" must be specified as a list")}
+    }
+
+
+    #if exclude is list  
+    if(is.list(exclude)) {
+
+    #determine number of elements in exclude
+      nexcl <- length(exclude)
+
+      #check each formula for presence of exclude variable in not.include list
+      #not.include <- lapply(cand.set, FUN = formula)
+
+      #set up a new list with model formula
+      forms <- list()
+      for (i in 1:nmods) {
+        form.tmp <- as.character(not.include[i]) #changed from other versions as formula returned is of different structure for unmarked objects
+        if(attr(regexpr("\\+", form.tmp), "match.length")==-1) {
+          forms[i] <- form.tmp
+        } else {forms[i] <- strsplit(form.tmp, split=" \\+ ")}
+      }
+
+      #additional check to see whether some variable names include "+"
+      check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\+", i), "match.length")>0)[[1]]))
+      if (any(check.forms==TRUE)) stop("\nPlease avoid \"+\" in variable names\n")
+
+      ##additional check to determine if intercept was removed from models
+      check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\- 1", i), "match.length")>0)[[1]]))
+      if (any(check.forms==TRUE)) stop("\nModels without intercept are not supported in this version, please use alternative parameterization\n")
+
+ 
+      #search within formula for variables to exclude
+      mod.exclude <- matrix(NA, nrow=nmods, ncol=nexcl)
+
+      #iterate over each element in exclude list
+      for (var in 1:nexcl) {
+
+      #iterate over each formula in mod_formula list
+        for (i in 1:nmods) {
+          idents <- NULL
+          form.excl <- forms[[i]]
+
+          #iterate over each element of forms[[i]]
+          for (j in 1:length(form.excl)) {
+            idents[j] <- identical(exclude[var][[1]], form.excl[j])
+          }
+          mod.exclude[i,var] <- ifelse(any(idents == 1), 1, 0)
+        }    
+        
+      }
+  
+      #determine outcome across all variables to exclude
+      to.exclude <- rowSums(mod.exclude)
+  
+  
+      #exclude models following models from model averaging  
+      include[which(to.exclude >= 1)] <- 0
+      
+      
+    }
+
+
+ 
+  ##add a check to determine if include always == 0
+  if (sum(include) == 0) {stop("\nParameter not found in any of the candidate models\n") }
+  
+  new.cand.set <- cand.set[which(include == 1)] #select models including a given parameter
+  new.mod.name <- modnames[which(include == 1)]    #update model names
+
+  new_table <- aictab(cand.set = new.cand.set, modnames = new.mod.name,
+                      second.ord = second.ord, nobs = nobs, sort = FALSE, c.hat = c.hat)  #recompute AIC table and associated measures
+  new_table$Beta_est <- unlist(lapply(new.cand.set, FUN = function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
+  ##if reversed.parm is not null and varies across models, potentially check for it here
+  new_table$SE <- unlist(lapply(new.cand.set, FUN = function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+  ##if reversed.parm is not null and varies across models, potentially check for it here
+
+  ##if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
+  if(c.hat > 1) {
+    new_table$SE <- new_table$SE*sqrt(c.hat)
+  } 
+
+  ##AICc
+  ##compute model-averaged estimates, unconditional SE, and 95% CL
+  if(c.hat == 1 && second.ord == TRUE) {
+    Modavg_beta <- sum(new_table$AICcWt*new_table$Beta_est)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }
+
+  ##QAICc
+  if(c.hat > 1 && second.ord == TRUE) {
+    Modavg_beta <- sum(new_table$QAICcWt*new_table$Beta_est)
+      
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {      
+      Uncond_SE <- sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+    
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$QAICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }     
+
+
+  ##AIC
+  if(c.hat == 1 && second.ord == FALSE) {
+    Modavg_beta <- sum(new_table$AICWt*new_table$Beta_est)
+      
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }
+  }
+
+
+  ##QAIC
+  if(c.hat > 1 && second.ord == FALSE) {
+    Modavg_beta <- sum(new_table$QAICWt*new_table$Beta_est)
+
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Uncond_SE <- sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+    }
+
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Uncond_SE <- sqrt(sum(new_table$QAICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+    }  
+  }     
+
+  
+  zcrit <- qnorm(p = (1 - conf.level)/2, lower.tail = FALSE)
+  Lower_CL <- Modavg_beta - zcrit*Uncond_SE
+  Upper_CL <- Modavg_beta + zcrit*Uncond_SE
+  out.modavg <- list("Parameter"=paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta,
+                     "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level, "Lower.CL" = Lower_CL,
+                     "Upper.CL" = Upper_CL)
+  
+  class(out.modavg) <- c("modavg", "list")
+  return(out.modavg)
+}
+
+
+
+##occuTTD
+modavg.AICunmarkedFitOccuTTD <-
+  function(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL, 
+           uncond.se = "revised", conf.level = 0.95, exclude = NULL, warn = TRUE,
+           c.hat = 1, parm.type = NULL, ...){
+
+  ##note that parameter is referenced differently from unmarked object - see labels( )
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+  
+  ##check for parm.type and stop if NULL
+  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavg for details\n")}
+
+
+      
+#####MODIFICATIONS BEGIN#######
+  ##remove all leading and trailing white space and within parm
+  parm <- gsub('[[:space:]]+', "", parm)
+  parm.strip <- parm #to use later
+  
+  ##if (Intercept) is chosen assign (Int) - for compatibility
+  if(identical(parm, "(Intercept)")) parm <- "Int"
+
+  ##reverse parm
+  reversed.parm <- reverse.parm(parm)
+  reversed.parm.strip <- reversed.parm #to use later
+  exclude <- reverse.exclude(exclude = exclude)
+#####MODIFICATIONS END######
+  
+  
+
+    ##single season or dynamic occupancy model
+    ##psi - initial occupancy
+    if(identical(parm.type, "psi")) {
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$psi)))
+      ##create label for parm
+      parm <- paste("psi", "(", parm, ")", sep="")
+      if(!is.null(reversed.parm)) {reversed.parm <- paste("psi", "(", reversed.parm, ")", sep="")}
+        not.include <- lapply(cand.set, FUN = function(i) i@psiformula)
+        parm.type1 <- "psi"
+    }
+      
+      ##gamma - colonization
+      if(identical(parm.type, "gamma")) {
+          nseasons <- unique(sapply(cand.set, FUN = function(i) i@data@numPrimary))
+          if(nseasons == 1) {
+              stop("\nParameter \'gamma\' does not appear in single-season models\n")
+          }
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$col)))
+          ##create label for parm
+          parm <- paste("col", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("col", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@gamformula)
+          parm.type1 <- "col"
+      }
+      
+      ##epsilon - extinction
+      if(identical(parm.type, "epsilon")) {
+          nseasons <- unique(sapply(cand.set, FUN = function(i) i@data@numPrimary))
+          if(nseasons == 1) {
+              stop("\nParameter \'epsilon\' does not appear in single-season models\n")
+          }
+          ##extract model formula for each model in cand.set
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$ext)))
+          ##create label for parm
+          parm <- paste("ext", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("ext", "(", reversed.parm, ")", sep="")}
+          ##for epsilon
+          not.include <- lapply(cand.set, FUN = function(i) i@epsformula)
+          parm.type1 <- "ext"
+      }
+      
+      ##detect
+      if(identical(parm.type, "detect")) {
+          ##detect - lambda parameter is a rate of a species not detected in t to be detected at next time step
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+          parm <- paste("lam", "(", parm, ")", sep="")
+          if(!is.null(reversed.parm)) {reversed.parm <- paste("lam", "(", reversed.parm, ")", sep="")}
+          not.include <- lapply(cand.set, FUN = function(i) i@detformula)
+          parm.type1 <- "det"
+      }
+
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
+    
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
+       
+  nmods <- length(cand.set)
+  
+  ##setup matrix to indicate presence of parms in the model
+  include <- matrix(NA, nrow=nmods, ncol=1)
+  ##add a check for multiple instances of same variable in given model (i.e., interactions)
+  include.check <- matrix(NA, nrow=nmods, ncol=1)
+
+##################################
+##################################
+###ADDED A NEW OBJECT TO STRIP AWAY lam( ) from parm on line 35
+###to enable search with regexpr( ) 
+  
+  
+  ##iterate over each formula in mod_formula list
+  for (i in 1:nmods) {
+    idents <- NULL
+    idents.check <- NULL
+    form <- mod_formula[[i]]
+
+
+######################################################################################################
+######################################################################################################
+###MODIFICATIONS BEGIN
+      ##iterate over each element of formula[[i]] in list
+      if(is.null(reversed.parm)) {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(parm, form[j])
+          ##added parm.strip here for regexpr( )
+          idents.check[j] <- ifelse(attr(regexpr(parm.strip, form[j], fixed=TRUE), "match.length")== "-1" , 0, 1)  
+        }
+      } else {
+        for (j in 1:length(form)) {
+          idents[j] <- identical(parm, form[j]) | identical(reversed.parm, form[j])
+          idents.check[j] <- ifelse(attr(regexpr(parm.strip, form[j], fixed=TRUE), "match.length")=="-1" & attr(regexpr(reversed.parm.strip, form[j],
+                                                                  fixed=TRUE), "match.length")=="-1" , 0, 1)  
+        }
+      }
+###MODIFICATIONS END
+######################################################################################################
+######################################################################################################
+
+    
+    include[i] <- ifelse(any(idents==1), 1, 0)
+    include.check[i] <- ifelse(sum(idents.check)>1, "duplicates", "OK")
+  }
+
+  #####################################################
+  #exclude == NULL; warn=TRUE:  warn that duplicates occur and stop
+  if(is.null(exclude) && identical(warn, TRUE)) {
+    #check for duplicates in same model
+    if(any(include.check == "duplicates")) {
+      stop("\nSome models include more than one instance of the parameter of interest. \n",
+           "This may be due to the presence of interaction/polynomial terms, or variables\n",
+             "with similar names:\n",
+             "\tsee \"?modavg\" for details on variable specification and \"exclude\" argument\n")
+      }
+
+    }
+
+    #exclude == NULL; warn=FALSE:  compute model-averaged beta estimate from models including variable of interest,
+    #assuming that the variable is not involved in interaction or higher order polynomial (x^2, x^3, etc...),
+    #warn that models were not excluded
+    if(is.null(exclude) && identical(warn, FALSE)) {
+      if(any(include.check == "duplicates")) {
+        warning("\nMultiple instances of parameter of interest in given model is presumably\n",
+                "not due to interaction or polynomial terms - these models will not be\n",
+                "excluded from the computation of model-averaged estimate\n")
+      }
+      
+    }
+
+    #warn if exclude is neither a list nor NULL
+    if(!is.null(exclude)) {
+      if(!is.list(exclude)) {stop("\nItems in \"exclude\" must be specified as a list")}
+    }
+
+
+    #if exclude is list  
+    if(is.list(exclude)) {
+
+    #determine number of elements in exclude
+      nexcl <- length(exclude)
+
+      #check each formula for presence of exclude variable in not.include list
+      #not.include <- lapply(cand.set, FUN = formula)
+
+      #set up a new list with model formula
+      forms <- list()
+      for (i in 1:nmods) {
+        form.tmp <- as.character(not.include[i]) #changed from other versions as formula returned is of different structure for unmarked objects
+        if(attr(regexpr("\\+", form.tmp), "match.length")==-1) {
+          forms[i] <- form.tmp
+        } else {forms[i] <- strsplit(form.tmp, split=" \\+ ")}
+      }
+
+      #additional check to see whether some variable names include "+"
+      check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\+", i), "match.length")>0)[[1]]))
+      if (any(check.forms==TRUE)) stop("\nPlease avoid \"+\" in variable names\n")
+
+      ##additional check to determine if intercept was removed from models
+      check.forms <- unlist(lapply(forms, FUN=function(i) any(attr(regexpr("\\- 1", i), "match.length")>0)[[1]]))
+      if (any(check.forms==TRUE)) stop("\nModels without intercept are not supported in this version, please use alternative parameterization\n")
+
+ 
+      #search within formula for variables to exclude
+      mod.exclude <- matrix(NA, nrow=nmods, ncol=nexcl)
+
+      #iterate over each element in exclude list
+      for (var in 1:nexcl) {
+
+      #iterate over each formula in mod_formula list
+        for (i in 1:nmods) {
+          idents <- NULL
+          form.excl <- forms[[i]]
+
+          #iterate over each element of forms[[i]]
+          for (j in 1:length(form.excl)) {
+            idents[j] <- identical(exclude[var][[1]], form.excl[j])
+          }
+          mod.exclude[i,var] <- ifelse(any(idents == 1), 1, 0)
+        }    
+        
+      }
+  
+      #determine outcome across all variables to exclude
+      to.exclude <- rowSums(mod.exclude)
+  
+  
+      #exclude models following models from model averaging  
+      include[which(to.exclude >= 1)] <- 0
+      
+      
+    }
+
+
+ 
+  ##add a check to determine if include always == 0
+  if (sum(include) == 0) {stop("\nParameter not found in any of the candidate models\n") }
+  
+  new.cand.set <- cand.set[which(include == 1)] #select models including a given parameter
+  new.mod.name <- modnames[which(include == 1)]    #update model names
+
+  new_table <- aictab(cand.set = new.cand.set, modnames = new.mod.name,
+                      second.ord = second.ord, nobs = nobs, sort = FALSE, c.hat = c.hat) #recompute AIC table and associated measures
   new_table$Beta_est <- unlist(lapply(new.cand.set, FUN = function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
   ##if reversed.parm is not null and varies across models, potentially check for it here
   new_table$SE <- unlist(lapply(new.cand.set, FUN = function(i) sqrt(diag(vcov(i)))[paste(parm)]))

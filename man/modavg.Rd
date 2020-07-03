@@ -40,6 +40,10 @@
 \alias{modavg.AICunmarkedFitGMM}
 \alias{modavg.AICunmarkedFitGPC}
 \alias{modavg.AICunmarkedFitOccuMulti}
+\alias{modavg.AICunmarkedFitOccuMS}
+\alias{modavg.AICunmarkedFitOccuTTD}
+\alias{modavg.AICunmarkedFitMMO}
+\alias{modavg.AICunmarkedFitDSO}
 \alias{print.modavg}
 
 \title{
@@ -225,6 +229,27 @@ modavg(cand.set, parm, modnames = NULL, second.ord = TRUE, nobs = NULL,
         NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
         parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitOccuMS}(cand.set, parm, modnames =
+        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitOccuTTD}(cand.set, parm, modnames =
+        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitMMO}(cand.set, parm, modnames =
+        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavg}{AICunmarkedFitDSO}(cand.set, parm, modnames =
+        NULL, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, exclude = NULL, warn = TRUE, c.hat = 1,
+        parm.type = NULL, \dots)
+
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -312,40 +337,43 @@ linear mixed models of the \code{mer} or \code{merMod} classes.
 if gamma GLM is used, the dispersion parameter should be specified here
 to apply the same value to each model.
 }
-\item{parm.type}{  this argument specifies the parameter type on which the effect size 
-  will be computed and is only relevant for models of
-  \code{unmarkedFitOccu}, \code{unmarkedFitColExt},
-  \code{unmarkedFitOccuFP}, \code{unmarkedFitOccuRN}, 
-  \code{unmarkedFitMPois}, \code{unmarkedFitPCount},
-  \code{unmarkedFitPCO}, \code{unmarkedFitDS}, \code{unmarkedFitGDS}, 
-  \code{unmarkedFitGMM}, \code{unmarkedFitGPC}, and
-  \code{unmarkedFitOccuMulti} classes.  The character strings supported
-  vary with the type of model fitted.  For \code{unmarkedFitOccu} and
-  \code{unmarkedFitOccuMulti} objects, either \code{psi} or
-  \code{detect} can be supplied to indicate whether the parameter is on
-  occupancy or detectability, respectively.  For
-  \code{unmarkedFitColExt}, possible values are \code{psi},
+\item{parm.type}{this argument specifies the parameter type on which
+  the model-averaged estimate of a predictor will be computed and is
+  only relevant for models of \code{unmarkedFit} classes.  The character
+  strings supported vary with the type of model fitted.  For
+  \code{unmarkedFitOccu} and \code{unmarkedFitOccuMulti} objects, either
+  \code{psi} or \code{detect} can be supplied to indicate whether the
+  parameter is on occupancy or detectability, respectively.  For
+  \code{unmarkedFitColExt} objects, possible values are \code{psi},
   \code{gamma}, \code{epsilon}, and \code{detect}, for parameters on
   occupancy in the inital year, colonization, extinction, and
-  detectability, respectively.  For \code{unmarkedFitOccuFP} objects,
-  one can specify \code{psi}, \code{detect}, \code{falsepos}, and
-  \code{certain}, for occupancy, detectability, probability of assigning
-  false-positives, and probability detections are certain, respectively.
-  For \code{unmarkedFitOccuRN} objects, either \code{lambda} or
-  \code{detect} can be entered for abundance and detectability
-  parameters, respectively.  For \code{unmarkedFitPCount} and
-  \code{unmarkedFitMPois} objects, \code{lambda} or \code{detect} denote
-  parameters on abundance and detectability, respectively.  For
-  \code{unmarkedFitPCO} objects, one can enter \code{lambda},
-  \code{gamma}, \code{omega}, \code{iota}, or \code{detect}, to specify
-  parameters on abundance, recruitment, apparent survival, immigration,
-  and detectability, respectively.  For \code{unmarkedFitDS} objects,
-  \code{lambda} and \code{detect} are supported.  For
-  \code{unmarkedFitGDS}, \code{lambda}, \code{phi}, and \code{detect}
-  denote abundance, availability, and detectability, respectively.  For
-  \code{unmarkedFitGMM} and \code{unmarkedFitGPC} objects,
-  \code{lambda}, \code{phi}, and \code{detect} denote abundance,
-  availability, and detectability, respectively.
+  detectability, respectively.  For \code{unmarkedFitOccuTTD} objects,
+  possible values are \code{psi}, \code{gamma}, \code{epsilon}, and
+  \code{detect}, for parameters on occupancy in the inital year,
+  colonization, extinction, and time-to-dection (lambda rate parameter),
+  respectively.  For \code{unmarkedFitOccuFP} objects, one can specify
+  \code{psi}, \code{detect}, \code{falsepos}, and \code{certain}, for
+  occupancy, detectability, probability of assigning false-positives,
+  and probability detections are certain, respectively.  For
+  \code{unmarkedFitOccuMS} objects, possible values are \code{psi},
+  \code{phi}, or \code{detect}, denoting occupancy, transition, and
+  detection probabilities, respectively.  For \code{unmarkedFitOccuRN}
+  objects, either \code{lambda} or \code{detect} can be entered for
+  abundance and detectability parameters, respectively.  For
+  \code{unmarkedFitPCount} and \code{unmarkedFitMPois} objects,
+  \code{lambda} or \code{detect} denote parameters on abundance and
+  detectability, respectively.  For \code{unmarkedFitPCO},
+  \code{unmarkedFitMMO}, and \code{unmarkedFitDSO} objects, one can
+  enter \code{lambda}, \code{gamma}, \code{omega}, \code{iota}, or
+  \code{detect}, to specify parameters on abundance, recruitment,
+  apparent survival, immigration, and detectability, respectively.  For
+  \code{unmarkedFitDS} objects, \code{lambda} and \code{detect} are
+  supported.  For \code{unmarkedFitGDS}, \code{lambda}, \code{phi}, and
+  \code{detect} denote abundance, availability, and detection
+  probability, respectively.  For \code{unmarkedFitGMM} and
+  \code{unmarkedFitGPC} objects, \code{lambda}, \code{phi}, and
+  \code{detect} denote abundance, availability, and detectability,
+  respectively.
 }
 \item{\dots}{
   additional arguments passed to the function.

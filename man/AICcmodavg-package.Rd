@@ -43,8 +43,8 @@ in the package.
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 2.2-2\cr
-Date: \tab 2019-05-29\cr
+Version: \tab 2.3-0\cr
+Date: \tab 2020-07-03\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -139,6 +139,8 @@ A number of functions for model diagnostics are available:
   lambda in \emph{N}-mixture models.}
 \item{\code{\link{detHist}}}  {Computes summary statistics from
   detection histories.}
+\item{\code{\link{detTime}}}  {Computes summary statistics from
+  time-to-detection data.}
 \item{\code{\link{extractCN}}}  {Extracts condition number from models of
   certain classes.}
 \item{\code{\link{mb.gof.test}}}  {Computes the MacKenzie and Bailey
