@@ -37,7 +37,8 @@ based on Pearson's chi-square.
 Nmix.chisq(mod, \dots)
 
 Nmix.gof.test(mod, nsim = 5, plot.hist = TRUE, report = NULL,
-parallel = TRUE, \dots)
+parallel = TRUE, ncores, cex.axis = 1, cex.lab = 1, cex.main = 1,
+lwd = 1, \dots)
 
 }
 \arguments{
@@ -62,6 +63,23 @@ parallel = TRUE, \dots)
 }
 \item{parallel}{logical.  If \code{TRUE}, requests that \code{parboot}
   use multiple cores to accelerate computations of the bootstrap.
+}
+\item{ncores}{integer indicating the number of cores to use when
+  bootstrapping in parallel during the analysis of simulated data sets.
+  If \code{ncores} is not specified, one less than the number of
+  available cores on the computer is used.
+}
+\item{cex.axis}{expansion factor influencing the size of axis
+  annotations on plots produced by the function.
+}
+\item{cex.lab}{expansion factor influencing the size of axis labels on
+  plots produced by the function.
+}
+\item{cex.main}{expansion factor influencing the size of the main title
+  above plots produced by the function.
+}
+\item{lwd}{expansion factor of line width on plots produced by the
+  function.
 }
 \item{\dots}{
   additional arguments passed to the function.

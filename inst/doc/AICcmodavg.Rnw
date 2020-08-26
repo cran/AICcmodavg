@@ -1,0 +1,610 @@
+\documentclass[letterpaper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{array, tabularx}
+%to use colors  
+\usepackage[usenames,dvipsnames]{xcolor}
+
+\usepackage{amsmath}
+
+\usepackage[left=2.54cm, right=2.54cm, top=2.54cm, bottom=2.54cm]{geometry}
+
+%include package to add hyperlinks
+\usepackage[colorlinks, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+
+\usepackage{Sweave}
+%to indent code by 2 em and remove space between code and output
+\DefineVerbatimEnvironment{Sinput}{Verbatim} {xleftmargin=2em,fontsize=\footnotesize}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{xleftmargin=2em,fontsize=\footnotesize}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{xleftmargin=2em,fontsize=\footnotesize}
+\fvset{listparameters={\setlength{\topsep}{0pt}}}
+\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+
+\title{Model selection and multimodel inference using the \texttt{AICcmodavg} package}
+\author{Marc J. Mazerolle\footnote{Département des sciences du bois et de la forêt, Université Laval}}
+\date{\today}
+
+\bibliographystyle{ecologyEN} %using Ecology style modified by M. J. Mazerolle
+
+%\VignetteIndexEntry{Overview of AICcmodavg}
+%\VignettePackage{AICcmodavg}
+%\VignetteDepends{xtable}
+
+\begin{document}
+
+<<echo=false>>=
+options(width=70, continue = "  ")
+@
+
+\maketitle
+
+\abstract{The \texttt{AICcmodavg} package implements model selection and multimodel inference for a wide range of model types. This vignette outlines the first steps to use the package and also presents the main functions. The package also offers utility functions for diagnostics and enhancements to specific classes of models that estimate demographic parameters and vital rates in populations of unmarked animals \citep{fiske11}.
+
+
+\section{Introduction}
+The publication of \citet{burnham98} and an expanded second edition of the book four years later \citep{burnham02} initiated a shift in ecology from traditional null-hypothesis statistical testing to the adoption of information-theoretic approaches for model selection and inference. This movement also echoed a broader fundamental change of focus in statistical inference. Whereas many statistical approaches have traditionnally centered on null-hypothesis statistical testing and \emph{P}-values, emphasis has moved to estimating parameters and measures of uncertainty \citep{goodman99, nuzzo14, wasserstein19, calinjageman19, anderson19}.
+
+The \texttt{AICcmodavg} package implements model selection and multimodel inference based on different information criteria, including $AIC$, $AIC_c$, $QAIC$, $QAIC_c$, and $BIC$ \citep{akaike73, sugiura78, burnham02, schwarz78}.  Before starting analyses, I suggest considering the ten following guidelines:
+
+\begin{enumerate}
+\item \textbf{Carefully construct your candidate model set.}  Each model should represent a specific (interesting) hypothesis to test.  Thought needs to be put in the models that are relevant for the hypotheses and data at hand.
+\item \textbf{Keep your candidate model set short.}  The number of models should generally be less than the number of data points \citep{burnham02}.
+\item \textbf{Check model fit.}  Use the global model (i.e., the model from which all other models can be derived) to assess model fit and ensure that model assumptions are met. If none of your models fit the data well, information criteria will only indicate the most parsimonious of the poor models.
+\item \textbf{Avoid data dredging.} Data dredging or data snooping consists in running analyses to find effects in your model set and then building the candidate model set based on this information. This is ill-advised and you should avoid such a procedure. You should specify the candidate model set based on your hypotheses, and then do model selection based on this model set.
+\item \textbf{Avoid overfitting models.}  You should not estimate too many parameters for the number of observations available in the sample. Running a model much too complex for the data available can lead to spurious results.
+\item \textbf{Watch out for missing values.}  Values that are missing only for certain explanatory variables change the data set and sample size, depending on which variable is included in any given model.  You should deal with missing values before analysis, either by deleting certain observations or using missing data imputation \citep{gelman07}.
+\item \textbf{Use the same response variable for all models of the candidate model set.}  It is inappropriate to run some models with a transformed response variable and others with the untransformed variable.  A workaround is to use a different link function for some models \citep{mccullagh89}.
+\item \textbf{When dealing with models with overdispersion, use the same value of $\hat{c}$ for all models in the candidate model set.}  Overdispersion occurs in certain models that use binomial or Poisson distributions and results from the variance in the data exceeding that allowed by the distribution. One way to diagnose the presence of overdispersion is to estimate a variance inflation factor ($\hat{c}$) from the global model.  Note that functions \texttt{c\_hat( )}, \texttt{mb.gof.test( )}, and \texttt{Nmix.gof.test( )} estimate $\hat{c}$ for specific model types.
+\item \textbf{Avoid mixing the information-theoretic approach and notions of statistical significance (i.e., \emph{P} values)}.  Information criteria and \emph{P}-values do not mix \citep{burnham02}. Instead, you should provide estimates and a measure of their precision such as unconditional standard errors or confidence intervals).
+\item \textbf{Determining the ranking of the models is just the first step.} When the top-ranking model has most of the support (e.g., Akaike weights > 0.9), it can be appropriate to base inference on this single most parsimonious model.  However, when many models rank highly, one should model-average effect sizes for the parameters with most support across the entire set of models.  This is the underlying idea behind multimodel inference which consists in making inference based on the whole set of candidate models.
+\end{enumerate}
+
+After this preamble, we can start with an example using various functions of the \texttt{AICcmodavg} package.
+
+\section{Getting started}
+In this section, we will walk through the steps to building the models as well as conducting model selection and multimodel inference with an example data set. Here, we will use the \texttt{dry.frog} data set from \citet{mazerolle06}.  The data feature mass lost by green frogs (\emph{Lithobates clamitans}) after spending two hours on one of three substrates that are encountered in some landscape types (for additional details, check \citealt{mazerolle05}).  The response variable is the mass lost (\texttt{Mass\_lost}) and we are interested in testing difference among substrate types.  To simplify the example, we will only consider main effects, but note that you should consider interactions whenever relevant (\citealt{mazerolle05} include interaction terms in the analysis}).
+
+\subsection{Importing data}
+Usually, importing a typical dataset in \texttt{R} will involve using \texttt{read.table( )} or one of its variations (e.g., \texttt{read.csv( )}, \texttt{read.delim( )}). In our case, the data set is already included in the \texttt{AICcmodavg} package, so we will load it directly:
+
+<<import>>=
+library(AICcmodavg)
+data(dry.frog)
+@ 
+
+For this example, we'll only be using the first seven columns of the data set:
+<<subData>>=
+##extract only first 7 columns
+frog <- dry.frog[, 1:7]
+##first lines
+head(frog)
+##structure of data frame
+str(frog)
+@ 
+
+Note that \texttt{Substrate} is a factor with three levels. Using the default treatment contrast coding in \texttt{R}, the variable has been recoded automatically with two indicator (dummy) variables. 
+
+It's also a good idea to check for missing values:
+<<na>>=
+any(is.na(frog))
+@ 
+
+In this case, there are no missing values and we won't have to worry about some observations being excluded in certain models. 
+
+
+\subsection{Specifying candidate models based on hypotheses}
+We are interested in testing the effect of substrate type on the mass lost by frogs, but a number of potential other variables could also influence the mass lost, namely, the initial mass of individuals (linear and quadratic effects) and the presence of shade (shade vs no shade). Given that mass loss is numeric, we will consider a multiple regression model using the normal distribution.  We specify eight candidate models to test our hypotheses.  Each parameter appears in four models, which will be a useful condition for multimodel inference (see \nameref{sec:beta} below). We also included a null model to quantify the support in favor of models relative to the null model:
+
+\vspace{12pt}
+
+\noindent \textbf{1. Null model}\\
+Biological hypothesis: Mass lost by frogs is constant.
+
+\begin{equation*}
+  \hat{Y_i} = \beta_0
+\end{equation*}
+
+\vspace{12pt}
+
+\noindent \textbf{2. Shade model}\\
+Biological hypothesis: Mass lost by frogs varies with shade.
+
+\begin{equation*}
+    \hat{Y_i} = \beta_0 + \beta_{Shade} * Shade_i
+\end{equation*}
+
+\vspace{12pt}
+
+\noindent \textbf{3. Substrate model}\\
+Biological hypothesis: Mass lost by frogs varies with substrate type.
+
+\begin{equation*}
+    \hat{Y_i} = \beta_0 + \beta_{SubstrateSOIL} * SubstrateSOIL_i + \beta_{SubstratePEAT} * SubstratePEAT_i
+\end{equation*}
+
+\vspace{12pt}
+
+\noindent \textbf{4. Shade and substrate model}\\
+Biological hypothesis: Mass lost by frogs varies with shade and substrate type.
+
+\begin{equation*}
+    \hat{Y_i} = \beta_0 + \beta_{Shade} * Shade_i + \beta_{SubstrateSOIL} * SubstrateSOIL_i + \beta_{SubstratePEAT} * SubstratePEAT_i
+\end{equation*}
+
+\vspace{12pt}
+
+\noindent \textbf{5. Null model with mass}\\
+Biological hypothesis: Mass lost by frogs varies with frog size.
+
+\begin{equation*}
+  \hat{Y_i} = \beta_0 + \beta_{Initial\_mass} * Initial\_mass_i + \beta_{Initial\_mass2} * Initial\_mass2_i
+\end{equation*}
+
+\vspace{12pt}
+
+\noindent \textbf{6. Shade model with mass}\\
+Biological hypothesis: Mass lost by frogs varies with frog size and shade.
+
+\begin{equation*}
+  \begin{aligned}
+    \hat{Y_i} = & \beta_0 + \beta_{Initial\_mass} * Initial\_mass_i + \beta_{Initial\_mass2} * Initial\_mass2_i + \\
+    & \beta_{Shade} * Shade_i
+  \end{aligned}
+\end{equation*}
+
+\vspace{12pt}
+
+\noindent \textbf{7. Substrate model with mass}\\
+Biological hypothesis: Mass lost by frogs varies with frog size and substrate type.
+
+\begin{equation*}
+  \begin{aligned}
+    \hat{Y_i} = & \beta_0 + \beta_{Initial\_mass} * Initial\_mass_i + \beta_{Initial\_mass2} * Initial\_mass2_i + \\
+    & \beta_{SubstrateSOIL} * SubstrateSOIL_i + \beta_{SubstratePEAT} * SubstratePEAT_i
+    \end{aligned}
+\end{equation*}
+
+\vspace{12pt}
+
+\noindent \textbf{8. Shade and substrate model with mass}\\
+Biological hypothesis: Mass lost by frogs varies with frog size, shade, and substrate type.
+
+\begin{equation*}
+  \begin{aligned}
+    \hat{Y_i} = & \beta_0 + \beta_{Initial\_mass} * Initial\_mass_i + \beta_{Initial\_mass2} * Initial\_mass2_i + \\
+    & \beta_{Shade} * Shade_i + \beta_{SubstrateSOIL} * SubstrateSOIL_i + \beta_{SubstratePEAT} * SubstratePEAT_i
+  \end{aligned}
+\end{equation*}
+
+
+\subsection{Formating data}
+Some of our hypotheses involve linear and quadratic effects of initial mass.  To reduce correlations between the two variables, we will center initial mass by subtracting the mean of the variable from each value:
+<<centInitialMass>>=
+##center initial mass
+frog$InitMass_cent <- frog$Initial_mass - mean(frog$Initial_mass)
+@
+
+We can then square the centered variable:
+<<InitialMass2>>=
+frog$InitMass2 <- frog$InitMass_cent^2
+@ 
+
+
+\subsection{Checking global model fit}
+With these eight candidate models specified, we can now check the diagnostics of the global model.
+
+<<checkDiag, fig = TRUE, include = FALSE>>=
+##run global model
+global <- lm(Mass_lost ~ InitMass_cent + InitMass2 + Substrate + Shade, 
+             data = frog)
+par(mfrow = c(2, 2))
+plot(global)
+@
+
+\begin{figure}
+\includegraphics{AICcmodavg-checkDiag}
+\caption{Assessment of model assumptions using residuals and fitted values from the global model based on mass lost (g) by green frogs (\emph{Lithobates clamitans}) exposed to different conditions.}
+\label{fig:checkDiag}
+\end{figure}
+
+
+The assumption of homoscedasticity does not seem to be met with the raw response variable, as the variance increases with the mean (Fig. \ref{fig:checkDiag}). To circumvent this issue, we will apply a log transformation to the response variable:
+<<logMass>>=
+frog$logMass_lost <- log(frog$Mass_lost + 1) #adding 1 due to presence of 0's
+@ 
+
+<<checkDiag2, fig = TRUE, include = FALSE>>=
+##run global model
+global.log <- lm(logMass_lost ~ InitMass_cent + InitMass2 + Substrate + Shade, 
+                 data = frog)
+par(mfrow = c(2, 2))
+plot(global.log)
+@ 
+
+
+\begin{figure}
+\includegraphics{AICcmodavg-checkDiag2}
+\caption{Assessment of model assumptions using residuals and fitted values from the global model based on the log of the mass lost (g) by green frogs (\emph{Lithobates clamitans}) exposed to different conditions.}
+\label{fig:checkDiag2}
+\end{figure}
+
+
+The log transformation generally homogenized the variance and most residuals follow a normal distribution, except for a few outliers (Fig. \ref{fig:checkDiag2}). Thus, we will proceed with the analysis using the log transformation on all candidate models.
+
+\subsection{Running candidate models and saving in list}
+We fit the 8 models in the candidate set:
+<<fitCands>>=
+m.null <- lm(logMass_lost ~ 1,
+             data = frog)
+m.shade <- lm(logMass_lost ~ Shade, 
+              data = frog)
+m.substrate <- lm(logMass_lost ~ Substrate, 
+                  data = frog)
+m.shade.substrate <- lm(logMass_lost ~ Shade + Substrate, 
+                        data = frog)
+m.null.mass <- lm(logMass_lost ~ InitMass_cent + InitMass2,
+                  data = frog)
+m.shade.mass <- lm(logMass_lost ~ InitMass_cent + InitMass2 + Shade, 
+                   data = frog)
+m.substrate.mass <- lm(logMass_lost ~ InitMass_cent + InitMass2 + Substrate, 
+                       data = frog)
+m.global.mass <- global.log
+@ 
+
+Most functions for model selection and multimodel inference in the \texttt{AICcmodavg} package require that the output of the candidate models be stored in a single list.  Although the functions will add generic names to each model automatically if none are supplied, it is good practice to provide meaningful and succinct names for each model.  This will help in the interpretation of the model selection tables.  Model names can be entered as a character string using the \texttt{modnames} argument or directly as a named list.
+
+Here are the model outputs stored in a list with names assigned to each element:
+<<storeList>>=
+##store models in named list
+Cand.models <- list("null" = m.null, "shade" = m.shade, 
+                    "substrate" = m.substrate, 
+                    "shade + substrate" = m.shade.substrate, 
+                    "mass" = m.null.mass, "mass + shade" = m.shade.mass, 
+                    "mass + substrate" = m.substrate.mass, 
+                    "global" = m.global.mass)
+@ 
+
+\subsection{Doing model selection}
+We are now ready to build the model selection table with \texttt{aictab}:
+<<modTableAICc>>=
+selectionTable <- aictab(cand.set = Cand.models)
+selectionTable
+@ 
+
+We note that the global model has all the support.  By default, $AIC_c$ is used in the model selection and multimodel inference functions, but $AIC$ can be selected with the \texttt{second.ord = FALSE} argument:
+<<modTableAIC>>=
+aictab(Cand.models, second.ord = FALSE)
+@ 
+
+For those familiar with \LaTeX \citep{lamport94, mittelbach04}, note that most functions in \texttt{AICcmodavg} can export result tables in \LaTeX{} format using \texttt{xtable( )} methods from the \texttt{xtable} package \citep{dahl14}. For example, the following code will produce Table \ref{tab:selection}:
+<<exportTable3, eval = FALSE>>=
+library(xtable)
+print(xtable(selectionTable, caption = "Model selection table on frog mass lost.", 
+             label = "tab:selection"),
+      include.rownames = FALSE, caption.placement = "top")
+@ 
+
+<<exportTable4, echo = FALSE, keep.source = FALSE, results = tex>>=
+library(xtable)
+print(xtable(selectionTable, caption = "Model selection table on frog mass lost.", 
+             label = "tab:selection"),
+      include.rownames = FALSE, caption.placement = "top", )
+@
+
+
+We can provide complementary information to assist the interpretation of the model selection table.  For instance, we can compute the 95\% confidence set of models \citep{burnham02}:
+<<confSet>>=
+##confidence set of models
+confset(cand.set = Cand.models)
+@ 
+
+Evidence ratios are also useful to quantify the amount of support in favor of a model relative to a competing model \citep{burnham02}.  Function \mbox{\texttt{evidence( )}} takes a model selection table as argument:
+<<evidence>>=
+##evidence ratios
+evidence(aic.table = selectionTable)
+@
+
+<<evidenceSilent, echo = FALSE, keep.source = FALSE>>=
+evRatio <- evidence(selectionTable)
+@ 
+
+Here, we see that the global model is \Sexpr{round(evRatio$Ev.ratio)} times more parsimonious that the substrate model. It is also possible to compare two arbitrary models by using their names in the \texttt{model.high} and \texttt{model.low} arguments:
+<<evidence2>>=
+##compare "substrate" vs "shade"
+evidence(selectionTable, model.high = "substrate",
+         model.low = "shade")
+@ 
+
+<<evidence2Silent, echo = FALSE, keep.source = FALSE>>=
+##compare "substrate" vs "shade"
+evRatio2 <- evidence(selectionTable, model.high = "substrate",
+                     model.low = "shade")
+@ 
+                     
+We conclude that the substrate model is \Sexpr{round(evRatio2$Ev.ratio)} times more parsimonious than the shade model.  Another useful comparison is between the top-ranked model and the null model:
+<<evidenceNull>>=
+evidence(selectionTable, model.high = "global",
+         model.low = "null")
+@
+
+
+Because the top-ranked model has all the support, we could interpret the results of the model using confidence intervals:
+<<confint>>=
+confint(m.global.mass)
+@ 
+
+We conclude that there is a quadratic effect of initial mass on frog mass loss, that mass loss is lower in the presence of shade, and that mass loss is lower on \emph{Sphagnum} moss (living vegetation) than on peat.  However, model support will often be shared by several models (i.e., top-ranked model having < 90\% of the support).  In such cases, we should conduct multimodel inference.
+
+
+\subsection{Making multimodel inference}
+Four main functions are used for multimodel inference in the \texttt{AICcmodavg} package: \texttt{modavg( )}, \texttt{modavgShrink( )}, \texttt{modavgPred( )}, and \texttt{modavgEffect( )}.  Two of these functions focus on making inferences on $\beta$ estimates (\texttt{modavg( )}, \texttt{modavgShrink( )}) and the two others work on model predictions (\texttt{modavgPred( )}, \texttt{modavgEffect( )}). These functions are presented below. 
+
+\subsubsection{Inference on $\beta$ estimates}
+\label{sec:beta}
+Two functions are available to compute model-averaged estimates of $\beta$ parameters. Function \texttt{modavg( )} implements the natural average. This method consists in using exclusively the models that include the parameter of interest, recalculating the $\Delta AIC$ and Akaike weights, and computing a weighted average of the estimates \citep[p. 152]{burnham02}. We can compute the natural average of the effect of shade ($\beta_{Shade}$) on the loss of frog mass:
+<<modavg>>=
+modavg(cand.set = Cand.models, parm = "Shade")
+@ 
+
+<<modavg2, echo = FALSE, keep.source = FALSE>>=
+modavgShade <- modavg(cand.set = Cand.models, parm = "Shade")
+@ 
+
+Note that the table only features the models that include shade as an explanatory variable.  We conclude that frogs loose less mass in the shade than out of the shade lost ($\hat{\bar{\beta}}_{Shade} = \Sexpr{round(modavgShade$Mod.avg.beta, 2)}$, 95\% CI: $[\Sexpr{round(modavgShade$Lower.CL, 2)}, \Sexpr{round(modavgShade$Upper.CL, 2)}]$). 
+
+Similarly, we can request a model-averaged estimate for factor levels, keeping in mind that only certain contrast have been estimated in the model (i.e., there are three levels, but only two contrasts). Note that the parameter must be specified with the same label as in the model output.
+
+For instance, to estimate the contrast between \texttt{SPHAGNUM} vs \texttt{PEAT}, we will inspect the labels of a model that includes substrate type:
+<<coef>>=
+coef(m.global.mass)
+@ 
+
+Thus, we will compute the model-averaged contrast \texttt{SPHAGNUM} vs \texttt{PEAT} as follows:
+<<substrateSPHAG>>=
+modavg(Cand.models, parm = "SubstrateSPHAGNUM")
+@ 
+
+<<substrateSPHAG2, echo = FALSE, keep.source = FALSE>>=
+modavgSphag <- modavg(Cand.models, parm = "SubstrateSPHAGNUM")
+@ 
+
+We conclude that mass loss is lower on the \emph{Sphagnum} substrate than on the peat substrate ($\hat{\bar{\beta}}_{SusbstrateSPHAGNUM} = \Sexpr{round(modavgSphag$Mod.avg.beta, 2)}$, 95\% CI: $[\Sexpr{round(modavgSphag$Lower.CL, 2)}, \Sexpr{round(modavgSphag$Upper.CL, 2)}]$). 
+
+The natural average has been under criticism lately, mainly due to the overestimation of the effect under certain conditions \citep{cade15}. Indeed, excluding models that do not feature the parameter of interest can inflate the model-averaged $\beta$, particularly if the parameter only appears in models with low weight.  Users should be wary of systematically investigating the effect of parameters appearing in weakly supported models, as using the natural average for this purpose is not recommended.  An alternative estimator, the model-averaging estimator with shrinkage, is more robust to this issue \citep{burnham02}.
+
+In contrast to the natural average, the model-averaging estimator with shrinkage retains all models in the candidate model set, regardless of the presence of the parameter of interest.  Specifically, models without the parameter of interest are assigned a value of 0 for the $\beta$ and variance.  This results in shrinking the effect towards 0 when models without the parameter of interest have high support.  Function \mbox{\texttt{modavgShrink( )}} implements this approach in \texttt{AICcmodavg}:
+
+<<modavg>>=
+modavgShrink(cand.set = Cand.models, parm = "Shade")
+@ 
+
+<<substrateSPHAGShrink>>=
+modavgShrink(Cand.models, parm = "SubstrateSPHAGNUM")
+@ 
+
+Note that all models are included in the tables above and that the estimate and variance are set to 0 when the parameter does not appear in the model.  An additional consideration is that one should strive to balance the number of models with and without the parameter of interest when specifying candidate models.  In our case, four models include the effect of shade (vs four without) and four models include the effect of substrate (vs four without).  
+
+In our example, both methods of model-averaging $\beta$ estimates lead to the same conclusions, because the top-ranked model (global model) has all the support and dominates the results.  However, whenever several candidate models share the support, both methods of model averaging will not lead to the same conclusions.  Model-averaging with shrinkage is the recommended approach for $\beta$ estimates.  A similar approach is also used to model-average predictions.
+
+
+\subsubsection{Inference on predictions}
+Model-averaging predictions was the originally intended use of model-averaging \citep{burnham02}.  Function \texttt{modavgPred( )} implements this approach, using the entire set of candidate models.  As opposed to infering on $\beta$ estimates, each model can provide an estimate of the prediction, regardless of the presence of a parameter of interest in the model.  For instance, both the null and global models can make predictions for the presence of shade, holding the other variables constant.  We can illustrate this point using \texttt{predict( )}:
+
+<<shadePred>>=
+##data frame to make predictions
+##all variables are held constant, except Shade
+predData <- data.frame(InitMass_cent = c(0, 0),
+                       InitMass2 = c(0, 0),
+                       Substrate = factor("SOIL", 
+                                          levels = levels(frog$Substrate)),
+                       Shade = c(0, 1))
+##predictions from global model
+predict(m.global.mass, newdata = predData, se.fit = TRUE)
+##predictions from null model
+predict(m.null, newdata = predData, se.fit = TRUE)
+@ 
+
+The main idea here is that the prediction from the null model does not depend on the frog being in the shade or not.  Similarly, we can make predictions for the same two conditions (shade vs no shade) from each model and obtain a model-averaged estimate of the predictions.  In other words, the predictions are weighted by the Akaike weights of each model.  Consequently, a model with larger weight has a greater influence on the model-averaged prediction than a model with low support.  Because \texttt{modavgPred( )} relies on \texttt{predict( )} methods for different model types, one must supply a \texttt{newdata} argument following the same restrictions as for \texttt{predict( )}.  Specifically, you must supply values for each variable appearing at least once in the candidate models.  To assist in this task, the \texttt{extractX( )} utility function displays every variable appearing in the model set:
+
+<<extractX>>=
+extractX(cand.set = Cand.models)
+@ 
+
+Using the \texttt{predData} data frame above, we proceed with model-averaging predictions:
+<<modavgPred>>=
+modavgPred(cand.set = Cand.models, newdata = predData)
+@ 
+
+
+We can proceed similarly for the substrate type:
+<<modavgPredSub>>=
+##data frame holding all variables constant, except Substrate
+predSub <- data.frame(InitMass_cent = c(0, 0, 0),
+                      InitMass2 = c(0, 0, 0),
+                      Substrate = factor(c("PEAT", "SOIL", "SPHAGNUM"),
+                                         levels = levels(frog$Substrate)),
+                      Shade = c(1, 1, 1))
+##model-average predictions
+predsMod <- modavgPred(Cand.models, newdata = predSub)
+predsMod
+@ 
+
+To facilitate in the preparation of a plot, I will add the model-averaged predictions, as well as the lower and upper 95\% confidence limits in \texttt{predSub} to keep everything in the same place.  We can first check the content of the \texttt{modavgPred} object to reveal the labels for each element we want to extract:
+
+<<checkContent>>=
+##check content of object
+str(predsMod)
+@ 
+
+
+Now we can add the elements to the \texttt{predSub} data frame:
+<<savePreds>>=
+##add predictions, lower CL, and upper CL
+predSub$fit <- predsMod$mod.avg.pred
+predSub$low95 <- predsMod$lower.CL
+predSub$upp95 <- predsMod$upper.CL
+@ 
+
+
+Finally, we can plot the results in a figure:
+<<plotPreds, fig = TRUE, include = FALSE>>=
+##create vector for X axis
+predSub$xvals <- c(0.25, 0.5, 0.75)
+##create empty box
+plot(fit ~ xvals, 
+     data = predSub,
+     xlim = c(0, 1),
+     ylim = range(low95, upp95),
+     xlab = "Substrate type",
+     ylab = "Predicted mass lost (log of mass in g)",
+     xaxt = "n",
+     cex.axis = 1.2, 
+     cex.lab = 1.2)
+##add x axis
+axis(side = 1, at = predSub$xvals,
+     labels = c("Peat", "Soil", "Sphagnum"),
+     cex.axis = 1.2)
+##add CI's
+segments(x0 = predSub$xvals, x1 = predSub$xvals,
+         y0 = predSub$low95, predSub$upp95)
+@ 
+
+\begin{figure}
+\includegraphics{AICcmodavg-PlotPreds}
+\caption{Model-averaged predictions of the log of mass lost by green frogs \emph{Lithobates clamitans} on three different substrate types.}
+\label{fig:preds}
+\end{figure}
+
+The plot clearly shows that mass lost is lower on Sphagnum than on the other substrates (Fig. \ref{fig:preds}).
+
+Besides model-averaging predictions, it is also possible to model-average effect sizes (differences between groups) using the predictions for two groups from each model.  This approach is implemented in the \texttt{modavgEffect( )} function.  Its use is similar to \texttt{modavgPred( )}, except that the \texttt{newdata} data frame used for prediction must include only two rows (i.e., the two groups to compare).  Here is the application on the difference between the peat and Sphagnum substrates:
+
+<<compGroups>>=
+predComp <- data.frame(InitMass_cent = c(0, 0),
+                       InitMass2 = c(0, 0),
+                       Substrate = factor(c("PEAT", "SPHAGNUM"),
+                                          levels = levels(frog$Substrate)),
+                       Shade = c(1, 1))
+##model-average predictions
+modavgEffect(Cand.models, newdata = predComp)
+@ 
+
+Again, we conclude that frogs lose mass faster on peat than on Sphagnum substrates.  The values reflect differences on the log scale, because we used a log transformation on the original response variable.
+
+
+\section{Support of model classes}
+\subsection{Classes supported}
+The \texttt{AICcmodavg} package supports models from different model classes. Table \ref{tab:support} illustrates the model types and the model classes compatible with the package. 
+
+
+\begin{table}[h]
+\begin{center}
+\caption{Model classes currently supported by \texttt{AICcmodavg} for model selection and multimodel inference based on $AIC$, $AIC_c$, $QAIC$, and $QAIC_c$. Note that support varies from basic model selection to model-averaging predictions.}
+\label{tab:support}
+\begin{tabular}{>{\raggedright\hspace{0pt}}p{65mm}%
+      >{\raggedright\hspace{0pt}}p{50mm}
+      >{\centering\hspace{0pt}}p{35mm}
+    }
+\hline
+Model type & Class & Degree of support\tabularnewline 
+\hline
+beta regression & \texttt{betareg} & model averaging $\beta$ \tabularnewline
+conditional logistic regression & \texttt{clogit} & model averaging $\beta$ \tabularnewline 
+cox proportional hazard & \texttt{coxph}, \texttt{coxme} & model averaging $\beta$ \tabularnewline 
+distributions & \texttt{fitdist}, \texttt{fitdistr} & model selection \tabularnewline 
+generalized least squares & \texttt{gls} & model averaging $\beta$ \tabularnewline 
+generalized linear mixed models & \texttt{glmerMod}, \texttt{glmmTMB} & model averaging predictions \tabularnewline 
+latent variable models & \texttt{lavaan} & model selection \tabularnewline
+linear and generalized linear models & \texttt{aov}, \texttt{lm}, \texttt{glm}, \texttt{vglm} & model averaging predictions \tabularnewline
+linear mixed models & \texttt{lme}, \texttt{lmerMod}, \texttt{lmekin}, \texttt{lmerModLmerTest} & model averaging predictions \tabularnewline 
+multinomial logistic regression & \texttt{multinom}, \texttt{vglm} & model averaging $\beta$ \tabularnewline 
+nonlinear model & \texttt{gnls}, \texttt{nls}, \texttt{nlme}, \texttt{nlmerMod} & model selection \tabularnewline 
+occupancy and abundance models with imperfect detectability & \texttt{unmarkedFit} & model averaging predictions \tabularnewline 
+ordinal logistic regression & \texttt{polr}, \texttt{clm}, \texttt{clmm}, \texttt{vglm} & model averaging $\beta$ \tabularnewline 
+presence-only models & \texttt{maxlikeFit} & model selection \tabularnewline 
+%robust regression & \texttt{rlm} model averaging predictions \tabularnewline 
+survival regression & \texttt{survreg} & model averaging predictions \tabularnewline
+zero-inflated models & \texttt{vglm}, \texttt{zeroinfl} & model averaging $\beta$ \tabularnewline
+zero-truncated models & \texttt{vglm}, \texttt{hurdle} & model averaging $\beta$ \tabularnewline
+\hline
+\end{tabular}
+\\
+\end{center}
+\end{table}
+
+The package also offers model selection based on $BIC$ for all model classes in Table \ref{tab:support} with the \texttt{bictab( )} function.  For Bayesian models of classes \texttt{bugs}, \texttt{rjags}, or \texttt{jagsUI}, model selection using the DIC \citep{spiegelhalter02} is enabled with the \mbox{\texttt{dictab( )}} function.  A number of functions offer the possibility of conducting model selection and multimodel inference by specifying the basic information (log-likelihood, number of parameters, estimates, standard errors) for models that are not currently supported. The next section features an example using these functions.
+
+\subsection{Working with classes not yet supported}
+Functions \texttt{aictabCustom( )} and \texttt{bictabCustom( )} perform model selection for model classes not yet supported by \texttt{AICcmodavg}.  Similarly, \texttt{modavgCustom( )} implements multimodel inference for such models.  The basic prerequisite is that models be fit with maximum likelihood and that the log-likelihood is available, along with the number of estimated parameters.  Of course, the estimates, and their standard errors are required for multimodel inference.  In this example, we ran three Cormack-Jolly-Seber capture-mark-recapture models in Program MARK \citep{cormack64, jolly65, seber65, white99}.  The data were collected during three breeding seasons to investigate the influence of the presence of road-mitigating infrastructures (amphibian tunnels associated with drift fences) on green frog (\emph{Lithobates clamitans}) populations adjacent to roads.  We will save the log-likelihoods, number of estimated parameters, and effective sample size in vectors to conduct model selection based on $AIC_c$:
+<<customAICc>>=
+##log-likelihoods
+modL <- c(-225.4180, -224.0697, -225.4161)
+##number of parameters
+modK <- c(2, 3, 3)
+##model selection
+outTab <- aictabCustom(logL = modL,
+                       K = modK,
+                       modnames = c("null", "phi(SVL)p(.)",
+                                    "phi(Road)p(.)"),
+                       nobs = 621)
+@ 
+
+We note that models including the effect of road-mitigating infrastructures have low support compared to models of frog size (SVL: snout-vent length) or the null model.  We can also compute the evidence ratio between the top-ranked model vs the model with the effect of road-mitigating infrastructures:
+<<evRatioCustom, eval = FALSE>>=
+evidence(outTab, model.high = "phi(SVL)p(.)",
+         model.low = "phi(Road)p(.)")
+@ 
+
+<<evRatioCustom, echo = FALSE, keep.source = FALSE>>=
+evRatioCust <- evidence(outTab, model.high = "phi(SVL)p(.)",
+                        model.low = "phi(Road)p(.)")
+@ 
+
+
+The top-ranked model has \Sexpr{round(evRatioCust$Ev.ratio, 1)} times more support than the model with road-mitigating infrastructures.  We continue by saving the predicted survival estimates in the presence of road-mitigating infrastructures and their standard errors:
+<<estSE>>=
+##survival estimates with road mitigation
+modEst <- c(0.1384450, 0.1266030, 0.1378745)
+##SE's of survival estimates with road mitigation
+modSE <- c(0.03670327, 0.03347475, 0.03862634)
+@ 
+
+Finally, we compute the model-averaged estimates of survival based on the entire model set:
+<<customModavg>>=
+##model-averaged survival with road mitigation
+modavgCustom(logL = modL,
+             K = modK,
+             modnames = c("null", "phi(SVL)p(.)",
+                          "phi(Road)p(.)"),
+             estimate = modEst,
+             se = modSE,
+             nobs = 621)
+@ 
+
+For comparative purposes, we can compute the model-averaged estimates of survival in the absence of road-mitigating infrastructures:
+<<customModavg2>>=
+##survival estimates without road mitigation
+modEst2 <- c(0.1384450, 0.1266030, 0.1399727)
+
+##SE's of survival estimates without road mitigation
+modSE2 <- c(0.03670327, 0.03347475, 0.04981635)
+
+##model-averaged survival
+modavgCustom(logL = modL,
+             K = modK,
+             modnames = c("null", "phi(SVL)p(.)",
+                          "phi(Road)p(.)"),
+             estimate = modEst2,
+             se = modSE2,
+             nobs = 621)
+@ 
+
+Unsuprisingly, we note that survival does not vary with the presence of road-mitigating infrastructures.
+
+The tools in this section highlighted how to conduct model selection and multimodel inference for models that are not yet supported by the package.  For models built outside of the \texttt{R} environment in other software and based on maximum likelihood, these tools can be convenient.  For model classes that you would wish to be supported by \texttt{AICcmodavg}, you can contact the package author directly.
+
+\bibliography{AICcmodavg}
+
+\end{document}

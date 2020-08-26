@@ -17,22 +17,34 @@ This function extracts various summary statistics from distance sampling
 data of various \code{unmarkedFrame} and \code{unmarkedFit} classes.
 }
 \usage{
-countDist(object, plot.freq = TRUE, plot.distance = TRUE, \dots)
+countDist(object, plot.freq = TRUE, plot.distance = TRUE, cex.axis = 1,
+          cex.lab = 1, cex.main = 1, \dots)
 
 \method{countDist}{unmarkedFrameDS}(object, plot.freq = TRUE,
-                   plot.distance = TRUE, \dots)
+                   plot.distance = TRUE, cex.axis = 1, cex.lab = 1,
+                   cex.main = 1, \dots)
 
 \method{countDist}{unmarkedFitDS}(object, plot.freq = TRUE,
-                   plot.distance = TRUE, \dots)
+                   plot.distance = TRUE, cex.axis = 1, cex.lab = 1,
+                   cex.main = 1, \dots)
 
 \method{countDist}{unmarkedFrameGDS}(object, plot.freq = TRUE,
-                   plot.distance = TRUE, \dots)
+                   plot.distance = TRUE, cex.axis = 1,
+                   cex.lab = 1, cex.main = 1, \dots)
 
 \method{countDist}{unmarkedFitGDS}(object, plot.freq = TRUE,
-                   plot.distance = TRUE, \dots)
+                   plot.distance = TRUE, cex.axis = 1,
+                   cex.lab = 1, cex.main = 1, \dots)
+
+\method{countDist}{unmarkedFrameDSO}(object, plot.freq = TRUE,
+                   plot.distance = TRUE, cex.axis = 1,
+                   cex.lab = 1, cex.main = 1, plot.seasons = FALSE,
+                   \dots)
 
 \method{countDist}{unmarkedFitDSO}(object, plot.freq = TRUE,
-                   plot.distance = TRUE, plot.seasons = FALSE, \dots)
+                   plot.distance = TRUE, cex.axis = 1,
+                   cex.lab = 1, cex.main = 1, plot.seasons = FALSE,
+                   \dots)
 }
 
 \arguments{
@@ -48,15 +60,23 @@ countDist(object, plot.freq = TRUE, plot.distance = TRUE, \dots)
    logical.  Specifies if the counts in each distance class (pooled
    across seasons) should be plotted.  
  }
+ \item{cex.axis}{expansion factor influencing the size of axis
+   annotations on plots produced by the function.
+ }
+ \item{cex.lab}{expansion factor influencing the size of axis labels on
+   plots produced by the function.
+ }
+ \item{cex.main}{expansion factor influencing the size of the main title
+   above plots produced by the function.
+ } 
  \item{plot.seasons}{
    logical.  Specifies if the count data should be plotted for each
    distance class and season separately.  This argument is only relevant
    for data collected across more than a single season.
  }
- 
-  \item{\dots}{
-    additional arguments passed to the function.
-  }
+ \item{\dots}{
+   additional arguments passed to the function.
+ }
 }
 
 \details{

@@ -1,8 +1,22 @@
 ####################################################################
 ##
 ##THIS FILE DOCUMENTS CHANGES TO FUNCTIONS IN PACKAGE AICcmodavg
-##Author:  Marc J. Mazerolle <marc.mazerolle@uqat.ca>
+##Author:  Marc J. Mazerolle <marc.mazerolle@sbf.ulaval.ca>
 ##
+####################################################################
+##revision 2.3-1 (21 August 2020)
+##- corrected bug in margin width when plotting results of 'mb.gof.test'
+##  with dynamic occupancy model models (thanks to M. Meredith)
+##- added 'ncores' argument to 'mb.gof.test' and 'Nmix.gof.test' to
+##  control number of cores used parametric bootstrap (suggested by M. Meredith)
+##- added arguments 'cex.axis', 'cex.lab', 'cex.main', and 'lwd' to add
+##  flexibility to various functions producing plots (i.e., 'mb.gof.test',
+##  'Nmix.gof.test', 'detTime', 'countDist', 'countHist')
+##- created an NEWS.Rd file
+##- created a vignette for a tour of main functions of the package
+
+
+
 ####################################################################
 ##revision 2.3-0 (3 July 2020)
 ##- added support for models of classes 'unmarkedFitOccuMS', 'unmarkedFitOccuTTD'
@@ -204,7 +218,7 @@
 ##- created a separate class for 'boot.wt' objects and print method to facilitate LaTeX formatting
 ##- created methods for 'xtable' to format objects from 'aictab', 'boot.wt', 'dictab', 'modavg', 'modavgShrink',
 ##  'modavgPred', 'modavgEffect', 'multComp', 'mb.chisq' to LaTeX
-##- modified CITATION file to use meta$Date and meta$Version as requested by CRAN
+
 
 
 ####################################################################
@@ -618,7 +632,7 @@
 
 
 #######################################################
-##revision 1.01:
+##revision 1.01 (3 September 2009):
 ## -cleaned up documentation file, added a few more sentences and added space within formulas 
 ##  for the example to display properly in pdf;
 

@@ -1,18 +1,21 @@
 ##summarize time to detection data
-detTime <- function(object, plot.time = TRUE, plot.seasons = FALSE, ...){
+detTime <- function(object, plot.time = TRUE, plot.seasons = FALSE,
+                    cex.axis = 1, cex.lab = 1, cex.main = 1, ...){
     UseMethod("detTime", object)
 }
 
 
 
-detTime.default <- function(object, plot.time = TRUE, plot.seasons = FALSE, ...){
+detTime.default <- function(object, plot.time = TRUE, plot.seasons = FALSE,
+                            cex.axis = 1, cex.lab = 1, cex.main = 1, ...){
   stop("\nFunction not yet defined for this object class\n")
 }
 
 
 
 ##for ummarkedFrameOccuTTD
-detTime.unmarkedFrameOccuTTD <- function(object, plot.time = TRUE, plot.seasons = FALSE, ...) {
+detTime.unmarkedFrameOccuTTD <- function(object, plot.time = TRUE, plot.seasons = FALSE,
+                                         cex.axis = 1, cex.lab = 1, cex.main = 1, ...) {
 
     ##extract data
     yMat <- object@y
@@ -34,16 +37,13 @@ detTime.unmarkedFrameOccuTTD <- function(object, plot.time = TRUE, plot.seasons 
     if(plot.time && !plot.seasons) {
         nRows <- 1
         nCols <- 1
-        par(mfrow = c(nRows, nCols),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(nRows, nCols))
     }
 
     
     if(!plot.time && plot.seasons) {
         ##determine arrangement of plots in matrix
-        if(plot.seasons && n.seasons > 12) {
+        if(plot.seasons && n.seasons >= 12) {
             n.seasons.adj <- 12
             warning("\nOnly first 12 seasons are plotted\n")
         }
@@ -89,10 +89,7 @@ detTime.unmarkedFrameOccuTTD <- function(object, plot.time = TRUE, plot.seasons 
                 }
             }
         }
-        par(mfrow = c(nRows, nCols),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(nRows, nCols))
     }
 
 
@@ -100,7 +97,7 @@ detTime.unmarkedFrameOccuTTD <- function(object, plot.time = TRUE, plot.seasons 
     ##if both plots for seasons and combined are requested
     if(plot.time) {
         
-        if(plot.seasons && n.seasons > 12) {
+        if(plot.seasons && n.seasons >= 12) {
             n.seasons.adj <- 11
             warning("\nOnly first 11 seasons are plotted\n")
         }
@@ -135,10 +132,7 @@ detTime.unmarkedFrameOccuTTD <- function(object, plot.time = TRUE, plot.seasons 
             }
         }
         
-        par(mfrow = c(nRows, nCols),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(nRows, nCols))
     }
 
         
@@ -185,7 +179,7 @@ detTime.unmarkedFrameOccuTTD <- function(object, plot.time = TRUE, plot.seasons 
         
         hist(uncensoredData.full, xlim = c(0, uniqueDist.full),
              xlab = "Time to detection (min.)",
-             main = main.title)
+             main = main.title, cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
     }
 
 
@@ -266,7 +260,7 @@ detTime.unmarkedFrameOccuTTD <- function(object, plot.time = TRUE, plot.seasons 
             ##create histogram
             hist(uncensoredData, xlim = c(0, uniqueDist.seasons[[i]]),
                  xlab = "Time to detection (min.)",
-                 main = main.title)
+                 main = main.title, cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
         }
     }
         
@@ -394,7 +388,8 @@ detTime.unmarkedFrameOccuTTD <- function(object, plot.time = TRUE, plot.seasons 
 
 
 ##for occuTTD
-detTime.unmarkedFitOccuTTD <- function(object, plot.time = TRUE, plot.seasons = FALSE, ...) {
+detTime.unmarkedFitOccuTTD <- function(object, plot.time = TRUE, plot.seasons = FALSE,
+                                       cex.axis = 1, cex.lab = 1, cex.main = 1, ...) {
 
     ##extract data
     yMat <- object@data@y
@@ -415,16 +410,13 @@ detTime.unmarkedFitOccuTTD <- function(object, plot.time = TRUE, plot.seasons = 
     if(plot.time && !plot.seasons) {
         nRows <- 1
         nCols <- 1
-        par(mfrow = c(nRows, nCols),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(nRows, nCols))
     }
 
     
     if(!plot.time && plot.seasons) {
         ##determine arrangement of plots in matrix
-        if(plot.seasons && n.seasons > 12) {
+        if(plot.seasons && n.seasons >= 12) {
             n.seasons.adj <- 12
             warning("\nOnly first 12 seasons are plotted\n")
         }
@@ -470,10 +462,7 @@ detTime.unmarkedFitOccuTTD <- function(object, plot.time = TRUE, plot.seasons = 
                 }
             }
         }
-        par(mfrow = c(nRows, nCols),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(nRows, nCols))
     }
 
 
@@ -481,7 +470,7 @@ detTime.unmarkedFitOccuTTD <- function(object, plot.time = TRUE, plot.seasons = 
     ##if both plots for seasons and combined are requested
     if(plot.time) {
         
-        if(plot.seasons && n.seasons > 12) {
+        if(plot.seasons && n.seasons >= 12) {
             n.seasons.adj <- 11
             warning("\nOnly first 11 seasons are plotted\n")
         }
@@ -516,10 +505,7 @@ detTime.unmarkedFitOccuTTD <- function(object, plot.time = TRUE, plot.seasons = 
             }
         }
         
-        par(mfrow = c(nRows, nCols),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(nRows, nCols))
     }
 
         
@@ -566,7 +552,8 @@ detTime.unmarkedFitOccuTTD <- function(object, plot.time = TRUE, plot.seasons = 
         
         hist(uncensoredData.full, xlim = c(0, uniqueDist.full),
              xlab = "Time to detection (min.)",
-             main = main.title)
+             main = main.title,
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
     }
 
 
@@ -647,7 +634,8 @@ detTime.unmarkedFitOccuTTD <- function(object, plot.time = TRUE, plot.seasons = 
             ##create histogram
             hist(uncensoredData, xlim = c(0, uniqueDist.seasons[[i]]),
                  xlab = "Time to detection (min.)",
-                 main = main.title)
+                 main = main.title,
+                 cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
         }
     }
         

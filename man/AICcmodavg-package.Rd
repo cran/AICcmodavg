@@ -43,8 +43,8 @@ in the package.
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 2.3-0\cr
-Date: \tab 2020-07-03\cr
+Version: \tab 2.3-1\cr
+Date: \tab 2020-08-21\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }

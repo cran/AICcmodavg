@@ -13,13 +13,16 @@ This function extracts various summary statistics from time to detection
 data of various \code{unmarkedFrame} and \code{unmarkedFit} classes.
 }
 \usage{
-detTime(object, plot.time = TRUE, plot.seasons = FALSE, \dots)
+detTime(object, plot.time = TRUE, plot.seasons = FALSE,
+        cex.axis = 1, cex.lab = 1, cex.main = 1, \dots)
 
 \method{detTime}{unmarkedFrameOccuTTD}(object, plot.time = TRUE,
-                   plot.seasons = FALSE, \dots)
+                 plot.seasons = FALSE, cex.axis = 1, cex.lab = 1,
+                 cex.main = 1, \dots)
 
 \method{detTime}{unmarkedFitOccuTTD}(object, plot.time = TRUE,
-                   plot.seasons = FALSE, \dots)
+                   plot.seasons = FALSE, cex.axis = 1, cex.lab = 1,
+                   cex.main = 1, \dots)
 }
 
 \arguments{
@@ -36,10 +39,18 @@ detTime(object, plot.time = TRUE, plot.seasons = FALSE, \dots)
    for each season separately.  This argument is only relevant
    for data collected across more than a single season.
  }
- 
-  \item{\dots}{
-    additional arguments passed to the function.
-  }
+ \item{cex.axis}{expansion factor influencing the size of axis
+   annotations on plots produced by the function.
+}
+\item{cex.lab}{expansion factor influencing the size of axis labels on
+  plots produced by the function.
+}
+\item{cex.main}{expansion factor influencing the size of the main title
+  above plots produced by the function.
+}
+\item{\dots}{
+  additional arguments passed to the function.
+}
 }
 
 \details{

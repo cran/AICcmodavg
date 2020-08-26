@@ -23,36 +23,49 @@ This function extracts various summary statistics from count data of
 various \code{unmarkedFrame} and \code{unmarkedFit} classes.
 }
 \usage{
-countHist(object, plot.freq = TRUE, \dots)
+countHist(object, plot.freq = TRUE, cex.axis = 1, cex.lab = 1,
+          cex.main = 1, \dots) 
 
-\method{countHist}{unmarkedFramePCount}(object, plot.freq = TRUE, \dots)
+\method{countHist}{unmarkedFramePCount}(object, plot.freq = TRUE,
+                   cex.axis = 1, cex.lab = 1, cex.main = 1, \dots)
 
-\method{countHist}{unmarkedFitPCount}(object, plot.freq = TRUE, \dots)
+\method{countHist}{unmarkedFitPCount}(object, plot.freq = TRUE,
+                   cex.axis = 1, cex.lab = 1, cex.main = 1, \dots)
 
-\method{countHist}{unmarkedFrameGPC}(object, plot.freq = TRUE, \dots)
+\method{countHist}{unmarkedFrameGPC}(object, plot.freq = TRUE,
+                   cex.axis = 1, cex.lab = 1, cex.main = 1, \dots)
 
-\method{countHist}{unmarkedFitGPC}(object, plot.freq = TRUE, \dots)
+\method{countHist}{unmarkedFitGPC}(object, plot.freq = TRUE,
+                   cex.axis = 1, cex.lab = 1, cex.main = 1, \dots)
 
-\method{countHist}{unmarkedFrameMPois}(object, plot.freq = TRUE, \dots)
+\method{countHist}{unmarkedFrameMPois}(object, plot.freq = TRUE,
+                   cex.axis = 1, cex.lab = 1, cex.main = 1, \dots)
 
-\method{countHist}{unmarkedFitMPois}(object, plot.freq = TRUE, \dots)
+\method{countHist}{unmarkedFitMPois}(object, plot.freq = TRUE,
+                   cex.axis = 1, cex.lab = 1, cex.main = 1, \dots)
 
 \method{countHist}{unmarkedFramePCO}(object, plot.freq = TRUE,
+                   cex.axis = 1, cex.lab = 1, cex.main = 1,
                    plot.seasons = FALSE, \dots)
 
 \method{countHist}{unmarkedFitPCO}(object, plot.freq = TRUE,
+                   cex.axis = 1, cex.lab = 1, cex.main = 1,
                    plot.seasons = FALSE, \dots)
 
 \method{countHist}{unmarkedFrameGMM}(object, plot.freq = TRUE,
+                   cex.axis = 1, cex.lab = 1, cex.main = 1,
                    plot.seasons = FALSE, \dots)
 
 \method{countHist}{unmarkedFitGMM}(object, plot.freq = TRUE,
+                   cex.axis = 1, cex.lab = 1, cex.main = 1,
                    plot.seasons = FALSE, \dots)
 
 \method{countHist}{unmarkedFrameMMO}(object, plot.freq = TRUE,
+                   cex.axis = 1, cex.lab = 1, cex.main = 1,
                    plot.seasons = FALSE, \dots)
 
 \method{countHist}{unmarkedFitMMO}(object, plot.freq = TRUE,
+                   cex.axis = 1, cex.lab = 1, cex.main = 1,
                    plot.seasons = FALSE, \dots)
 
 }
@@ -66,15 +79,23 @@ countHist(object, plot.freq = TRUE, \dots)
    logical.  Specifies if the count data (pooled across seasons) should
    be plotted.
  }
+ \item{cex.axis}{expansion factor influencing the size of axis
+   annotations on plots produced by the function.
+ }
+ \item{cex.lab}{expansion factor influencing the size of axis labels on
+   plots produced by the function.
+ }
+ \item{cex.main}{expansion factor influencing the size of the main title
+   above plots produced by the function.
+ } 
  \item{plot.seasons}{
    logical.  Specifies if the count data should be plotted for each
    season separately.  This argument is only relevant for data collected
    across more than a single season.
  }
- 
-  \item{\dots}{
-    additional arguments passed to the function.
-  }
+ \item{\dots}{
+   additional arguments passed to the function.
+ }
 }
 
 \details{

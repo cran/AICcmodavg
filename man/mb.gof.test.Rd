@@ -32,18 +32,23 @@ mb.chisq(mod, print.table = TRUE, \dots)
                   maxK = NULL, \dots)
 
 mb.gof.test(mod, nsim = 5, plot.hist = TRUE, report = NULL,
-            parallel = TRUE, \dots)
+            parallel = TRUE, ncores, cex.axis = 1, cex.lab = 1,
+            cex.main = 1, lwd = 1, \dots)
 
 \method{mb.gof.test}{unmarkedFitOccu}(mod, nsim = 5, plot.hist = TRUE,
-                     report = NULL, parallel = TRUE, \dots)
+                     report = NULL, parallel = TRUE, ncores,
+                     cex.axis = 1, cex.lab = 1, cex.main = 1,
+                     lwd = 1, \dots)
 
 \method{mb.gof.test}{unmarkedFitColExt}(mod, nsim = 5, plot.hist = TRUE,
                      report = NULL, parallel = TRUE,
-                     plot.seasons = FALSE, \dots) 
+                     ncores, cex.axis = 1, cex.lab = 1, cex.main = 1,
+                     lwd = 1, plot.seasons = FALSE, \dots) 
 
 \method{mb.gof.test}{unmarkedFitOccuRN}(mod, nsim = 5, plot.hist = TRUE,
-                     report = NULL, parallel = TRUE, maxK = NULL,
-                     \dots)
+                     report = NULL, parallel = TRUE, ncores,
+                     cex.axis = 1, cex.lab = 1, cex.main = 1,
+                     lwd = 1, maxK = NULL, \dots)
 
 }
 \arguments{
@@ -68,6 +73,23 @@ the model for which a goodness-of-fit test is required.
 }
 \item{parallel}{logical.  If \code{TRUE}, requests that \code{parboot}
   use multiple cores to accelerate computations of the bootstrap.
+}
+\item{ncores}{integer indicating the number of cores to use when
+  bootstrapping in parallel during the analysis of simulated data sets.
+  If \code{ncores} is not specified, one less than the number of
+  available cores on the computer is used.
+}
+\item{cex.axis}{expansion factor influencing the size of axis
+  annotations on plots produced by the function.
+}
+\item{cex.lab}{expansion factor influencing the size of axis labels on
+  plots produced by the function.
+}
+\item{cex.main}{expansion factor influencing the size of the main title
+  above plots produced by the function.
+}
+\item{lwd}{expansion factor of line width on plots produced by the
+  function.
 }
 \item{plot.seasons}{logical.  For dynamic occupancy models, specifies
   that a histogram of the bootstrapped test statistic for each primary
@@ -308,7 +330,13 @@ m1 <- occu(~ 1 ~ 1, data = y.sim.data)
 
 mb.gof.test(m1, nsim = 3)
 ##note that more bootstrap samples are recommended
-##(e.g., 1000, 5000, or 10 000) 
+##(e.g., 1000, 5000, or 10 000)
+
+##modifying graphical parameters
+mb.gof.test(m1, nsim = 3,
+cex.axis = 1.2, #axis annotations are 1.2 the default size
+cex.lab = 1.2,  #axis labels are 1.2 the default size
+lwd = 2)        #line width is twice the default width
 detach(package:unmarked)
 }
 }

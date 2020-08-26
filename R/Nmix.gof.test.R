@@ -231,20 +231,26 @@ Nmix.chisq.unmarkedFitDSO <- function(mod, ...) {
 
 ##generic
 Nmix.gof.test <- function(mod, nsim = 5, plot.hist = TRUE,
-                          report = NULL, parallel = TRUE, ...){
+                          report = NULL, parallel = TRUE, ncores,
+                          cex.axis = 1, cex.lab = 1, cex.main = 1,
+                          lwd = 1,...){
   UseMethod("Nmix.gof.test", mod)
 }
 
 
 Nmix.gof.test.default <- function(mod, nsim = 5, plot.hist = TRUE,
-                                  report = NULL, parallel = TRUE, ...){
+                                  report = NULL, parallel = TRUE, ncores,
+                                  cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                  lwd = 1,...){
   stop("\nFunction not yet defined for this object class\n")
 }
 
 
 ##PCount
 Nmix.gof.test.unmarkedFitPCount <- function(mod, nsim = 5, plot.hist = TRUE,
-                                            report = NULL, parallel = TRUE, ...){
+                                            report = NULL, parallel = TRUE, ncores,
+                                            cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                            lwd = 1, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -254,12 +260,12 @@ Nmix.gof.test.unmarkedFitPCount <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, parallel = parallel)
+                     nsim = nsim, parallel = parallel, ncores = ncores)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report, parallel = parallel)
+                     nsim = nsim, report = report, parallel = parallel, ncores = ncores)
 
   }
   
@@ -273,16 +279,16 @@ Nmix.gof.test.unmarkedFitPCount <- function(mod, nsim = 5, plot.hist = TRUE,
 
   ##create plot
     if(plot.hist) {
-        par(cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+
         hist(out@t.star,
              main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
                                              list(nsim = nsim))),
              xlim = range(c(out@t.star, out@t0)),
-             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-        abline(v = out@t0, lty = "dashed", col = "red")
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""),
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5,
+              cex.main = cex.main)
+        abline(v = out@t0, lty = "dashed", col = "red", lwd = lwd)
     }
   
   ##estimate c-hat
@@ -298,7 +304,9 @@ Nmix.gof.test.unmarkedFitPCount <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##PCO
 Nmix.gof.test.unmarkedFitPCO <- function(mod, nsim = 5, plot.hist = TRUE,
-                                         report = NULL, parallel = TRUE, ...){
+                                         report = NULL, parallel = TRUE, ncores,
+                                         cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                         lwd = 1, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -308,12 +316,13 @@ Nmix.gof.test.unmarkedFitPCO <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, parallel = parallel)
+                     nsim = nsim, parallel = parallel, ncores = ncores)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report, parallel = parallel)
+                     nsim = nsim, report = report, parallel = parallel,
+                     ncores = ncores)
       
   }
   
@@ -327,16 +336,15 @@ Nmix.gof.test.unmarkedFitPCO <- function(mod, nsim = 5, plot.hist = TRUE,
 
   ##create plot
     if(plot.hist) {
-        par(cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
         hist(out@t.star,
              main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
                                              list(nsim = nsim))),
              xlim = range(c(out@t.star, out@t0)),
-             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-        abline(v = out@t0, lty = "dashed", col = "red")
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""),
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5,
+              cex.main = cex.main)
+        abline(v = out@t0, lty = "dashed", col = "red", lwd = lwd)
     }
   
   ##estimate c-hat
@@ -352,7 +360,9 @@ Nmix.gof.test.unmarkedFitPCO <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##DS
 Nmix.gof.test.unmarkedFitDS <- function(mod, nsim = 5, plot.hist = TRUE,
-                                        report = NULL, parallel = TRUE, ...){
+                                        report = NULL, parallel = TRUE, ncores,
+                                        cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                        lwd = 1, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -362,12 +372,13 @@ Nmix.gof.test.unmarkedFitDS <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, parallel = parallel)
+                     nsim = nsim, parallel = parallel, ncores = ncores)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report, parallel = parallel)
+                     nsim = nsim, report = report, parallel = parallel,
+                     ncores = ncores)
 
   }
 
@@ -381,16 +392,16 @@ Nmix.gof.test.unmarkedFitDS <- function(mod, nsim = 5, plot.hist = TRUE,
 
   ##create plot
     if(plot.hist) {
-        par(cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+
         hist(out@t.star,
              main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
                                              list(nsim = nsim))),
              xlim = range(c(out@t.star, out@t0)),
-             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-        abline(v = out@t0, lty = "dashed", col = "red")
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""),
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5,
+              cex.main = cex.main)
+        abline(v = out@t0, lty = "dashed", col = "red", lwd = lwd)
     }
   
   ##estimate c-hat
@@ -406,7 +417,9 @@ Nmix.gof.test.unmarkedFitDS <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##GDS
 Nmix.gof.test.unmarkedFitGDS <- function(mod, nsim = 5, plot.hist = TRUE,
-                                         report = NULL, parallel = TRUE, ...){
+                                         report = NULL, parallel = TRUE, ncores,
+                                         cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                         lwd = 1, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -416,12 +429,13 @@ Nmix.gof.test.unmarkedFitGDS <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, parallel = parallel)
+                     nsim = nsim, parallel = parallel, ncores = ncores)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report, parallel = parallel)
+                     nsim = nsim, report = report, parallel = parallel,
+                     ncores = ncores)
 
   }
   
@@ -435,16 +449,16 @@ Nmix.gof.test.unmarkedFitGDS <- function(mod, nsim = 5, plot.hist = TRUE,
 
   ##create plot
     if(plot.hist) {
-        par(cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        
         hist(out@t.star,
              main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
                                              list(nsim = nsim))),
              xlim = range(c(out@t.star, out@t0)),
-             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-        abline(v = out@t0, lty = "dashed", col = "red")
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""),
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5,
+              cex.main = cex.main)
+        abline(v = out@t0, lty = "dashed", col = "red", lwd = lwd)
     }
   
   ##estimate c-hat
@@ -460,7 +474,9 @@ Nmix.gof.test.unmarkedFitGDS <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##GMM
 Nmix.gof.test.unmarkedFitGMM <- function(mod, nsim = 5, plot.hist = TRUE,
-                                         report = NULL, parallel = TRUE, ...){
+                                         report = NULL, parallel = TRUE, ncores,
+                                         cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                         lwd = 1, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -470,12 +486,13 @@ Nmix.gof.test.unmarkedFitGMM <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, parallel = parallel)
+                     nsim = nsim, parallel = parallel, ncores = ncores)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report, parallel = parallel)
+                     nsim = nsim, report = report, parallel = parallel,
+                     ncores = ncores)
 
   }
   
@@ -489,17 +506,16 @@ Nmix.gof.test.unmarkedFitGMM <- function(mod, nsim = 5, plot.hist = TRUE,
 
   ##create plot
     if(plot.hist) {
-        par(cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
         
         hist(out@t.star,
              main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
                                              list(nsim = nsim))),
              xlim = range(c(out@t.star, out@t0)),
-             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-        abline(v = out@t0, lty = "dashed", col = "red")
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""),
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5,
+              cex.main = cex.main)
+        abline(v = out@t0, lty = "dashed", col = "red", lwd = lwd)
     }
   
   ##estimate c-hat
@@ -515,7 +531,9 @@ Nmix.gof.test.unmarkedFitGMM <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##GPC
 Nmix.gof.test.unmarkedFitGPC <- function(mod, nsim = 5, plot.hist = TRUE,
-                                         report = NULL, parallel = TRUE, ...){
+                                         report = NULL, parallel = TRUE, ncores,
+                                         cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                         lwd = 1,...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -525,12 +543,13 @@ Nmix.gof.test.unmarkedFitGPC <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, parallel = parallel)
+                     nsim = nsim, parallel = parallel, ncores = ncores)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report, parallel = parallel)
+                     nsim = nsim, report = report, parallel = parallel,
+                     ncores = ncores)
 
   }
   
@@ -544,17 +563,16 @@ Nmix.gof.test.unmarkedFitGPC <- function(mod, nsim = 5, plot.hist = TRUE,
 
   ##create plot
     if(plot.hist) {
-        par(cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
         
         hist(out@t.star,
              main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
                                              list(nsim = nsim))),
              xlim = range(c(out@t.star, out@t0)),
-             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-        abline(v = out@t0, lty = "dashed", col = "red")
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""),
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5,
+              cex.main = cex.main)
+        abline(v = out@t0, lty = "dashed", col = "red", lwd = lwd)
     }
   
   ##estimate c-hat
@@ -570,7 +588,9 @@ Nmix.gof.test.unmarkedFitGPC <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##MPois
 Nmix.gof.test.unmarkedFitMPois <- function(mod, nsim = 5, plot.hist = TRUE,
-                                           report = NULL, parallel = TRUE, ...){
+                                           report = NULL, parallel = TRUE, ncores,
+                                           cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                           lwd = 1, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -580,12 +600,13 @@ Nmix.gof.test.unmarkedFitMPois <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, parallel = parallel)
+                     nsim = nsim, parallel = parallel, ncores = ncores)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report, parallel = parallel)
+                     nsim = nsim, report = report, parallel = parallel,
+                     ncores = ncores)
 
   }
   
@@ -599,17 +620,16 @@ Nmix.gof.test.unmarkedFitMPois <- function(mod, nsim = 5, plot.hist = TRUE,
 
   ##create plot
     if(plot.hist) {
-        par(cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
-        
+              
         hist(out@t.star,
              main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
                                              list(nsim = nsim))),
              xlim = range(c(out@t.star, out@t0)),
-             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-        abline(v = out@t0, lty = "dashed", col = "red")
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""),
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5,
+              cex.main = cex.main)
+        abline(v = out@t0, lty = "dashed", col = "red", lwd = lwd)
     }
   
   ##estimate c-hat
@@ -626,7 +646,9 @@ Nmix.gof.test.unmarkedFitMPois <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##multmixOpen
 Nmix.gof.test.unmarkedFitMMO <- function(mod, nsim = 5, plot.hist = TRUE,
-                                         report = NULL, parallel = TRUE, ...){
+                                         report = NULL, parallel = TRUE, ncores,
+                                         cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                         lwd = 1, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -636,12 +658,13 @@ Nmix.gof.test.unmarkedFitMMO <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, parallel = parallel)
+                     nsim = nsim, parallel = parallel, ncores = ncores)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report, parallel = parallel)
+                     nsim = nsim, report = report, parallel = parallel,
+                     ncores = ncores)
       
   }
   
@@ -655,16 +678,16 @@ Nmix.gof.test.unmarkedFitMMO <- function(mod, nsim = 5, plot.hist = TRUE,
 
   ##create plot
     if(plot.hist) {
-        par(cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+
         hist(out@t.star,
              main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
                                              list(nsim = nsim))),
              xlim = range(c(out@t.star, out@t0)),
-             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-        abline(v = out@t0, lty = "dashed", col = "red")
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""),
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5,
+              cex.main = cex.main)
+        abline(v = out@t0, lty = "dashed", col = "red", lwd = lwd)
     }
   
   ##estimate c-hat
@@ -681,7 +704,9 @@ Nmix.gof.test.unmarkedFitMMO <- function(mod, nsim = 5, plot.hist = TRUE,
 
 ##distsampOpen
 Nmix.gof.test.unmarkedFitDSO <- function(mod, nsim = 5, plot.hist = TRUE,
-                                         report = NULL, parallel = TRUE, ...){
+                                         report = NULL, parallel = TRUE, ncores,
+                                         cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                         lwd = 1, ...){
   ##more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract model type
@@ -691,12 +716,13 @@ Nmix.gof.test.unmarkedFitDSO <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, parallel = parallel)
+                     nsim = nsim, parallel = parallel, ncores = ncores)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) Nmix.chisq(i)$chi.square,
-                     nsim = nsim, report = report, parallel = parallel)
+                     nsim = nsim, report = report, parallel = parallel,
+                     ncores = ncores)
       
   }
   
@@ -710,16 +736,16 @@ Nmix.gof.test.unmarkedFitDSO <- function(mod, nsim = 5, plot.hist = TRUE,
 
   ##create plot
     if(plot.hist) {
-        par(cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+  
         hist(out@t.star,
              main = as.expression(substitute("Bootstrapped "*chi^2*" fit statistic ("*nsim*" samples)",
                                              list(nsim = nsim))),
              xlim = range(c(out@t.star, out@t0)),
-             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""))
-        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5)
-        abline(v = out@t0, lty = "dashed", col = "red")
+             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0, digits = 2), ")", sep = ""),
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+        title(main = bquote(paste(italic(P), .(p.display))), line = 0.5,
+               cex.main = cex.main)
+        abline(v = out@t0, lty = "dashed", col = "red", lwd = lwd)
     }
   
   ##estimate c-hat

@@ -1,11 +1,13 @@
 ##summarize detection histories and count data
-countDist <- function(object, plot.freq = TRUE, plot.distance = TRUE, ...){
+countDist <- function(object, plot.freq = TRUE, plot.distance = TRUE,
+                      cex.axis = 1, cex.lab = 1, cex.main = 1, ...){
   UseMethod("countDist", object)
 }
 
 
 
-countDist.default <- function(object, plot.freq = TRUE, plot.distance = TRUE, ...){
+countDist.default <- function(object, plot.freq = TRUE, plot.distance = TRUE,
+                              cex.axis = 1, cex.lab = 1, cex.main = 1, ...){
   stop("\nFunction not yet defined for this object class\n")
 }
 
@@ -13,7 +15,8 @@ countDist.default <- function(object, plot.freq = TRUE, plot.distance = TRUE, ..
 
 
 ##for unmarkedFrameDS
-countDist.unmarkedFrameDS <- function(object, plot.freq = TRUE, plot.distance = TRUE, ...) {
+countDist.unmarkedFrameDS <- function(object, plot.freq = TRUE, plot.distance = TRUE,
+                                      cex.axis = 1, cex.lab = 1, cex.main = 1, ...) {
 
   ##extract data
   yMat <- object@y
@@ -44,10 +47,7 @@ countDist.unmarkedFrameDS <- function(object, plot.freq = TRUE, plot.distance = 
   ##determine size of plot window
   ##when both types are requested
   if(plot.freq && plot.distance) {
-      par(mfrow = c(1, 2),
-          cex = 1.1,
-          cex.axis = 1.1,
-          cex.lab = 1.1)
+      par(mfrow = c(1, 2))
   }
   
   ##summarize counts
@@ -55,7 +55,8 @@ countDist.unmarkedFrameDS <- function(object, plot.freq = TRUE, plot.distance = 
     
     ##create histogram
     barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-            main = "Distribution of raw counts")
+            main = "Distribution of raw counts",
+            cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
   }
 
   ##summarize counts per distance
@@ -69,7 +70,8 @@ countDist.unmarkedFrameDS <- function(object, plot.freq = TRUE, plot.distance = 
     ##create histogram
     barplot(dist.sums.full, ylab = "Frequency",
             xlab = paste("Distance class (", unitsIn, ")", sep = ""),
-            main = "Distribution of distance data")
+            main = "Distribution of distance data",
+            cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
   }
 
   ##raw counts
@@ -120,114 +122,115 @@ countDist.unmarkedFrameDS <- function(object, plot.freq = TRUE, plot.distance = 
 
 
 ##for unmarkedFitDS
-countDist.unmarkedFitDS <- function(object, plot.freq = TRUE, plot.distance = TRUE, ...) {
+countDist.unmarkedFitDS <- function(object, plot.freq = TRUE, plot.distance = TRUE,
+                                    cex.axis = 1, cex.lab = 1, cex.main = 1, ...) {
 
-  ##extract data
-  yMat <- object@data@y
-  nsites <- nrow(yMat)
-  n.seasons <- 1
-  nvisits <- 1
+    ##extract data
+    yMat <- object@data@y
+    nsites <- nrow(yMat)
+    n.seasons <- 1
+    nvisits <- 1
     ##visits per season
     n.visits.season <- 1
     
-  ##distance classes
-  dist.classes <- object@data@dist.breaks
-
-  ##number of distance classes
-  n.dist.classes <- length(dist.classes) - 1
-
-  ##units
-  unitsIn <- object@data@unitsIn
-  
-  ##create string of names
-  dist.names <- rep(NA, n.dist.classes)
-  for(i in 1:n.dist.classes){
-    dist.names[i] <- paste(dist.classes[i], "-", dist.classes[i+1], sep = "")
-  }
-  
-  ##collapse yMat into a single vector
-  yVec <- as.vector(yMat)
-
-  ##determine size of plot window
-  ##when both types are requested
-  if(plot.freq && plot.distance) {
-    par(mfrow = c(1, 2),
-        cex = 1.1,
-        cex.axis = 1.1,
-        cex.lab = 1.1)
-  }
-  
-  ##summarize counts
-  if(plot.freq) {
+    ##distance classes
+    dist.classes <- object@data@dist.breaks
     
-    ##create histogram
-    barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-            main = "Distribution of raw counts")
-  }
+    ##number of distance classes
+    n.dist.classes <- length(dist.classes) - 1
 
+    ##units
+    unitsIn <- object@data@unitsIn
+  
+    ##create string of names
+    dist.names <- rep(NA, n.dist.classes)
+    for(i in 1:n.dist.classes){
+        dist.names[i] <- paste(dist.classes[i], "-", dist.classes[i+1], sep = "")
+    }
+  
+    ##collapse yMat into a single vector
+    yVec <- as.vector(yMat)
+
+    ##determine size of plot window
+    ##when both types are requested
+    if(plot.freq && plot.distance) {
+        par(mfrow = c(1, 2))
+    }
+  
+    ##summarize counts
+    if(plot.freq) {
+        
+        ##create histogram
+        barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
+                main = "Distribution of raw counts",
+                cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+    }
+    
     ##summarize counts per distance
     dist.sums.full <- colSums(yMat)
     names(dist.sums.full) <- dist.names
     dist.table.seasons <- list(dist.sums.full)
     names(dist.table.seasons) <- "season1"
     
-  if(plot.distance) {
+    if(plot.distance) {
     
-    ##create histogram
-    barplot(dist.sums.full, ylab = "Frequency",
-            xlab = paste("Distance class (", unitsIn, ")", sep = ""),
-            main = "Distribution of distance data")
-  }
+        ##create histogram
+        barplot(dist.sums.full, ylab = "Frequency",
+                xlab = paste("Distance class (", unitsIn, ")", sep = ""),
+                main = "Distribution of distance data",
+                cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+    }
 
-  ##raw counts
-  count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
-  count.table.seasons <- list(count.table.full)
+    ##raw counts
+    count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
+    count.table.seasons <- list(count.table.full)
 
 
-  ##for each season, determine frequencies
-  out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected")
-  rownames(out.freqs) <- "Season-1"
+    ##for each season, determine frequencies
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- "Season-1"
 
-  ySeason <- yMat
+    ySeason <- yMat
     
-  ##determine proportion of sites with at least 1 detection
-  det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
-
-  ##check sites with observed detections and deal with NA's
-  sum.rows <- rowSums(ySeason, na.rm = TRUE)
-  is.na(sum.rows) <- rowSums(is.na(ySeason)) == ncol(ySeason)
+    ##determine proportion of sites with at least 1 detection
+    det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
     
-  ##number of sites sampled
-  out.freqs[1, 1] <- sum(!is.na(sum.rows))
-  ##number of sites with at least 1 detection
-  out.freqs[1, 2] <- sum(det.sum)
-
-  ##create a matrix with proportion of sites with colonizations
-  ##and extinctions based on raw data
-  out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 1)
-  colnames(out.props) <- "naive.occ"
-  rownames(out.props) <- rownames(out.freqs)
-  out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
-
-  out.count <- list("count.table.full" = count.table.full,
-                    "count.table.seasons" = count.table.seasons,
-                    "dist.sums.full" = dist.sums.full,
-                    "dist.table.seasons" = dist.table.seasons,
-                    "dist.names" = dist.names,
-                    "n.dist.classes" = n.dist.classes,
-                    "out.freqs" = out.freqs,
-                    "out.props" = out.props,
-                    "n.seasons" = n.seasons,
-                    "n.visits.season" = n.visits.season)
-  class(out.count) <- "countDist"
-  return(out.count)
+    ##check sites with observed detections and deal with NA's
+    sum.rows <- rowSums(ySeason, na.rm = TRUE)
+    is.na(sum.rows) <- rowSums(is.na(ySeason)) == ncol(ySeason)
+    
+    ##number of sites sampled
+    out.freqs[1, 1] <- sum(!is.na(sum.rows))
+    ##number of sites with at least 1 detection
+    out.freqs[1, 2] <- sum(det.sum)
+    
+    ##create a matrix with proportion of sites with colonizations
+    ##and extinctions based on raw data
+    out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 1)
+    colnames(out.props) <- "naive.occ"
+    rownames(out.props) <- rownames(out.freqs)
+    out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
+    
+    out.count <- list("count.table.full" = count.table.full,
+                      "count.table.seasons" = count.table.seasons,
+                      "dist.sums.full" = dist.sums.full,
+                      "dist.table.seasons" = dist.table.seasons,
+                      "dist.names" = dist.names,
+                      "n.dist.classes" = n.dist.classes,
+                      "out.freqs" = out.freqs,
+                      "out.props" = out.props,
+                      "n.seasons" = n.seasons,
+                      "n.visits.season" = n.visits.season)
+    class(out.count) <- "countDist"
+    return(out.count)
 }
 
 
 
 ##for unmarkedFrameGDS
-countDist.unmarkedFrameGDS <- function(object, plot.freq = TRUE, plot.distance = TRUE, ...) {
+countDist.unmarkedFrameGDS <- function(object, plot.freq = TRUE, plot.distance = TRUE,
+                                       cex.axis = 1, cex.lab = 1, cex.main = 1, ...) {
 
   ##extract data
   yMat <- object@y
@@ -258,10 +261,7 @@ countDist.unmarkedFrameGDS <- function(object, plot.freq = TRUE, plot.distance =
   ##determine size of plot window
   ##when both types are requested
   if(plot.freq && plot.distance) {
-      par(mfrow = c(1, 2),
-          cex = 1.1,
-          cex.axis = 1.1,
-          cex.lab = 1.1)
+      par(mfrow = c(1, 2))
   }
   
   ##summarize counts
@@ -269,7 +269,8 @@ countDist.unmarkedFrameGDS <- function(object, plot.freq = TRUE, plot.distance =
     
     ##create histogram
     barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-            main = "Distribution of raw counts")
+            main = "Distribution of raw counts",
+            cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
   }
 
   ##summarize counts per distance
@@ -291,7 +292,8 @@ countDist.unmarkedFrameGDS <- function(object, plot.freq = TRUE, plot.distance =
     ##create histogram
     barplot(dist.sums.full, ylab = "Frequency",
             xlab = paste("Distance class (", unitsIn, ")", sep = ""),
-            main = "Distribution of distance data")
+            main = "Distribution of distance data",
+            cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
   }
 
   ##raw counts
@@ -342,7 +344,8 @@ countDist.unmarkedFrameGDS <- function(object, plot.freq = TRUE, plot.distance =
 
 
 ##for unmarkedFitGDS
-countDist.unmarkedFitGDS <- function(object, plot.freq = TRUE, plot.distance = TRUE, ...) {
+countDist.unmarkedFitGDS <- function(object, plot.freq = TRUE, plot.distance = TRUE,
+                                     cex.axis = 1, cex.lab = 1, cex.main = 1, ...) {
 
   ##extract data
   yMat <- object@data@y
@@ -375,10 +378,7 @@ countDist.unmarkedFitGDS <- function(object, plot.freq = TRUE, plot.distance = T
   ##determine size of plot window
   ##when both types are requested
   if(plot.freq && plot.distance) {
-      par(mfrow = c(1, 2),
-          cex = 1.1,
-          cex.axis = 1.1,
-          cex.lab = 1.1)
+      par(mfrow = c(1, 2))
   }
   
   ##summarize counts
@@ -386,7 +386,8 @@ countDist.unmarkedFitGDS <- function(object, plot.freq = TRUE, plot.distance = T
     
     ##create histogram
     barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-            main = "Distribution of raw counts")
+            main = "Distribution of raw counts",
+            cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
   }
 
   ##summarize counts per distance
@@ -408,7 +409,8 @@ countDist.unmarkedFitGDS <- function(object, plot.freq = TRUE, plot.distance = T
     ##create histogram
     barplot(dist.sums.full, ylab = "Frequency",
             xlab = paste("Distance class (", unitsIn, ")", sep = ""),
-            main = "Distribution of distance data")
+            main = "Distribution of distance data",
+            cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
   }
 
   ##raw counts
@@ -458,8 +460,10 @@ countDist.unmarkedFitGDS <- function(object, plot.freq = TRUE, plot.distance = T
 
 
 
-##for unmarkedFrameDS
-countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance = TRUE, plot.seasons = FALSE, ...) {
+##for unmarkedFrameDSO
+countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance = TRUE,
+                                       cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                       plot.seasons = FALSE, ...) {
 
     ##extract data
     yMat <- object@y
@@ -489,24 +493,15 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
     ##determine size of plot window
     ##when two types are requested
     if(plot.freq && plot.distance && !plot.seasons) {
-        par(mfrow = c(1, 2),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(1, 2))
     }
 
     if(plot.freq && !plot.distance && !plot.seasons) {
-        par(mfrow = c(1, 1),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(1, 1))
     }
 
     if(!plot.freq && plot.distance && !plot.seasons) {
-        par(mfrow = c(1, 1),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(1, 1))
     }
 
 
@@ -515,7 +510,7 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
 
         if(!plot.freq && !plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons > 12) {
+            if(plot.seasons && n.seasons >= 12) {
                 n.seasons.adj <- 12
                 warning("\nOnly first 12 seasons are plotted\n")
             }
@@ -523,7 +518,7 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
 
         if(!plot.freq && !plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons > 12) {
+            if(plot.seasons && n.seasons >= 12) {
                 n.seasons.adj <- 12
                 warning("\nOnly first 12 seasons are plotted\n")
             }
@@ -532,7 +527,7 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
         
         if(plot.freq && !plot.distance || !plot.freq && plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons > 11) {
+            if(plot.seasons && n.seasons >= 11) {
                 n.seasons.adj <- 11
                 warning("\nOnly first 11 seasons are plotted\n")
             }
@@ -540,7 +535,7 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
 
         if(plot.freq && plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons > 10) {
+            if(plot.seasons && n.seasons >= 10) {
                 n.seasons.adj <- 10
                 warning("\nOnly first 10 seasons are plotted\n")
             }
@@ -587,10 +582,7 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
             }
         }
 
-        par(mfrow = c(nRows, nCols),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(nRows, nCols))
     }
     
     ##distances across years
@@ -601,7 +593,8 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
 
         ##create histogram
         barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-                main = paste("Distribution of raw counts (", n.seasons, " seasons combined)", sep = ""))
+                main = paste("Distribution of raw counts (", n.seasons, " seasons combined)", sep = ""),
+                cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
     }
 
  
@@ -633,7 +626,8 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
             ##create histogram
             barplot(dist.sums.full, ylab = "Frequency",
                     xlab = paste("Distance class (", unitsIn, ")", sep = ""),
-                    main = paste("Distribution of distance data (", n.seasons, " seasons combined)", sep = ""))
+                    main = paste("Distribution of distance data (", n.seasons, " seasons combined)", sep = ""),
+                    cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
         }
 
 
@@ -654,7 +648,8 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
             ##create histogram
             barplot(dist.sums.season, ylab = "Frequency",
                     xlab = paste("Distance class (", unitsIn, ")", sep = ""),
-                    main = paste("Distribution of distance data (season ", i, ")", sep = ""))
+                    main = paste("Distribution of distance data (season ", i, ")", sep = ""),
+                    cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
         }
     }
 
@@ -738,8 +733,9 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
 
 
 
-##for unmarkedFitDS
+##for unmarkedFitDSO
 countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = TRUE,
+                                     cex.axis = 1, cex.lab = 1, cex.main = 1,
                                      plot.seasons = FALSE, ...) {
 
     ##extract data
@@ -770,24 +766,15 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
     ##determine size of plot window
     ##when two types are requested
     if(plot.freq && plot.distance && !plot.seasons) {
-        par(mfrow = c(1, 2),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(1, 2))
     }
 
     if(plot.freq && !plot.distance && !plot.seasons) {
-        par(mfrow = c(1, 1),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(1, 1))
     }
 
     if(!plot.freq && plot.distance && !plot.seasons) {
-        par(mfrow = c(1, 1),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(1, 1))
     }
 
 
@@ -796,15 +783,7 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
 
         if(!plot.freq && !plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons > 12) {
-                n.seasons.adj <- 12
-                warning("\nOnly first 12 seasons are plotted\n")
-            }
-        }
-
-        if(!plot.freq && !plot.distance) {
-            ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons > 12) {
+            if(plot.seasons && n.seasons >= 12) {
                 n.seasons.adj <- 12
                 warning("\nOnly first 12 seasons are plotted\n")
             }
@@ -813,7 +792,7 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
         
         if(plot.freq && !plot.distance || !plot.freq && plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons > 11) {
+            if(plot.seasons && n.seasons >= 11) {
                 n.seasons.adj <- 11
                 warning("\nOnly first 11 seasons are plotted\n")
             }
@@ -821,7 +800,7 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
 
         if(plot.freq && plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons > 10) {
+            if(plot.seasons && n.seasons >= 10) {
                 n.seasons.adj <- 10
                 warning("\nOnly first 10 seasons are plotted\n")
             }
@@ -868,10 +847,7 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
             }
         }
 
-        par(mfrow = c(nRows, nCols),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
+        par(mfrow = c(nRows, nCols))
     }
 
     ##distances across years
@@ -882,7 +858,8 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
 
         ##create histogram
         barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-                main = paste("Distribution of raw counts (", n.seasons, " seasons combined)", sep = ""))
+                main = paste("Distribution of raw counts (", n.seasons, " seasons combined)", sep = ""),
+                cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
     }
 
  
@@ -913,7 +890,8 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
             ##create histogram
             barplot(dist.sums.full, ylab = "Frequency",
                     xlab = paste("Distance class (", unitsIn, ")", sep = ""),
-                    main = paste("Distribution of distance data (", n.seasons, " seasons combined)", sep = ""))
+                    main = paste("Distribution of distance data (", n.seasons, " seasons combined)", sep = ""),
+                    cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
         }
 
 
@@ -934,7 +912,8 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
             ##create histogram
             barplot(dist.sums.season, ylab = "Frequency",
                     xlab = paste("Distance class (", unitsIn, ")", sep = ""),
-                    main = paste("Distribution of distance data (season ", i, ")", sep = ""))
+                    main = paste("Distribution of distance data (season ", i, ")", sep = ""),
+                    cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
         }
     }
 

@@ -993,19 +993,25 @@ mb.chisq.unmarkedFitOccuRN <- function (mod, print.table = TRUE, maxK = NULL, ..
 ##simulating data from model to compute P-value of test statistic
 ##create generic mb.gof.test 
 mb.gof.test <- function(mod, nsim = 5, plot.hist = TRUE,
-                        report = NULL, parallel = TRUE, ...){
+                        report = NULL, parallel = TRUE, ncores,
+                        cex.axis = 1, cex.lab = 1, cex.main = 1,
+                        lwd = 1, ...){
   UseMethod("mb.gof.test", mod)
 }
 
 mb.gof.test.default <- function(mod, nsim = 5, plot.hist = TRUE,
-                                report = NULL, parallel = TRUE, ...){
+                                report = NULL, parallel = TRUE, ncores,
+                                cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                lwd = 1, ...){
   stop("\nFunction not yet defined for this object class\n")
 }
 
 
 ##for single-season occupancy models of class unmarkedFitOccu
 mb.gof.test.unmarkedFitOccu <- function(mod, nsim = 5, plot.hist = TRUE,
-                                        report = NULL, parallel = TRUE, ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
+                                        report = NULL, parallel = TRUE, ncores,
+                                        cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                        lwd = 1, ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract table from fitted model
   mod.table <- mb.chisq(mod)
@@ -1014,12 +1020,13 @@ mb.gof.test.unmarkedFitOccu <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) mb.chisq(i)$chi.square,
-                     nsim = nsim, parallel = parallel)
+                     nsim = nsim, parallel = parallel, ncores = ncores)
   } else {
 
   ##compute GOF P-value
   out <- parboot(mod, statistic = function(i) mb.chisq(i)$chi.square,
-                 nsim = nsim, report = report, parallel = parallel)
+                 nsim = nsim, report = report, parallel = parallel,
+                 ncores = ncores)
 }
   
   ##determine significance
@@ -1032,26 +1039,26 @@ mb.gof.test.unmarkedFitOccu <- function(mod, nsim = 5, plot.hist = TRUE,
 
     ##create plot
     if(plot.hist) {
-        par(cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
-        
-        hist(out@t.star, main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples)", sep = ""),
+
+        hist(out@t.star,
+             main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples)", sep = ""),
              xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ",
-                                                               round(out@t0, digits = 2), ")", sep = ""))
-        title(main = bquote(paste(italic(P), " ", .(p.display))), line = 0.5)
-        abline(v = out@t0, lty = "dashed", col = "red")
+                                                               round(out@t0, digits = 2), ")", sep = ""),
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+        title(main = bquote(paste(italic(P), " ", .(p.display))), line = 0.5,
+              cex.main = cex.main)
+        abline(v = out@t0, lty = "dashed", col = "red", lwd = lwd)
     }
     
-  ##estimate c-hat
-  c.hat.est <- out@t0/mean(out@t.star)
+    ##estimate c-hat
+    c.hat.est <- out@t0/mean(out@t.star)
 
 
-##assemble result
-gof.out <- list(model.type = mod.table$model.type, chisq.table = mod.table$chisq.table, chi.square = mod.table$chi.square,
-                t.star = out@t.star, p.value = p.value, c.hat.est = c.hat.est, nsim = nsim)
-  class(gof.out) <- "mb.chisq"
-  return(gof.out)  
+    ##assemble result
+    gof.out <- list(model.type = mod.table$model.type, chisq.table = mod.table$chisq.table, chi.square = mod.table$chi.square,
+                    t.star = out@t.star, p.value = p.value, c.hat.est = c.hat.est, nsim = nsim)
+    class(gof.out) <- "mb.chisq"
+    return(gof.out)  
 }
 
 
@@ -1059,7 +1066,8 @@ gof.out <- list(model.type = mod.table$model.type, chisq.table = mod.table$chisq
 ##dynamic occupancy models of class unmarkedFitColExt
 mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
                                           report = NULL, parallel = TRUE,
-                                          plot.seasons = FALSE, ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
+                                          ncores, cex.axis = 1, cex.lab = 1, cex.main = 1,
+                                          lwd = 1, plot.seasons = FALSE, ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
   ##extract table from fitted model
   mod.table <- mb.chisq(mod)
@@ -1070,12 +1078,13 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
   if(is.null(report)) {
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) mb.chisq(i)$all.chisq,
-                     nsim = nsim, parallel = parallel)
+                     nsim = nsim, parallel = parallel, ncores = ncores)
   } else {
 
       ##compute GOF P-value
       out <- parboot(mod, statistic = function(i) mb.chisq(i)$all.chisq, #extract chi-square for each year
-                     nsim = nsim, report = report, parallel = parallel)
+                     nsim = nsim, report = report, parallel = parallel,
+                     ncores = ncores)
   }
   
   ##list to hold results
@@ -1085,16 +1094,13 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
   if(plot.hist && !plot.seasons) {
         nRows <- 1
         nCols <- 1
-        par(mfrow = c(nRows, nCols),
-            cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
-    }
+        par(mfrow = c(nRows, nCols))
+  }
 
   ##if only season-specific plots are requested
   if(!plot.hist && plot.seasons) {
     ##determine arrangement of plots in matrix
-    if(plot.seasons && n.seasons > 12) {
+    if(plot.seasons && n.seasons >= 12) {
       n.seasons.adj <- 12
       warning("\nOnly first 12 seasons are plotted\n")
     }
@@ -1139,18 +1145,14 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
         }
       }
     }
-
-      par(mfrow = c(nRows, nCols),
-          cex = 1.1,
-          cex.axis = 1.1,
-          cex.lab = 1.1)
+      par(mfrow = c(nRows, nCols))
   }
 
   
   ##if both plots for seasons and summary are requested
   if(plot.hist && plot.seasons){
     ##determine arrangement of plots in matrix
-    if(plot.seasons && n.seasons > 12) {
+    if(plot.seasons && n.seasons >= 12) {
       n.seasons.adj <- 11
       warning("\nOnly first 11 seasons are plotted\n")
     }
@@ -1184,11 +1186,7 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
         }
       }
     }
-
-      par(mfrow = c(nRows, nCols),
-          cex = 1.1,
-          cex.axis = 1.1,
-          cex.lab = 1.1)
+      par(mfrow = c(nRows, nCols))
   }
 
     
@@ -1204,19 +1202,26 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
     
     p.vals[[k]] <- list("p.value" = p.value, "p.display" = p.display)
   }  
-      
-  ##create plot for first 12 plots
-  if(plot.seasons) {
-    for(k in 1:n.seasons.adj) {
-        hist(out@t.star[, k],
-             main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples) - season ", k, sep = ""),
-             xlim = range(c(out@t.star[, k], out@t0[k])),
-             xlab = paste("Simulated statistic ", "(observed = ", round(out@t0[k], digits = 2), ")", sep = ""))
-        title(main = bquote(paste(italic(P), " ", .(p.vals[[k]]$p.display))), line = 0.5)
-        abline(v = out@t0[k], lty = "dashed", col = "red")
-        
+
+    ##create plot for first 12 plots
+    if(plot.seasons) {
+        ##add a check to handle error with plotting window
+        tryHist <- try(expr = {
+            for(k in 1:n.seasons.adj) {
+                hist(out@t.star[, k],
+                     main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples) - season ", k, sep = ""),
+                     xlim = range(c(out@t.star[, k], out@t0[k])),
+                     xlab = paste("Simulated statistic ", "(observed = ", round(out@t0[k], digits = 2), ")", sep = ""),
+                     cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+                title(main = bquote(paste(italic(P), " ", .(p.vals[[k]]$p.display))), line = 0.5,
+                      cex.main = cex.main)
+                abline(v = out@t0[k], lty = "dashed", col = "red", lwd = lwd)
+            }
+        }, silent = TRUE)
+        if(is(tryHist, "try-error")) {
+            warning("\nFigure margins are too wide for the current plotting window: adjust graphical parameters.\n")
+        }
     }
-  }
 
 
   ##estimate c-hat
@@ -1242,9 +1247,11 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
   if(plot.hist) {
     hist(sum.chisq, main = paste("Bootstrapped sum of chi-square statistic (", nsim, " samples)", sep = ""),
          xlim = range(c(sum.chisq, obs.chisq)),
-         xlab = paste("Simulated statistic ", "(observed = ", round(obs.chisq, digits = 2), ")", sep = ""))
-    title(main = bquote(paste(italic(P), " ", .(p.global.display))), line = 0.5)
-    abline(v = obs.chisq, lty = "dashed", col = "red")
+         xlab = paste("Simulated statistic ", "(observed = ", round(obs.chisq, digits = 2), ")", sep = ""),
+         cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+    title(main = bquote(paste(italic(P), " ", .(p.global.display))), line = 0.5,
+          cex.main = cex.main)
+    abline(v = obs.chisq, lty = "dashed", col = "red", lwd = lwd)
   }
 
   
@@ -1262,7 +1269,8 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
 ##Royle-Nichols count models of class unmarkedFitOccuRN
 mb.gof.test.unmarkedFitOccuRN <- function (mod, nsim = 5, plot.hist = TRUE,
                                            report = NULL, parallel = TRUE,
-                                           maxK = NULL, ...){
+                                           ncores, cex.axis = 1, cex.lab = 1,
+                                           cex.main = 1, lwd = 1, maxK = NULL, ...){
 
     ##extract table from fitted model
     mod.table <- mb.chisq(mod, ...)
@@ -1287,16 +1295,14 @@ mb.gof.test.unmarkedFitOccuRN <- function (mod, nsim = 5, plot.hist = TRUE,
 
   ##create plot
     if(plot.hist) {
-
-        par(cex = 1.1,
-            cex.axis = 1.1,
-            cex.lab = 1.1)
         
         hist(out@t.star, main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples)", sep = ""),
              xlim = range(c(out@t.star, out@t0)), xlab = paste("Simulated statistic ", "(observed = ",
-                                                               round(out@t0, digits = 2), ")", sep = ""))
-        title(main = bquote(paste(italic(P), " ", .(p.display))), line = 0.5)
-        abline(v = out@t0, lty = "dashed", col = "red")
+                                                               round(out@t0, digits = 2), ")", sep = ""),
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+        title(main = bquote(paste(italic(P), " ", .(p.display))), line = 0.5,
+              cex.main = cex.main)
+        abline(v = out@t0, lty = "dashed", col = "red", lwd = lwd)
     }
     
     ##estimate c-hat
