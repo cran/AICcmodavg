@@ -159,6 +159,12 @@ countHist(object, plot.freq = TRUE, cex.axis = 1, cex.lab = 1,
 
   \item{n.visits.season}{the maximum number of visits per season in the data set.
   }
+
+  \item{missing.seasons}{logical vector indicating whether data were
+  collected or not during a given season (primary period), where
+  \code{TRUE} indicates that no data were collected during the season. 
+}
+
 }
 
 

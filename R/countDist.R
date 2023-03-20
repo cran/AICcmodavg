@@ -18,105 +18,134 @@ countDist.default <- function(object, plot.freq = TRUE, plot.distance = TRUE,
 countDist.unmarkedFrameDS <- function(object, plot.freq = TRUE, plot.distance = TRUE,
                                       cex.axis = 1, cex.lab = 1, cex.main = 1, ...) {
 
-  ##extract data
-  yMat <- object@y
-  nsites <- nrow(yMat)
-  n.seasons <- 1
-  nvisits <- 1
+    ##extract data
+    yMat <- object@y
+    nsites <- nrow(yMat)
+    n.seasons <- 1
+    nvisits <- 1
     ##visits per season
     n.visits.season <- 1
     
-  ##distance classes
-  dist.classes <- object@dist.breaks
+    ##distance classes
+    dist.classes <- object@dist.breaks
 
-  ##number of distance classes
-  n.dist.classes <- length(dist.classes) - 1
+    ##number of distance classes
+    n.dist.classes <- length(dist.classes) - 1
     
-  ##units
-  unitsIn <- object@unitsIn
+    ##units
+    unitsIn <- object@unitsIn
   
-  ##create string of names
-  dist.names <- rep(NA, n.dist.classes)
-  for(i in 1:n.dist.classes){
-    dist.names[i] <- paste(dist.classes[i], "-", dist.classes[i+1], sep = "")
-  }
+    ##create string of names
+    dist.names <- rep(NA, n.dist.classes)
+    for(i in 1:n.dist.classes){
+        dist.names[i] <- paste(dist.classes[i], "-", dist.classes[i+1], sep = "")
+    }
   
-  ##collapse yMat into a single vector
-  yVec <- as.vector(yMat)
+    ##collapse yMat into a single vector
+    yVec <- as.vector(yMat)
 
-  ##determine size of plot window
-  ##when both types are requested
-  if(plot.freq && plot.distance) {
-      par(mfrow = c(1, 2))
-  }
-  
-  ##summarize counts
-  if(plot.freq) {
-    
-    ##create histogram
-    barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-            main = "Distribution of raw counts",
-            cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
-  }
+    ##determine size of plot window
+    ##when both types are requested
+    if(plot.freq && plot.distance) {
 
-  ##summarize counts per distance
-  dist.sums.full <- colSums(yMat)
-  names(dist.sums.full) <- dist.names
-  dist.table.seasons <- list(dist.sums.full)
-  names(dist.table.seasons)  <- "season1"
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 2
+        oldpar <- par(mfrow = c(nRows, nCols))
+    }
+
+    ##when single type is requested
+    if(plot.freq && !plot.distance) {
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 1
+        oldpar <- par(mfrow = c(nRows, nCols))
+    }
+
+    ##when single type is requested
+    if(!plot.freq && plot.distance) {
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 1
+        oldpar <- par(mfrow = c(nRows, nCols))
+    }
+
     
-  if(plot.distance) {
+    ##summarize counts
+    if(plot.freq) {
+        
+        ##create histogram
+        barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
+                main = "Distribution of raw counts",
+                cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+    }
     
-    ##create histogram
-    barplot(dist.sums.full, ylab = "Frequency",
+    ##summarize counts per distance
+    dist.sums.full <- colSums(yMat, na.rm = TRUE)
+    names(dist.sums.full) <- dist.names
+    dist.table.seasons <- list(dist.sums.full)
+    names(dist.table.seasons)  <- "season1"
+    
+    if(plot.distance) {
+    
+        ##create histogram
+        barplot(dist.sums.full, ylab = "Frequency",
             xlab = paste("Distance class (", unitsIn, ")", sep = ""),
             main = "Distribution of distance data",
             cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
-  }
+    }
 
-  ##raw counts
-  count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
-  count.table.seasons <- list(count.table.full)
-
-
-  ##for each season, determine frequencies
-  out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected")
-  rownames(out.freqs) <- "Season-1"
-
-  ySeason <- yMat
+    ##raw counts
+    count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
+    count.table.seasons <- list(count.table.full)
     
-  ##determine proportion of sites with at least 1 detection
-  det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
 
-  ##check sites with observed detections and deal with NA's
-  sum.rows <- rowSums(ySeason, na.rm = TRUE)
-  is.na(sum.rows) <- rowSums(is.na(ySeason)) == ncol(ySeason)
+    ##for each season, determine frequencies
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- "Season-1"
     
-  ##number of sites sampled
-  out.freqs[1, 1] <- sum(!is.na(sum.rows))
-  ##number of sites with at least 1 detection
-  out.freqs[1, 2] <- sum(det.sum)
+    ySeason <- yMat
+    
+    ##determine proportion of sites with at least 1 detection
+    det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
+    
+    ##check sites with observed detections and deal with NA's
+    sum.rows <- rowSums(ySeason, na.rm = TRUE)
+    is.na(sum.rows) <- rowSums(is.na(ySeason)) == ncol(ySeason)
+    
+    ##number of sites sampled
+    out.freqs[1, 1] <- sum(!is.na(sum.rows))
+    ##number of sites with at least 1 detection
+    out.freqs[1, 2] <- sum(det.sum)
 
-  ##create a matrix with proportion of sites with colonizations
-  ##and extinctions based on raw data
-  out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 1)
-  colnames(out.props) <- "naive.occ"
-  rownames(out.props) <- rownames(out.freqs)
-  out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
+    ##create a matrix with proportion of sites with colonizations
+    ##and extinctions based on raw data
+    out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 1)
+    colnames(out.props) <- "naive.occ"
+    rownames(out.props) <- rownames(out.freqs)
+    out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
 
-  out.count <- list("count.table.full" = count.table.full,
-                    "count.table.seasons" = count.table.seasons,
-                    "dist.sums.full" = dist.sums.full,
-                    "dist.table.seasons" = dist.table.seasons,
-                    "dist.names" = dist.names,
-                    "n.dist.classes" = n.dist.classes,
-                    "out.freqs" = out.freqs,
-                    "out.props" = out.props,
-                    "n.seasons" = n.seasons,
-                    "n.visits.season" = n.visits.season)
-  class(out.count) <- "countDist"
-  return(out.count)
+    ##reset to original values
+    if(any(plot.freq || plot.distance)) {
+        on.exit(par(oldpar))
+    }
+
+    out.count <- list("count.table.full" = count.table.full,
+                      "count.table.seasons" = count.table.seasons,
+                      "dist.sums.full" = dist.sums.full,
+                      "dist.table.seasons" = dist.table.seasons,
+                      "dist.names" = dist.names,
+                      "n.dist.classes" = n.dist.classes,
+                      "out.freqs" = out.freqs,
+                      "out.props" = out.props,
+                      "n.seasons" = n.seasons,
+                      "n.visits.season" = n.visits.season,
+                      "missing.seasons" = FALSE)
+    class(out.count) <- "countDist"
+    return(out.count)
 }
 
 
@@ -154,9 +183,32 @@ countDist.unmarkedFitDS <- function(object, plot.freq = TRUE, plot.distance = TR
     ##determine size of plot window
     ##when both types are requested
     if(plot.freq && plot.distance) {
-        par(mfrow = c(1, 2))
+        
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 2
+        oldpar <- par(mfrow = c(nRows, nCols))
     }
   
+    ##when single type is requested
+    if(plot.freq && !plot.distance) {
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 1
+        oldpar <- par(mfrow = c(nRows, nCols))
+    }
+
+    ##when single type is requested
+    if(!plot.freq && plot.distance) {
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 1
+        oldpar <- par(mfrow = c(nRows, nCols))
+    }
+
+
     ##summarize counts
     if(plot.freq) {
         
@@ -167,7 +219,7 @@ countDist.unmarkedFitDS <- function(object, plot.freq = TRUE, plot.distance = TR
     }
     
     ##summarize counts per distance
-    dist.sums.full <- colSums(yMat)
+    dist.sums.full <- colSums(yMat, na.rm = TRUE)
     names(dist.sums.full) <- dist.names
     dist.table.seasons <- list(dist.sums.full)
     names(dist.table.seasons) <- "season1"
@@ -211,7 +263,12 @@ countDist.unmarkedFitDS <- function(object, plot.freq = TRUE, plot.distance = TR
     colnames(out.props) <- "naive.occ"
     rownames(out.props) <- rownames(out.freqs)
     out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
-    
+
+    ##reset to original values
+    if(any(plot.freq || plot.distance)) {
+        on.exit(par(oldpar))
+    }
+
     out.count <- list("count.table.full" = count.table.full,
                       "count.table.seasons" = count.table.seasons,
                       "dist.sums.full" = dist.sums.full,
@@ -221,7 +278,8 @@ countDist.unmarkedFitDS <- function(object, plot.freq = TRUE, plot.distance = TR
                       "out.freqs" = out.freqs,
                       "out.props" = out.props,
                       "n.seasons" = n.seasons,
-                      "n.visits.season" = n.visits.season)
+                      "n.visits.season" = n.visits.season,
+                      "missing.seasons" = FALSE)
     class(out.count) <- "countDist"
     return(out.count)
 }
@@ -232,113 +290,142 @@ countDist.unmarkedFitDS <- function(object, plot.freq = TRUE, plot.distance = TR
 countDist.unmarkedFrameGDS <- function(object, plot.freq = TRUE, plot.distance = TRUE,
                                        cex.axis = 1, cex.lab = 1, cex.main = 1, ...) {
 
-  ##extract data
-  yMat <- object@y
-  nsites <- nrow(yMat)
-  n.seasons <- 1
-  ##for GDS - several visits in single season
-  nvisits <- object@numPrimary
-  ##visits per season
-  n.visits.season <- 1
-  ##distance classes
-  dist.classes <- object@dist.breaks
+    ##extract data
+    yMat <- object@y
+    nsites <- nrow(yMat)
+    n.seasons <- 1
+    ##for GDS - several visits in single season
+    nvisits <- object@numPrimary
+    ##visits per season
+    n.visits.season <- 1
+    ##distance classes
+    dist.classes <- object@dist.breaks
 
-  ##number of distance classes
-  n.dist.classes <- length(dist.classes) - 1
+    ##number of distance classes
+    n.dist.classes <- length(dist.classes) - 1
 
-  ##units
-  unitsIn <- object@unitsIn
+    ##units
+    unitsIn <- object@unitsIn
   
-  ##create string of names
-  dist.names <- rep(NA, n.dist.classes)
-  for(i in 1:n.dist.classes){
-    dist.names[i] <- paste(dist.classes[i], "-", dist.classes[i+1], sep = "")
-  }
+    ##create string of names
+    dist.names <- rep(NA, n.dist.classes)
+    for(i in 1:n.dist.classes){
+        dist.names[i] <- paste(dist.classes[i], "-", dist.classes[i+1], sep = "")
+    }
   
-  ##collapse yMat into a single vector
-  yVec <- as.vector(yMat)
+    ##collapse yMat into a single vector
+    yVec <- as.vector(yMat)
 
-  ##determine size of plot window
-  ##when both types are requested
-  if(plot.freq && plot.distance) {
-      par(mfrow = c(1, 2))
-  }
+    ##determine size of plot window
+    ##when both types are requested
+    if(plot.freq && plot.distance) {
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 2
+        oldpar <- par(mfrow = c(nRows, nCols))
+    }
   
-  ##summarize counts
-  if(plot.freq) {
+    ##when single type is requested
+    if(plot.freq && !plot.distance) {
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 1
+        oldpar <- par(mfrow = c(nRows, nCols))
+    }
+
+    ##when single type is requested
+    if(!plot.freq && plot.distance) {
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 1
+        oldpar <- par(mfrow = c(nRows, nCols))
+    }
+
+
+    ##summarize counts
+    if(plot.freq) {
     
-    ##create histogram
-    barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-            main = "Distribution of raw counts",
-            cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
-  }
+        ##create histogram
+        barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
+                main = "Distribution of raw counts",
+                cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+    }
 
-  ##summarize counts per distance
-  dist.sums.full <- rep(NA, n.dist.classes)
-  ##create matrix to hold indices of visits x dist.classes
-  mat.dist <- matrix(1:(nvisits*n.dist.classes),
-                     nrow = n.dist.classes,
-                     ncol = nvisits)
-  for(j in 1:n.dist.classes) {
-    dist.sums.full[j] <- sum(colSums(yMat[, mat.dist[j, ]], na.rm = TRUE), na.rm = TRUE)
-  }
+    ##summarize counts per distance
+    dist.sums.full <- rep(NA, n.dist.classes)
+    ##create matrix to hold indices of visits x dist.classes
+    mat.dist <- matrix(1:(nvisits*n.dist.classes),
+                       nrow = n.dist.classes,
+                       ncol = nvisits)
+    for(j in 1:n.dist.classes) {
+        dist.sums.full[j] <- sum(colSums(yMat[, mat.dist[j, ]], na.rm = TRUE), na.rm = TRUE)
+    }
 
     names(dist.sums.full) <- dist.names
     dist.table.seasons <- list(dist.sums.full)
     names(dist.table.seasons) <- "season1"
     
-  if(plot.distance) {
+    if(plot.distance) {
+        
+        ##create histogram
+        barplot(dist.sums.full, ylab = "Frequency",
+                xlab = paste("Distance class (", unitsIn, ")", sep = ""),
+                main = "Distribution of distance data",
+                cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+    }
+
+    ##raw counts
+    count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
+    count.table.seasons <- list(count.table.full)
+
+
+    ##for each season, determine frequencies
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- "Season-1"
     
-    ##create histogram
-    barplot(dist.sums.full, ylab = "Frequency",
-            xlab = paste("Distance class (", unitsIn, ")", sep = ""),
-            main = "Distribution of distance data",
-            cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
-  }
-
-  ##raw counts
-  count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
-  count.table.seasons <- list(count.table.full)
-
-
-  ##for each season, determine frequencies
-  out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected")
-  rownames(out.freqs) <- "Season-1"
-
-  ySeason <- yMat
+    ySeason <- yMat
     
-  ##determine proportion of sites with at least 1 detection
-  det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
+    ##determine proportion of sites with at least 1 detection
+    det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
 
-  ##check sites with observed detections and deal with NA's
-  sum.rows <- rowSums(ySeason, na.rm = TRUE)
-  is.na(sum.rows) <- rowSums(is.na(ySeason)) == ncol(ySeason)
+    ##check sites with observed detections and deal with NA's
+    sum.rows <- rowSums(ySeason, na.rm = TRUE)
+    is.na(sum.rows) <- rowSums(is.na(ySeason)) == ncol(ySeason)
     
-  ##number of sites sampled
-  out.freqs[1, 1] <- sum(!is.na(sum.rows))
-  ##number of sites with at least 1 detection
-  out.freqs[1, 2] <- sum(det.sum)
+    ##number of sites sampled
+    out.freqs[1, 1] <- sum(!is.na(sum.rows))
+    ##number of sites with at least 1 detection
+    out.freqs[1, 2] <- sum(det.sum)
 
-  ##create a matrix with proportion of sites with colonizations
-  ##and extinctions based on raw data
-  out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 1)
-  colnames(out.props) <- "naive.occ"
-  rownames(out.props) <- rownames(out.freqs)
-  out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
+    ##create a matrix with proportion of sites with colonizations
+    ##and extinctions based on raw data
+    out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 1)
+    colnames(out.props) <- "naive.occ"
+    rownames(out.props) <- rownames(out.freqs)
+    out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
+    
+    ##reset to original values
+    if(any(plot.freq || plot.distance)) {
+        on.exit(par(oldpar))
+    }
 
-  out.count <- list("count.table.full" = count.table.full,
-                    "count.table.seasons" = count.table.seasons,
-                    "dist.sums.full" = dist.sums.full,
-                    "dist.table.seasons" = dist.table.seasons,
-                    "dist.names" = dist.names,
-                    "n.dist.classes" = n.dist.classes,
-                    "out.freqs" = out.freqs,
-                    "out.props" = out.props,
-                    "n.seasons" = n.seasons,
-                    "n.visits.season" = n.visits.season)
-  class(out.count) <- "countDist"
-  return(out.count)
+    out.count <- list("count.table.full" = count.table.full,
+                      "count.table.seasons" = count.table.seasons,
+                      "dist.sums.full" = dist.sums.full,
+                      "dist.table.seasons" = dist.table.seasons,
+                      "dist.names" = dist.names,
+                      "n.dist.classes" = n.dist.classes,
+                      "out.freqs" = out.freqs,
+                      "out.props" = out.props,
+                      "n.seasons" = n.seasons,
+                      "n.visits.season" = n.visits.season,
+                      "missing.seasons" = FALSE)
+    class(out.count) <- "countDist"
+    return(out.count)
 }
 
 
@@ -347,115 +434,144 @@ countDist.unmarkedFrameGDS <- function(object, plot.freq = TRUE, plot.distance =
 countDist.unmarkedFitGDS <- function(object, plot.freq = TRUE, plot.distance = TRUE,
                                      cex.axis = 1, cex.lab = 1, cex.main = 1, ...) {
 
-  ##extract data
-  yMat <- object@data@y
-  nsites <- nrow(yMat)
-  n.seasons <- 1
-  ##for GDS - several visits in single season
-  nvisits <- object@data@numPrimary
-  ##visits per season
-  n.visits.season <- 1
-
-  ##distance classes
-  dist.classes <- object@data@dist.breaks
-
-  ##number of distance classes
-  n.dist.classes <- length(dist.classes) - 1
-
-  ##units
-  unitsIn <- object@data@unitsIn
-  
-  ##create string of names
-  dist.names <- rep(NA, n.dist.classes)
-  for(i in 1:n.dist.classes){
-    dist.names[i] <- paste(dist.classes[i], "-", dist.classes[i+1], sep = "")
-  }
-  
-
-  ##collapse yMat into a single vector
-  yVec <- as.vector(yMat)
-
-  ##determine size of plot window
-  ##when both types are requested
-  if(plot.freq && plot.distance) {
-      par(mfrow = c(1, 2))
-  }
-  
-  ##summarize counts
-  if(plot.freq) {
+    ##extract data
+    yMat <- object@data@y
+    nsites <- nrow(yMat)
+    n.seasons <- 1
+    ##for GDS - several visits in single season
+    nvisits <- object@data@numPrimary
+    ##visits per season
+    n.visits.season <- 1
     
-    ##create histogram
-    barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
-            main = "Distribution of raw counts",
-            cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
-  }
+    ##distance classes
+    dist.classes <- object@data@dist.breaks
+    
+    ##number of distance classes
+    n.dist.classes <- length(dist.classes) - 1
+    
+    ##units
+    unitsIn <- object@data@unitsIn
+  
+    ##create string of names
+    dist.names <- rep(NA, n.dist.classes)
+    for(i in 1:n.dist.classes){
+        dist.names[i] <- paste(dist.classes[i], "-", dist.classes[i+1], sep = "")
+    }
+  
 
-  ##summarize counts per distance
-  dist.sums.full <- rep(NA, n.dist.classes)
-  ##create matrix to hold indices of visits x dist.classes
-  mat.dist <- matrix(1:(nvisits*n.dist.classes),
-                     nrow = n.dist.classes,
-                     ncol = nvisits)
-  for(j in 1:n.dist.classes) {
-      dist.sums.full[j] <- sum(colSums(yMat[, mat.dist[j, ]], na.rm = TRUE), na.rm = TRUE)
-  }  
+    ##collapse yMat into a single vector
+    yVec <- as.vector(yMat)
+
+    ##determine size of plot window
+    ##when both types are requested
+    if(plot.freq && plot.distance) {
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 2
+        oldpar <- par(mfrow = c(nRows, nCols))
+    }
+  
+    ##when single type is requested
+    if(plot.freq && !plot.distance) {
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 1
+        oldpar <- par(mfrow = c(nRows, nCols))
+    }
+
+    ##when single type is requested
+    if(!plot.freq && plot.distance) {
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 1
+        oldpar <- par(mfrow = c(nRows, nCols))
+    }
+
+    
+    ##summarize counts
+    if(plot.freq) {
+    
+        ##create histogram
+        barplot(table(yVec), ylab = "Frequency", xlab = "Counts of individuals",
+                main = "Distribution of raw counts",
+                cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+    }
+
+    ##summarize counts per distance
+    dist.sums.full <- rep(NA, n.dist.classes)
+    ##create matrix to hold indices of visits x dist.classes
+    mat.dist <- matrix(1:(nvisits*n.dist.classes),
+                       nrow = n.dist.classes,
+                       ncol = nvisits)
+    for(j in 1:n.dist.classes) {
+        dist.sums.full[j] <- sum(colSums(yMat[, mat.dist[j, ]], na.rm = TRUE), na.rm = TRUE)
+    }  
 
     names(dist.sums.full) <- dist.names
     dist.table.seasons <- list(dist.sums.full)
     names(dist.table.seasons) <- "season1"
     
-  if(plot.distance) {
+    if(plot.distance) {
+        
+        ##create histogram
+        barplot(dist.sums.full, ylab = "Frequency",
+                xlab = paste("Distance class (", unitsIn, ")", sep = ""),
+                main = "Distribution of distance data",
+                cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+    }
+
+    ##raw counts
+    count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
+    count.table.seasons <- list(count.table.full)
+
+
+    ##for each season, determine frequencies
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- "Season-1"
     
-    ##create histogram
-    barplot(dist.sums.full, ylab = "Frequency",
-            xlab = paste("Distance class (", unitsIn, ")", sep = ""),
-            main = "Distribution of distance data",
-            cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
-  }
-
-  ##raw counts
-  count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
-  count.table.seasons <- list(count.table.full)
-
-
-  ##for each season, determine frequencies
-  out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
-  colnames(out.freqs) <- c("sampled", "detected")
-  rownames(out.freqs) <- "Season-1"
-
-  ySeason <- yMat
+    ySeason <- yMat
     
-  ##determine proportion of sites with at least 1 detection
-  det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
+    ##determine proportion of sites with at least 1 detection
+    det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
 
-  ##check sites with observed detections and deal with NA's
-  sum.rows <- rowSums(ySeason, na.rm = TRUE)
-  is.na(sum.rows) <- rowSums(is.na(ySeason)) == ncol(ySeason)
+    ##check sites with observed detections and deal with NA's
+    sum.rows <- rowSums(ySeason, na.rm = TRUE)
+    is.na(sum.rows) <- rowSums(is.na(ySeason)) == ncol(ySeason)
     
-  ##number of sites sampled
-  out.freqs[1, 1] <- sum(!is.na(sum.rows))
-  ##number of sites with at least 1 detection
-  out.freqs[1, 2] <- sum(det.sum)
+    ##number of sites sampled
+    out.freqs[1, 1] <- sum(!is.na(sum.rows))
+    ##number of sites with at least 1 detection
+    out.freqs[1, 2] <- sum(det.sum)
+    
+    ##create a matrix with proportion of sites with colonizations
+    ##and extinctions based on raw data
+    out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 1)
+    colnames(out.props) <- "naive.occ"
+    rownames(out.props) <- rownames(out.freqs)
+    out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
 
-  ##create a matrix with proportion of sites with colonizations
-  ##and extinctions based on raw data
-  out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 1)
-  colnames(out.props) <- "naive.occ"
-  rownames(out.props) <- rownames(out.freqs)
-  out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
+    ##reset to original values
+    if(any(plot.freq || plot.distance)) {
+        on.exit(par(oldpar))
+    }
 
-  out.count <- list("count.table.full" = count.table.full,
-                    "count.table.seasons" = count.table.seasons,
-                    "dist.sums.full" = dist.sums.full,
-                    "dist.table.seasons" = dist.table.seasons,
-                    "dist.names" = dist.names,
-                    "n.dist.classes" = n.dist.classes,
-                    "out.freqs" = out.freqs,
-                    "out.props" = out.props,
-                    "n.seasons" = n.seasons,
-                    "n.visits.season" = n.visits.season)
-  class(out.count) <- "countDist"
-  return(out.count)
+    out.count <- list("count.table.full" = count.table.full,
+                      "count.table.seasons" = count.table.seasons,
+                      "dist.sums.full" = dist.sums.full,
+                      "dist.table.seasons" = dist.table.seasons,
+                      "dist.names" = dist.names,
+                      "n.dist.classes" = n.dist.classes,
+                      "out.freqs" = out.freqs,
+                      "out.props" = out.props,
+                      "n.seasons" = n.seasons,
+                      "n.visits.season" = n.visits.season,
+                      "missing.seasons" = FALSE)
+    class(out.count) <- "countDist"
+    return(out.count)
 }
 
 
@@ -493,15 +609,27 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
     ##determine size of plot window
     ##when two types are requested
     if(plot.freq && plot.distance && !plot.seasons) {
-        par(mfrow = c(1, 2))
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 2
+        oldpar <- par(mfrow = c(nRows, nCols))
     }
 
     if(plot.freq && !plot.distance && !plot.seasons) {
-        par(mfrow = c(1, 1))
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 1
+        oldpar <- par(mfrow = c(nRows, nCols))
     }
 
     if(!plot.freq && plot.distance && !plot.seasons) {
-        par(mfrow = c(1, 1))
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 1
+        oldpar <- par(mfrow = c(nRows, nCols))
     }
 
 
@@ -510,38 +638,29 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
 
         if(!plot.freq && !plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons >= 12) {
+            if(n.seasons >= 12) {
                 n.seasons.adj <- 12
                 warning("\nOnly first 12 seasons are plotted\n")
             }
         }
 
-        if(!plot.freq && !plot.distance) {
-            ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons >= 12) {
-                n.seasons.adj <- 12
-                warning("\nOnly first 12 seasons are plotted\n")
-            }
-        }
-
-        
         if(plot.freq && !plot.distance || !plot.freq && plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons >= 11) {
+            if(n.seasons >= 11) {
                 n.seasons.adj <- 11
                 warning("\nOnly first 11 seasons are plotted\n")
             }
         }
-
+        
         if(plot.freq && plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons >= 10) {
+            if(n.seasons >= 10) {
                 n.seasons.adj <- 10
                 warning("\nOnly first 10 seasons are plotted\n")
             }
         }
 
-        if(plot.seasons && n.seasons.adj <= 12) {
+        if(n.seasons.adj <= 12) {
 
             ##if n.seasons < 12
             ##if 12, 11, 10 <- 4 x 3
@@ -582,7 +701,8 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
             }
         }
 
-        par(mfrow = c(nRows, nCols))
+        ##reset graphics parameters and save in object
+        oldpar <- par(mfrow = c(nRows, nCols))
     }
     
     ##distances across years
@@ -603,7 +723,7 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
     yMat.seasons <- vector(mode = "list", length = n.seasons)
     names(yMat.seasons) <- seasonNames
     minusOne <- n.dist.classes - 1
-    
+
     ##iterate over each season
     for(i in 1:n.seasons) {
         
@@ -614,21 +734,23 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
 
     }
 
-
+    ##check if any seasons were not sampled
+    y.seasonsNA <- sapply(yMat.seasons, FUN = function(i) all(is.na(i)))
+    
     ##collapse list into matrix
     fullData <- do.call("rbind", yMat.seasons)
     ##summarize counts per distance
-    dist.sums.full <- colSums(fullData)
+    dist.sums.full <- colSums(fullData, na.rm = TRUE)
     names(dist.sums.full) <- dist.names
     
     if(plot.distance) {
     
-            ##create histogram
-            barplot(dist.sums.full, ylab = "Frequency",
-                    xlab = paste("Distance class (", unitsIn, ")", sep = ""),
-                    main = paste("Distribution of distance data (", n.seasons, " seasons combined)", sep = ""),
-                    cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
-        }
+        ##create histogram
+        barplot(dist.sums.full, ylab = "Frequency",
+                xlab = paste("Distance class (", unitsIn, ")", sep = ""),
+                main = paste("Distribution of distance data (", n.seasons, " seasons combined)", sep = ""),
+                cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+    }
 
 
     dist.table.seasons <- vector("list", n.seasons)
@@ -639,10 +761,17 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
         yMat2 <- yMat.seasons[[i]]
         
         ##summarize counts per distance
-        dist.sums.season <- colSums(yMat2)
+        dist.sums.season <- colSums(yMat2, na.rm = TRUE)
         names(dist.sums.season) <- dist.names
+        ##replace with NA if not sampled
+        if(y.seasonsNA[i]) {
+            dist.sums.season[1:length(dist.names)] <- NA
+        }
         dist.table.seasons[[i]] <- dist.sums.season
-  
+
+        ##check for missing season
+        if(y.seasonsNA[i]) {next} #skip to next season if current season not sampled
+        
         if(plot.seasons) {
     
             ##create histogram
@@ -654,9 +783,9 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
     }
 
     
-  ##raw counts
-  count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
-  count.table.seasons <- lapply(yMat.seasons, table)
+    ##raw counts
+    count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
+    count.table.seasons <- lapply(yMat.seasons, table)
 
         
     ##for each season, determine frequencies
@@ -694,16 +823,27 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
         some1 <- out.seasons[[j-1]]$some
         none2 <- out.seasons[[j]]$none
         some2 <- out.seasons[[j]]$some
-        ##colonizations
-        out.freqs[j, 3] <- sum(duplicated(c(some2, none1)))
-        ##extinctions
-        out.freqs[j, 4] <- sum(duplicated(c(some1, none2)))
-        ##no change
-        out.freqs[j, 5] <- sum(duplicated(c(some1, some2))) + sum(duplicated(c(none1, none2)))
-        ##sites both sampled in t and t-1
-        year1 <- c(none1, some1)
-        year2 <- c(none2, some2)
-        out.freqs[j, 6] <- sum(duplicated(c(year1, year2)))
+
+        ##add check for seasons without sampling or previous season without sampling
+        if(y.seasonsNA[j] || y.seasonsNA[j-1]) {
+            if(y.seasonsNA[j]) {
+                out.freqs[j, 2:6] <- NA
+            }
+            if(y.seasonsNA[j-1]) {
+                out.freqs[j, 3:6] <- NA
+            }
+        } else {
+            ##colonizations
+            out.freqs[j, 3] <- sum(duplicated(c(some2, none1)))
+            ##extinctions
+            out.freqs[j, 4] <- sum(duplicated(c(some1, none2)))
+            ##no change
+            out.freqs[j, 5] <- sum(duplicated(c(some1, some2))) + sum(duplicated(c(none1, none2)))
+            ##sites both sampled in t and t-1
+            year1 <- c(none1, some1)
+            year2 <- c(none2, some2)
+            out.freqs[j, 6] <- sum(duplicated(c(year1, year2)))
+        }
     }
 
     ##create a matrix with proportion of sites with colonizations
@@ -711,12 +851,28 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
     out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 4)
     colnames(out.props) <- c("naive.occ", "naive.colonization", "naive.extinction", "naive.static")
     rownames(out.props) <- rownames(out.freqs)
-    out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
-    out.props[, 2] <- out.freqs[, 3]/out.freqs[, 6]
-    out.props[, 3] <- out.freqs[, 4]/out.freqs[, 6]
-    out.props[, 4] <- out.freqs[, 5]/out.freqs[, 6]
 
-    
+    for(k in 1:n.seasons) {
+        ##proportion of sites with detections
+        out.props[k, 1] <- out.freqs[k, 2]/out.freqs[k, 1]
+        ##add check for seasons without sampling
+        if(y.seasonsNA[k]) {
+            out.props[k, 2:4] <- NA
+        } else {
+            ##proportion colonized
+            out.props[k, 2] <- out.freqs[k, 3]/out.freqs[k, 6]
+            ##proportion extinct
+            out.props[k, 3] <- out.freqs[k, 4]/out.freqs[k, 6]
+            ##proportion static
+            out.props[k, 4] <- out.freqs[k, 5]/out.freqs[k, 6]
+        }
+    }
+
+    ##reset to original values
+    if(any(plot.freq || plot.distance || plot.seasons)) {
+        on.exit(par(oldpar))
+    }
+
     out.count <- list("count.table.full" = count.table.full,
                       "count.table.seasons" = count.table.seasons,
                       "dist.sums.full" = dist.sums.full,
@@ -726,7 +882,8 @@ countDist.unmarkedFrameDSO <- function(object, plot.freq = TRUE, plot.distance =
                       "out.freqs" = out.freqs,
                       "out.props" = out.props,
                       "n.seasons" = n.seasons,
-                      "n.visits.season" = n.visits.season)
+                      "n.visits.season" = n.visits.season,
+                      "missing.seasons" = y.seasonsNA)
     class(out.count) <- "countDist"
     return(out.count)
 }
@@ -766,15 +923,27 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
     ##determine size of plot window
     ##when two types are requested
     if(plot.freq && plot.distance && !plot.seasons) {
-        par(mfrow = c(1, 2))
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 2
+        oldpar <- par(mfrow = c(nRows, nCols))
     }
 
     if(plot.freq && !plot.distance && !plot.seasons) {
-        par(mfrow = c(1, 1))
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 1
+        oldpar <- par(mfrow = c(nRows, nCols))
     }
 
     if(!plot.freq && plot.distance && !plot.seasons) {
-        par(mfrow = c(1, 1))
+
+        ##reset graphics parameters and save in object
+        nRows <- 1
+        nCols <- 1
+        oldpar <- par(mfrow = c(nRows, nCols))
     }
 
 
@@ -783,16 +952,15 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
 
         if(!plot.freq && !plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons >= 12) {
+            if(n.seasons >= 12) {
                 n.seasons.adj <- 12
                 warning("\nOnly first 12 seasons are plotted\n")
             }
         }
-
         
         if(plot.freq && !plot.distance || !plot.freq && plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons >= 11) {
+            if(n.seasons >= 11) {
                 n.seasons.adj <- 11
                 warning("\nOnly first 11 seasons are plotted\n")
             }
@@ -800,13 +968,13 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
 
         if(plot.freq && plot.distance) {
             ##determine arrangement of plots in matrix
-            if(plot.seasons && n.seasons >= 10) {
+            if(n.seasons >= 10) {
                 n.seasons.adj <- 10
                 warning("\nOnly first 10 seasons are plotted\n")
             }
         }
 
-        if(plot.seasons && n.seasons.adj <= 12) {
+        if(n.seasons.adj <= 12) {
 
             ##if n.seasons < 12
             ##if 12, 11, 10 <- 4 x 3
@@ -847,7 +1015,8 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
             }
         }
 
-        par(mfrow = c(nRows, nCols))
+        ##reset graphics parameters and save in object
+        oldpar <- par(mfrow = c(nRows, nCols))
     }
 
     ##distances across years
@@ -868,6 +1037,7 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
     yMat.seasons <- vector(mode = "list", length = n.seasons)
     names(yMat.seasons) <- seasonNames
     minusOne <- n.dist.classes - 1
+
     ##iterate over each season
     for(i in 1:n.seasons) {
         
@@ -878,21 +1048,23 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
 
     }
 
+    ##check if any seasons were not sampled
+    y.seasonsNA <- sapply(yMat.seasons, FUN = function(i) all(is.na(i)))
 
     ##collapse list into matrix
     fullData <- do.call("rbind", yMat.seasons)
     ##summarize counts per distance
-    dist.sums.full <- colSums(fullData)
+    dist.sums.full <- colSums(fullData, na.rm = TRUE)
     names(dist.sums.full) <- dist.names
     
     if(plot.distance) {
     
-            ##create histogram
-            barplot(dist.sums.full, ylab = "Frequency",
-                    xlab = paste("Distance class (", unitsIn, ")", sep = ""),
-                    main = paste("Distribution of distance data (", n.seasons, " seasons combined)", sep = ""),
-                    cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
-        }
+        ##create histogram
+        barplot(dist.sums.full, ylab = "Frequency",
+                xlab = paste("Distance class (", unitsIn, ")", sep = ""),
+                main = paste("Distribution of distance data (", n.seasons, " seasons combined)", sep = ""),
+                cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+    }
 
 
     dist.table.seasons <- vector("list", n.seasons)
@@ -903,10 +1075,17 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
         yMat2 <- yMat.seasons[[i]]
         
         ##summarize counts per distance
-        dist.sums.season <- colSums(yMat2)
+        dist.sums.season <- colSums(yMat2, na.rm = TRUE)
         names(dist.sums.season) <- dist.names
+        ##replace with NA if not sampled
+        if(y.seasonsNA[i]) {
+            dist.sums.season[1:length(dist.names)] <- NA
+        }
         dist.table.seasons[[i]] <- dist.sums.season
-  
+
+        ##check for missing season
+        if(y.seasonsNA[i]) {next} #skip to next season if current season not sampled
+       
         if(plot.seasons) {
     
             ##create histogram
@@ -918,9 +1097,9 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
     }
 
     
-  ##raw counts
-  count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
-  count.table.seasons <- lapply(yMat.seasons, table)
+    ##raw counts
+    count.table.full <- table(yVec, exclude = NULL, deparse.level = 0)
+    count.table.seasons <- lapply(yMat.seasons, table)
 
         
     ##for each season, determine frequencies
@@ -958,16 +1137,27 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
         some1 <- out.seasons[[j-1]]$some
         none2 <- out.seasons[[j]]$none
         some2 <- out.seasons[[j]]$some
-        ##colonizations
-        out.freqs[j, 3] <- sum(duplicated(c(some2, none1)))
-        ##extinctions
-        out.freqs[j, 4] <- sum(duplicated(c(some1, none2)))
-        ##no change
-        out.freqs[j, 5] <- sum(duplicated(c(some1, some2))) + sum(duplicated(c(none1, none2)))
-        ##sites both sampled in t and t-1
-        year1 <- c(none1, some1)
-        year2 <- c(none2, some2)
-        out.freqs[j, 6] <- sum(duplicated(c(year1, year2)))
+
+        ##add check for seasons without sampling or previous season without sampling
+        if(y.seasonsNA[j] || y.seasonsNA[j-1]) {
+            if(y.seasonsNA[j]) {
+                out.freqs[j, 2:6] <- NA
+            }
+            if(y.seasonsNA[j-1]) {
+                out.freqs[j, 3:6] <- NA
+            }
+        } else {
+            ##colonizations
+            out.freqs[j, 3] <- sum(duplicated(c(some2, none1)))
+            ##extinctions
+            out.freqs[j, 4] <- sum(duplicated(c(some1, none2)))
+            ##no change
+            out.freqs[j, 5] <- sum(duplicated(c(some1, some2))) + sum(duplicated(c(none1, none2)))
+            ##sites both sampled in t and t-1
+            year1 <- c(none1, some1)
+            year2 <- c(none2, some2)
+            out.freqs[j, 6] <- sum(duplicated(c(year1, year2)))
+        }
     }
 
     ##create a matrix with proportion of sites with colonizations
@@ -975,12 +1165,28 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
     out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 4)
     colnames(out.props) <- c("naive.occ", "naive.colonization", "naive.extinction", "naive.static")
     rownames(out.props) <- rownames(out.freqs)
-    out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
-    out.props[, 2] <- out.freqs[, 3]/out.freqs[, 6]
-    out.props[, 3] <- out.freqs[, 4]/out.freqs[, 6]
-    out.props[, 4] <- out.freqs[, 5]/out.freqs[, 6]
 
-    
+    for(k in 1:n.seasons) {
+        ##proportion of sites with detections
+        out.props[k, 1] <- out.freqs[k, 2]/out.freqs[k, 1]
+        ##add check for seasons without sampling
+        if(y.seasonsNA[k]) {
+            out.props[k, 2:4] <- NA
+        } else {
+            ##proportion colonized
+            out.props[k, 2] <- out.freqs[k, 3]/out.freqs[k, 6]
+            ##proportion extinct
+            out.props[k, 3] <- out.freqs[k, 4]/out.freqs[k, 6]
+            ##proportion static
+            out.props[k, 4] <- out.freqs[k, 5]/out.freqs[k, 6]
+        }
+    }
+
+    ##reset to original values
+    if(any(plot.freq || plot.distance || plot.seasons)) {
+        on.exit(par(oldpar))
+    }
+
     out.count <- list("count.table.full" = count.table.full,
                       "count.table.seasons" = count.table.seasons,
                       "dist.sums.full" = dist.sums.full,
@@ -990,7 +1196,8 @@ countDist.unmarkedFitDSO <- function(object, plot.freq = TRUE, plot.distance = T
                       "out.freqs" = out.freqs,
                       "out.props" = out.props,
                       "n.seasons" = n.seasons,
-                      "n.visits.season" = n.visits.season)
+                      "n.visits.season" = n.visits.season,
+                      "missing.seasons" = y.seasonsNA)
     class(out.count) <- "countDist"
     return(out.count)
 }
@@ -1027,6 +1234,16 @@ print.countDist <- function(x, digits = 2, ...) {
       rownames(count.mat) <- "Frequency"
       print(count.mat)
 
+      ##if some seasons have not been sampled
+      if(any(x$missing.seasons)) {
+          if(sum(x$missing.seasons) == 1) {
+              cat("\nNote: season", which(x$missing.seasons), "was not sampled\n")
+          } else {
+              cat("\nNote: seasons",
+                  paste(which(x$missing.seasons), sep = ", "),
+                  "were not sampled\n")
+          }
+      }
       cat("\nSummary of counts for each distance class across", x$n.seasons, "seasons:\n")
       dist.mat <- matrix(x$dist.sums.full, nrow = 1)
       colnames(dist.mat) <- names(x$dist.sums.full)
@@ -1037,19 +1254,26 @@ print.countDist <- function(x, digits = 2, ...) {
       cat("\nSeason-specific counts for each distance class: \n")
       cat("\n")
       for(i in 1:x$n.seasons) {
-            cat("Season", i, "\n")
-            temp.tab <- x$dist.table.seasons[[i]]
-            out.mat <- matrix(temp.tab, nrow = 1)
-            colnames(out.mat) <- names(temp.tab)
-            rownames(out.mat) <- "Frequency"
-            print(out.mat)
-            cat("--------\n\n")
+          if(!x$missing.seasons[i]) {
+              cat("Season", i, "\n")
+          } else {
+              cat("Season", i, "(no sites sampled)", "\n")
+          }
+              
+          temp.tab <- x$dist.table.seasons[[i]]
+          out.mat <- matrix(temp.tab, nrow = 1)
+          colnames(out.mat) <- names(temp.tab)
+          rownames(out.mat) <- "Frequency"
+          print(out.mat)
+          cat("--------\n\n")
       }
 
       ##cat("\n")
       cat("Frequencies of sites with detections, extinctions, and colonizations:\n")
       ##add matrix of frequencies
       print(x$out.freqs)
+      
   }
 }
+
 

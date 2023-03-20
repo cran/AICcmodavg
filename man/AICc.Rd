@@ -196,7 +196,7 @@ linear mixed models of the \code{mer} or \code{merMod} classes.
   estimated parameters.
   
   Second-order or small sample AIC (AICc, Sugiura   1978, Hurvich and
-  Tsai 1991), \deqn{-2 * log-likelihood + 2 * K  * (n/(n - K - 1)),}
+  Tsai 1989, 1991), \deqn{-2 * log-likelihood + 2 * K  * (n/(n - K - 1)),}
   where \emph{n} is the sample size of the data set.
   
   Quasi-likelihood AIC (QAIC, Burnham and Anderson 2002), \deqn{QAIC =
@@ -250,6 +250,9 @@ linear mixed models of the \code{mer} or \code{merMod} classes.
   repeated counts of an open population. \emph{Biometrics} \bold{67},
   577--587. 
   
+  Hurvich, C. M., Tsai, C.-L. (1989) Regression and time series model
+  selection in small samples. \emph{Biometrika} \bold{76}, 297--307. 
+
   Hurvich, C. M., Tsai, C.-L. (1991) Bias of the corrected AIC
   criterion for underfitted regression and time series
   models. \emph{Biometrika} \bold{78}, 499--509. 

@@ -2,9 +2,9 @@
 
 ##aictab
 xtable.aictab <- function(x, caption = NULL, label = NULL, align = NULL,
-                          digits = NULL, display = NULL, nice.names = TRUE,
-                          include.AICc = TRUE, include.LL = TRUE,
-                          include.Cum.Wt = FALSE, ...) {
+                          digits = NULL, display = NULL, auto = FALSE,
+                          nice.names = TRUE, include.AICc = TRUE,
+                          include.LL = TRUE, include.Cum.Wt = FALSE, ...) {
  
   ##change to nicer names
   if(nice.names) {
@@ -96,7 +96,7 @@ xtable.aictab <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##modavg
 xtable.modavg <- function(x, caption = NULL, label = NULL, align = NULL,
-                          digits = NULL, display = NULL,
+                          digits = NULL, display = NULL, auto = FALSE,
                           nice.names = TRUE, print.table = FALSE, ...) {
 
     ##different format for models of class multinom
@@ -215,7 +215,7 @@ xtable.modavg <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##modavgShrink
 xtable.modavgShrink <- function(x, caption = NULL, label = NULL, align = NULL,
-                                digits = NULL, display = NULL, 
+                                digits = NULL, display = NULL, auto = FALSE, 
                                 nice.names = TRUE, print.table = FALSE, ...) {
 
   if(print.table) {
@@ -277,7 +277,7 @@ xtable.modavgShrink <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##modavgPred
 xtable.modavgPred <- function(x, caption = NULL, label = NULL, align = NULL,
-                              digits = NULL, display = NULL, 
+                              digits = NULL, display = NULL, auto = FALSE, 
                               nice.names = TRUE, ...) {
   modavg.pred <- data.frame(x$matrix.output, check.names = FALSE)
   
@@ -305,8 +305,9 @@ xtable.modavgPred <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##dictab
 xtable.dictab <- function(x, caption = NULL, label = NULL, align = NULL,
-                          digits = NULL, display = NULL, nice.names = TRUE,
-                          include.DIC = TRUE, include.Cum.Wt = FALSE, ...) {
+                          digits = NULL, display = NULL, auto = FALSE,
+                          nice.names = TRUE, include.DIC = TRUE,
+                          include.Cum.Wt = FALSE, ...) {
 
   ##change to nicer names
   if(nice.names) {
@@ -363,7 +364,7 @@ xtable.dictab <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##modavgEffect
 xtable.modavgEffect <- function(x, caption = NULL, label = NULL, align = NULL,
-                                digits = NULL, display = NULL, 
+                                digits = NULL, display = NULL, auto = FALSE,
                                 nice.names = TRUE, print.table = FALSE, ...) {
 
     if(print.table) {
@@ -453,7 +454,7 @@ xtable.modavgEffect <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##multComp
 xtable.multComp <- function(x, caption = NULL, label = NULL, align = NULL,
-                            digits = NULL, display = NULL, 
+                            digits = NULL, display = NULL, auto = FALSE,
                             nice.names = TRUE, print.table = FALSE, ...) {
 
   if(print.table) {
@@ -514,8 +515,9 @@ xtable.multComp <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##boot.wt - class aictab - potentially create new class for boot.wt
 xtable.boot.wt <- function(x, caption = NULL, label = NULL, align = NULL,
-                           digits = NULL, display = NULL, nice.names = TRUE,
-                           include.AICc = TRUE, include.AICcWt = FALSE, ...) {
+                           digits = NULL, display = NULL, auto = FALSE,
+                           nice.names = TRUE, include.AICc = TRUE,
+                           include.AICcWt = FALSE, ...) {
 
   ##change to nicer names
   if(nice.names) {
@@ -573,7 +575,8 @@ xtable.boot.wt <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##mb.chisq - for single-season model
 xtable.mb.chisq <- function(x, caption = NULL, label = NULL, align = NULL,
-                            digits = NULL, display = NULL, nice.names = TRUE,
+                            digits = NULL, display = NULL, auto = FALSE,
+                            nice.names = TRUE,
                             include.detection.histories = TRUE, ...) {
 
 
@@ -642,7 +645,7 @@ xtable.mb.chisq <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##add method for detHist class
 xtable.detHist <- function(x, caption = NULL, label = NULL, align = NULL,
-                           digits = NULL, display = NULL, 
+                           digits = NULL, display = NULL, auto = FALSE, 
                            nice.names = TRUE, table.detHist = "freq",
                            ...) {
   ##for single season single species, display frequencies in a single matrix
@@ -764,7 +767,7 @@ xtable.detHist <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##add method for countHist class
 xtable.countHist <- function(x, caption = NULL, label = NULL, align = NULL,
-                             digits = NULL, display = NULL, 
+                             digits = NULL, display = NULL, auto = FALSE,
                              nice.names = TRUE, table.countHist = "count",
                              ...) {
   ##for single season, display frequencies in a single matrix
@@ -879,7 +882,7 @@ xtable.countHist <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##add method for countDist class
 xtable.countDist <- function(x, caption = NULL, label = NULL, align = NULL,
-                             digits = NULL, display = NULL, 
+                             digits = NULL, display = NULL, auto = FALSE,
                              nice.names = TRUE, table.countDist = "distance",
                              ...) {
   ##for single season, display frequencies in a single matrix
@@ -991,7 +994,7 @@ xtable.countDist <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##add method for detTime class
 xtable.detTime <- function(x, caption = NULL, label = NULL, align = NULL,
-                           digits = NULL, display = NULL, 
+                           digits = NULL, display = NULL, auto = FALSE,
                            nice.names = TRUE, table.detTime = "freq",
                            ...) {
   ##for single season, display frequencies in a single matrix
@@ -1079,9 +1082,9 @@ xtable.detTime <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##bictab
 xtable.bictab <- function(x, caption = NULL, label = NULL, align = NULL,
-                          digits = NULL, display = NULL, nice.names = TRUE,
-                          include.BIC = TRUE, include.LL = TRUE,
-                          include.Cum.Wt = FALSE, ...) {
+                          digits = NULL, display = NULL, auto = FALSE,
+                          nice.names = TRUE, include.BIC = TRUE,
+                          include.LL = TRUE, include.Cum.Wt = FALSE, ...) {
 
   ##change to nicer names
   if(nice.names) {
@@ -1173,8 +1176,9 @@ xtable.bictab <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##checkParms
 xtable.checkParms <- function(x, caption = NULL, label = NULL, align = NULL,
-                              digits = NULL, display = NULL, nice.names = TRUE,
-                              include.variable = TRUE, include.max.se = TRUE,
+                              digits = NULL, display = NULL, auto = FALSE,
+                              nice.names = TRUE, include.variable = TRUE,
+                              include.max.se = TRUE,
                               include.n.high.se = TRUE, ...) {
 
     ##change to nicer names
@@ -1255,7 +1259,7 @@ xtable.checkParms <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##summaryOD
 xtable.summaryOD <- function(x, caption = NULL, label = NULL, align = NULL,
-                             digits = NULL, display = NULL, 
+                             digits = NULL, display = NULL, auto = FALSE,
                              nice.names = TRUE, ...) {
 
     ##extract model table
@@ -1295,7 +1299,7 @@ xtable.summaryOD <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##anovaOD
 xtable.anovaOD <- function(x, caption = NULL, label = NULL, align = NULL,
-                           digits = NULL, display = NULL, 
+                           digits = NULL, display = NULL, auto = FALSE,
                            nice.names = TRUE, ...) {
 
     ##extract model selection table
@@ -1332,8 +1336,9 @@ xtable.anovaOD <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##ictab
 xtable.ictab <- function(x, caption = NULL, label = NULL, align = NULL,
-                         digits = NULL, display = NULL, nice.names = TRUE,
-                         include.IC = TRUE, include.Cum.Wt = FALSE, ...) {
+                         digits = NULL, display = NULL, auto = FALSE,
+                         nice.names = TRUE, include.IC = TRUE,
+                         include.Cum.Wt = FALSE, ...) {
  
   ##change to nicer names
   if(nice.names) {
@@ -1408,7 +1413,7 @@ xtable.ictab <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##modavgIC
 xtable.modavgIC <- function(x, caption = NULL, label = NULL, align = NULL,
-                            digits = NULL, display = NULL,
+                            digits = NULL, display = NULL, auto = FALSE,
                             nice.names = TRUE, print.table = FALSE, ...) {
 
   if(print.table) {
@@ -1474,7 +1479,7 @@ xtable.modavgIC <- function(x, caption = NULL, label = NULL, align = NULL,
 
 ##modavgCustom
 xtable.modavgCustom <- function(x, caption = NULL, label = NULL, align = NULL,
-                                digits = NULL, display = NULL,
+                                digits = NULL, display = NULL, auto = FALSE,
                                 nice.names = TRUE, print.table = FALSE, ...) {
 
     if(print.table) {

@@ -4,7 +4,6 @@ detHist <- function(object, ...){
 }
 
 
-
 detHist.default <- function(object, ...){
   stop("\nFunction not yet defined for this object class\n")
 }
@@ -61,7 +60,7 @@ detHist.unmarkedFrameOccu <- function(object, ...) {
                     "out.freqs" = out.freqs, "out.props" = out.props,
                     "n.seasons" = n.seasons,
                     "n.visits.season" = n.visits.season,
-                    "n.species" = 1)
+                    "n.species" = 1, "missing.seasons" = FALSE)
     class(out.det) <- "detHist"
     return(out.det)
 }
@@ -118,7 +117,7 @@ detHist.unmarkedFitOccu <- function(object, ...) {
                     "out.freqs" = out.freqs, "out.props" = out.props,
                     "n.seasons" = n.seasons,
                     "n.visits.season" = n.visits.season,
-                    "n.species" = 1)
+                    "n.species" = 1, "missing.seasons" = FALSE)
   class(out.det) <- "detHist"
   return(out.det)
 }
@@ -175,7 +174,7 @@ detHist.unmarkedFrameOccuFP <- function(object, ...) {
                     "out.freqs" = out.freqs, "out.props" = out.props,
                     "n.seasons" = n.seasons,
                     "n.visits.season" = n.visits.season,
-                    "n.species" = 1)
+                    "n.species" = 1, "missing.seasons" = FALSE)
     class(out.det) <- "detHist"
     return(out.det)
 }
@@ -232,7 +231,7 @@ detHist.unmarkedFitOccuFP <- function(object, ...) {
                     "out.freqs" = out.freqs, "out.props" = out.props,
                     "n.seasons" = n.seasons,
                     "n.visits.season" = n.visits.season,
-                    "n.species" = 1)
+                    "n.species" = 1, "missing.seasons" = FALSE)
   class(out.det) <- "detHist"
   return(out.det)
 }
@@ -289,7 +288,7 @@ detHist.unmarkedFitOccuRN <- function(object, ...) {
                     "out.freqs" = out.freqs, "out.props" = out.props,
                     "n.seasons" = n.seasons,
                     "n.visits.season" = n.visits.season,
-                    "n.species" = 1)
+                    "n.species" = 1, "missing.seasons" = FALSE)
     class(out.det) <- "detHist"
     return(out.det)
 }
@@ -314,10 +313,17 @@ detHist.unmarkedMultFrame <- function(object, ...) {
     colEnds <- colStarts + (n.visits.season - 1)
     yrows <- list( )
 
+    ##add check for seasons not sampled
+    y.seasons <- list( )
+    
     ##subsequent seasons
     for(i in 1:n.seasons) {
         yrows[[i]] <- apply(yMat[, colStarts[i]:colEnds[i]], MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
+        y.seasons[[i]] <- yMat[, colStarts[i]:colEnds[i]]
     }
+
+    ##check if any seasons were not sampled
+    y.seasonsNA <- sapply(y.seasons, FUN = function(i) all(is.na(i)))
 
     ##organize and paste rows
     hist.full <- do.call(what = "paste", args = c(yrows, sep = "'"))
@@ -352,9 +358,9 @@ detHist.unmarkedMultFrame <- function(object, ...) {
         
         ##number of sites sampled
         out.freqs[i, 1] <- sum(!is.na(sum.rows))
+        ##detections
         out.freqs[i, 2] <- sum(det.sum)
         
-
         ##sites without detections
         none <- which(sum.rows == 0)
         ##sites with at least one detection
@@ -368,16 +374,27 @@ detHist.unmarkedMultFrame <- function(object, ...) {
         some1 <- out.seasons[[j-1]]$some
         none2 <- out.seasons[[j]]$none
         some2 <- out.seasons[[j]]$some
-        ##colonizations
-        out.freqs[j, 3] <- sum(duplicated(c(some2, none1)))
-        ##extinctions
-        out.freqs[j, 4] <- sum(duplicated(c(some1, none2)))
-        ##no change
-        out.freqs[j, 5] <- sum(duplicated(c(some1, some2))) + sum(duplicated(c(none1, none2)))
-        ##sites both sampled in t and t-1
-        year1 <- c(none1, some1)
-        year2 <- c(none2, some2)
-        out.freqs[j, 6] <- sum(duplicated(c(year1, year2)))
+        
+        ##add check for seasons without sampling or previous season without sampling
+        if(y.seasonsNA[j] || y.seasonsNA[j-1]) {
+            if(y.seasonsNA[j]) {
+                out.freqs[j, 2:6] <- NA
+            }
+            if(y.seasonsNA[j-1]) {
+                out.freqs[j, 3:6] <- NA
+            }
+        } else {
+            ##colonizations
+            out.freqs[j, 3] <- sum(duplicated(c(some2, none1)))
+            ##extinctions
+            out.freqs[j, 4] <- sum(duplicated(c(some1, none2)))
+            ##no change
+            out.freqs[j, 5] <- sum(duplicated(c(some1, some2))) + sum(duplicated(c(none1, none2)))
+            ##sites both sampled in t and t-1
+            year1 <- c(none1, some1)
+            year2 <- c(none2, some2)
+            out.freqs[j, 6] <- sum(duplicated(c(year1, year2)))
+        }
     }
 
     ##create a matrix with proportion of sites with colonizations
@@ -385,17 +402,29 @@ detHist.unmarkedMultFrame <- function(object, ...) {
     out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 4)
     colnames(out.props) <- c("naive.occ", "naive.colonization", "naive.extinction", "naive.static")
     rownames(out.props) <- rownames(out.freqs)
-    out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
-    out.props[, 2] <- out.freqs[, 3]/out.freqs[, 6]
-    out.props[, 3] <- out.freqs[, 4]/out.freqs[, 6]
-    out.props[, 4] <- out.freqs[, 5]/out.freqs[, 6]
+
+    for(k in 1:n.seasons) {
+        ##proportion of sites with detections
+        out.props[k, 1] <- out.freqs[k, 2]/out.freqs[k, 1]
+        ##add check for seasons without sampling
+        if(y.seasonsNA[k]) {
+            out.props[k, 2:4] <- NA
+        } else {
+            ##proportion colonized
+            out.props[k, 2] <- out.freqs[k, 3]/out.freqs[k, 6]
+            ##proportion extinct
+            out.props[k, 3] <- out.freqs[k, 4]/out.freqs[k, 6]
+            ##proportion static
+            out.props[k, 4] <- out.freqs[k, 5]/out.freqs[k, 6]
+        }
+    }
     
     out.det <- list("hist.table.full" = hist.table.full,
                     "hist.table.seasons" = hist.table.seasons,
                     "out.freqs" = out.freqs, "out.props" = out.props,
                     "n.seasons" = n.seasons,
                     "n.visits.season" = n.visits.season,
-                    "n.species" = 1)
+                    "n.species" = 1, "missing.seasons" = y.seasonsNA)
     class(out.det) <- "detHist"
     return(out.det)
 }
@@ -420,10 +449,17 @@ detHist.unmarkedFitColExt <- function(object, ...) {
     colEnds <- colStarts + (n.visits.season - 1)
     yrows <- list( )
 
+    ##add check for seasons not sampled
+    y.seasons <- list( )
+       
     ##subsequent seasons
     for(i in 1:n.seasons) {
         yrows[[i]] <- apply(yMat[, colStarts[i]:colEnds[i]], MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
+        y.seasons[[i]] <- yMat[, colStarts[i]:colEnds[i]]
     }
+
+    ##check if any seasons were not sampled
+    y.seasonsNA <- sapply(y.seasons, FUN = function(i) all(is.na(i)))
 
     ##organize and paste rows
     hist.full <- do.call(what = "paste", args = c(yrows, sep = "'"))
@@ -458,13 +494,14 @@ detHist.unmarkedFitColExt <- function(object, ...) {
         
         ##number of sites sampled
         out.freqs[i, 1] <- sum(!is.na(sum.rows))
+        ##detections
         out.freqs[i, 2] <- sum(det.sum)
-
-
+        
         ##sites without detections
         none <- which(sum.rows == 0)
         ##sites with at least one detection
-        some <- which(sum.rows != 0) 
+        some <- which(sum.rows != 0)
+
         out.seasons[[i]] <- list("none" = none, "some" = some)
     }
   
@@ -474,36 +511,59 @@ detHist.unmarkedFitColExt <- function(object, ...) {
         some1 <- out.seasons[[j-1]]$some
         none2 <- out.seasons[[j]]$none
         some2 <- out.seasons[[j]]$some
-        ##colonizations
-        out.freqs[j, 3] <- sum(duplicated(c(some2, none1)))
-        ##extinctions
-        out.freqs[j, 4] <- sum(duplicated(c(some1, none2)))
-        ##no change
-        out.freqs[j, 5] <- sum(duplicated(c(some1, some2))) + sum(duplicated(c(none1, none2)))
-        ##sites both sampled in t and t-1
-        year1 <- c(none1, some1)
-        year2 <- c(none2, some2)
-        out.freqs[j, 6] <- sum(duplicated(c(year1, year2)))
+
+        ##add check for seasons without sampling or previous season without sampling
+        if(y.seasonsNA[j] || y.seasonsNA[j-1]) {
+            if(y.seasonsNA[j]) {
+                out.freqs[j, 2:6] <- NA
+            }
+            if(y.seasonsNA[j-1]) {
+                out.freqs[j, 3:6] <- NA
+            }
+        } else {
+            ##colonizations
+            out.freqs[j, 3] <- sum(duplicated(c(some2, none1)))
+            ##extinctions
+            out.freqs[j, 4] <- sum(duplicated(c(some1, none2)))
+            ##no change
+            out.freqs[j, 5] <- sum(duplicated(c(some1, some2))) + sum(duplicated(c(none1, none2)))
+            ##sites both sampled in t and t-1
+            year1 <- c(none1, some1)
+            year2 <- c(none2, some2)
+            out.freqs[j, 6] <- sum(duplicated(c(year1, year2)))
+        }
     }
+    
 
     ##create a matrix with proportion of sites with colonizations
     ##and extinctions based on raw data
     out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 4)
     colnames(out.props) <- c("naive.occ", "naive.colonization", "naive.extinction", "naive.static")
     rownames(out.props) <- rownames(out.freqs)
-    out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
-    out.props[, 2] <- out.freqs[, 3]/out.freqs[, 6]
-    out.props[, 3] <- out.freqs[, 4]/out.freqs[, 6]
-    out.props[, 4] <- out.freqs[, 5]/out.freqs[, 6]
-    
-    out.det <- list("hist.table.full" = hist.table.full,
-                    "hist.table.seasons" = hist.table.seasons,
-                    "out.freqs" = out.freqs, "out.props" = out.props,
-                    "n.seasons" = n.seasons,
-                    "n.visits.season" = n.visits.season,
-                    "n.species" = 1)
-    class(out.det) <- "detHist"
-    return(out.det)
+
+    for(k in 1:n.seasons) {
+        ##proportion of sites with detections
+        out.props[k, 1] <- out.freqs[k, 2]/out.freqs[k, 1]
+        ##add check for seasons without sampling
+        if(y.seasonsNA[k]) {
+            out.props[k, 2:4] <- NA
+        } else {
+            ##proportion colonized
+            out.props[k, 2] <- out.freqs[k, 3]/out.freqs[k, 6]
+            ##proportion extinct
+            out.props[k, 3] <- out.freqs[k, 4]/out.freqs[k, 6]
+            ##proportion static
+            out.props[k, 4] <- out.freqs[k, 5]/out.freqs[k, 6]
+        }
+    }
+        out.det <- list("hist.table.full" = hist.table.full,
+                        "hist.table.seasons" = hist.table.seasons,
+                        "out.freqs" = out.freqs, "out.props" = out.props,
+                        "n.seasons" = n.seasons,
+                        "n.visits.season" = n.visits.season,
+                        "n.species" = 1, "missing.seasons" = y.seasonsNA)
+        class(out.det) <- "detHist"
+        return(out.det)
 }
 
 
@@ -594,7 +654,7 @@ detHist.unmarkedFrameOccuMulti <- function(object, ...) {
                     "out.freqs" = out.freqs, "out.props" = out.props,
                     "n.seasons" = n.seasons,
                     "n.visits.season" = n.visits.season,
-                    "n.species" = nspecies)
+                    "n.species" = nspecies, "missing.seasons" = FALSE)
     class(out.det) <- "detHist"
     return(out.det)
 }
@@ -684,7 +744,7 @@ detHist.unmarkedFitOccuMulti <- function(object, ...) {
                     "out.freqs" = out.freqs, "out.props" = out.props,
                     "n.seasons" = n.seasons,
                     "n.visits.season" = n.visits.season,
-                    "n.species" = nspecies)
+                    "n.species" = nspecies, "missing.seasons" = FALSE)
     class(out.det) <- "detHist"
     return(out.det)
 }
@@ -702,7 +762,9 @@ detHist.unmarkedFrameOccuMS <- function(object, ...) {
     ##visits per season
     n.visits.season <- nvisits/n.seasons
     seasonNames <- paste("season", 1:n.seasons, sep = "")
-    
+    ##no missing season when single season
+    y.seasonsNA <- FALSE
+        
     ##for each season, determine frequencies
     out.seasons <- vector(mode = "list", length = n.seasons)
     hist.table.seasons <- vector(mode = "list", length = n.seasons)
@@ -758,12 +820,19 @@ detHist.unmarkedFrameOccuMS <- function(object, ...) {
         colStarts <- seq(from = 1, to = nvisits, by = n.visits.season)
         colEnds <- colStarts + (n.visits.season - 1)
         yrows <- list( )
-
+        yMat.seasons <- vector(mode = "list", length = n.seasons)
+        
         ##subsequent seasons
         for(i in 1:n.seasons) {
             yrows[[i]] <- apply(yMat[, colStarts[i]:colEnds[i]], MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
+            
+            yMat.seasons[[i]] <- yMat[, colStarts[i]:colEnds[i]]
+            
         }
 
+        ##check if any seasons were not sampled
+        y.seasonsNA <- sapply(yMat.seasons, FUN = function(i) all(is.na(i)))
+                
         ##organize and paste rows
         hist.full <- do.call(what = "paste", args = c(yrows, sep = "'"))
         hist.table.full <- table(hist.full, deparse.level = 0)
@@ -809,16 +878,28 @@ detHist.unmarkedFrameOccuMS <- function(object, ...) {
             some1 <- out.seasons[[j-1]]$some
             none2 <- out.seasons[[j]]$none
             some2 <- out.seasons[[j]]$some
-            ##colonizations
-            out.freqs[j, 3] <- sum(duplicated(c(some2, none1)))
-            ##extinctions
-            out.freqs[j, 4] <- sum(duplicated(c(some1, none2)))
-            ##no change
-            out.freqs[j, 5] <- sum(duplicated(c(some1, some2))) + sum(duplicated(c(none1, none2)))
-            ##sites both sampled in t and t-1
-            year1 <- c(none1, some1)
-            year2 <- c(none2, some2)
-            out.freqs[j, 6] <- sum(duplicated(c(year1, year2)))
+
+            ##add check for seasons without sampling or previous season without sampling
+            if(y.seasonsNA[j] || y.seasonsNA[j-1]) {
+                if(y.seasonsNA[j]) {
+                    out.freqs[j, 2:6] <- NA
+                }
+                if(y.seasonsNA[j-1]) {
+                    out.freqs[j, 3:6] <- NA
+                }
+            } else {
+
+                ##colonizations
+                out.freqs[j, 3] <- sum(duplicated(c(some2, none1)))
+                ##extinctions
+                out.freqs[j, 4] <- sum(duplicated(c(some1, none2)))
+                ##no change
+                out.freqs[j, 5] <- sum(duplicated(c(some1, some2))) + sum(duplicated(c(none1, none2)))
+                ##sites both sampled in t and t-1
+                year1 <- c(none1, some1)
+                year2 <- c(none2, some2)
+                out.freqs[j, 6] <- sum(duplicated(c(year1, year2)))
+            }
         }
     
         
@@ -827,19 +908,31 @@ detHist.unmarkedFrameOccuMS <- function(object, ...) {
         out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 4)
         colnames(out.props) <- c("naive.occ", "naive.colonization", "naive.extinction", "naive.static")
         rownames(out.props) <- rownames(out.freqs)
-        out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
-        out.props[, 2] <- out.freqs[, 3]/out.freqs[, 6]
-        out.props[, 3] <- out.freqs[, 4]/out.freqs[, 6]
-        out.props[, 4] <- out.freqs[, 5]/out.freqs[, 6]
+
+        for(k in 1:n.seasons) {
+            ##proportion of sites with detections
+            out.props[k, 1] <- out.freqs[k, 2]/out.freqs[k, 1]
+            ##add check for seasons without sampling
+            if(y.seasonsNA[k]) {
+                out.props[k, 2:4] <- NA
+            } else {
+                ##proportion colonized
+                out.props[k, 2] <- out.freqs[k, 3]/out.freqs[k, 6]
+                ##proportion extinct
+                out.props[k, 3] <- out.freqs[k, 4]/out.freqs[k, 6]
+                ##proportion static
+                out.props[k, 4] <- out.freqs[k, 5]/out.freqs[k, 6]
+            }
+        }
     }
     
-
     out.det <- list("hist.table.full" = hist.table.full,
                     "hist.table.seasons" = hist.table.seasons,
                     "out.freqs" = out.freqs, "out.props" = out.props,
                     "n.seasons" = n.seasons,
                     "n.visits.season" = n.visits.season,
-                    "n.species" = 1)
+                    "n.species" = 1,
+                    "missing.seasons" = y.seasonsNA)
     class(out.det) <- "detHist"
     return(out.det)
 }
@@ -858,6 +951,8 @@ detHist.unmarkedFitOccuMS <- function(object, ...) {
     ##visits per season
     n.visits.season <- nvisits/n.seasons
     seasonNames <- paste("season", 1:n.seasons, sep = "")
+    ##no missing season when single season
+    y.seasonsNA <- FALSE
     
     ##for each season, determine frequencies
     out.seasons <- vector(mode = "list", length = n.seasons)
@@ -914,12 +1009,18 @@ detHist.unmarkedFitOccuMS <- function(object, ...) {
         colStarts <- seq(from = 1, to = nvisits, by = n.visits.season)
         colEnds <- colStarts + (n.visits.season - 1)
         yrows <- list( )
-
+        yMat.seasons <- vector(mode = "list", length = n.seasons)
+        
         ##subsequent seasons
         for(i in 1:n.seasons) {
             yrows[[i]] <- apply(yMat[, colStarts[i]:colEnds[i]], MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
+
+            yMat.seasons[[i]] <- yMat[, colStarts[i]:colEnds[i]]
         }
 
+        ##check if any seasons were not sampled
+        y.seasonsNA <- sapply(yMat.seasons, FUN = function(i) all(is.na(i)))
+        
         ##organize and paste rows
         hist.full <- do.call(what = "paste", args = c(yrows, sep = "'"))
         hist.table.full <- table(hist.full, deparse.level = 0)
@@ -964,16 +1065,28 @@ detHist.unmarkedFitOccuMS <- function(object, ...) {
             some1 <- out.seasons[[j-1]]$some
             none2 <- out.seasons[[j]]$none
             some2 <- out.seasons[[j]]$some
-            ##colonizations
-            out.freqs[j, 3] <- sum(duplicated(c(some2, none1)))
-            ##extinctions
-            out.freqs[j, 4] <- sum(duplicated(c(some1, none2)))
-            ##no change
-            out.freqs[j, 5] <- sum(duplicated(c(some1, some2))) + sum(duplicated(c(none1, none2)))
-            ##sites both sampled in t and t-1
-            year1 <- c(none1, some1)
-            year2 <- c(none2, some2)
-            out.freqs[j, 6] <- sum(duplicated(c(year1, year2)))
+
+            ##add check for seasons without sampling or previous season without sampling
+            if(y.seasonsNA[j] || y.seasonsNA[j-1]) {
+                if(y.seasonsNA[j]) {
+                    out.freqs[j, 2:6] <- NA
+                }
+                if(y.seasonsNA[j-1]) {
+                    out.freqs[j, 3:6] <- NA
+                }
+            } else {
+
+                ##colonizations
+                out.freqs[j, 3] <- sum(duplicated(c(some2, none1)))
+                ##extinctions
+                out.freqs[j, 4] <- sum(duplicated(c(some1, none2)))
+                ##no change
+                out.freqs[j, 5] <- sum(duplicated(c(some1, some2))) + sum(duplicated(c(none1, none2)))
+                ##sites both sampled in t and t-1
+                year1 <- c(none1, some1)
+                year2 <- c(none2, some2)
+                out.freqs[j, 6] <- sum(duplicated(c(year1, year2)))
+            }
         }
     
         
@@ -982,10 +1095,22 @@ detHist.unmarkedFitOccuMS <- function(object, ...) {
         out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 4)
         colnames(out.props) <- c("naive.occ", "naive.colonization", "naive.extinction", "naive.static")
         rownames(out.props) <- rownames(out.freqs)
-        out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
-        out.props[, 2] <- out.freqs[, 3]/out.freqs[, 6]
-        out.props[, 3] <- out.freqs[, 4]/out.freqs[, 6]
-        out.props[, 4] <- out.freqs[, 5]/out.freqs[, 6]
+
+        for(k in 1:n.seasons) {
+            ##proportion of sites with detections
+            out.props[k, 1] <- out.freqs[k, 2]/out.freqs[k, 1]
+            ##add check for seasons without sampling
+            if(y.seasonsNA[k]) {
+                out.props[k, 2:4] <- NA
+            } else {
+                ##proportion colonized
+                out.props[k, 2] <- out.freqs[k, 3]/out.freqs[k, 6]
+                ##proportion extinct
+                out.props[k, 3] <- out.freqs[k, 4]/out.freqs[k, 6]
+                ##proportion static
+                out.props[k, 4] <- out.freqs[k, 5]/out.freqs[k, 6]
+            }
+        }
     }
     
 
@@ -994,7 +1119,8 @@ detHist.unmarkedFitOccuMS <- function(object, ...) {
                     "out.freqs" = out.freqs, "out.props" = out.props,
                     "n.seasons" = n.seasons,
                     "n.visits.season" = n.visits.season,
-                    "n.species" = 1)
+                    "n.species" = 1,
+                    "missing.seasons" = y.seasonsNA)
     class(out.det) <- "detHist"
     return(out.det)
 }
@@ -1109,20 +1235,36 @@ print.detHist <- function(x, digits = 2, ...) {
             rownames(out.mat) <- "Frequency"
             print(out.mat)
         }
-        
-        cat("\nSeason-specific detection histories: \n")
-        cat("\n")
-        for(i in 1:x$n.seasons) {
-            cat("Season", i, "\n")
-            temp.tab <- x$hist.table.seasons[[i]]
-            out.mat <- matrix(temp.tab, nrow = 1)
-            colnames(out.mat) <- names(temp.tab)
-            rownames(out.mat) <- "Frequency"
-            print(out.mat)
-            cat("--------\n\n")
+
+        ##if some seasons have not been sampled
+        if(any(x$missing.seasons)) {
+            if(sum(x$missing.seasons) == 1) {
+                cat("\nNote: season", which(x$missing.seasons), "was not sampled\n")
+            } else {
+                cat("\nNote: seasons",
+                    paste(which(x$missing.seasons), sep = ", "),
+                    "were not sampled\n")
+            }
+                
+            cat("\nSeason-specific detection histories: \n")
+            cat("\n")
+            for(i in 1:x$n.seasons) {
+                if(!x$missing.seasons[i]) {
+                    cat("Season", i, "\n")
+                } else {
+                    cat("Season", i, "(no sites sampled)", "\n")
+                }
+                
+                temp.tab <- x$hist.table.seasons[[i]]
+                out.mat <- matrix(temp.tab, nrow = 1)
+                colnames(out.mat) <- names(temp.tab)
+                rownames(out.mat) <- "Frequency"
+                print(out.mat)
+                cat("--------\n\n")
+            }
         }
 
-        #cat("\n")
+        ##cat("\n")
         cat("Frequencies of sites with detections, extinctions, and colonizations:\n")
         ##add matrix of frequencies
         print(x$out.freqs)

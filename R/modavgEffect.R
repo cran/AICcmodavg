@@ -49,7 +49,18 @@ modavgEffect.AICaov.lm <- function(cand.set, modnames = NULL, newdata, second.or
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -201,6 +212,18 @@ modavgEffect.AICglm.lm <- function(cand.set, modnames = NULL, newdata, second.or
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
+
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
 
   ##extract name of column
   if(sum(varies) == 1) {
@@ -450,7 +473,18 @@ modavgEffect.AICgls <- function(cand.set, modnames = NULL, newdata, second.ord =
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -603,7 +637,18 @@ modavgEffect.AIClm <- function(cand.set, modnames = NULL, newdata, second.ord = 
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -754,7 +799,18 @@ function(cand.set, modnames = NULL, newdata, second.ord = TRUE, nobs = NULL,
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -903,8 +959,19 @@ modavgEffect.AICmer <- function(cand.set, modnames = NULL, newdata, second.ord =
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
-    
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
+   
   ##extract name of column
   if(sum(varies) == 1) {
     var.id <- names(varies)[which(varies == TRUE)]
@@ -1066,7 +1133,18 @@ modavgEffect.AICglmerMod <- function(cand.set, modnames = NULL, newdata, second.
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -1231,7 +1309,18 @@ modavgEffect.AIClmerMod <- function(cand.set, modnames = NULL, newdata, second.o
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -1387,7 +1476,18 @@ modavgEffect.AIClmerModLmerTest <- function(cand.set, modnames = NULL, newdata, 
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -1541,6 +1641,18 @@ modavgEffect.AICnegbin.glm.lm <- function(cand.set, modnames = NULL, newdata, se
     uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
     lengths <- lapply(X = uniques, FUN = length)
     varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
+
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
 
     ##extract name of column
     if(sum(varies) == 1) {
@@ -1713,7 +1825,18 @@ modavgEffect.AICrlm.lm <- function(cand.set, modnames = NULL, newdata, second.or
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -1870,6 +1993,18 @@ modavgEffect.AICsurvreg <- function(cand.set, modnames = NULL, newdata, second.o
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
+
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
 
     
   ##extract name of column
@@ -2049,7 +2184,18 @@ modavgEffect.AICunmarkedFitOccu <- function(cand.set, modnames = NULL, newdata, 
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -2312,7 +2458,18 @@ modavgEffect.AICunmarkedFitColExt <- function(cand.set, modnames = NULL, newdata
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -2562,7 +2719,18 @@ modavgEffect.AICunmarkedFitOccuRN <- function(cand.set, modnames = NULL, newdata
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -2815,7 +2983,18 @@ modavgEffect.AICunmarkedFitPCount <- function(cand.set, modnames = NULL, newdata
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -3099,7 +3278,18 @@ modavgEffect.AICunmarkedFitPCO <- function(cand.set, modnames = NULL, newdata, s
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -3367,7 +3557,18 @@ modavgEffect.AICunmarkedFitDS <- function(cand.set, modnames = NULL, newdata, se
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -3625,7 +3826,18 @@ modavgEffect.AICunmarkedFitGDS <- function(cand.set, modnames = NULL, newdata, s
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -3891,7 +4103,18 @@ modavgEffect.AICunmarkedFitOccuFP <- function(cand.set, modnames = NULL, newdata
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -4143,7 +4366,18 @@ modavgEffect.AICunmarkedFitMPois <- function(cand.set, modnames = NULL, newdata,
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -4394,7 +4628,18 @@ modavgEffect.AICunmarkedFitGMM <- function(cand.set, modnames = NULL, newdata, s
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -4647,7 +4892,18 @@ modavgEffect.AICunmarkedFitGPC <- function(cand.set, modnames = NULL, newdata, s
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -4930,7 +5186,18 @@ modavgEffect.AICunmarkedFitMMO <- function(cand.set, modnames = NULL, newdata, s
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -5231,7 +5498,18 @@ modavgEffect.AICunmarkedFitDSO <- function(cand.set, modnames = NULL, newdata, s
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -5512,7 +5790,18 @@ modavgEffect.AICunmarkedFitOccuTTD <- function(cand.set, modnames = NULL, newdat
   uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
   lengths <- lapply(X = uniques, FUN = length)
   varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
   ##extract name of column
   if(sum(varies) == 1) {
@@ -5789,7 +6078,18 @@ modavgEffect.AICunmarkedFitOccuMS <- function(cand.set, modnames = NULL, newdata
     uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
     lengths <- lapply(X = uniques, FUN = length)
     varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
     ##extract name of column
     if(sum(varies) == 1) {
@@ -6100,7 +6400,18 @@ modavgEffect.AICunmarkedFitOccuMulti <- function(cand.set, modnames = NULL, newd
     uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
     lengths <- lapply(X = uniques, FUN = length)
     varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
 
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
     
     ##extract name of column
     if(sum(varies) == 1) {

@@ -443,12 +443,29 @@ AICc.nlme <-
 AICc.nls <-
   function(mod, return.K = FALSE, second.ord = TRUE, nobs = NULL, ...){
 
-    if(identical(nobs, NULL)) {n <- length(fitted(mod))} else {n <- nobs}
-    LL <- logLik(mod)[1]
-    K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model
-    if(second.ord == TRUE) {AICc <- -2*LL+2*K*(n/(n-K-1))}  else{AICc <- -2*LL+2*K}
-    if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
-    AICc
+      if(identical(nobs, NULL)) {
+          n <- length(fitted(mod))
+
+          ##add warning if returning a constant with length(fitted(mod))
+          if(n == 1) {
+              warning(paste("\nlength(fitted(mod)) returned the following scalar: ", n,
+                            "\nif sample size is larger than this value, supply sample size using 'nobs' argument\n"))
+          }
+          
+          if(n > 1 && n < 5) {
+              warning(paste("\nlength(fitted(mod)) returned: ", n,
+                            "\nif sample size is larger than this value, supply sample size using the 'nobs' argument\n"))
+          }
+          
+      } else {
+          n <- nobs
+      }
+      
+      LL <- logLik(mod)[1]
+      K <- attr(logLik(mod), "df")  #extract correct number of parameters included in model
+      if(second.ord == TRUE) {AICc <- -2*LL+2*K*(n/(n-K-1))}  else{AICc <- -2*LL+2*K}
+      if(return.K == TRUE) AICc[1] <- K #attributes the first element of AICc to K
+      AICc
   }
 
 

@@ -71,7 +71,9 @@ Bullfrogs (\emph{Lithobates catesbeianus}) in 50 wetlands sampled in
 }
 \details{
 This data set is used to illustrate single-species single-season
-occupancy models (MacKenzie et al. 2002) in Mazerolle (2015). 
+occupancy models (MacKenzie et al. 2002) in Mazerolle (2015). The
+average number of sampling stations on each visit was 8.665714, and was
+used to center \code{Effort} on each visit.
 }
 \source{
   MacKenzie, D. I., Nichols, J. D., Lachman, G. B., Droege, S., Royle,

@@ -1,13 +1,11 @@
-citHeader("To cite package 'AICcmodavg' in publications use:")
-year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
-vers <- paste("R package version", meta$Version)
-citEntry(entry="Manual",
-	title = "AICcmodavg: Model selection and multimodel inference based on (Q)AIC(c)",
-        author = personList(as.person("Marc J. Mazerolle")),
-	       year = year,
-               note = vers,
-	       url = "https://cran.r-project.org/package=AICcmodavg",	       
-               textVersion =
-               paste("Marc J. Mazerolle (", 
-	       year, ") AICcmodavg: Model selection and multimodel inference based on (Q)AIC(c). ",
-                      vers, ". https://cran.r-project.org/package=AICcmodavg.", sep=""))
+bibentry(bibtype = "Manual",
+         title = "AICcmodavg: Model selection and multimodel inference based on (Q)AIC(c)",
+         author = person(given = c("Marc", "J."), family = "Mazerolle",
+                         role = "aut", email = "marc.mazerolle@sbf.ulaval.ca"),
+         year = "2023",
+         note = "R package version 2.3.2",
+         url = "https://cran.r-project.org/package=AICcmodavg",	       
+         textVersion = NULL, bibtex = TRUE,
+         header = "To cite package 'AICcmodavg' in publications use:",
+         key = "AICcmodavg-package")
+

@@ -130,6 +130,12 @@ detHist(object, \dots)
   \item{n.species}{the number of species in the data set.
   }
 
+  \item{missing.seasons}{logical vector indicating whether data were
+  collected or not during a given season (primary period), where
+  \code{TRUE} indicates that no data were collected during the season. 
+}
+
+
   For objects of classes \code{unmarkedFitOccuMulti} and
   \code{unmarkedFrameOccuMulti}, \code{detHist} returns a list with the
   following components: 
@@ -161,6 +167,11 @@ detHist(object, \dots)
 
   \item{n.species}{the number of species in the data set.
   }
+
+  \item{missing.seasons}{logical vector indicating whether data were
+  collected or not during a given season (primary period), where
+  \code{TRUE} indicates that no data were collected during the season. 
+}
 }
 
 

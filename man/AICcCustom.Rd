@@ -53,7 +53,7 @@ AICcCustom(logL, K, return.K = FALSE, second.ord = TRUE, nobs = NULL,
   \code{AICcCustom} computes one of the following four information criteria:
   
   Akaike's information criterion (AIC, Akaike 1973), the  second-order
-  or small sample AIC (AICc, Sugiura   1978, Hurvich and Tsai 1991), the
+  or small sample AIC (AICc, Sugiura   1978, Hurvich and Tsai 1989, 1991), the
   quasi-likelihood AIC (QAIC, Burnham and Anderson 2002), and the
   quasi-likelihood AICc (QAICc, Burnham and Anderson 2002).
 }
@@ -80,10 +80,13 @@ AICcCustom(logL, K, return.K = FALSE, second.ord = TRUE, nobs = NULL,
   Multimodel Inference: a practical information-theoretic
   approach}. Second edition. Springer: New York.
 
-Dail, D., Madsen, L. (2011) Models for estimating abundance from
-repeated counts of an open population. \emph{Biometrics} \bold{67},
-577--587. 
+  Dail, D., Madsen, L. (2011) Models for estimating abundance from
+  repeated counts of an open population. \emph{Biometrics} \bold{67},
+  577--587. 
   
+  Hurvich, C. M., Tsai, C.-L. (1989) Regression and time series model
+  selection in small samples. \emph{Biometrika} \bold{76}, 297--307.  
+
   Hurvich, C. M., Tsai, C.-L. (1991) Bias of the corrected AIC
   criterion for underfitted regression and time series
   models. \emph{Biometrika} \bold{78}, 499--509. 

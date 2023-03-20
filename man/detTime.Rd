@@ -101,12 +101,17 @@ detTime(object, plot.time = TRUE, plot.seasons = FALSE,
   }
 
   \item{n.seasons}{the number of seasons (primary periods) in the data
-  set.
+    set.
   }
 
   \item{n.visits.season}{the maximum number of visits per season in the
-  data set.
+    data set.
   }
+
+  \item{missing.seasons}{logical vector indicating whether data were
+  collected or not during a given season (primary period), where
+  \code{TRUE} indicates that no data were collected during the season.
+}
 }
 
 

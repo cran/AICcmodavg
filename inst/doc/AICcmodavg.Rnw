@@ -23,8 +23,8 @@
 \renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
 
 \title{Model selection and multimodel inference using the \texttt{AICcmodavg} package}
-\author{Marc J. Mazerolle\footnote{Département des sciences du bois et de la forêt, Université Laval}}
-\date{\today}
+\author{Marc J. Mazerolle\footnote{Département des sciences du bois et de la forêt, Université Laval, Québec, Canada}}
+\date{20 March 2023}
 
 \bibliographystyle{ecologyEN} %using Ecology style modified by M. J. Mazerolle
 

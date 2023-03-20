@@ -31,86 +31,86 @@
 }
 \usage{
 \method{xtable}{aictab}(x, caption = NULL, label = NULL, align = NULL, 
-        digits = NULL, display = NULL, nice.names = TRUE,
-        include.AICc = TRUE, include.LL = TRUE, include.Cum.Wt = FALSE,
-        \dots)
+        digits = NULL, display = NULL, auto = FALSE,
+        nice.names = TRUE, include.AICc = TRUE,
+        include.LL = TRUE, include.Cum.Wt = FALSE, \dots)
 
 \method{xtable}{anovaOD}(x, caption = NULL, label = NULL, align = NULL,
-                         digits = NULL, display = NULL, 
-                         nice.names = TRUE, \dots)
+       digits = NULL, display = NULL, auto = FALSE, 
+       nice.names = TRUE, \dots)
 
 \method{xtable}{bictab}(x, caption = NULL, label = NULL, align = NULL, 
-        digits = NULL, display = NULL, nice.names = TRUE,
-        include.BIC = TRUE, include.LL = TRUE, include.Cum.Wt = FALSE,
-        \dots)
+        digits = NULL, display = NULL, auto = FALSE,
+        nice.names = TRUE, include.BIC = TRUE, include.LL = TRUE,
+        include.Cum.Wt = FALSE, \dots)
 
 \method{xtable}{boot.wt}(x, caption = NULL, label = NULL, align = NULL,
-        digits = NULL, display = NULL, nice.names = TRUE,
-        include.AICc = TRUE, include.AICcWt = FALSE, \dots)
+        digits = NULL, display = NULL, auto = FALSE,
+        nice.names = TRUE, include.AICc = TRUE, include.AICcWt = FALSE, \dots)
 
 \method{xtable}{countDist}(x, caption = NULL, label = NULL,
-        align = NULL, digits = NULL, display = NULL,
+        align = NULL, digits = NULL, display = NULL, auto = FALSE,
         nice.names = TRUE, table.countDist = "distance", \dots)
 
 \method{xtable}{checkParms}(x, caption = NULL, label = NULL,
-        align = NULL, digits = NULL, display = NULL,
+        align = NULL, digits = NULL, display = NULL, auto = FALSE,
         nice.names = TRUE, include.variable = TRUE, include.max.se =
         TRUE, include.n.high.se = TRUE, \dots)
 
 \method{xtable}{countHist}(x, caption = NULL, label = NULL,
-        align = NULL, digits = NULL, display = NULL,
+        align = NULL, digits = NULL, display = NULL, auto = FALSE,
         nice.names = TRUE, table.countHist = "count", \dots)
 
 \method{xtable}{detHist}(x, caption = NULL, label = NULL,
-        align = NULL, digits = NULL, display = NULL,
+        align = NULL, digits = NULL, display = NULL, auto = FALSE,
         nice.names = TRUE, table.detHist = "freq", \dots)
 
 \method{xtable}{detTime}(x, caption = NULL, label = NULL,
-        align = NULL, digits = NULL, display = NULL,
+        align = NULL, digits = NULL, display = NULL, auto = FALSE,
         nice.names = TRUE, table.detTime = "freq", \dots)
 
 \method{xtable}{dictab}(x, caption = NULL, label = NULL, align = NULL, 
-        digits = NULL, display = NULL, nice.names = TRUE,
-        include.DIC = TRUE, include.Cum.Wt = FALSE, \dots)
+        digits = NULL, display = NULL, auto = FALSE, 
+        nice.names = TRUE, include.DIC = TRUE, include.Cum.Wt = FALSE, \dots)
 
 \method{xtable}{ictab}(x, caption = NULL, label = NULL, align = NULL,
-        digits = NULL, display = NULL, nice.names = TRUE,
+        digits = NULL, display = NULL, auto = FALSE, nice.names = TRUE,
         include.IC = TRUE, include.Cum.Wt = FALSE, \dots)
 
 \method{xtable}{mb.chisq}(x, caption = NULL, label = NULL, align = NULL,
-        digits = NULL, display = NULL, nice.names = TRUE,
+        digits = NULL, display = NULL, auto = FALSE, nice.names = TRUE,
         include.detection.histories = TRUE, \dots)
 
 \method{xtable}{modavg}(x, caption = NULL, label = NULL, align = NULL,
-        digits = NULL, display = NULL, nice.names = TRUE,
+        digits = NULL, display = NULL, auto = FALSE, nice.names = TRUE,
         print.table = FALSE, \dots)
 
 \method{xtable}{modavgCustom}(x, caption = NULL, label = NULL,
-        align = NULL, digits = NULL, display = NULL, nice.names = TRUE,
-        print.table = FALSE, \dots)
+        align = NULL, digits = NULL, display = NULL, auto = FALSE,
+        nice.names = TRUE, print.table = FALSE, \dots)
 
 \method{xtable}{modavgEffect}(x, caption = NULL, label = NULL,
-        align = NULL, digits = NULL, display = NULL, nice.names = TRUE, 
-        print.table = FALSE, \dots)
+        align = NULL, digits = NULL, display = NULL, auto = FALSE,
+        nice.names = TRUE, print.table = FALSE, \dots)
 
 \method{xtable}{modavgIC}(x, caption = NULL, label = NULL, align = NULL,
-        digits = NULL, display = NULL, nice.names = TRUE,
+        digits = NULL, display = NULL, auto = FALSE, nice.names = TRUE,
         print.table = FALSE, \dots)
 
 \method{xtable}{modavgPred}(x, caption = NULL, label = NULL,
-        align = NULL, digits = NULL, display = NULL, nice.names = TRUE,  
-        \dots)
+        align = NULL, digits = NULL, display = NULL, auto = FALSE,
+        nice.names = TRUE, \dots)
 
 \method{xtable}{modavgShrink}(x, caption = NULL, label = NULL,
-        align = NULL, digits = NULL, display = NULL, nice.names = TRUE, 
-        print.table = FALSE, \dots)
+        align = NULL, digits = NULL, display = NULL, auto = FALSE,
+        nice.names = TRUE, print.table = FALSE, \dots)
 
 \method{xtable}{multComp}(x, caption = NULL, label = NULL,
-        align = NULL, digits = NULL, display = NULL, nice.names = TRUE, 
-        print.table = FALSE, \dots)
+        align = NULL, digits = NULL, display = NULL, auto = FALSE,
+        nice.names = TRUE, print.table = FALSE, \dots)
 
 \method{xtable}{summaryOD}(x, caption = NULL, label = NULL, align = NULL,
-                           digits = NULL, display = NULL, 
+                           digits = NULL, display = NULL, auto = FALSE, 
                            nice.names = TRUE, \dots)
 
 }
@@ -157,6 +157,15 @@
     additional possible values.
   }
 
+
+  \item{auto}{
+    Logical, indicating whether to apply automatic format when no value
+    is passed to \code{align}, \code{digits}, or \code{display}. This
+    \code{autoformat} (based on \code{xalign}, \code{xdigits}, and \code{xdisplay})
+    can be useful to quickly format a typical \code{matrix} or
+    \code{data.frame}. Default value is \code{FALSE}.
+  }
+  
   \item{nice.names}{
     logical.  If \code{TRUE}, column labels are modified to improve their
     appearance in the table.  If \code{FALSE}, simpler labels are used,

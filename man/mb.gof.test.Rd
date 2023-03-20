@@ -196,7 +196,12 @@ indicate lack-of-fit and that an alternative model should be investigated.
   }
   \item{n.seasons}{the number of primary periods (seasons).
   }
-
+  \item{n.seasons}{the number of primary periods (seasons).
+  }
+  \item{missing.seasons}{logical vector indicating whether data were
+  collected or not during a given season (primary period), where
+  \code{TRUE} indicates that no data were collected during the season.
+}
 
   \code{mb.gof.test} returns the following components for single-season
   and Royle-Nichols occupancy models:

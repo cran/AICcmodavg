@@ -518,12 +518,22 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, print.matrix = FALSE, lev
 ###  THIS BIT IS MODIFIED FOR OFFSET
 ###############################################
   ##check for offset
-  if(length(mod@offset) > 0) {
-    calls <- attr(TT, "variables")
-    off.num <- attr(TT, "offset")
+  ##if(length(mod@offset) > 0) {
+  ##  calls <- attr(TT, "variables")
+  ##  off.num <- attr(TT, "offset")
     ##offset values
-    offset.values <- eval(calls[[off.num+1]], newdata)
-  }
+    ##offset.values <- eval(calls[[off.num+1]], newdata)
+    ##}
+
+    checkCall <- as.list(mod@call)
+    checkOffset <- any(regexpr("offset", text = as.character(names(checkCall))) != -1)
+    if(checkOffset) {
+        calls <- attr(TT, "variables")
+        off.num <- attr(TT, "offset")
+        ##offset values
+        offset.values <- eval(attr(mod@frame, "offset"), newdata)
+    }
+  
 ###############################################
 ###END OF MODIFICATIONS FOR OFFSET
 ###############################################
@@ -605,28 +615,28 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, print.matrix = FALSE, lev
 ########BEGIN MODIFIED FOR OFFSET############
 ##############################################
 ##############################################
-  if(length(mod@offset) > 0) {
-    ##iterate and combine betas and covariates
-  formula2 <- character(length = ncoefs+1)
-  for(b in 1:ncoefs) {
-    formula2[b] <- paste(formula[b], names.cov[b], sep="*")
-  }
+    if(checkOffset) {
+      ##iterate and combine betas and covariates
+      formula2 <- character(length = ncoefs+1)
+      for(b in 1:ncoefs) {
+        formula2[b] <- paste(formula[b], names.cov[b], sep="*")
+      }
 
-  ##add offset variable to formula
-  formula2[ncoefs+1] <- "offset.vals"
+      ##add offset variable to formula
+      formula2[ncoefs+1] <- "offset.vals"
   
-  ##replace with Beta0 if fixed intercept term present
-  if(int.yes) {formula2[1] <- "Beta0"}
-  
-  ##collapse into a single equation and convert to expression
-  eq.space <- parse(text  = as.expression(paste(formula2, collapse="+")),
-                    srcfile = NULL)
-  ##add step to remove white space to avoid reaching 500 character limit
-  
-  ##remove space within expression
-  no.space <- gsub("[[:space:]]+", "", as.character(eq.space))
-  equation <- parse(text = as.expression(no.space))
-}
+      ##replace with Beta0 if fixed intercept term present
+      if(int.yes) {formula2[1] <- "Beta0"}
+      
+      ##collapse into a single equation and convert to expression
+      eq.space <- parse(text  = as.expression(paste(formula2, collapse="+")),
+                        srcfile = NULL)
+      ##add step to remove white space to avoid reaching 500 character limit
+      
+      ##remove space within expression
+      no.space <- gsub("[[:space:]]+", "", as.character(eq.space))
+      equation <- parse(text = as.expression(no.space))
+    }
 ##############################################
 ########END MODIFIED FOR OFFSET###############
 ##############################################
@@ -728,8 +738,8 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, print.matrix = FALSE, lev
 ######################################
 ###BEGIN MODIFIED FOR OFFSET
 ######################################
-        if(length(mod@offset) > 0) {
-          predicted.vals <- fix.coef%*%cov.values.mat[w,] + offset.values[w]
+        if(checkOffset) {
+            predicted.vals <- fix.coef%*%cov.values.mat[w,] + offset.values[w]
         }
 ######################################
 ###END MODIFIED FOR OFFSET
@@ -815,8 +825,8 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, print.matrix = FALSE, lev
 ######################################
 
             ##if offset present, add in equation
-            if(length(mod@offset) > 0) {
-              cmds[[ncoefs+1]] <- paste("offset.vals = offset.values[w]")
+            if(checkOffset) {
+                cmds[[ncoefs+1]] <- paste("offset.vals = offset.values[w]")
             }
 ######################################
 ###END MODIFIED FOR OFFSET
@@ -854,9 +864,9 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, print.matrix = FALSE, lev
 ######################################
 ###BEGIN MODIFIED FOR OFFSET
 ######################################
-        if(length(mod@offset) > 0) {
-          predicted.vals <- fix.coef%*%cov.values.mat[w,] + offset.values[w]
-        }
+          if(checkOffset) {
+            predicted.vals <- fix.coef%*%cov.values.mat[w,] + offset.values[w]
+          }
 ######################################
 ###END MODIFIED FOR OFFSET
 ######################################
@@ -882,8 +892,8 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, print.matrix = FALSE, lev
 ######################################
 ###BEGIN MODIFIED FOR OFFSET
 ######################################
-        if(length(mod@offset) > 0) {
-          predicted.vals <- fix.coef%*%cov.values.mat[w,] + offset.values[w]
+        if(checkOffset) {
+            predicted.vals <- fix.coef%*%cov.values.mat[w,] + offset.values[w]
         }
 ######################################
 ###END MODIFIED FOR OFFSET
@@ -920,7 +930,6 @@ predictSE.mer <- function(mod, newdata, se.fit = TRUE, print.matrix = FALSE, lev
   return(out.fit.SE)
 }
 
-  
 
 
 ##########################

@@ -4,6 +4,24 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@sbf.ulaval.ca>
 ##
 ####################################################################
+##revision 2.3-2 (20 March 2023)
+##- added a vignette for a full example using diagnostic tools and utility functions implemented in 'AICcmodavg' for models fit in 'unmarked' package
+##- updated 'modavgEffect' with check to include case with a single predictor appearing in models
+##- updated 'mb.gof.test' for 'unmarkedFitColExt' object to deal with seasons without any sampling
+##- updated 'detHist' for 'unmarkedFitColExt' and 'unmarkedFitoccuMS' objects to deal with seasons without any sampling
+##- updated 'detTime' for 'unmarkedFitoccuTTD' objects to deal with seasons without any sampling
+##- updated 'countDist' for 'unmarkedFitPCO', 'unmarkedFitGMM', and 'unmarkedFitMMO' objects to deal with seasons without any sampling
+##- updated 'countHist' for 'unmarkedFitDSO' objects to deal with seasons without any sampling
+##- modified 'par' settings to return to original plot settings on exit for
+##  'mb.gof.test', 'countDist', 'countHist', and 'detTime' (Suggestion by M. Meredith)
+##- added a warning when using 'nls' with null model when 'fitted' produces scalar
+##  (Thanks to D. Armstrong)
+##- modified 'xtable' methods to include new argument 'auto' in 'xtable' package
+##- corrected bug from change in 'mer' object structure when dealing with offsets
+
+
+
+####################################################################
 ##revision 2.3-1 (21 August 2020)
 ##- corrected bug in margin width when plotting results of 'mb.gof.test'
 ##  with dynamic occupancy model models (thanks to M. Meredith)

@@ -2,6 +2,37 @@
 \title{AICcmodavg News}
 \encoding{UTF-8}
 
+\section{Changes in version 2.3-2 (2023-03-20)}{
+  \itemize{
+    \item{added a vignette for a full example using diagnostic tools and
+      utility functions implemented in 'AICcmodavg' for models fit in
+      'unmarked' package}
+    \item{updated modavgEffect to check consistency of variables between
+      'newdata' and variables appearing in candidate model set}
+    \item{updated 'mb.gof.test' for 'unmarkedFitColExt' object to deal with seasons without any sampling}
+    \item{updated 'detHist' for 'unmarkedFitColExt' and
+      'unmarkedFitoccuMS' objects to deal with seasons without any sampling}
+    \item{updated 'detTime' for 'unmarkedFitoccuTTD' objects to deal
+      with seasons without any sampling}
+    \item{updated 'countDist' for 'unmarkedFitPCO', 'unmarkedFitGMM',
+    and 'unmarkedFitMMO' objects to deal with seasons without any
+    sampling}
+  \item{updated 'countHist' for 'unmarkedFitDSO' objects to deal with
+    seasons without any sampling}
+  \item{modified 'par' settings to return to original plot settings on
+    exit for 'mb.gof.test', 'countDist', 'countHist', and 'detTime'
+    (Suggestion by M. Meredith)}
+  \item{added a warning when using 'nls' with null model when 'fitted'
+    produces scalar and 'nobs' = 1 (Thanks to D. Armstrong)}
+  \item{modified 'xtable' methods to include new argument 'auto' in
+    'xtable' package}
+  \item{corrected bug from change in 'mer' object structure when dealing
+    with offsets}
+}
+}
+      
+      
+
 \section{Changes in version 2.3-1 (2020-08-21)}{
   \itemize{
     \item corrected bug in margin width when plotting results of

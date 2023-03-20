@@ -1,0 +1,499 @@
+\documentclass[letterpaper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{array, tabularx}
+%to use colors  
+\usepackage[usenames,dvipsnames]{xcolor}
+
+\usepackage{amsmath}
+
+\usepackage[left=2.54cm, right=2.54cm, top=2.54cm, bottom=2.54cm]{geometry}
+
+%include package to add hyperlinks
+\usepackage[colorlinks, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+
+\usepackage{Sweave}
+%to indent code by 2 em and remove space between code and output
+\DefineVerbatimEnvironment{Sinput}{Verbatim} {xleftmargin=2em,fontsize=\footnotesize}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{xleftmargin=2em,fontsize=\footnotesize}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{xleftmargin=2em,fontsize=\footnotesize}
+\fvset{listparameters={\setlength{\topsep}{0pt}}}
+\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+
+\title{Example session of model selection tools and diagnostics for models fit with the \texttt{unmarked} package}
+\author{Marc J. Mazerolle\footnote{Département des sciences du bois et de la forêt, Université Laval, Québec, Canada}}
+\date{20 March 2023}
+
+\bibliographystyle{ecologyEN} %using Ecology style modified by M. J. Mazerolle
+
+%\VignetteIndexEntry{Using AICcmodavg with unmarked objects}
+%\VignettePackage{AICcmodavg}
+%\VignetteDepends{xtable}
+
+\begin{document}
+
+<<echo=false>>=
+options(width=70, continue = "  ")
+@
+
+\maketitle
+
+\abstract{The \texttt{AICcmodavg} package implements model selection and multimodel inference for a wide range of model types, including those fit with the unmarked package \citep{fiske11}. For the latter model type, the \texttt{AICcmodavg} package offers additional diagnostic tools and utility functions. Using an example of single-season single-species site analysis, this vignette illustrates these tools.
+
+  
+  \section{Introduction}
+  Estimating demographic parameters can be challenging in animal populations afflicted by varying probabilities of detection \citep{williams02, mazerolle07}. A variety of approaches have been developed to overcome this issue, by estimating detection probabilities explicitly along with the biological parameters of interest \citep{buckland01, williams02, mackenzie06, royle08}. These methods include capture-mark-recapture models, distance sampling, site occupancy models, and \emph{N}-mixture models \citep{williams02, mackenzie06}. Some of these methods are gaining popularity and have been implemented in the \texttt{unmarked} package \citep{fiske11}. Two recent books by \citet{kery16} and \citet{kery21} are excellent introductions to the application of these methods using \texttt{unmarked}. Below, I outline an example using various tools from the \texttt{AICcmodavg} package.
+  
+  \section{Example using a site occupancy analysis}
+  The basic design for site occupancy analysis consists of repeated visits conducted at a series of sites to detect a species of interest \cite{mackenzie06}. An important assumption of these analyses is that the state of the site (occupied or not occupied) does not change between the first and last visit. The first example is drawn from a study of the invasive common reed (\emph{Phragmites australis}, haplotype M) on the occupancy of Bullfrogs (\emph{Lithobates catesbeianus}) in 50 wetlands in the Montréal area, Québec, Canada \citep{mazerolle15}. Three-minute call surveys were conducted at stations on the perimeter of the wetlands on three occasions during the 2009 Bullfrog breeding season. The number of sampling stations depended on wetland size, ranging between 4 and 11 stations (average number of sampling stations on a given visit = 8.67). Minnow traps were also used to sample adults, with a trap deployed at each sampling station during two periods of two consecutive nights. Traps were checked daily to identify and release individuals. Sites were surveyed for invasive common reed. These data are included in the \texttt{AICcmodavg} package in the \texttt{bullfrog} data frame. The help page of the data frame describes each column (see \texttt{?bullfrog}).
+  
+\subsection{Preparing the data and a few diagnostics}  
+<<loadPackage>>=
+##load package
+library(AICcmodavg)
+##load data frame
+data(bullfrog)
+@   
+  
+We can start by checking the structure of the data frame:
+<<checkBullfrog>>=
+##check data structure
+str(bullfrog)
+##first rows
+head(bullfrog)
+@ 
+
+We will then extract the data to later format into an \texttt{unmarkedFrameOccu} object, including the detections, the site variables, and the observation variables:
+<<formatData>>=
+##extract detections
+yObs <- bullfrog[, c("V1", "V2", "V3", "V4", "V5", "V6", "V7")]
+
+##extract site variables
+siteVars <- bullfrog[, c("Location", "Reed.presence")]
+
+##extract observation variables
+##centered sampling effort on each visit
+effort <- bullfrog[, c("Effort1", "Effort2", "Effort3", "Effort4",
+                       "Effort5", "Effort6", "Effort7")]
+##survey type (0 = call survey, 1 = minnow trap)
+type <- bullfrog[, c("Type1", "Type2", "Type3", "Type4", "Type5",
+                     "Type6", "Type7")]
+@ 
+
+Now that the variables have been extracted, we can assemble the \texttt{unmarkedFrameOccu} object. This step is important for the unmarked functions to properly retrieve the required information to run the models:
+<<loadFormat>>=
+##load package
+library(unmarked)
+##format data
+bfrogData <- unmarkedFrameOccu(y = yObs,
+                               siteCovs = siteVars,
+                               obsCovs = list(Type = type, Effort = effort))
+@ 
+
+We can inspect the newly-created object:
+<<summary1>>=
+summary(bfrogData)
+@ 
+
+The \texttt{detHist( )} function in \texttt{AICcmodavg} displays the frequencies for each observed detection history, and this function also works with model objects:
+<<detHist>>=
+detHist(bfrogData)
+@ 
+Also see functions \texttt{detTime( )}, \texttt{countDist( )}, and \texttt{countHist( )} to summarize time-to-detection data, distance sampling data, or count data. 
+
+
+\subsection{Formulating and fitting the candidate models}
+Next, we can formulate the candidate models. In this example, I am considering four candidate models involving the probabilities of occupancy ($\psi$) and detection ($p$):
+\begin{enumerate}
+\item a null model with constant occupancy and detection probability, $\psi(.) p(.)$;
+\item a model with constant occupancy but detection probability varying with survey effort (number of stations) and survey type, $\psi(.) p(\text{Effort} + \text{Type})$; 
+\item a model with occupancy varying with reed presence and constant detection probability, $\psi(\text{Reed}) p(.)$; 
+\item the full model, $\psi(\text{Reed}) p(\text{Effort} + \text{Type})$.
+\end{enumerate}
+
+We can fit the single-season site occupancy models using the \texttt{occu( )} function of \texttt{unmarked}. Note that it is recommended to center or standardize numeric explanatory variables recorded on an interval or ratio scale to facilitate convergence of the optimization routine. Here, sampling effort was centered by subtracting the mean number of stations ($\bar{x} = 8.66$) from each value before importing the data set.
+<<fitOccu>>=
+##null model
+m1 <- occu(~ 1 ~ 1, data = bfrogData)
+##p varies with survey type and effort, occupancy is constant
+m2 <- occu(~ Type + Effort ~ 1, data = bfrogData)
+##p constant, occupancy varies with reed presence
+m3 <- occu(~ 1 ~ Reed.presence, data = bfrogData)
+##global model
+m4 <- occu(~ Type + Effort ~ Reed.presence, data = bfrogData)
+@ 
+
+\subsection{Inspecting the output and checking model fit}
+To inspect the output, we can use \texttt{summary( )} from \texttt{unmarked} or \texttt{summaryOD( )} from the \texttt{AICcmodavg} package. With the latter, we can request the output in the form of confidence intervals around the estimates or traditional null-hypothesis testing, and we can also correct inferences for overdispersion:
+<<checkOut>>=
+summary(m4)
+summaryOD(m4, out.type = "confint")
+summaryOD(m4, out.type = "nhst")
+@ 
+
+We can use the above functions to inspect the output of each model, keeping an eye out for issues in model fitting, such as error or warning messages about non convergence, problems with the Hessian matrix, or abnormally large standard errors relative to the estimates. Certain diagnostic tools of the \texttt{AICcmodavg} package can be applied to a list of models. Let's create a list of models to store the output. This list will also be necessary for model selection and multimodel inference.
+
+<<createList>>=
+bfrogMods <- list("null" = m1, "psidot.pTypeEffort" = m2,
+                  "psiReed.pdot" = m3, 
+                  "psiReed.pTypeEffort" = m4)
+@ 
+
+We can check for the convergence of the algorithm to find the maximum likelihood estimates, with the \texttt{checkConv} function. This can be done for a single model or a list of models:
+<<checkConv>>=
+##check convergence for a single model
+checkConv(m1)
+##extract values across all models
+sapply(bfrogMods, checkConv)
+@ 
+
+The output suggests that the algorithm converged for all four models. Next, we can compute the condition number, which is the ratio of the largest eigenvalue of the Hessian matrix to the smallest value of the same matrix. Typically, large values of the condition number (e.g., 1 000 000) can indicate that a model may be overparameterized. We can get the condition using the \texttt{extractCN( )} function:
+<<extractCN>>=
+##extract condition number of single model
+extractCN(m1)
+##extract condition across all models
+sapply(bfrogMods, extractCN)
+@ 
+
+None of the models have excessively high condition numbers. Another diagnostic tool that may be useful is the highest standard errors of the estimates in each model or the number of standard errors larger than a given threshold (e.g., 25), obtained with the \texttt{checkParms( )} function:
+<<largeSE>>=
+##check highest SE in single model
+checkParms(m1)
+##check highest SE across all models
+lapply(bfrogMods, checkParms)
+@ 
+
+We note that the standard errors of the estimates are not exceptionally high, suggesting that there are no issues with the standard errors. We can the proceed to check the goodness of fit of the global model \citep{burnham02}. A first assessment could be based on a comparison between the global model and the null model, using a likelihood-ratio test implemented with \texttt{anovaOD( )}. This function also adjusts inferences in case of overdispersion when the \texttt{c.hat} argument is specified:
+<<LRT>>=
+##compare global model vs null
+anovaOD(mod.simple = m1, mod.complex = m3)
+@ 
+
+This comparison suggests that the global model is marginally better than the null model. A more formal assessment is based on the MacKenzie and Bailey goodness of fit test, which essentially compares the observed frequencies of the detection histories to the expected frequencies based on a $\chi^2$ statistic, where the significance of the statistic is assessed with a parametric bootstrap \citep{mackenzie04}. This test is implemented in the \texttt{mb.gof.test( )} function. A total of 1000 to 10000 iterations are recommended \citep{mackenzie04}. The function includes arguments to specify the number of cores on the computer (\texttt{ncores}) and whether parallel processing should be used to speed up computations (\texttt{parallel}). Because the time to complete the goodness-of-fit test depends on your hardware, saving the output in a file using \texttt{save( )} is more efficient than running the function each time.
+<<gof, eval = FALSE>>=
+##this takes 226 min. using 2 cores
+gof <- mb.gof.test(mod = m4, nsim = 10000, parallel = TRUE, ncores = 2)
+gof
+save(gof, file = "gofMod3.Rdata")
+@ 
+%utilisateur     système      écoulé 
+%     18.246       9.093   13540.481 
+<<gof2, eval = TRUE, keep.source = FALSE, echo = FALSE, fig = TRUE, include = FALSE>>=
+load("gofMod3.Rdata")
+gof
+p.value <- sum(gof$t.star >= gof$chi.square)/gof$nsim
+if (p.value == 0) {
+    p.display <- paste("<", round(1/gof$nsim, digits = 4))
+} else {
+    p.display <- paste("=", round(p.value, digits = 4))
+}
+hist(gof$t.star, 
+     main = "Bootstrapped MacKenzie and Bailey fit statistic (10 000 samples)", 
+     xlim = range(c(gof$t.star, gof$chi.square)), 
+     xlab = paste("Simulated statistic (observed = ", 
+                  round(gof$chi.square, digits = 2), ")", sep = ""), 
+     cex.axis = 1.2, cex.lab = 1.2, cex.main = 1.2)
+title(main = bquote(paste(italic(P), " ", .(p.display))), 
+      line = 0.5, cex.main = 1.2)
+abline(v = gof$chi.square, lty = "dashed", 
+       col = "red")
+@
+
+\begin{figure}[h]
+\includegraphics{AICcmodavg-unmarked-gof2}
+\caption{Distribution of chi-square values obtained from parametric bootstrapping from the global site occupancy model.}
+\label{fig:gofcheck}
+\end{figure}
+
+
+The goodness-of-fit test suggests that the model fits the data with low overdispersion ($P \Sexpr{p.display}, \hat{c} = \Sexpr{round(gof$c.hat.est, 2)}$, Fig. \ref{fig:gofcheck}). Values of $\hat{c}$ > 3 can indicate lack-of-fit in addition to overdispersion \citep{lebreton92}. Given that the $\hat{c}$ is very close to 1, adjusting for this overdispersion will make inferences slightly more conservative:
+<<summaryOD2>>=
+##compare inferences 
+summaryOD(m3)
+summaryOD(m3, c.hat = 1.08)
+@ 
+
+However, differences in the inferences will increase with $\hat{c}$, because the standard errors of the estimates are multiplied by $\hat{c}$.
+
+\subsection{Conducting model selection and multimodel inference}
+Now that we confirmed that the global model fits the data, we can proceed with model selection using \texttt{aictab( )}. The default option uses the second-order Akaike information criterion ($AIC_c$, \citealt{sugiura78, hurvich89}). Other information criteria can be chosen such as $AIC$ \citep{akaike73} by using \texttt{second.ord = FALSE}, or their quasi-likelihood versions in the presence of overdispersion, $QAIC$ or $QAIC_c$ by modifying \texttt{c.hat} \citep{lebreton92, burnham02}. Model selection with the Bayesian information criterion ($BIC$, \citealt{schwarz78}) is implemented in function \texttt{bictab( )}. Below, we use the $AIC_c$ and compare it against the $QAIC_c$:
+<<aic>>=
+##when no overdispersion is present
+outTab <- aictab(cand.set = bfrogMods) 
+##accounting for overdispersion
+outTabC <- aictab(cand.set = bfrogMods, c.hat = 1.08)
+outTab
+outTabC
+@ 
+
+Two models emerged as being equivalent ($\Delta QAIC_c = \Sexpr{round(outTabC$Delta_QAICc[2], 2)}$), with a combined Akaike weight of \Sexpr{round(outTabC$Cum.Wt[2], 2)}. Both models consisted of survey type and effort on detection probability, but varied in terms of reed presence on occupancy. We can use the evidence ratio of Akaike weights to compare the two models:
+<<evidenceRatio>>=
+##evidence ratio between top-ranked model vs second-ranked model
+evidence(aic.table = outTabC)
+@ 
+
+Given that the two models are equivalent and differ only in the reed presence on occupancy, there is little evidence for a variation of bullfrog occupancy with the presence of common reed. We can formally assess the effect of reed presence across the entire model set using the model-averaging shrinkage estimator (\texttt{modavgShrink( )}, \citealt{burnham02}), based on the model-averaged estimate ($\hat{\bar{\beta}}$) and an unconditional 95\% confidence interval ($95\% \: CI$). Note that we use the \texttt{parm.type} argument in \texttt{modavgShrink( )} to specify the parameter on which reed presence appears, here \texttt{parm.type = "psi"} because reed presence is a variable on the occupancy component of the models:
+<<modavgShrink>>=
+##model-averaged estimate of reed presence - shrinkage estimator
+estReed <- modavgShrink(cand.set = bfrogMods, 
+                        parm = "Reed.presence", parm.type = "psi",
+                        c.hat = 1.08)
+estReed
+@
+
+
+Although the top-ranked model included the presence of reed on occupancy, the estimate of reed presence on the occupancy of bullfrogs did not differ from 0 ($\hat{\bar{\beta}}_ {\text{Reed}}$ = \Sexpr{round(estReed$Mod.avg.beta, 2)}, $95\% \: CI: [$\Sexpr{round(estReed$Lower.CL, 2)}, \Sexpr{round(estReed$Upper.CL, 2)}$]$). Similarly, we can estimate the effect of survey type and sampling effort on detection probability, now specifying \texttt{parm.type = "detect"} because these two variables appear on the detection probability part of the models:
+<<modavgShrink2>>=
+estType <- modavgShrink(cand.set = bfrogMods, 
+                        parm = "Type", parm.type = "detect",
+                        c.hat = 1.08)
+estType
+estEffort <- modavgShrink(cand.set = bfrogMods, 
+                          parm = "Effort", parm.type = "detect",
+                          c.hat = 1.08)
+estEffort
+@ 
+
+Detection probability during call surveys was higher than using minnow trapping sessions ($\hat{\bar{\beta}}_{\text{Type}} = \Sexpr{round(estType$Mod.avg.beta, 2)}, 95\% \: CI: [\Sexpr{round(estType$Lower.CL, 2)}, \Sexpr{round(estType$Upper.CL, 2)}]$). However, detection probability did not vary with the number of sampling stations ($\hat{\bar{\beta}}_{\text{Effort}} = \Sexpr{round(estEffort$Mod.avg.beta, 2)}, 95\% \: CI: [ \Sexpr{round(estEffort$Lower.CL, 2)}, \Sexpr{round(estEffort$Upper.CL, 2)} ]$).
+
+\subsection{Plotting results}
+The next step is to create plots to illustrate the results. Because no single model encompassed all the support, we can make predictions based on the entire set of models. This is implemented in \texttt{modavgPred( )}. The approach is similar to \texttt{predict( )} which uses a \texttt{newdata} argument to specify a new data set to make predictions. To obtain model-averaged predictions with \texttt{modavgPred( )}, you must supply a data frame with the \texttt{newdata} argument. This data frame must include values for every variable appearing in the component of the candidate models for which predictions are desired (e.g., occupancy or detection probability). A further requirement is that each variable must be of the same class, and factors must use the same reference level than in the original analysis. To facilitate the identification of each variable to include in predictions, the \texttt{extractX( )} function summarizes the variables appearing at least once in a given component of the model, as well as their class:
+<<checkXpsi>>=
+##variables on psi
+extractX(cand.set = bfrogMods, parm.type = "psi")
+##variables on p
+extractX(cand.set = bfrogMods, parm.type = "detect")
+@ 
+
+We see that reed presence is the only variable appearing in models on occupancy, whereas the survey type and sampling effort appear in models on detection probability.
+
+To make predictions of occupancy according to reed presence, we could create the following data frame:
+<<predReed>>=
+reedFrame <- data.frame(Reed.presence = c(0, 1))
+@ 
+
+We would then compute the model-averaged predictions of occupancy in the presence or absence of reed:
+<<predReed2>>=
+outReed <- modavgPred(cand.set = bfrogMods, newdata = reedFrame, 
+                      parm.type = "psi", c.hat = 1.08)
+outReed
+@ 
+
+Before building the plot, it can be useful to store the predictions in the data frame and take advantage of the \texttt{data} argument in \texttt{plot( )}:
+<<storeReed>>=
+##store predictions and confidence intervals in data frame
+reedFrame$fit <- outReed$mod.avg.pred
+reedFrame$low95 <- outReed$lower.CL
+reedFrame$upp95 <- outReed$upper.CL
+@ 
+
+We can now create the plot:
+<<plotReed, fig = TRUE, include = FALSE>>=
+##create plot
+xvals <- c(0.2, 0.4)
+plot(fit ~ xvals, data = reedFrame,
+     ylab = "Probability of occupancy",
+     xlab = "Presence of reed",
+     ylim = c(0, 1),
+     cex = 1.2, cex.axis = 1.2, cex.lab = 1.2,
+     xlim = c(0, 0.6),
+     xaxt = "n")
+#add x axis
+axis(side = 1, at = xvals, 
+     labels = c("absent", "present"), 
+     cex.axis = 1.2)
+##add error bars
+segments(x0 = xvals, y0 = reedFrame$low95,
+         x1 = xvals, y1 = reedFrame$upp95)
+@ 
+
+\begin{figure}[h]
+\includegraphics{AICcmodavg-unmarked-plotReed}
+\caption{Occupancy probability of bullfrogs (\emph{Lithobates catesbeianus}) in wetlands with and without invasive common reed.}
+\label{fig:plotreed2}
+\end{figure}
+
+Unsurprisingly, Figure \ref{fig:plotreed2} shows that there is no difference in occupancy in the presence or absence of common reed in the wetland, consistent with the results of the model-averaged $\beta$ estimate of reed presence shown earlier.
+
+We can use a similar strategy to compute predictions for detection probability for the two survey types. Recall that survey type was coded as 0 (call survey) or 1 (minnow trapping). Two variables appeared on detection probability. To plot detection probability across survey types, we need to hold the other variable constant. We can hold numeric variables constant at their mean (0 if variable was centered or standardized), whereas for binary variables or factors, we must choose a level for predictions. 
+<<predType>>=
+##vary Type, hold Effort constant at its mean 
+typeFrame <- data.frame(Type = c(0, 1), Effort = 0)
+##model-averaged predictions
+outType <- modavgPred(cand.set = bfrogMods, newdata = typeFrame, 
+                      parm.type = "detect", c.hat = 1.08)
+outType
+@ 
+
+We now plot predictions across survey type:
+<<plotType, fig = TRUE, include = FALSE>>=
+##store predictions and confidence intervals in data frame
+typeFrame$fit <- outType$mod.avg.pred
+typeFrame$low95 <- outType$lower.CL
+typeFrame$upp95 <- outType$upper.CL
+##create plot
+xvals <- c(0.2, 0.4)
+plot(fit ~ xvals, data = typeFrame,
+     ylab = "Detection probability",
+     xlab = "Survey type",
+     ylim = c(0, 1),
+     cex = 1.2, cex.axis = 1.2, cex.lab = 1.2,
+     xlim = c(0, 0.6),
+     xaxt = "n")
+#add x axis
+axis(side = 1, at = xvals, 
+     labels = c("call survey", "minnow trapping"), 
+     cex.axis = 1.2)
+##add error bars
+segments(x0 = xvals, y0 = typeFrame$low95,
+         x1 = xvals, y1 = typeFrame$upp95)
+@ 
+
+\begin{figure}[h]
+\includegraphics{AICcmodavg-unmarked-plotType}
+\caption{Detection probability of bullfrogs (\emph{Lithobates catesbeianus}) in wetlands during call surveys and minnow trapping surveys.}
+\label{fig:plotsurvey}
+\end{figure}
+
+Figure \ref{fig:plotsurvey} shows that detection probability is higher during call surveys than during minnow trapping periods. We can create the plot for the second explanatory variable (sampling effort) appearing on detection probability.
+
+We note that sampling effort is a numeric variable relating to the number of stations sampled on each visit. To make predictions across sampling effort, we can provide a series of values within the range of values observed in the original data set. Thirty or forty values usually suffice to plot the predicted curve. Sampling effort was recorded as the number of sampling stations and this variable was centered using the average number of sampling stations per visit ($\bar{x} = 8.67$). Working from the standardized variable, we can determine the minimum and maximum values to plot. 
+
+<<extractEffort>>=
+##extract centered values of sampling effort
+effort <- bfrogData@obsCovs$Effort
+
+##create a series of 30 values to plot
+Effort.cent <- seq(from = min(effort), to = max(effort),
+                   length.out = 30)
+##back-transform values to original scale of variable
+Effort.mean <- 8.67 #mean of original variable see ?bullfrog
+Effort.orig <- Effort.cent + Effort.mean
+@ 
+
+We can then assemble the variables in a data frame and make model-averaged predictions:
+<<predEffort>>=
+##note that all variables on the parameter must appear here
+pred.dataEffort <- data.frame(Effort.orig = Effort.orig,
+                              Effort = Effort.cent, #centered variable
+                              Type = 1) 
+#Recall that \texttt{Type} was coded 1 (minnow trap) or 0 (call survey)
+
+##compute model-averaged predictions with modavgPred on probability scale
+out.predsEffort <- modavgPred(cand.set = bfrogMods,
+                              newdata = pred.dataEffort, parm.type = "detect",
+                              type = "response", c.hat = 1.08)
+@
+
+Next, we add the predictions and confidence limits to the data frame containing the variables used for predictions:
+<<addPreds>>=
+##add predictions to data set to keep everything in the same place
+pred.dataEffort$fit <- out.predsEffort$mod.avg.pred
+pred.dataEffort$se.fit <- out.predsEffort$uncond.se
+pred.dataEffort$low95 <- out.predsEffort$lower.CL
+pred.dataEffort$upp95 <- out.predsEffort$upper.CL
+@
+
+We can now plot the predictions:
+<<plotEffort, fig = TRUE, include = FALSE>>=
+##create plot
+
+##plot
+plot(fit ~ Effort.orig,
+     ylab = "Detection probability",
+     xlab = "Sampling effort",
+     ylim = c(0, 1),
+     type = "l", 
+     cex = 1.2, cex.lab = 1.2, cex.axis = 1.2,
+     data = pred.dataEffort)
+
+##add 95% CI around predictions
+lines(low95 ~ Effort.orig, data = pred.dataEffort,
+      lty = "dashed")
+lines(upp95 ~ Effort.orig, data = pred.dataEffort,
+      lty = "dashed")
+@ 
+
+\begin{figure}[h]
+\includegraphics{AICcmodavg-unmarked-plotEffort}
+\caption{Detection probability of bullfrogs (\emph{Lithobates catesbeianus}) in wetlands during call surveys and minnow trapping surveys.}
+\label{fig:ploteffort}
+\end{figure}
+
+Figure \ref{fig:ploteffort} does not suggest large changes in detection probability within the range of values of sampling effort observed during the study.
+
+\section{Additional methods to export output}
+For users familiar with \texttt{Markdown} or \LaTeX{}, the \emph{AICcmodavg} package offers a number of utility functions to convert output to \LaTeX{} tables. For example, we can convert the model selection table:
+<<xtable1>>=
+library(xtable)
+xtable(outTabC)
+@ 
+
+We can also format the results of multimodel inference to a \LaTeX{} table:
+<<table2>>=
+xtable(estReed)
+@ 
+
+Other possibilities include the detection history summary:
+<<table3>>=
+xtable(detHist(m3))
+@ 
+
+We can also obtain the \LaTeX version of the chi-square table when checking model fit:
+<<table4>>=
+xtable(mb.chisq(m3))
+@ 
+
+Table \ref{tab:xtable} presents the different \texttt{xtable} methods useful with objects created with the \texttt{AICcmodavg} package. A number of options are available to suppress certain columns in the table, in addition to including captions or table labels:
+<<xtableOptions>>=
+#add caption, suppress log-likelihood, and include cumulative Akaike weight
+print(xtable(outTabC, 
+             caption = "Model selection accounting for overdispersion in the bullfrog data.", 
+             include.LL = FALSE, include.Cum.Wt = TRUE),
+      caption.placement = "top", include.rownames = FALSE)
+@ 
+
+
+\begin{table}[h]
+  \begin{center}
+    \caption{Methods of the \texttt{xtable} package extended for objects created with the \texttt{AICcmodavg} package.}
+      \label{tab:xtable}
+      \begin{tabular}{>{\raggedright\hspace{0pt}}p{40mm}%
+        >{\raggedright\hspace{0pt}}p{115mm}
+        %>{\centering\hspace{0pt}}p{35mm}
+        }
+        \hline
+        \texttt{AICcmodavg} function producing result & Additional arguments supplied to \texttt{xtable} \tabularnewline
+        \hline
+        \texttt{aictab} & \texttt{nice.names = TRUE}, \texttt{include.AICc = TRUE}, \mbox{\texttt{include.LL = TRUE}}, \texttt{include.Cum.Wt = FALSE} \tabularnewline
+        \texttt{bictab} & \texttt{nice.names = TRUE}, \texttt{include.BIC = TRUE}, \mbox{\texttt{include.LL = TRUE}}, \texttt{include.Cum.Wt = FALSE} \tabularnewline
+        \texttt{boot.wt} & \texttt{nice.names = TRUE}, \texttt{include.AICc = TRUE}, \mbox{\texttt{include.AICcWt = FALSE}} \tabularnewline
+        \texttt{dictab} & \texttt{nice.names = TRUE}, \texttt{include.DIC = TRUE}, \mbox{\texttt{include.Cum.Wt = FALSE}} \tabularnewline
+        \texttt{ictab} & \texttt{nice.names = TRUE}, \texttt{include.IC = TRUE}, \mbox{\texttt{include.LL = TRUE}}, \texttt{include.Cum.Wt = FALSE} \tabularnewline
+        \texttt{countDist} & \texttt{nice.names = TRUE}, \texttt{table.countDist = "distance"} \tabularnewline
+        \texttt{countHist} & \texttt{nice.names = TRUE}, \texttt{table.countHist = "count"} \tabularnewline
+        \texttt{detHist} & \texttt{nice.names = TRUE}, \texttt{table.detHist = "freq"} \tabularnewline
+        \texttt{detTime} & \texttt{nice.names = TRUE}, \texttt{table.detTime = "freq"} \tabularnewline
+        \texttt{anovaOD} & \texttt{nice.names = TRUE}, \texttt{include.BIC = TRUE}, \mbox{\texttt{include.LL = TRUE}}, \texttt{include.Cum.Wt = FALSE} \tabularnewline
+        \texttt{summaryOD} & \texttt{nice.names = TRUE} \tabularnewline
+        \texttt{mb.chisq} & \texttt{nice.names = TRUE}, \texttt{include.detection.histories = TRUE} \tabularnewline
+        \texttt{checkParms} & \texttt{nice.names = TRUE}, \texttt{include.variable = TRUE}, \mbox{\texttt{include.max.se = TRUE}}, \texttt{include.n.high.se = TRUE} \tabularnewline
+        \texttt{modavg} & \texttt{nice.names = TRUE}, \texttt{print.table = FALSE} \tabularnewline
+        \texttt{modavgCustom} & \texttt{nice.names = TRUE}, \texttt{print.table = FALSE} \tabularnewline
+        \texttt{modavgEffect} & \texttt{nice.names = TRUE}, \texttt{print.table = FALSE} \tabularnewline
+        \texttt{modavgIC} & \texttt{nice.names = TRUE}, \texttt{print.table = FALSE} \tabularnewline
+        \texttt{modavgShrink} & \texttt{nice.names = TRUE}, \texttt{print.table = FALSE} \tabularnewline
+        \texttt{modavgPred} & \texttt{nice.names = TRUE} \tabularnewline
+        \texttt{multComp} & \texttt{nice.names = TRUE}, \texttt{print.table = FALSE} \tabularnewline
+        \hline
+      \end{tabular}
+    \end{center}
+  \end{table}
+  
+
+
+\bibliography{AICcmodavg}
+
+\end{document}

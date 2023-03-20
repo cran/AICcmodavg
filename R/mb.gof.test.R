@@ -322,7 +322,10 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
     y.seasons[[k]] <- detections[, first.col:(first.col+n.visits-1)]
   }
 
-
+  ##check if any seasons were not sampled
+  y.seasonsNA <- sapply(y.seasons, FUN = function(i) all(is.na(i)))
+    
+    
 #################################
   ##from model
   ##predict init psi
@@ -335,10 +338,6 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
   ##predict epsilon
   eps.pred <- matrix(data = predict(mod, type = "ext")$Predicted,
                      ncol = n.seasons, byrow = TRUE)[, 1:(n.seasons - 1)]
-
-  ##compute predicted values of psi for each season
-  ##predicted init psi
-  psi.init.pred <- predict(mod, type = "psi")$Predicted
 
   ##predicted p
   p.pred <- matrix(data = predict(mod, type = "det")$Predicted,
@@ -353,7 +352,7 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
   }
 
 
-  ##compute psi for each season
+  ##compute predicted values of psi for each season
   psi.seasons <- list( )
   ##add first year in list
   psi.seasons[[1]] <- psi.init.pred
@@ -419,6 +418,9 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
     } else { 
       Ts <- ncol(y.data)
     }
+
+    ##if no data, skip to next season
+    if(Ts == 0) {next}
 
     ##if single visit, returns error
     if(Ts == 1) {
@@ -716,16 +718,20 @@ mb.chisq.unmarkedFitColExt <- function(mod, print.table = TRUE, ...) {
   ##add a final named element combining the chi-square
   all.chisq <- unlist(lapply(out, FUN = function(i) i$chi.square))
 
-  ##add label for seasons
-  new.season.labels <- paste("Season", 1:n.seasons, sep = " ")
-  names(all.chisq) <- new.season.labels
+    ##add label for seasons
+    sampled.seasons <- which(!y.seasonsNA)
+    new.season.labels <- paste("Season", sampled.seasons, sep = " ")
+    names(all.chisq) <- new.season.labels
   
   ##print table or only test statistic
   if(print.table) {
     out.nice <- list(tables = out, all.chisq = all.chisq,
-                     n.seasons = n.seasons, model.type = "dynamic")
+                     n.seasons = n.seasons, model.type = "dynamic",
+                     missing.seasons = y.seasonsNA)
   } else {
-    out.nice <- list(all.chisq = all.chisq, n.seasons = n.seasons, model.type = "dynamic")
+      out.nice <- list(all.chisq = all.chisq, n.seasons = n.seasons,
+                       model.type = "dynamic",
+                       missing.seasons = y.seasonsNA)
   }
   
   class(out.nice) <- "mb.chisq" 
@@ -989,7 +995,6 @@ mb.chisq.unmarkedFitOccuRN <- function (mod, print.table = TRUE, maxK = NULL, ..
 
 
 
-
 ##simulating data from model to compute P-value of test statistic
 ##create generic mb.gof.test 
 mb.gof.test <- function(mod, nsim = 5, plot.hist = TRUE,
@@ -1069,199 +1074,252 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
                                           ncores, cex.axis = 1, cex.lab = 1, cex.main = 1,
                                           lwd = 1, plot.seasons = FALSE, ...){#more bootstrap samples are recommended (e.g., 1000, 5000, or 10 000)
 
-  ##extract table from fitted model
-  mod.table <- mb.chisq(mod)
-  n.seasons <- mod.table$n.seasons
-  n.seasons.adj <- n.seasons #total number of plots fixed to 11 or 12, depending on plots requested
+    ##extract table from fitted model
+    mod.table <- mb.chisq(mod)
+    n.seasons <- mod.table$n.seasons
+    n.seasons.adj <- n.seasons #total number of plots fixed to 11 or 12, depending on plots requested
+    missing.seasons <- mod.table$missing.seasons
+    ##number of seasons with data
+    n.season.data <- sum(missing.seasons)
 
-  ##if NULL, don't print test statistic at each iteration
-  if(is.null(report)) {
-      ##compute GOF P-value
-      out <- parboot(mod, statistic = function(i) mb.chisq(i)$all.chisq,
-                     nsim = nsim, parallel = parallel, ncores = ncores)
-  } else {
+    ##if NULL, don't print test statistic at each iteration
+    if(is.null(report)) {
+        ##compute GOF P-value
+        out <- parboot(mod, statistic = function(i) mb.chisq(i)$all.chisq,
+                       nsim = nsim, parallel = parallel, ncores = ncores)
+    } else {
 
-      ##compute GOF P-value
-      out <- parboot(mod, statistic = function(i) mb.chisq(i)$all.chisq, #extract chi-square for each year
-                     nsim = nsim, report = report, parallel = parallel,
-                     ncores = ncores)
-  }
+        ##compute GOF P-value
+        out <- parboot(mod, statistic = function(i) mb.chisq(i)$all.chisq, #extract chi-square for each year
+                       nsim = nsim, report = report, parallel = parallel,
+                       ncores = ncores)
+    }
   
-  ##list to hold results
-  p.vals <- list( )
+    ##list to hold results
+    p.vals <- list( )
 
-    
-  if(plot.hist && !plot.seasons) {
+
+    if(plot.hist && !plot.seasons) {
         nRows <- 1
         nCols <- 1
-        par(mfrow = c(nRows, nCols))
-  }
-
-  ##if only season-specific plots are requested
-  if(!plot.hist && plot.seasons) {
-    ##determine arrangement of plots in matrix
-    if(plot.seasons && n.seasons >= 12) {
-      n.seasons.adj <- 12
-      warning("\nOnly first 12 seasons are plotted\n")
+        
+        ##reset graphics parameters and save in object
+        oldpar <- par(mfrow = c(nRows, nCols))
     }
-    
-    if(plot.seasons && n.seasons.adj <= 12) {
 
-      ##if n.seasons < 12
-      ##if 12, 11, 10 <- 4 x 3
-      ##if 9, 8, 7 <- 3 x 3
-      ##if 6, 5 <- 3 x 2
-      ##if 4 <- 2 x 2
-      ##if 3 <- 3 x 1
-      ##if 2 <- 2 x 1
-    
-      if(n.seasons.adj >= 10) {
-          nRows <- 4
-          nCols <- 3
-      } else {
-
-        if(n.seasons.adj >= 7) {
-            nRows <- 3
-            nCols <- 3
-        } else {
-
-          if(n.seasons.adj >= 5) {
-              nRows <- 3
-              nCols <- 2
-          } else {
-            if(n.seasons.adj == 4) {
-                nRows <- 2
-                nCols <- 2
-            } else {
-              if(n.seasons.adj == 3) {
-                  nRows <- 3
-                  nCols <- 1
-              } else {
-                  nRows <- 2
-                  nCols <- 1
-              }
-            }
-          }
+    ##if only season-specific plots are requested
+    if(!plot.hist && plot.seasons) {
+        ##determine arrangement of plots in matrix
+        if(plot.seasons && n.seasons >= 12) {
+            n.seasons.adj <- 12
+            warning("\nOnly first 12 seasons are plotted\n")
         }
-      }
-    }
-      par(mfrow = c(nRows, nCols))
-  }
+    
+        if(plot.seasons && n.seasons.adj <= 12) {
 
+            ##if n.seasons < 12
+            ##if 12, 11, 10 <- 4 x 3
+            ##if 9, 8, 7 <- 3 x 3
+            ##if 6, 5 <- 3 x 2
+            ##if 4 <- 2 x 2
+            ##if 3 <- 3 x 1
+            ##if 2 <- 2 x 1
+            
+            if(n.seasons.adj >= 10) {
+                nRows <- 4
+                nCols <- 3
+            } else {
+                
+                if(n.seasons.adj >= 7) {
+                    nRows <- 3
+                    nCols <- 3
+                } else {
+                    
+                    if(n.seasons.adj >= 5) {
+                        nRows <- 3
+                        nCols <- 2
+                    } else {
+                        if(n.seasons.adj == 4) {
+                            nRows <- 2
+                            nCols <- 2
+                        } else {
+                            if(n.seasons.adj == 3) {
+                                nRows <- 3
+                                nCols <- 1
+                            } else {
+                                nRows <- 2
+                                nCols <- 1
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ##reset graphics parameters and save in object
+        oldpar <- par(mfrow = c(nRows, nCols))
+    }
+    
   
-  ##if both plots for seasons and summary are requested
-  if(plot.hist && plot.seasons){
-    ##determine arrangement of plots in matrix
-    if(plot.seasons && n.seasons >= 12) {
-      n.seasons.adj <- 11
-      warning("\nOnly first 11 seasons are plotted\n")
-    }
-
-    if(plot.seasons && n.seasons.adj <= 11) {
-
-      if(n.seasons.adj >= 9) {
-          nRows <- 4
-          nCols <- 3
-      } else {
-
-        if(n.seasons.adj >= 6) {
-            nRows <- 3
-            nCols <- 3
-        } else {
-
-          if(n.seasons.adj >= 4) {
-              nRows <- 3
-              nCols <- 2
-          } else {
-            if(n.seasons.adj == 3) {
-                nRows <- 2
-                nCols <- 2
-            } else {
-              if(n.seasons.adj == 2) {
-                  nRows <- 3
-                  nCols <- 1
-              }
-            }
-          }
+    ##if both plots for seasons and summary are requested
+    if(plot.hist && plot.seasons){
+        ##determine arrangement of plots in matrix
+        if(plot.seasons && n.seasons >= 12) {
+            n.seasons.adj <- 11
+            warning("\nOnly first 11 seasons are plotted\n")
         }
-      }
+        
+        if(plot.seasons && n.seasons.adj <= 11) {
+            
+            if(n.seasons.adj >= 9) {
+                nRows <- 4
+                nCols <- 3
+            } else {
+
+                if(n.seasons.adj >= 6) {
+                    nRows <- 3
+                    nCols <- 3
+                } else {
+                    
+                    if(n.seasons.adj >= 4) {
+                        nRows <- 3
+                        nCols <- 2
+                    } else {
+                        if(n.seasons.adj == 3) {
+                            nRows <- 2
+                            nCols <- 2
+                        } else {
+                            if(n.seasons.adj == 2) {
+                                nRows <- 3
+                                nCols <- 1
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ##reset graphics parameters and save in object
+        oldpar <- par(mfrow = c(nRows, nCols))
     }
-      par(mfrow = c(nRows, nCols))
-  }
 
     
-  ##determine significance for each season
-  for(k in 1:n.seasons) {
-
-    p.value <- sum(out@t.star[, k] >= out@t0[k])/nsim
-    if(p.value == 0) {
-        p.display <- paste("<", round(1/nsim, digits = 4))
+    ##determine significance for each season
+    if(!any(missing.seasons)) {
+        for(k in 1:n.seasons) {
+            p.value <- sum(out@t.star[, k] >= out@t0[k])/nsim
+            if(p.value == 0) {
+                p.display <- paste("<", round(1/nsim, digits = 4))
+            } else {
+                p.display  <- paste("=", round(p.value, digits = 4))
+            }
+            
+            p.vals[[k]] <- list("p.value" = p.value, "p.display" = p.display)
+        }
+        
+        ##create plot for first 12 plots
+        if(plot.seasons) {
+            ##add a check to handle error with plotting window
+            tryHist <- try(expr = {
+                for(k in 1:n.seasons.adj) {
+                    hist(out@t.star[, k],
+                         main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples) - season ", k, sep = ""),
+                         xlim = range(c(out@t.star[, k], out@t0[k])),
+                         xlab = paste("Simulated statistic ", "(observed = ", round(out@t0[k], digits = 2), ")", sep = ""),
+                         cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+                    title(main = bquote(paste(italic(P), " ", .(p.vals[[k]]$p.display))), line = 0.5,
+                          cex.main = cex.main)
+                    abline(v = out@t0[k], lty = "dashed", col = "red", lwd = lwd)
+                }
+            }, silent = TRUE)
+            if(is(tryHist, "try-error")) {
+                warning("\nFigure margins are too wide for the current plotting window: adjust graphical parameters.\n")
+            }
+        }
+        
     } else {
-        p.display  <- paste("=", round(p.value, digits = 4))
-    }
-    
-    p.vals[[k]] <- list("p.value" = p.value, "p.display" = p.display)
-  }  
-
-    ##create plot for first 12 plots
-    if(plot.seasons) {
-        ##add a check to handle error with plotting window
-        tryHist <- try(expr = {
-            for(k in 1:n.seasons.adj) {
-                hist(out@t.star[, k],
-                     main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples) - season ", k, sep = ""),
-                     xlim = range(c(out@t.star[, k], out@t0[k])),
-                     xlab = paste("Simulated statistic ", "(observed = ", round(out@t0[k], digits = 2), ")", sep = ""),
-                     cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
-                title(main = bquote(paste(italic(P), " ", .(p.vals[[k]]$p.display))), line = 0.5,
-                      cex.main = cex.main)
-                abline(v = out@t0[k], lty = "dashed", col = "red", lwd = lwd)
+        for(k in 1:n.season.data) {
+            p.value <- sum(out@t.star[, k] >= out@t0[k])/nsim
+            if(p.value == 0) {
+                p.display <- paste("<", round(1/nsim, digits = 4))
+            } else {
+                p.display  <- paste("=", round(p.value, digits = 4))
             }
-        }, silent = TRUE)
-        if(is(tryHist, "try-error")) {
-            warning("\nFigure margins are too wide for the current plotting window: adjust graphical parameters.\n")
+            
+            p.vals[[k]] <- list("p.value" = p.value, "p.display" = p.display)
+        }
+
+        ##create plot for first 12 plots
+        if(plot.seasons) {
+            ##add a check to handle error with plotting window
+            tryHist <- try(expr = {
+                for(k in 1:n.season.data) {
+                    hist(out@t.star[, k],
+                         main = paste("Bootstrapped MacKenzie and Bailey fit statistic (", nsim, " samples) - season ", k, sep = ""),
+                         xlim = range(c(out@t.star[, k], out@t0[k])),
+                         xlab = paste("Simulated statistic ", "(observed = ", round(out@t0[k], digits = 2), ")", sep = ""),
+                         cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+                    title(main = bquote(paste(italic(P), " ", .(p.vals[[k]]$p.display))), line = 0.5,
+                          cex.main = cex.main)
+                    abline(v = out@t0[k], lty = "dashed", col = "red", lwd = lwd)
+                }
+            }, silent = TRUE)
+            if(is(tryHist, "try-error")) {
+                warning("\nFigure margins are too wide for the current plotting window: adjust graphical parameters.\n")
+            }
         }
     }
+    
+    
 
 
-  ##estimate c-hat
-  obs.chisq <- sum(mod.table$all.chisq)
-  boot.chisq <- sum(colMeans(out@t.star))
-  c.hat.est <- obs.chisq/boot.chisq
-  
-  all.p.vals <- lapply(p.vals, FUN = function(i) i$p.value)
-  ##lapply(mod.table, FUN = function(i) i$chisq.table)
+    ##estimate c-hat
+    obs.chisq <- sum(mod.table$all.chisq)
+    boot.chisq <- sum(colMeans(out@t.star))
+    c.hat.est <- obs.chisq/boot.chisq
+    
+    all.p.vals <- lapply(p.vals, FUN = function(i) i$p.value)
+    ##lapply(mod.table, FUN = function(i) i$chisq.table)
 
-  ##compute P-value for obs.chisq
-  sum.chisq <- rowSums(out@t.star)
-  p.global <- sum(sum.chisq >= obs.chisq)/nsim 
+    ##compute P-value for obs.chisq
+    sum.chisq <- rowSums(out@t.star)
+    p.global <- sum(sum.chisq >= obs.chisq)/nsim 
 
-  if(p.global == 0) {
-    p.global.display <- paste("< ", 1/nsim)
-  } else {
-    p.global.display <- paste("=", round(p.global, digits = 4))
-  }
+    if(p.global == 0) {
+        p.global.display <- paste("< ", 1/nsim)
+    } else {
+        p.global.display <- paste("=", round(p.global, digits = 4))
+    }
 
-  ##optionally show sum of chi-squares
-  ##create plot
-  if(plot.hist) {
-    hist(sum.chisq, main = paste("Bootstrapped sum of chi-square statistic (", nsim, " samples)", sep = ""),
-         xlim = range(c(sum.chisq, obs.chisq)),
-         xlab = paste("Simulated statistic ", "(observed = ", round(obs.chisq, digits = 2), ")", sep = ""),
-         cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
-    title(main = bquote(paste(italic(P), " ", .(p.global.display))), line = 0.5,
-          cex.main = cex.main)
-    abline(v = obs.chisq, lty = "dashed", col = "red", lwd = lwd)
-  }
-
-  
-  ##assemble result
-  gof.out <- list(model.type = mod.table$model.type, chisq.table = mod.table,
-                  chi.square = obs.chisq, t.star = sum.chisq,
-                  p.value = all.p.vals, p.global = p.global, c.hat.est = c.hat.est,
-                  nsim = nsim, n.seasons = n.seasons)
-  class(gof.out) <- "mb.chisq"
-  return(gof.out)  
+    ##optionally show sum of chi-squares
+    ##create plot
+    if(plot.hist) {
+        hist(sum.chisq, main = paste("Bootstrapped sum of chi-square statistic (", nsim, " samples)", sep = ""),
+             xlim = range(c(sum.chisq, obs.chisq)),
+             xlab = paste("Simulated statistic ", "(observed = ", round(obs.chisq, digits = 2), ")", sep = ""),
+             cex.axis = cex.axis, cex.lab = cex.lab, cex.main = cex.main)
+        title(main = bquote(paste(italic(P), " ", .(p.global.display))), line = 0.5,
+              cex.main = cex.main)
+        abline(v = obs.chisq, lty = "dashed", col = "red", lwd = lwd)
+    }
+    
+    ##reset to original values
+    if(any(plot.hist || plot.seasons)) {
+        on.exit(par(oldpar))
+    }
+    
+    ##check if missing seasons
+    if(identical(mod.table$model.type, "dynamic")) {
+        missing.seasons <- mod.table$missing.seasons
+    } else {
+        missing.seasons <- NULL
+    }
+    
+    ##assemble result
+    gof.out <- list(model.type = mod.table$model.type, chisq.table = mod.table,
+                    chi.square = obs.chisq, t.star = sum.chisq,
+                    p.value = all.p.vals, p.global = p.global, c.hat.est = c.hat.est,
+                    nsim = nsim, n.seasons = n.seasons, missing.seasons = missing.seasons)
+    class(gof.out) <- "mb.chisq"
+    return(gof.out)  
 }
 
 
@@ -1372,17 +1430,43 @@ print.mb.chisq <- function(x, digits.vals = 2, digits.chisq = 4, ...) {
         cat("\nChi-square statistic:\n")
         if(any(names(x) == "all.chisq")) {
             print(round(x$all.chisq, digits = digits.chisq))
-            cat("\nTotal chi-square =", round(sum(x$all.chisq), digits = digits.chisq), "\n")
+            if(any(x$missing.seasons)) {
+                if(sum(x$missing.seasons) == 1) {
+                    cat("\nNote: season", which(x$missing.seasons), "was not sampled\n")
+                } else {
+                    cat("\nNote: seasons",
+                        paste(which(x$missing.seasons), sep = ", "),
+                        "were not sampled\n")
+                }
+            }
+            
+            cat("\nTotal chi-square =", round(sum(x$all.chisq),
+                                              digits = digits.chisq), "\n")
+            
         } else {
             print(round(x$chisq.table$all.chisq, digits = digits.chisq))
-            cat("\nTotal chi-square =", round(sum(x$chi.square), digits = digits.chisq), "\n")
+
+            if(any(x$missing.seasons)) {
+                if(sum(x$missing.seasons) == 1) {
+                    cat("\nNote: season", which(x$missing.seasons), "was not sampled\n")
+                } else {
+                    cat("\nNote: seasons",
+                        paste(which(x$missing.seasons), sep = ", "),
+                        "were not sampled\n")
+                }
+            }
+
+            cat("\nTotal chi-square =", round(sum(x$chi.square),
+                                              digits = digits.chisq), "\n")
             cat("Number of bootstrap samples =", x$nsim)
             cat("\nP-value =", x$p.global)
             cat("\n\nQuantiles of bootstrapped statistics:\n")
             print(quantile(x$t.star), digits = digits.vals)
-            cat("\nEstimate of c-hat =", round(x$c.hat.est, digits = digits.vals), "\n")
+            cat("\nEstimate of c-hat =", round(x$c.hat.est,
+                                               digits = digits.vals), "\n")
         }
-        cat("\n")
     }
+    cat("\n")
 }
+
 
