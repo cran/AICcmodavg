@@ -5,7 +5,7 @@
 \usepackage{natbib}
 \usepackage{array, tabularx}
 %to use colors  
-\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[dvipsnames]{xcolor}
 
 \usepackage{amsmath}
 

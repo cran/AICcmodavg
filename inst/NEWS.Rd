@@ -2,13 +2,20 @@
 \title{AICcmodavg News}
 \encoding{UTF-8}
 
-\section{Changes in version 2.3-2 (2023-03-20)}{
+\section{Changes in version 2.3-3 (2023-11-16)}{
+  \itemize{
+    \item{modified vignette .Rnw files (AICcmodavg.Rnw,
+  AICcmodavg-unmarked.Rnw) to remove usenames option when using xcolor
+  LaTeX package following modifications of xcolor.sty}
+}
+}
+
+    \section{Changes in version 2.3-2 (2023-03-20)}{
   \itemize{
     \item{added a vignette for a full example using diagnostic tools and
       utility functions implemented in 'AICcmodavg' for models fit in
       'unmarked' package}
-    \item{updated modavgEffect to check consistency of variables between
-      'newdata' and variables appearing in candidate model set}
+    \item{updated 'modavgEffect' with check to include case with a single predictor appearing in models}
     \item{updated 'mb.gof.test' for 'unmarkedFitColExt' object to deal with seasons without any sampling}
     \item{updated 'detHist' for 'unmarkedFitColExt' and
       'unmarkedFitoccuMS' objects to deal with seasons without any sampling}

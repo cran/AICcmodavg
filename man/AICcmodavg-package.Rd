@@ -43,8 +43,8 @@ in the package.
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 2.3-2\cr
-Date: \tab 2023-03-20\cr
+Version: \tab 2.3-3\cr
+Date: \tab 2023-11-16\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -56,118 +56,115 @@ below).
 
 This package contains several useful functions for model selection and
 multimodel inference for several model classes:
-\itemize{
-\item{\code{\link{AICc}}}  {Computes AIC, AICc, and their
-  quasi-likelihood counterparts (QAIC, QAICc).}
-\item{\code{\link{aictab}}}  {Constructs model selection tables with
-  number of parameters, AIC, delta AIC, Akaike weights or variants based
-  on AICc, QAIC, and QAICc for a set of candidate models.}
-\item{\code{\link{bictab}}}  {Constructs model selection tables with
-  number of parameters, BIC, delta BIC, BIC weights for a set of
+\describe{
+\item{\code{\link{AICc}}}{Computes AIC, AICc, and their quasi-likelihood counterparts (QAIC, QAICc).}
+\item{\code{\link{aictab}}}{Constructs model selection tables with
+  number of parameters, AIC, delta AIC, Akaike weights or variants based on AICc, QAIC, and QAICc for a set of candidate models.}
+\item{\code{\link{bictab}}}{Constructs model selection tables with number of parameters, BIC, delta BIC, BIC weights for a set of
   candidate models.}
-\item{\code{\link{boot.wt}}}  {Computes summary statistics from
+\item{\code{\link{boot.wt}}}{Computes summary statistics from
   detection histories.}
-\item{\code{\link{confset}}}  {Determines the confidence set for the
+\item{\code{\link{confset}}}{Determines the confidence set for the
   best model based on one of three criteria.}
-\item{\code{\link{DIC}}}  {Extracts DIC.}
-\item{\code{\link{dictab}}}  {Constructs model selection tables with
+\item{\code{\link{DIC}}}{Extracts DIC.}
+\item{\code{\link{dictab}}}{Constructs model selection tables with
   number of parameters, DIC, delta DIC, DIC weights for a set of
   candidate models.}
-\item{\code{\link{evidence}}}  {Computes the evidence ratio between the
+\item{\code{\link{evidence}}}{Computes the evidence ratio between the
   highest-ranked model based on the information criteria selected and a
   lower-ranked model.}
-\item{\code{\link{importance}}}  {Computes importance values (w+) for
+\item{\code{\link{importance}}}{Computes importance values (w+) for
   the support of a given parameter among set of candidate models.}
-\item{\code{\link{modavg}}}  {Computes model-averaged estimate,
+\item{\code{\link{modavg}}}{Computes model-averaged estimate,
   unconditional standard error, and unconditional confidence interval of
   a parameter of interest among a set of candidate models.}
-\item{\code{\link{modavgEffect}}}  {Computes model-averaged effect
+\item{\code{\link{modavgEffect}}}{Computes model-averaged effect
   sizes between groups based on the entire candidate model set.}
-\item{\code{\link{modavgShrink}}}  {Computes shrinkage version of
+\item{\code{\link{modavgShrink}}}{Computes shrinkage version of
   model-averaged estimate, unconditional standard error, and
   unconditional confidence interval of a parameter of interest among
   entire set of candidate models.} 
-\item{\code{\link{modavgPred}}}  {Computes model-average predictions, 
+\item{\code{\link{modavgPred}}}{Computes model-average predictions, 
   unconditional SE's, and confidence intervals among entire set of
   candidate models.}
-\item{\code{\link{multComp}}}  {Performs multiple comparisons across
+\item{\code{\link{multComp}}}{Performs multiple comparisons across
   levels of a factor in a model selection framework.}
-\item{\code{\link{useBIC}}}  {Computes BIC or a quasi-likelihood
+\item{\code{\link{useBIC}}}{Computes BIC or a quasi-likelihood
   counterparts (QBIC).}
 }
 
 For models not yet supported by the functions above, the following
 can be useful for model selection and multimodel inference conducted
 from input values supplied by the user:
-\itemize{
-  \item{\code{AICcCustom}} {Computes AIC, AICc, QAIC, and QAICc from
+\describe{
+  \item{\code{\link{AICcCustom}}}{Computes AIC, AICc, QAIC, and QAICc from
     user-supplied input values of log-likelihood and number of
     parameters.}
-  \item{\code{aictabCustom}} {Creates model selection tables based on
+  \item{\code{\link{aictabCustom}}}{Creates model selection tables based on
     (Q)AIC(c) from user-supplied input values of log-likelihood and
     number of parameters.}
-  \item{\code{bictabCustom}} {Creates model selection tables based on
+  \item{\code{\link{bictabCustom}}}{Creates model selection tables based on
     (Q)BIC from user-supplied input values of log-likelihood and number
     of parameters.}
-  \item{\code{ictab}} {Creates model selection tables from user-supplied
+  \item{\code{\link{ictab}}}{Creates model selection tables from user-supplied
     values of an information criterion.}
-  \item{\code{modavgCustom}} {Computes model-averaged parameter estimate
+  \item{\code{\link{modavgCustom}}}{Computes model-averaged parameter estimate
     based on (Q)AIC(c) from user-supplied input values of
     log-likelihood, number of parameters, parameter estimates, and
     standard errors.}
-  \item{\code{modavgIC}} {Computes model-averaged parameter estimate
+  \item{\code{\link{modavgIC}}}{Computes model-averaged parameter estimate
     from user-supplied values of information criterion, parameter
     estimates, and standard errors.}
-  \item{\code{useBICCustom}} {Computes BIC and QBIC from user-supplied
+  \item{\code{\link{useBICCustom}}}{Computes BIC and QBIC from user-supplied
     input values of log-likelihoods and number of parameters.}
 }
 
 
 A number of functions for model diagnostics are available:
-\itemize{
-\item{\code{\link{c_hat}}}  {Estimates variance inflation factor for
+\describe{
+\item{\code{\link{c_hat}}}{Estimates variance inflation factor for
   binomial or Poisson GLM's based on various estimators.}
-\item{\code{\link{checkConv}}}  {Checks the convergence information of
+\item{\code{\link{checkConv}}}{Checks the convergence information of
   the algorithm for the model.}
-\item{\code{\link{checkParms}}}  {Checks the occurrence of parameter
+\item{\code{\link{checkParms}}}{Checks the occurrence of parameter
   estimates with high standard errors in a model.}
-\item{\code{\link{countDist}}}  {Computes summary statistics from
+\item{\code{\link{countDist}}}{Computes summary statistics from
   distance sampling data.}
-\item{\code{\link{countHist}}}  {Computes summary statistics from
+\item{\code{\link{countHist}}}{Computes summary statistics from
   count history data.} 
-\item{\code{\link{covDiag}}}  {Computes covariance diagnostics for
+\item{\code{\link{covDiag}}}{Computes covariance diagnostics for
   lambda in \emph{N}-mixture models.}
-\item{\code{\link{detHist}}}  {Computes summary statistics from
+\item{\code{\link{detHist}}}{Computes summary statistics from
   detection histories.}
-\item{\code{\link{detTime}}}  {Computes summary statistics from
+\item{\code{\link{detTime}}}{Computes summary statistics from
   time-to-detection data.}
-\item{\code{\link{extractCN}}}  {Extracts condition number from models of
+\item{\code{\link{extractCN}}}{Extracts condition number from models of
   certain classes.}
-\item{\code{\link{mb.gof.test}}}  {Computes the MacKenzie and Bailey
+\item{\code{\link{mb.gof.test}}}{Computes the MacKenzie and Bailey
   goodness-of-fit test for single season and dynamic occupancy models
   using the Pearson chi-square statistic.}
-\item{\code{\link{Nmix.gof.test}}}  {Computes goodness-of-fit test for
+\item{\code{\link{Nmix.gof.test}}}{Computes goodness-of-fit test for
   \emph{N}-mixture models based on the Pearson chi-square statistic.}
 }
 
 Other utility functions include:
-\itemize{
-\item{\code{\link{anovaOD}}}  {Computes likelihood-ratio test statistic
+\describe{
+\item{\code{\link{anovaOD}}}{Computes likelihood-ratio test statistic
   corrected for overdispersion between two models.}
-\item{\code{\link{extractLL}}}  {Extracts log-likelihood from
+\item{\code{\link{extractLL}}}{Extracts log-likelihood from
   models of certain classes.}
-\item{\code{\link{extractSE}}}  {Extracts standard errors from models of
+\item{\code{\link{extractSE}}}{Extracts standard errors from models of
   certain classes and adds the labels.}
-\item{\code{\link{extractX}}}  {Extracts the predictors and associated
+\item{\code{\link{extractX}}}{Extracts the predictors and associated
   information on variables from a list of candidate models.}
-\item{\code{\link{fam.link.mer}}}  {Extracts the distribution family and 
+\item{\code{\link{fam.link.mer}}}{Extracts the distribution family and 
   link function from a generalized linear mixed model of classes \code{mer}
   and \code{merMod}.}
-\item{\code{\link{predictSE}}}  {Computes predictions and associated 
+\item{\code{\link{predictSE}}}{Computes predictions and associated 
   standard errors models of certain classes.}
-\item{\code{\link{summaryOD}}}  {Displays summary of model output
+\item{\code{\link{summaryOD}}}{Displays summary of model output
   adjusted for overdispersion.}
-\item{\code{\link{xtable}}}  {Formats various objects resulting from
+\item{\code{\link{xtable}}}{Formats various objects resulting from
   model selection and multimodel inference to LaTeX or HTML tables.}
 }
 }

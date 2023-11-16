@@ -188,9 +188,9 @@ multComp(mod, factor.id, letter.labels = TRUE, second.ord = TRUE,
   factor.
 
   For example, a factor with three levels has four possible grouping
-  patterns: {abc} (all groups are different), {abb} (the first group
-  differs from the other two), {aab} (the first two groups differ from the
-  third), and {aaa} (all groups are equal).  \code{multComp} implements
+  patterns: \{abc\} (all groups are different), \{abb\} (the first group
+  differs from the other two), \{aab\} (the first two groups differ from the
+  third), and \{aaa\} (all groups are equal).  \code{multComp} implements
   such an approach by pooling groups of the factor variable in a model and
   updating the model, for each grouping pattern possible.  The models are
   ranked according to one of four information criteria (AIC, AICc, QAIC,

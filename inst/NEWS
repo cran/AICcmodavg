@@ -4,6 +4,12 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@sbf.ulaval.ca>
 ##
 ####################################################################
+##revision 2.3-3 (16 November 2023)
+##- modified vignette .Rnw files (AICcmodavg.Rnw, AICcmodavg-unmarked.Rnw) to remove usenames option when using xcolor LaTeX package following modifications of xcolor.sty
+
+
+
+####################################################################
 ##revision 2.3-2 (20 March 2023)
 ##- added a vignette for a full example using diagnostic tools and utility functions implemented in 'AICcmodavg' for models fit in 'unmarked' package
 ##- updated 'modavgEffect' with check to include case with a single predictor appearing in models
