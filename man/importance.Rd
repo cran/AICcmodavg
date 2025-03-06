@@ -43,6 +43,8 @@
 \alias{importance.AICunmarkedFitOccuTTD}
 \alias{importance.AICunmarkedFitMMO}
 \alias{importance.AICunmarkedFitDSO}
+\alias{importance.AICunmarkedFitGOccu}
+\alias{importance.AICunmarkedFitOccuComm}
 \alias{importance.AICvglm}
 \alias{importance.AICzeroinfl}
 \alias{print.importance}
@@ -184,6 +186,14 @@ importance(cand.set, parm, modnames = NULL, second.ord = TRUE,
            second.ord = TRUE, nobs = NULL, c.hat = 1, parm.type = NULL,
        ...)
 
+\method{importance}{AICunmarkedFitGOccu}(cand.set, parm, modnames = NULL,
+           second.ord = TRUE, nobs = NULL, c.hat = 1, parm.type = NULL,
+       ...)
+
+\method{importance}{AICunmarkedFitOccuComm}(cand.set, parm, modnames = NULL,
+           second.ord = TRUE, nobs = NULL, c.hat = 1, parm.type = NULL,
+       ...)
+
 \method{importance}{AICvglm}(cand.set, parm, modnames = NULL, 
            second.ord = TRUE, nobs = NULL, c.hat = 1, ...)
 
@@ -235,10 +245,10 @@ linear mixed models of the \code{mer} or \code{merMod} classes.
 \item{parm.type}{this argument specifies the parameter type on which
   the variable of interest will be extracted and is only relevant for
   models of \code{unmarkedFit} classes.  The character strings supported
-  vary with the type of model fitted.  For \code{unmarkedFitOccu} and
-  \code{unmarkedFitOccuMulti} objects, either \code{psi} or
-  \code{detect} can be supplied to indicate whether the parameter is on
-  occupancy or detectability, respectively.  For
+  vary with the type of model fitted.  For \code{unmarkedFitOccu},
+  \code{unmarkedFitOccuMulti}, \code{unmarkedFitOccuComm} objects,
+  either \code{psi} or \code{detect} can be supplied to indicate whether
+  the parameter is on occupancy or detectability, respectively.  For
   \code{unmarkedFitColExt} objects, possible values are \code{psi}, 
   \code{gamma}, \code{epsilon}, and \code{detect}, for parameters on
   occupancy in the inital year, colonization, extinction, and
@@ -268,7 +278,9 @@ linear mixed models of the \code{mer} or \code{merMod} classes.
   probability, respectively.  For \code{unmarkedFitGMM} and
   \code{unmarkedFitGPC} objects, \code{lambda}, \code{phi}, and
   \code{detect} denote abundance, availability, and detectability,
-  respectively.
+  respectively.  For \code{unmarkedFitGOccu} objects, possible values
+  are \code{psi}, \code{phi}, or \code{detect}, denoting occupancy,
+  availability, and detection probabilities, respectively. 
 }
 \item{\dots}{
   additional arguments passed to the function.

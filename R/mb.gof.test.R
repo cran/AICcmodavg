@@ -1080,7 +1080,7 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
     n.seasons.adj <- n.seasons #total number of plots fixed to 11 or 12, depending on plots requested
     missing.seasons <- mod.table$missing.seasons
     ##number of seasons with data
-    n.season.data <- sum(missing.seasons)
+    n.season.data <- sum(!missing.seasons)
 
     ##if NULL, don't print test statistic at each iteration
     if(is.null(report)) {
@@ -1276,7 +1276,7 @@ mb.gof.test.unmarkedFitColExt <- function(mod, nsim = 5, plot.hist = TRUE,
     boot.chisq <- sum(colMeans(out@t.star))
     c.hat.est <- obs.chisq/boot.chisq
     
-    all.p.vals <- lapply(p.vals, FUN = function(i) i$p.value)
+    all.p.vals <- sapply(p.vals, FUN = function(i) i$p.value)
     ##lapply(mod.table, FUN = function(i) i$chisq.table)
 
     ##compute P-value for obs.chisq

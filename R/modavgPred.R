@@ -8423,6 +8423,786 @@ modavgPred.AICunmarkedFitOccuMulti <- function(cand.set, modnames = NULL, newdat
 
 
 
+##goccu
+modavgPred.AICunmarkedFitGOccu <-
+  function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
+           nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+           type = "response", c.hat = 1, parm.type = NULL, ...) {
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+
+  ##check for parm.type and stop if NULL
+  if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgPred for details\n")}
+
+
+  ##rename values according to unmarked to extract from object
+  ##psi
+  if(identical(parm.type, "psi")) {
+    parm.type1 <- "psi"
+  }
+  
+      ##detect
+      if(identical(parm.type, "detect")) {
+          parm.type1 <- "det"
+      }
+
+      ##availability
+      if(identical(parm.type, "phi")) {
+          parm.type1 <- "phi"
+      }
+
+  
+##################
+    ##extract link function
+    check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                 parm.type1, "@invlink",
+                                                                                 sep = ""))))
+    unique.link <- unique(check.link)
+    select.link <- unique.link[1]
+    
+    if(identical(type, "link")) {
+        if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                          "with different link functions\n")}
+    }
+##################
+      
+  ##extract inverse link function
+  if(identical(select.link, "logistic")) {
+    link.inv <- plogis
+  }
+  ##extract inverse link function
+  if(identical(select.link, "cloglog")) {
+    link.inv <- function(x) 1 - exp(-exp(x))
+  }
+####changes#############
+
+  
+  ##newdata is data frame with exact structure of the original data frame (same variable names and type)
+  
+  ##determine number of observations in new data set
+  nobserv <- dim(newdata)[1]
+  
+  ##determine number of columns in new data set
+  ncolumns <- dim(newdata)[2]
+
+  ##if only 1 column, add an additional column to avoid problems in computation with predictSE.mer( )
+  if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
+ 
+  ##store AICc table
+  AICctab <- aictab(cand.set = cand.set, modnames = modnames,
+                    second.ord = second.ord, nobs = nobs, sort = FALSE, c.hat = c.hat)
+
+  ##create object to hold Model-averaged estimates and unconditional SE's
+  Mod.avg.out <- matrix(NA, nrow = nobserv, ncol = 2)
+  colnames(Mod.avg.out) <- c("Mod.avg.est", "Uncond.SE")
+  
+  ##required for CI
+  if(identical(type, "response")) {
+    Mod.avg.out.link <- matrix(NA, nrow = nobserv, ncol = 2)
+    colnames(Mod.avg.out.link) <- c("Mod.avg.est", "Uncond.SE")
+  }
+
+  ##begin loop - AICc
+  if(second.ord == TRUE && c.hat == 1){
+    
+    for (obs in 1:nobserv) {
+
+      ##create temporary data.frame to store fitted values and SE 
+      AICctmp <- AICctab
+      
+      if(identical(type, "response")) {
+        ##extract fitted value for observation obs
+        fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                             type = parm.type1)$Predicted))
+        
+        ##extract SE for fitted value for observation obs
+        SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                            type = parm.type1)$SE))
+        if(length(unique.link) == 1) {
+          AICctmp$fit.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                             type = parm.type1, backTransform = FALSE)$Predicted))
+          AICctmp$SE.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                           type = parm.type1, backTransform = FALSE)$SE))
+        } else {
+          warning("\nIt is not appropriate to model-average linear predictors using different link functions\n")
+          AICctmp$fit.link <- NA
+          AICctmp$SE.link <- NA
+        }
+      }
+    
+      
+      if(identical(type, "link")) {
+        ##extract fitted value for observation obs
+        fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                             type = parm.type1, backTransform = FALSE)$Predicted))
+
+        ##extract SE for fitted value for observation obs
+        SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                          type = parm.type1, backTransform = FALSE)$SE))
+      }
+      
+
+      AICctmp$fit <- fit
+      AICctmp$SE <- SE
+    
+      
+      ##compute model averaged prediction and store in output matrix
+      Mod.avg.out[obs, 1] <- sum(AICctmp$AICcWt*AICctmp$fit)
+      ##compute unconditional SE and store in output matrix
+
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Mod.avg.out[obs, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE^2 + (AICctmp$fit- Mod.avg.out[obs, 1])^2))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(AICctmp$AICcWt*AICctmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.link^2 + (AICctmp$fit.link - Mod.avg.out.link[obs, 1])^2))
+        }
+      }
+
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Mod.avg.out[obs, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE^2 + (AICctmp$fit- Mod.avg.out[obs, 1])^2)))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(AICctmp$AICcWt*AICctmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.link^2 + (AICctmp$fit.link - Mod.avg.out.link[obs, 1])^2)))
+        }        
+      }
+    }
+  }
+
+
+  ##begin loop - QAICc
+  if(second.ord == TRUE && c.hat > 1){
+    
+    for (obs in 1:nobserv) {
+      
+      ##create temporary data.frame to store fitted values and SE 
+      QAICctmp <- AICctab
+  
+      if(identical(type, "response")) {
+      ##extract fitted value for observation obs
+      fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                           type = parm.type1)$Predicted))
+      ##extract SE for fitted value for observation obs
+      SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                          type = parm.type1)$SE))
+      if(length(unique.link) == 1) {
+        QAICctmp$fit.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                           type = parm.type1, backTransform = FALSE)$Predicted))
+        QAICctmp$SE.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                          type = parm.type1, backTransform = FALSE)$SE)) * sqrt(c.hat)
+      } else {
+        warning("\nIt is not appropriate to model-average linear predictors using different link functions\n")
+        QAICctmp$fit.link <- NA
+        QAICctmp$SE.link <- NA
+      }
+    }
+      
+      if(identical(type, "link")) {
+      ##extract fitted value for observation obs
+      fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                           type = parm.type1, backTransform = FALSE)$Predicted))
+      ##extract SE for fitted value for observation obs
+      SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                          type = parm.type1, backTransform = FALSE)$SE))
+    }
+
+      
+      QAICctmp$fit <- fit
+      QAICctmp$SE <- SE * sqrt(c.hat)
+      
+      
+      ##compute model averaged prediction and store in output matrix
+      Mod.avg.out[obs, 1] <- sum(QAICctmp$QAICcWt * QAICctmp$fit)
+      ##compute unconditional SE and store in output matrix
+
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Mod.avg.out[obs, 2] <- sum(QAICctmp$QAICcWt * sqrt(QAICctmp$SE^2 + (QAICctmp$fit- Mod.avg.out[obs, 1])^2))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.link^2 + (QAICctmp$fit.link - Mod.avg.out.link[obs, 1])^2))
+        }
+      }
+
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Mod.avg.out[obs, 2] <- sqrt(sum(QAICctmp$QAICcWt *(QAICctmp$SE^2 + (QAICctmp$fit- Mod.avg.out[obs, 1])^2)))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.link^2 + (QAICctmp$fit.link - Mod.avg.out.link[obs, 1])^2)))
+        }
+      }
+    }
+  }
+  
+  
+  ##begin loop - AIC
+  if(second.ord == FALSE && c.hat == 1) {
+
+    for (obs in 1:nobserv) {
+
+      ##create temporary data.frame to store fitted values and SE 
+      AICtmp <- AICctab
+      
+      if(identical(type, "response")) {
+          fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                               type = parm.type1)$Predicted))
+
+          ##extract SE for fitted value for observation obs
+          SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                              type = parm.type1)$SE))
+          if(length(unique.link) == 1) {
+            AICtmp$fit.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                             type = parm.type1, backTransform = FALSE)$Predicted))
+            AICtmp$SE.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                            type = parm.type1, backTransform = FALSE)$SE))
+            
+          } else {
+            warning("\nIt is not appropriate to model-average linear predictors using different link functions\n")
+            AICtmp$fit.link <- NA
+            AICtmp$SE.link <- NA
+          }
+        }
+      
+
+      if(identical(type, "link")) {
+        ##extract fitted value for observation obs
+        fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                             type = parm.type1, backTransform = FALSE)$Predicted))
+        
+        ##extract SE for fitted value for observation obs
+        SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                            type = parm.type1, backTransform = FALSE)$SE))
+      }
+        
+      
+      AICtmp$fit <- fit
+      AICtmp$SE <- SE
+
+      
+      ##compute model averaged prediction and store in output matrix
+      Mod.avg.out[obs, 1] <- sum(AICtmp$AICWt*AICtmp$fit)
+      
+      ##compute unconditional SE and store in output matrix
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Mod.avg.out[obs, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE^2 + (AICtmp$fit- Mod.avg.out[obs, 1])^2))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(AICtmp$AICWt*AICtmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.link^2 + (AICtmp$fit.link - Mod.avg.out.link[obs, 1])^2))
+        }
+      }
+
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Mod.avg.out[obs, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE^2 + (AICtmp$fit- Mod.avg.out[obs, 1])^2)))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(AICtmp$AICWt*AICtmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.link^2 + (AICtmp$fit.link - Mod.avg.out.link[obs, 1])^2)))
+        }
+      }  
+    }
+  }
+
+  
+  ##begin loop - QAIC
+  if(second.ord == FALSE && c.hat > 1){
+     
+    for (obs in 1:nobserv) {
+
+      ##create temporary data.frame to store fitted values and SE 
+      QAICtmp <- AICctab
+      
+      if(identical(type, "response")) {
+      ##extract fitted value for observation obs
+      fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                       type = parm.type1)$Predicted))
+
+      ##extract SE for fitted value for observation obs
+      SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                      type = parm.type1)$SE))
+      
+      if(length(unique.link) == 1) {
+        QAICtmp$fit.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                          type = parm.type1, backTransform = FALSE)$Predicted))
+        QAICtmp$SE.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                         type = parm.type1, backTransform = FALSE)$SE)) * sqrt(c.hat)
+      } else {
+        warning("\nIt is not appropriate to model-average linear predictors using different link functions\n")
+        QAICtmp$fit.link <- NA
+        QAICtmp$SE.link <- NA
+      }
+    }
+      
+      if(identical(type, "link")) {
+      ##extract fitted value for observation obs
+      fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                       type = parm.type1, backTransform = FALSE)$Predicted))
+
+      ##extract SE for fitted value for observation obs
+      SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                      type = parm.type1, backTransform = FALSE)$SE))
+    }
+      
+      
+      QAICtmp$fit <- fit
+      QAICtmp$SE <- SE * sqrt(c.hat)
+      
+      
+      ##compute model averaged prediction and store in output matrix
+      Mod.avg.out[obs, 1] <- sum(QAICtmp$QAICWt * QAICtmp$fit)
+      ##compute unconditional SE and store in output matrix
+
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Mod.avg.out[obs, 2] <- sum(QAICtmp$QAICWt * sqrt(QAICtmp$SE^2 + (QAICtmp$fit- Mod.avg.out[obs, 1])^2))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(QAICtmp$QAICWt*QAICtmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.link^2 + (QAICtmp$fit.link - Mod.avg.out.link[obs, 1])^2))
+        }
+      }
+
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Mod.avg.out[obs, 2] <- sqrt(sum(QAICtmp$QAICWt *(QAICtmp$SE^2 + (QAICtmp$fit- Mod.avg.out[obs, 1])^2)))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(QAICtmp$QAICWt*QAICtmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.link^2 + (QAICtmp$fit.link - Mod.avg.out.link[obs, 1])^2)))
+        }
+      }
+    }
+  }
+
+##############changes start here
+  mod.avg.pred <- Mod.avg.out[, 1]
+  uncond.se <- Mod.avg.out[, 2]
+  
+  ##compute confidence interval
+  zcrit <- qnorm(p=(1-conf.level)/2, lower.tail=FALSE)
+
+  if(identical(type, "link")) {
+    lower.CL <- mod.avg.pred - zcrit * uncond.se
+    upper.CL <- mod.avg.pred + zcrit * uncond.se
+  } else {
+    lower.CL <- link.inv(Mod.avg.out.link[, 1] - zcrit * Mod.avg.out.link[, 2])
+    upper.CL <- link.inv(Mod.avg.out.link[, 1] + zcrit * Mod.avg.out.link[, 2])
+  }
+  
+  ##create matrix
+  matrix.output <- matrix(data = c(mod.avg.pred, uncond.se, lower.CL, upper.CL),
+                          nrow = nrow(newdata), ncol = 4)
+  colnames(matrix.output) <- c("mod.avg.pred", "uncond.se", "lower.CL", "upper.CL")
+  
+  ##organize as list
+  Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
+                        "matrix.output" = matrix.output)
+  class(Mod.pred.list) <- c("modavgPred", "list")
+  return(Mod.pred.list)
+}  
+
+
+
+##occuComm
+modavgPred.AICunmarkedFitOccuComm <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
+                                              nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                              type = "response", c.hat = 1, parm.type = NULL, ...) {
+
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+        if(is.null(names(cand.set))) {
+            modnames <- paste("Mod", 1:length(cand.set), sep = "")
+            warning("\nModel names have been supplied automatically in the table\n")
+        } else {
+            modnames <- names(cand.set)
+        }
+    }
+
+
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgPred for details\n")}
+
+  
+    ##rename values according to unmarked to extract from object
+    ##psi
+    if(identical(parm.type, "psi")) {
+    parm.type1 <- "state"
+    
+    }
+
+  
+    ##detect
+    if(identical(parm.type, "detect")) {
+        parm.type1 <- "det"
+        
+    }
+ 
+
+##################
+    ##extract link function
+    check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                 parm.type1, "@invlink",
+                                                                                 sep = ""))))
+    unique.link <- unique(check.link)
+    select.link <- unique.link[1]
+    
+    if(identical(type, "link")) {
+        if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                          "with different link functions\n")}
+    }
+##################
+    
+    ##extract inverse link function
+    if(identical(select.link, "logistic")) {
+        link.inv <- plogis
+    }
+
+    ##extract inverse link function
+    if(identical(select.link, "cloglog")) {
+        link.inv <- function(x) 1 - exp(-exp(x))
+    }
+
+    
+    ##newdata is data frame with exact structure of the original data frame (same variable names and type)
+  
+    ##determine number of observations in new data set
+    nobserv <- dim(newdata)[1]
+  
+  ##determine number of columns in new data set
+  ncolumns <- dim(newdata)[2]
+
+  ##if only 1 column, add an additional column to avoid problems in computation with predict( )
+  if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
+ 
+  ##store AICc table
+  AICctab <- aictab(cand.set = cand.set, modnames = modnames,
+                    second.ord = second.ord, nobs = nobs, sort = FALSE, c.hat = c.hat)
+
+  ##create object to hold Model-averaged estimates and unconditional SE's
+  Mod.avg.out <- matrix(NA, nrow = nobserv, ncol = 2)
+  colnames(Mod.avg.out) <- c("Mod.avg.est", "Uncond.SE")
+  
+
+  ##required for CI
+  if(identical(type, "response")) {
+    Mod.avg.out.link <- matrix(NA, nrow = nobserv, ncol = 2)
+    colnames(Mod.avg.out.link) <- c("Mod.avg.est", "Uncond.SE")
+  }
+  
+  
+  ##begin loop - AICc
+  if(second.ord == TRUE && c.hat == 1){
+    
+    for (obs in 1:nobserv) {
+
+      ##create temporary data.frame to store fitted values and SE 
+      AICctmp <- AICctab
+      
+      if(identical(type, "response")) {
+        ##extract fitted value for observation obs
+        fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                             type = parm.type1)$Predicted))
+        
+        ##extract SE for fitted value for observation obs
+        SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                            type = parm.type1)$SE))
+        if(length(unique.link) == 1) {
+          AICctmp$fit.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                             type = parm.type1, backTransform = FALSE)$Predicted))
+          AICctmp$SE.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                             type = parm.type1, backTransform = FALSE)$SE))
+        } else {
+          warning("\nIt is not appropriate to model-average linear predictors using different link functions\n")
+          AICctmp$fit.link <- NA
+          AICctmp$SE.link <- NA
+        }
+      }
+    
+      
+      if(identical(type, "link")) {
+        ##extract fitted value for observation obs
+        fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                             type = parm.type1, backTransform = FALSE)$Predicted))
+
+        ##extract SE for fitted value for observation obs
+        SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                          type = parm.type1, backTransform = FALSE)$SE))
+      }
+      
+
+      AICctmp$fit <- fit
+      AICctmp$SE <- SE
+    
+      
+      ##compute model averaged prediction and store in output matrix
+      Mod.avg.out[obs, 1] <- sum(AICctmp$AICcWt*AICctmp$fit)
+      ##compute unconditional SE and store in output matrix
+
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Mod.avg.out[obs, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE^2 + (AICctmp$fit- Mod.avg.out[obs, 1])^2))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(AICctmp$AICcWt*AICctmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.link^2 + (AICctmp$fit.link - Mod.avg.out.link[obs, 1])^2))
+        }
+      }
+
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Mod.avg.out[obs, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE^2 + (AICctmp$fit- Mod.avg.out[obs, 1])^2)))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(AICctmp$AICcWt*AICctmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.link^2 + (AICctmp$fit.link - Mod.avg.out.link[obs, 1])^2)))
+        }        
+      }
+    }
+  }
+
+
+  ##begin loop - QAICc
+  if(second.ord == TRUE && c.hat > 1){
+    
+    for (obs in 1:nobserv) {
+      
+      ##create temporary data.frame to store fitted values and SE 
+      QAICctmp <- AICctab
+  
+      if(identical(type, "response")) {
+      ##extract fitted value for observation obs
+      fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                           type = parm.type1)$Predicted))
+      ##extract SE for fitted value for observation obs
+      SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                          type = parm.type1)$SE))
+      if(length(unique.link) == 1) {
+        QAICctmp$fit.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                           type = parm.type1, backTransform = FALSE)$Predicted))
+        QAICctmp$SE.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                          type = parm.type1, backTransform = FALSE)$SE)) * sqrt(c.hat)
+      } else {
+        warning("\nIt is not appropriate to model-average linear predictors using different link functions\n")
+        QAICctmp$fit.link <- NA
+        QAICctmp$SE.link <- NA
+      }
+    }
+      
+      if(identical(type, "link")) {
+      ##extract fitted value for observation obs
+      fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                           type = parm.type1, backTransform = FALSE)$Predicted))
+      ##extract SE for fitted value for observation obs
+      SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                          type = parm.type1, backTransform = FALSE)$SE))
+    }
+
+      
+      QAICctmp$fit <- fit
+      QAICctmp$SE <- SE * sqrt(c.hat)
+      
+      
+      ##compute model averaged prediction and store in output matrix
+      Mod.avg.out[obs, 1] <- sum(QAICctmp$QAICcWt * QAICctmp$fit)
+      ##compute unconditional SE and store in output matrix
+
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Mod.avg.out[obs, 2] <- sum(QAICctmp$QAICcWt * sqrt(QAICctmp$SE^2 + (QAICctmp$fit- Mod.avg.out[obs, 1])^2))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.link^2 + (QAICctmp$fit.link - Mod.avg.out.link[obs, 1])^2))
+        }
+      }
+
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Mod.avg.out[obs, 2] <- sqrt(sum(QAICctmp$QAICcWt *(QAICctmp$SE^2 + (QAICctmp$fit- Mod.avg.out[obs, 1])^2)))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.link^2 + (QAICctmp$fit.link - Mod.avg.out.link[obs, 1])^2)))
+        }
+      }
+    }
+  }
+  
+  
+  
+  ##begin loop - AIC
+  if(second.ord == FALSE && c.hat == 1) {
+
+    for (obs in 1:nobserv) {
+
+      ##create temporary data.frame to store fitted values and SE 
+      AICtmp <- AICctab
+      
+      if(identical(type, "response")) {
+          fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                               type = parm.type1)$Predicted))
+
+          ##extract SE for fitted value for observation obs
+          SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                              type = parm.type1)$SE))
+          if(length(unique.link) == 1) {
+            AICtmp$fit.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                             type = parm.type1, backTransform = FALSE)$Predicted))
+            AICtmp$SE.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                            type = parm.type1, backTransform = FALSE)$SE))
+            
+          } else {
+            warning("\nIt is not appropriate to model-average linear predictors using different link functions\n")
+            AICtmp$fit.link <- NA
+            AICtmp$SE.link <- NA
+          }
+        }
+      
+
+      if(identical(type, "link")) {
+        ##extract fitted value for observation obs
+        fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                             type = parm.type1, backTransform = FALSE)$Predicted))
+        
+        ##extract SE for fitted value for observation obs
+        SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                            type = parm.type1, backTransform = FALSE)$SE))
+      }
+        
+      
+      AICtmp$fit <- fit
+      AICtmp$SE <- SE
+
+      
+      ##compute model averaged prediction and store in output matrix
+      Mod.avg.out[obs, 1] <- sum(AICtmp$AICWt*AICtmp$fit)
+      
+      ##compute unconditional SE and store in output matrix
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Mod.avg.out[obs, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE^2 + (AICtmp$fit- Mod.avg.out[obs, 1])^2))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(AICtmp$AICWt*AICtmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.link^2 + (AICtmp$fit.link - Mod.avg.out.link[obs, 1])^2))
+        }
+      }
+
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Mod.avg.out[obs, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE^2 + (AICtmp$fit- Mod.avg.out[obs, 1])^2)))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(AICtmp$AICWt*AICtmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.link^2 + (AICtmp$fit.link - Mod.avg.out.link[obs, 1])^2)))
+        }
+      }  
+    }
+  }
+
+  
+  ##begin loop - QAICc
+  if(second.ord == FALSE && c.hat > 1){
+     
+    for (obs in 1:nobserv) {
+
+      ##create temporary data.frame to store fitted values and SE 
+      QAICtmp <- AICctab
+      
+      if(identical(type, "response")) {
+      ##extract fitted value for observation obs
+      fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                       type = parm.type1)$Predicted))
+
+      ##extract SE for fitted value for observation obs
+      SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                      type = parm.type1)$SE))
+      
+      if(length(unique.link) == 1) {
+        QAICtmp$fit.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                          type = parm.type1, backTransform = FALSE)$Predicted))
+        QAICtmp$SE.link <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                                         type = parm.type1, backTransform = FALSE)$SE)) * sqrt(c.hat)
+      } else {
+        warning("\nIt is not appropriate to model-average linear predictors using different link functions\n")
+        QAICtmp$fit.link <- NA
+        QAICtmp$SE.link <- NA
+      }
+    }
+      
+      if(identical(type, "link")) {
+      ##extract fitted value for observation obs
+      fit <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                       type = parm.type1, backTransform = FALSE)$Predicted))
+
+      ##extract SE for fitted value for observation obs
+      SE <- unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata[obs, ],
+                                      type = parm.type1, backTransform = FALSE)$SE))
+    }
+      
+      
+      QAICtmp$fit <- fit
+      QAICtmp$SE <- SE * sqrt(c.hat)
+      
+      
+      ##compute model averaged prediction and store in output matrix
+      Mod.avg.out[obs, 1] <- sum(QAICtmp$QAICWt * QAICtmp$fit)
+      ##compute unconditional SE and store in output matrix
+
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Mod.avg.out[obs, 2] <- sum(QAICtmp$QAICWt * sqrt(QAICtmp$SE^2 + (QAICtmp$fit- Mod.avg.out[obs, 1])^2))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(QAICtmp$QAICWt*QAICtmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.link^2 + (QAICtmp$fit.link - Mod.avg.out.link[obs, 1])^2))
+        }
+      }
+
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Mod.avg.out[obs, 2] <- sqrt(sum(QAICtmp$QAICWt *(QAICtmp$SE^2 + (QAICtmp$fit- Mod.avg.out[obs, 1])^2)))
+        if(identical(type, "response")) {
+          Mod.avg.out.link[obs, 1] <- sum(QAICtmp$QAICWt*QAICtmp$fit.link)
+          Mod.avg.out.link[obs, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.link^2 + (QAICtmp$fit.link - Mod.avg.out.link[obs, 1])^2)))
+        }
+      }
+    }
+  }
+
+##############changes start here
+  mod.avg.pred <- Mod.avg.out[, 1]
+  uncond.se <- Mod.avg.out[, 2]
+  
+  ##compute confidence interval
+  zcrit <- qnorm(p=(1-conf.level)/2, lower.tail=FALSE)
+
+  if(identical(type, "link")) {
+    lower.CL <- mod.avg.pred - zcrit * uncond.se
+    upper.CL <- mod.avg.pred + zcrit * uncond.se
+  } else {
+    lower.CL <- link.inv(Mod.avg.out.link[, 1] - zcrit * Mod.avg.out.link[, 2])
+    upper.CL <- link.inv(Mod.avg.out.link[, 1] + zcrit * Mod.avg.out.link[, 2])
+  }
+  
+  ##create matrix
+  matrix.output <- matrix(data = c(mod.avg.pred, uncond.se, lower.CL, upper.CL),
+                          nrow = nrow(newdata), ncol = 4)
+  colnames(matrix.output) <- c("mod.avg.pred", "uncond.se", "lower.CL", "upper.CL")
+  
+  ##organize as list
+  Mod.pred.list <- list("type" = type, "mod.avg.pred" = mod.avg.pred, "uncond.se" = uncond.se,
+                        "conf.level" = conf.level, "lower.CL" = lower.CL, "upper.CL" = upper.CL,
+                        "matrix.output" = matrix.output)
+  class(Mod.pred.list) <- c("modavgPred", "list")
+  return(Mod.pred.list)
+}
+
+
+
 print.modavgPred <- function(x, digits = 3, ...) {
 
   if(any(names(x)=="type") ) {

@@ -16,6 +16,9 @@ extractCN.unmarkedFit <- function(mod, method = "svd", ...) {
   ##extract Hessian matrix
   hess <- mod@opt$hessian
 
+  ##check if NULL
+  if(is.null(hess)) stop("\nFunction not yet defined for random effects\n")
+   
   ##SVD
   if(identical(method, "svd")) {
     s <- svd(hess, nu = 0, nv = 0)$d

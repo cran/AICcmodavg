@@ -30,6 +30,8 @@
 \alias{modavgPred.AICunmarkedFitDSO}
 \alias{modavgPred.AICunmarkedFitOccuMS}
 \alias{modavgPred.AICunmarkedFitOccuMulti}
+\alias{modavgPred.AICunmarkedFitGOccu}
+\alias{modavgPred.AICunmarkedFitOccuComm}
 \alias{print.modavgPred}
 \title{
 Compute Model-averaged Predictions
@@ -175,6 +177,16 @@ modavgPred(cand.set, modnames = NULL, newdata, second.ord = TRUE,
         newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
         conf.level = 0.95, type = "response", c.hat = 1,
         parm.type = NULL, \dots)
+
+\method{modavgPred}{AICunmarkedFitGOccu}(cand.set, modnames = NULL,
+        newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
+
+\method{modavgPred}{AICunmarkedFitOccuComm}(cand.set, modnames = NULL,
+        newdata, second.ord = TRUE, nobs = NULL, uncond.se = "revised",
+        conf.level = 0.95, type = "response", c.hat = 1,
+        parm.type = NULL, \dots)
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -192,7 +204,10 @@ models.
 }
   \item{newdata}{
 a data frame with the same structure as that of the original data frame
-for which we want to make predictions.
+for which we want to make predictions.  For community occupancy models
+of \code{unmarkedFitOccuComm} classes, the \code{newdata} data frame
+must include a column specifying the name of the species for which each
+prediction is requested (see 'Examples' below). 
 }
 \item{second.ord}{
   logical.  If \code{TRUE}, the function returns the second-order
@@ -248,20 +263,21 @@ supported for generalized linear mixed models of the \code{mer} class.
 \item{parm.type}{  this argument specifies the parameter type on which
   the predictions will be computed and is only relevant for models of
   \code{unmarkedFit} classes.  The character strings supported vary with
-  the type of model fitted.  For \code{unmarkedFitOccu} objects, either
-  \code{psi} or \code{detect} can be supplied to indicate whether the
-  parameter is on occupancy or detectability, respectively.  For
-  \code{unmarkedFitColExt} objects, possible values are \code{psi},
-  \code{gamma}, \code{epsilon}, and \code{detect}, for parameters on
-  occupancy in the inital year, colonization, extinction, and
-  detectability, respectively.  For \code{unmarkedFitOccuTTD} objects,
+  the type of model fitted.  For \code{unmarkedFitOccu}, \code{unmarkedFitOccuMulti}, and
+  \code{unmarkedFitOccuComm} objects, either \code{psi} or \code{detect}
+  can be supplied to indicate whether the parameter is on occupancy or
+  detectability, respectively.  For \code{unmarkedFitColExt} objects,
   possible values are \code{psi}, \code{gamma}, \code{epsilon}, and
   \code{detect}, for parameters on occupancy in the inital year,
-  colonization, extinction, and time-to-dection (lambda rate parameter),
-  respectively.  For \code{unmarkedFitOccuFP} objects, one can specify
-  \code{psi}, \code{detect}, \code{falsepos}, and \code{certain}, for
-  occupancy, detectability, probability of assigning false-positives,
-  and probability detections are certain, respectively.  For
+  colonization, extinction, and detectability, respectively.  For
+  \code{unmarkedFitOccuTTD} objects, possible values are \code{psi},
+  \code{gamma}, \code{epsilon}, and \code{detect}, for parameters on
+  occupancy in the inital year, colonization, extinction, and
+  time-to-dection (lambda rate parameter), respectively.  For
+  \code{unmarkedFitOccuFP} objects, one can specify \code{psi},
+  \code{detect}, \code{falsepos}, and \code{certain}, for occupancy,
+  detectability, probability of assigning false-positives, and
+  probability detections are certain, respectively.  For
   \code{unmarkedFitOccuRN} objects, either \code{lambda} or
   \code{detect} can be entered for abundance and detectability
   parameters, respectively.  For \code{unmarkedFitPCount} and
@@ -273,16 +289,16 @@ supported for generalized linear mixed models of the \code{mer} class.
   parameters on abundance, recruitment, apparent survival, immigration,
   and detectability, respectively.  For \code{unmarkedFitDS} objects,
   \code{lambda} and \code{detect} are supported.  For
-  \code{unmarkedFitGDS}, \code{lambda}, \code{phi}, and \code{detect}
+  \code{unmarkedFitGDS}, \code{lambda}, \code{phi}, and \code{detect} 
   denote abundance, availability, and detection probability,
   respectively.  For \code{unmarkedFitGMM} and \code{unmarkedFitGPC}
   objects, \code{lambda}, \code{phi}, and \code{detect} denote
   abundance, availability, and detectability, respectively.  For
   \code{unmarkedFitOccuMS} objects, \code{psi}, \code{phi}, and
   \code{detect} denote occupancy, transition, and detection probability,
-  respectively.  For \code{unmarkedFitOccuMulti} objects, \code{psi} and
-  \code{detect} denote occupancy and detection probability,
-  respectively.
+  respectively.  For \code{unmarkedFitGOccu} objects, possible values
+  are \code{psi}, \code{phi}, or \code{detect}, denoting occupancy,
+  availability, and detection probabilities, respectively.
  }
 \item{\dots}{
   additional arguments passed to the function.
@@ -541,6 +557,79 @@ detach(package:unmarked)
 }
 
 
+
+##example of model-averaged occupancy in community occupancy model
+\dontrun{
+##example adapted from ?occuComm in unmarked package
+##simulate multispecies data
+M <- 300
+J <- 5
+S <- 30
+     
+set.seed(123)
+x <- rnorm(M)
+     
+mu_0 <- 0
+sd_0 <- 0.4
+beta0 <- rnorm(S, mu_0, sd_0)
+
+mu_x <- 1
+sd_x <- 0.3
+beta_x <- rnorm(S, mu_x, sd_x)
+
+mu_a <- 0
+sd_a <- 0.2
+alpha0 <- rnorm(S, mu_a, sd_a)
+
+ylist <- list()
+z <- matrix(NA, M, S)
+for (s in 1:S){
+    psi <- plogis(beta0[s] + beta_x[s] * x)
+    z[,s] <- rbinom(M, 1, psi)
+    
+    p <- plogis(alpha0[s])
+    
+    y <- matrix(NA, M, J)
+    for (m in 1:M){
+        y[m,] <- rbinom(J, 1, p * z[m,s])
+    }
+    ylist[[s]] <- y
+}
+##add species names
+names(ylist) <- paste0("sp", sprintf("%02d", 1:S))
+
+##create unmarkedFrame
+sc <- data.frame(x=x, a=factor(sample(letters[1:5], M, replace=TRUE)))
+umf <- unmarkedFrameOccuComm(ylist, siteCovs=sc)
+
+##fit model with one covariate on occupancy
+##structure of the model psi ~ (x | species), p ~ (1 | species)
+fit1 <- occuComm(~ 1 ~ x, umf)
+
+##fit alternative model without covariate
+fit2 <- occuComm(~ 1 ~ 1, umf)
+
+##assemble models in list
+occModels <- list("withX" = fit1, "withoutX" = fit2)
+
+##check names of species in unmarkedFrameOccuComm object
+checkNames <- names(umf@ylist)
+checkNames    
+    
+##create data frame for predictions on sp06
+newData <- data.frame(x = seq(min(sc$x), max(sc$x), length.out = 30),
+                      species = factor("sp06", levels = checkNames))
+resultsPred <- modavgPred(occModels, newdata = newData,
+                          parm.type = "psi")
+resultsPred
+##example with multiple species
+newData2 <- expand.grid(x = seq(min(sc$x), max(sc$x), length.out = 30),
+                        species = factor(c("sp06", "sp10", "sp22"),
+                                         levels = checkNames))
+resultsPred2 <- modavgPred(occModels, newdata = newData2,
+                           parm.type = "psi")
+resultsPred2    
+}
 
 ##example using Orthodont data set from Pinheiro and Bates (2000)
 \dontrun{

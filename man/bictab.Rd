@@ -48,6 +48,8 @@
 \alias{bictab.AICunmarkedFitOccuTTD}
 \alias{bictab.AICunmarkedFitMMO}
 \alias{bictab.AICunmarkedFitDSO}
+\alias{bictab.AICunmarkedFitGOccu}
+\alias{bictab.AICunmarkedFitOccuComm}
 \alias{bictab.AICvglm}
 \alias{bictab.AICzeroinfl}
 \alias{print.bictab}
@@ -213,6 +215,12 @@ bictab(cand.set, modnames = NULL, nobs = NULL,
          nobs = NULL, sort = TRUE, c.hat = 1, \dots)
 
 \method{bictab}{AICunmarkedFitDSO}(cand.set, modnames = NULL,
+         nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{bictab}{AICunmarkedFitGOccu}(cand.set, modnames = NULL,
+         nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{bictab}{AICunmarkedFitOccuComm}(cand.set, modnames = NULL,
          nobs = NULL, sort = TRUE, c.hat = 1, \dots)
 
 \method{bictab}{AICvglm}(cand.set, modnames = NULL,

@@ -30,6 +30,8 @@
 \alias{modavgEffect.AICunmarkedFitDSO}
 \alias{modavgEffect.AICunmarkedFitOccuMS}
 \alias{modavgEffect.AICunmarkedFitOccuMulti}
+\alias{modavgEffect.AICunmarkedFitGOccu}
+\alias{modavgEffect.AICunmarkedFitOccuComm}
 \alias{print.modavgEffect}
 
 \title{
@@ -179,6 +181,16 @@ modavgEffect(cand.set, modnames = NULL, newdata, second.ord = TRUE,
         NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
         "revised", conf.level = 0.95, type = "response",
         c.hat = 1, parm.type = NULL, \dots)
+
+\method{modavgEffect}{AICunmarkedFitGOccu}(cand.set, modnames =
+        NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
+
+\method{modavgEffect}{AICunmarkedFitOccuComm}(cand.set, modnames =
+        NULL, newdata, second.ord = TRUE, nobs = NULL, uncond.se =
+        "revised", conf.level = 0.95, type = "response",
+        c.hat = 1, parm.type = NULL, \dots)
 }
 
 
@@ -206,7 +218,11 @@ data set defines one of the two groups compared.  The first row in
 the second group.  The effect size is computed as the prediction in the
 first row minus the prediction in the second row (first row - second 
 row). Only the column relating to the grouping variable can change value
-and all others must be held constant for the comparison (see 'Details').
+and all others must be held constant for the comparison (see
+'Details'). For community occupancy models of \code{unmarkedFitOccuComm}
+classes, the \code{newdata} data frame must include a column specifying
+the name of the species for which each prediction is requested (see
+'Examples' below).
 }
   \item{second.ord}{
 logical.  If \code{TRUE}, the function returns the second-order Akaike
@@ -267,20 +283,21 @@ to apply the same value to each model.
   this argument specifies the parameter type on which the effect size 
   will be computed and is only relevant for models of \code{unmarkedFit}
   classes.  The character strings supported vary with the type of model
-  fitted.  For \code{unmarkedFitOccu} objects, either \code{psi} or
-  \code{detect} can be supplied to indicate whether the parameter is on
-  occupancy or detectability, respectively.  For
-  \code{unmarkedFitColExt} objects, possible values are \code{psi},
-  \code{gamma}, \code{epsilon}, and \code{detect}, for parameters on
-  occupancy in the inital year, colonization, extinction, and
-  detectability, respectively.  For \code{unmarkedFitOccuTTD} objects,
+  fitted.  For \code{unmarkedFitOccu}, \code{unmarkedFitOccuMulti}, and
+  \code{unmarkedFitOccuComm} objects, either \code{psi} or \code{detect}
+  can be supplied to indicate whether the parameter is on occupancy or
+  detectability, respectively.  For \code{unmarkedFitColExt} objects,
   possible values are \code{psi}, \code{gamma}, \code{epsilon}, and
   \code{detect}, for parameters on occupancy in the inital year,
-  colonization, extinction, and time-to-dection (lambda rate parameter),
-  respectively.  For \code{unmarkedFitOccuFP} objects, one can specify
-  \code{psi}, \code{detect}, \code{falsepos}, and \code{certain}, for
-  occupancy, detectability, probability of assigning false-positives,
-  and probability detections are certain, respectively.  For
+  colonization, extinction, and detectability, respectively.  For
+  \code{unmarkedFitOccuTTD} objects, possible values are \code{psi},
+  \code{gamma}, \code{epsilon}, and \code{detect}, for parameters on
+  occupancy in the inital year, colonization, extinction, and
+  time-to-dection (lambda rate parameter), respectively.  For
+  \code{unmarkedFitOccuFP} objects, one can specify \code{psi},
+  \code{detect}, \code{falsepos}, and \code{certain}, for occupancy,
+  detectability, probability of assigning false-positives, and
+  probability detections are certain, respectively.  For
   \code{unmarkedFitOccuRN} objects, either \code{lambda} or
   \code{detect} can be entered for abundance and detectability
   parameters, respectively.  For \code{unmarkedFitPCount} and
@@ -299,9 +316,9 @@ to apply the same value to each model.
   abundance, availability, and detectability, respectively.  For
   \code{unmarkedFitOccuMS} objects, \code{psi}, \code{phi}, and
   \code{detect} denote occupancy, transition, and detection probability,
-  respectively.  For \code{unmarkedFitOccuMulti} objects, \code{psi} and
-  \code{detect} denote occupancy and detection probability,
-  respectively.
+  respectively.  For \code{unmarkedFitGOccu} objects, possible values
+  are \code{psi}, \code{phi}, or \code{detect}, denoting occupancy,
+  availability, and detection probabilities, respectively.
 }
 \item{\dots}{
   additional arguments passed to the function.
@@ -343,8 +360,8 @@ of objects in the list.  The current classes supported include
 \code{unmarkedFitPCount}, \code{unmarkedFitPCO}, \code{unmarkedFitDS},
 \code{unmarkedFitDSO}, \code{unmarkedFitGDS}, \code{unmarkedFitMPois},
 \code{unmarkedFitGMM}, \code{unmarkedFitMMO}, \code{unmarkedFitGPC},
-\code{unmarkedFitOccuMS}, and \code{unmarkedFitOccuMulti}.
-classes.
+\code{unmarkedFitOccuMS}, \code{unmarkedFitOccuMulti},
+\code{unmarkedFitGOccu}, and \code{unmarkedFitOccuComm} classes.
 }
 \value{
 The result is an object of class \code{modavgEffect} with the following
@@ -403,13 +420,13 @@ detection probabilities are less than one. \emph{Ecology} \bold{83},
 2248--2255.
 
 MacKenzie, D. I., Nichols, J. D., Hines, J. E., Knutson, M. G.,
-  Franklin, A. B. (2003) Estimating site occupancy, colonization, and
-  local extinction when a species is detected imperfectly. \emph{Ecology}
-  \bold{84}, 2200--2207.
+Franklin, A. B. (2003) Estimating site occupancy, colonization, and
+local extinction when a species is detected imperfectly. \emph{Ecology}
+\bold{84}, 2200--2207.
 
-  Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
-  Akaike's Information Criterion (AIC) to assess the strength of
-  biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
+Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
+Akaike's Information Criterion (AIC) to assess the strength of
+biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
 
 Royle, J. A. (2004) \emph{N}-mixture models for estimating population
 size from spatially replicated counts. \emph{Biometrics} \bold{60},
@@ -683,5 +700,72 @@ modavgEffect(Cands, Modnames, newdata = data.frame(site.group = c(0, 1)),
 
 detach(package:unmarked)
 }
+
+##example of model-averaged occupancy in community occupancy model
+\dontrun{
+##example adapted from ?occuComm in unmarked package
+##simulate multispecies data
+M <- 300
+J <- 5
+S <- 30
+     
+set.seed(123)
+x <- rnorm(M)
+     
+mu_0 <- 0
+sd_0 <- 0.4
+beta0 <- rnorm(S, mu_0, sd_0)
+
+mu_x <- 1
+sd_x <- 0.3
+beta_x <- rnorm(S, mu_x, sd_x)
+
+mu_a <- 0
+sd_a <- 0.2
+alpha0 <- rnorm(S, mu_a, sd_a)
+
+ylist <- list()
+z <- matrix(NA, M, S)
+for (s in 1:S){
+    psi <- plogis(beta0[s] + beta_x[s] * x)
+    z[,s] <- rbinom(M, 1, psi)
+    
+    p <- plogis(alpha0[s])
+    
+    y <- matrix(NA, M, J)
+    for (m in 1:M){
+        y[m,] <- rbinom(J, 1, p * z[m,s])
+    }
+    ylist[[s]] <- y
+}
+##add species names    
+names(ylist) <- paste0("sp", sprintf("%02d", 1:S))
+
+##create unmarkedFrame
+sc <- data.frame(x=x, a=factor(sample(letters[1:5], M, replace=TRUE)))
+umf <- unmarkedFrameOccuComm(ylist, siteCovs=sc)
+
+##fit model with one covariate on occupancy
+##structure of the model psi ~ (x | species), p ~ (1 | species)
+fit1 <- occuComm(~ 1 ~ x, umf)
+
+##fit alternative model without covariate
+fit2 <- occuComm(~ 1 ~ 1, umf)
+
+##assemble models in list
+occModels <- list("withX" = fit1, "withoutX" = fit2)
+
+##check names of species in unmarkedFrameOccuComm object
+checkNames <- names(umf@ylist)
+checkNames    
+    
+##create data frame for predictions on sp06
+newData <- data.frame(x = c(min(sc$x), max(sc$x)),
+                      species = factor("sp06", levels = checkNames))
+resultsPred <- modavgPred(occModels, newdata = newData,
+                          parm.type = "psi")
+resultsPred
+}
+
 }
 \keyword{models}

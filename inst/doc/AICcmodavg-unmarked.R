@@ -359,32 +359,38 @@ lines(upp95 ~ Effort.orig, data = pred.dataEffort,
 
 
 ###################################################
-### code chunk number 33: xtable1
+### code chunk number 33: xtable0
 ###################################################
 library(xtable)
+xtable(summaryOD(m4))
+
+
+###################################################
+### code chunk number 34: xtable1
+###################################################
 xtable(outTabC)
 
 
 ###################################################
-### code chunk number 34: table2
+### code chunk number 35: table2
 ###################################################
 xtable(estReed)
 
 
 ###################################################
-### code chunk number 35: table3
+### code chunk number 36: table3
 ###################################################
 xtable(detHist(m3))
 
 
 ###################################################
-### code chunk number 36: table4
+### code chunk number 37: table4
 ###################################################
 xtable(mb.chisq(m3))
 
 
 ###################################################
-### code chunk number 37: xtableOptions
+### code chunk number 38: xtableOptions
 ###################################################
 #add caption, suppress log-likelihood, and include cumulative Akaike weight
 print(xtable(outTabC, 

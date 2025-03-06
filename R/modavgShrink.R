@@ -6089,6 +6089,365 @@ modavgShrink.AICunmarkedFitOccuTTD <-
 
 
 
+##goccu
+modavgShrink.AICunmarkedFitGOccu <- 
+  function(cand.set, parm, modnames = NULL, second.ord = TRUE,
+           nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+           c.hat = 1, parm.type = NULL, ...){
+
+    ##note that parameter is referenced differently from unmarked object - see labels( )
+    
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+      if(is.null(names(cand.set))) {
+        modnames <- paste("Mod", 1:length(cand.set), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+      } else {
+        modnames <- names(cand.set)
+      }
+    }
+    
+    
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
+  
+    
+    ##remove all leading and trailing white space and within parm
+    parm <- gsub('[[:space:]]+', "", parm)
+
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+   
+    
+    ##goccu model
+    ##psi - occupancy
+    if(identical(parm.type, "psi")) {
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$psi)))
+      parm.unmarked <- "psi"
+        parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+        parm.type1 <- "psi"
+    }
+      
+    ##detect
+    if(identical(parm.type, "detect")) {
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+      parm.unmarked <- "p"
+      parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+      parm.type1 <- "det"
+    }
+      
+    ##availability
+    if(identical(parm.type, "phi")) {
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$phi)))
+      parm.unmarked <- "phi"
+      parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+      parm.type1 <- "phi"
+    }
+    
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
+    
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
+
+    
+    ##NEED TO PASTE THE PARAMETER TYPE - INCLUDE THIS STEP ABOVE FOR EACH PARM.TYPE
+    ##determine frequency of each term across models (except (Intercept) ) 
+    pooled.terms <- unlist(mod_formula)
+    ##remove intercept from vector
+    no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
+    terms.freq <- table(no.int)
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
+    
+
+    ##check whether parm is involved in interaction
+    parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
+    inter.check <- ifelse(attr(regexpr(parm.inter[1], mod_formula, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
+                                                                     mod_formula, fixed = TRUE), "match.length") == "-1", 0, 1)
+    if(sum(inter.check) > 0) stop("\nParameter of interest should not be involved in interaction for shrinkage version of model-averaging to be appropriate\n")
+
+    
+    nmods <- length(cand.set)
+  
+    
+    new_table <- aictab(cand.set = cand.set, modnames = modnames, 
+                        second.ord = second.ord, nobs = nobs,
+                        sort = FALSE, c.hat = c.hat)  #recompute AIC table and associated measures
+    new_table$Beta_est <- unlist(lapply(cand.set, FUN = function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
+    new_table$SE <- unlist(lapply(cand.set, FUN = function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+
+    ##replace NA's with 0
+    new_table$Beta_est[is.na(new_table$Beta_est)] <- 0
+    new_table$SE[is.na(new_table$SE)] <- 0
+
+    ##add a check to determine if parameter occurs in any model
+    if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("\nParameter not found in any of the candidate models\n") }
+
+    
+    ##if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
+    if(c.hat > 1) {
+      new_table$SE <- new_table$SE*sqrt(c.hat)
+    } 
+
+    ##AICc
+    ##compute model-averaged estimates, unconditional SE, and 95% CL
+    if(c.hat == 1 && second.ord == TRUE) {
+      Modavg_beta <- sum(new_table$AICcWt*new_table$Beta_est)
+
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+      
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }
+    }
+
+    ##QAICc
+    if(c.hat > 1 && second.ord == TRUE) {
+      Modavg_beta <- sum(new_table$QAICcWt*new_table$Beta_est)
+      
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {      
+        Uncond_SE <- sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+      
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table$QAICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }
+    }     
+
+    
+    ##AIC
+    if(c.hat == 1 && second.ord == FALSE) {
+      Modavg_beta <- sum(new_table$AICWt*new_table$Beta_est)
+      
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+      
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }
+    }
+
+
+    ##QAIC
+    if(c.hat > 1 && second.ord == FALSE) {
+      Modavg_beta <- sum(new_table$QAICWt*new_table$Beta_est)
+
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE <- sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table$QAICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }  
+    }     
+
+  
+    zcrit <- qnorm(p = (1 - conf.level)/2, lower.tail = FALSE)
+    Lower_CL <- Modavg_beta - zcrit*Uncond_SE
+    Upper_CL <- Modavg_beta + zcrit*Uncond_SE
+    out.modavg <- list("Parameter"=paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta,
+                       "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level, "Lower.CL" = Lower_CL,
+                       "Upper.CL" = Upper_CL)
+    
+    class(out.modavg) <- c("modavgShrink", "list")
+    return(out.modavg)
+  }
+
+
+
+##occuComm
+modavgShrink.AICunmarkedFitOccuComm <- 
+  function(cand.set, parm, modnames = NULL, second.ord = TRUE,
+           nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+           c.hat = 1, parm.type = NULL, ...){
+
+    ##note that parameter is referenced differently from unmarked object - see labels( )
+    
+    ##check if named list if modnames are not supplied
+    if(is.null(modnames)) {
+      if(is.null(names(cand.set))) {
+        modnames <- paste("Mod", 1:length(cand.set), sep = "")
+        warning("\nModel names have been supplied automatically in the table\n")
+      } else {
+        modnames <- names(cand.set)
+      }
+    }
+
+    
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgShrink for details\n")}
+    
+    ##remove all leading and trailing white space and within parm
+    parm <- gsub('[[:space:]]+', "", parm)
+
+    ##if (Intercept) is chosen assign (Int) - for compatibility
+    if(identical(parm, "(Intercept)")) parm <- "Int"
+   
+    ##single-season occupancy model
+    ##psi
+    if(identical(parm.type, "psi")) {
+      ##extract model formula for each model in cand.set
+      mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$state)))
+      parm.unmarked <- "psi"
+        parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+        parm.type1 <- "state"
+
+    }
+
+      ##detect
+      if(identical(parm.type, "detect")) {
+          mod_formula <- lapply(cand.set, FUN = function(i) labels(coef(i@estimates@estimates$det)))
+          parm.unmarked <- "p"
+          parm <- paste(parm.unmarked, "(", parm, ")", sep="")
+          parm.type1 <- "det"
+      }
+    
+##################
+      ##extract link function
+      check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                   parm.type1, "@invlink",
+                                                                                   sep = ""))))
+      unique.link <- unique(check.link)
+      select.link <- unique.link[1]
+    
+      if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                        "with different link functions\n")}
+##################
+
+  
+    ##NEED TO PASTE THE PARAMETER TYPE - INCLUDE THIS STEP ABOVE FOR EACH PARM.TYPE
+    ##determine frequency of each term across models (except (Intercept) ) 
+    pooled.terms <- unlist(mod_formula)
+    ##remove intercept from vector
+    no.int <- pooled.terms[which(pooled.terms != paste(parm.unmarked, "(Int)", sep = ""))]
+    terms.freq <- table(no.int)
+    if(length(unique(terms.freq)) > 1) warning("\nVariables do not appear with same frequency across models, proceed with caution\n")
+
+
+    ##check whether parm is involved in interaction
+    parm.inter <- c(paste(parm, ":", sep = ""), paste(":", parm, sep = ""))
+    inter.check <- ifelse(attr(regexpr(parm.inter[1], mod_formula, fixed = TRUE), "match.length") == "-1" & attr(regexpr(parm.inter[2],
+                                                                     mod_formula, fixed = TRUE), "match.length") == "-1", 0, 1)
+    if(sum(inter.check) > 0) stop("\nParameter of interest should not be involved in interaction for shrinkage version of model-averaging to be appropriate\n")
+
+    
+    nmods <- length(cand.set)
+  
+    
+    new_table <- aictab(cand.set = cand.set, modnames = modnames, 
+                        second.ord = second.ord, nobs = nobs,
+                        sort = FALSE, c.hat = c.hat)  #recompute AIC table and associated measures
+    new_table$Beta_est <- unlist(lapply(cand.set, FUN = function(i) coef(i)[paste(parm)])) #extract beta estimate for parm
+    new_table$SE <- unlist(lapply(cand.set, FUN = function(i) sqrt(diag(vcov(i)))[paste(parm)]))
+
+    ##replace NA's with 0
+    new_table$Beta_est[is.na(new_table$Beta_est)] <- 0
+    new_table$SE[is.na(new_table$SE)] <- 0
+
+    ##add a check to determine if parameter occurs in any model
+    if (isTRUE(all.equal(unique(new_table$Beta_est), 0))) {stop("\nParameter not found in any of the candidate models\n") }
+
+    
+    ##if c-hat is estimated adjust the SE's by multiplying with sqrt of c-hat
+    if(c.hat > 1) {
+      new_table$SE <- new_table$SE*sqrt(c.hat)
+    } 
+
+    ##AICc
+    ##compute model-averaged estimates, unconditional SE, and 95% CL
+    if(c.hat == 1 && second.ord == TRUE) {
+      Modavg_beta <- sum(new_table$AICcWt*new_table$Beta_est)
+
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE <- sum(new_table$AICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+      
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table$AICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }
+    }
+
+    ##QAICc
+    if(c.hat > 1 && second.ord == TRUE) {
+      Modavg_beta <- sum(new_table$QAICcWt*new_table$Beta_est)
+      
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {      
+        Uncond_SE <- sum(new_table$QAICcWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+      
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table$QAICcWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }
+    }     
+
+    
+    ##AIC
+    if(c.hat == 1 && second.ord == FALSE) {
+      Modavg_beta <- sum(new_table$AICWt*new_table$Beta_est)
+      
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE <- sum(new_table$AICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+      
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table$AICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }
+    }
+
+
+    ##QAIC
+    if(c.hat > 1 && second.ord == FALSE) {
+      Modavg_beta <- sum(new_table$QAICWt*new_table$Beta_est)
+
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Uncond_SE <- sum(new_table$QAICWt*sqrt(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2))
+      }
+
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Uncond_SE <- sqrt(sum(new_table$QAICWt*(new_table$SE^2 + (new_table$Beta_est- Modavg_beta)^2)))
+      }  
+    }     
+
+  
+    zcrit <- qnorm(p = (1 - conf.level)/2, lower.tail = FALSE)
+    Lower_CL <- Modavg_beta - zcrit*Uncond_SE
+    Upper_CL <- Modavg_beta + zcrit*Uncond_SE
+    out.modavg <- list("Parameter"=paste(parm), "Mod.avg.table" = new_table, "Mod.avg.beta" = Modavg_beta,
+                       "Uncond.SE" = Uncond_SE, "Conf.level" = conf.level, "Lower.CL" = Lower_CL,
+                       "Upper.CL" = Upper_CL)
+    
+    class(out.modavg) <- c("modavgShrink", "list")
+    return(out.modavg)
+  }
+
+
+
 print.modavgShrink <-
   function(x, digits = 2, ...) {
     ic <- colnames(x$Mod.avg.table)[3]

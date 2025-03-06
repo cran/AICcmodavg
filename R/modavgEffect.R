@@ -6706,6 +6706,534 @@ modavgEffect.AICunmarkedFitOccuMulti <- function(cand.set, modnames = NULL, newd
 
 
 
+##goccu
+modavgEffect.AICunmarkedFitGOccu <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
+                                             nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                             type = "response", c.hat = 1, parm.type = NULL,
+                                             ...) {
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgEffect for details\n")}
+
+  ##rename values according to unmarked to extract from object
+
+  ##psi
+  if(identical(parm.type, "psi")) {
+    parm.type1 <- "psi"; parm.id <- "psi"
+  }
+
+  ##detect
+  if(identical(parm.type, "detect")) {parm.type1 <- "det"; parm.id <- "p"}
+  
+  ##availability
+  if(identical(parm.type, "phi")) {parm.type1 <- "phi"; parm.id <- "phi"}
+
+##################
+    ##extract link function
+    check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                 parm.type1, "@invlink",
+                                                                                 sep = ""))))
+    unique.link <- unique(check.link)
+    select.link <- unique.link[1]
+    
+    if(identical(type, "link")) {
+        if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                          "with different link functions\n")}
+    }
+##################
+    
+  ##newdata is data frame with exact structure of the original data frame (same variable names and type)
+  ##check on newdata
+  ##determine number of observations in new data set
+  nobserv <- nrow(newdata)
+  if(nobserv > 2) stop("\nCurrent maximum number of groups compared is 2:\nmodify newdata argument accordingly\n")
+
+  ##determine number of columns in new data set
+  ncolumns <- ncol(newdata)
+
+  ##if only 1 column, add an additional column to avoid problems in computation
+  if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
+
+  
+  ##determine which column varies
+  uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
+  lengths <- lapply(X = uniques, FUN = length)
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
+
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
+    
+  ##extract name of column
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
+    
+  ##number of models
+  nmods <- length(modnames)
+
+
+  ##compute predicted values
+  ##point estimate
+  if(identical(type, "response")) {
+    fit <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata,
+                                                                              type = parm.type1)$Predicted)),
+                  nrow = nmods, ncol = 2, byrow = TRUE)
+
+    ##extract SE for fitted value for observation obs
+    SE <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata,
+                                                                             type = parm.type1)$SE)),
+                 nrow = nmods, ncol = 2, byrow = TRUE)
+  }
+  
+  ##link scale
+  if(identical(type, "link")) {
+    ##extract fitted value for observation obs
+    fit <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata,
+                                                                              type = parm.type1, backTransform = FALSE)$Predicted)),
+                  nrow = nmods, ncol = 2, byrow = TRUE)
+
+    ##extract SE for fitted value for observation obs
+    SE <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata,
+                                                                             type = parm.type1, backTransform = FALSE)$SE)),
+                 nrow = nmods, ncol = 2, byrow = TRUE)
+  }  
+
+  
+  ##difference between groups 
+  differ <- fit[, 1] - fit[, 2]
+    
+  ##SE on difference
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  
+  ##store AICc table
+  AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
+                    nobs = nobs, sort = FALSE, c.hat = c.hat)
+
+  ##create object to hold Model-averaged estimates and unconditional SE's
+  Mod.avg.out <- matrix(NA, nrow = 1, ncol = 2)
+  ##colnames(Mod.avg.out) <- c("Mod.avg.diff", "Uncond.SE")
+
+  ##begin loop - AICc
+  if(second.ord == TRUE && c.hat == 1){
+     
+    ##create temporary data.frame to store fitted values and SE 
+    AICctmp <- AICctab
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
+    
+    ##compute model averaged prediction and store in output matrix
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
+    ##compute unconditional SE and store in output matrix
+      
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
+    }
+
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
+    }
+    ##store table
+    AICc.out <- AICctmp
+  }
+
+
+  ##begin loop - QAICc
+  if(second.ord == TRUE && c.hat > 1){
+      ##create temporary data.frame to store fitted values and SE 
+      QAICctmp <- AICctab
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
+
+      ##compute model averaged prediction and store in output matrix
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
+      
+      ##compute unconditional SE and store in output matrix
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
+      }
+      
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
+      }
+      ##store table
+      AICc.out <- QAICctmp
+    
+    }
+  
+  
+  
+  ##create temporary data.frame to store fitted values and SE - AIC
+  if(second.ord == FALSE && c.hat == 1) {
+    AICtmp <- AICctab
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
+
+    ##compute model averaged prediction and store in output matrix
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
+
+    ##compute unconditional SE and store in output matrix
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
+    }
+
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
+    }  
+    ##store table
+    AICc.out <- AICtmp
+  }
+
+  
+  ##begin loop - QAICc
+  if(second.ord == FALSE && c.hat > 1){
+      
+    ##create temporary data.frame to store fitted values and SE 
+    QAICtmp <- AICctab
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
+      
+    ##compute model averaged prediction and store in output matrix
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
+      
+    ##compute unconditional SE and store in output matrix
+    if(identical(uncond.se, "old")) {
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
+    }  
+    ##store table
+    AICc.out <- QAICtmp
+  }
+
+  Group.variable <- paste(parm.id, "(", var.id, ")")
+  
+  zcrit <- qnorm(p=(1-conf.level)/2, lower.tail=FALSE)
+  Lower.CL <- Mod.avg.out[, 1] - zcrit * Mod.avg.out[, 2]
+  Upper.CL <- Mod.avg.out[, 1] + zcrit * Mod.avg.out[, 2]
+
+    ##arrange in matrix
+    predsOutMat <- matrix(data = c(Mod.avg.out[, 1], Mod.avg.out[, 2],
+                                   Lower.CL, Upper.CL),
+                          nrow = 1, ncol = 4)
+    colnames(predsOutMat) <- c("mod.avg.pred", "uncond.se", "lower.CL", "upper.CL")
+    rownames(predsOutMat) <- "effect.size"
+
+    Mod.eff.list <- list("Group.variable" = var.id, "Group1" = group1,
+                         "Group2" = group2, "Type" = type, "Mod.avg.table" = AICc.out, "Mod.avg.eff" = Mod.avg.out[,1], 
+                         "Uncond.se" = Mod.avg.out[,2], "Conf.level" = conf.level, "Lower.CL" = Lower.CL,
+                         "Upper.CL" = Upper.CL, "Matrix.output" = predsOutMat)
+    class(Mod.eff.list) <- c("modavgEffect", "list")
+    return(Mod.eff.list)  
+}
+
+
+
+##occuComm
+modavgEffect.AICunmarkedFitOccuComm <- function(cand.set, modnames = NULL, newdata, second.ord = TRUE,
+                                                nobs = NULL, uncond.se = "revised", conf.level = 0.95,
+                                                type = "response", c.hat = 1, parm.type = NULL,
+                                                ...) {
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?modavgEffect for details\n")}
+
+    
+    ##rename values according to unmarked to extract from object
+    ##psi
+    if(identical(parm.type, "psi")) {
+        parm.type1 <- "state"; parm.id <- "psi"
+    
+    }
+
+    ##detect
+    if(identical(parm.type, "detect")) {parm.type1 <- "det"; parm.id <- "p"}
+
+
+##################
+    ##extract link function
+    check.link <- sapply(X = cand.set, FUN = function(i) eval(parse(text = paste("i@estimates@estimates$",
+                                                                                 parm.type1, "@invlink",
+                                                                                 sep = ""))))
+    unique.link <- unique(check.link)
+    select.link <- unique.link[1]
+    
+    if(identical(type, "link")) {
+        if(length(unique.link) > 1) {stop("\nIt is not appropriate to compute a model averaged linear predictor\n",
+                                          "with different link functions\n")}
+    }
+##################    
+    
+  ##newdata is data frame with exact structure of the original data frame (same variable names and type)
+  ##check on newdata
+  ##determine number of observations in new data set
+  nobserv <- nrow(newdata)
+  if(nobserv > 2) stop("\nCurrent maximum number of groups compared is 2:\nmodify newdata argument accordingly\n")
+
+  ##determine number of columns in new data set
+  ncolumns <- ncol(newdata)
+
+  ##if only 1 column, add an additional column to avoid problems in computation
+  if(ncolumns == 1) newdata$blank.fake.column.NAs <- NA
+
+  
+  ##determine which column varies
+  uniques <- apply(X = newdata, MARGIN = 2, FUN = unique)
+  lengths <- lapply(X = uniques, FUN = length)
+  varies <- sapply(X = lengths, FUN = function(i) i > 1)
+##########################################
+    ##CHANGES: add case when only a single variable appears in data frame
+    if(ncol(newdata) == 1) {
+        varies <- 1
+    }
+
+    ##add extractX to check that variables appearing in model also appear in data frame
+    ##checkVariables <- extractX(cand.set, parm.type = parm.type)
+    ##if(any(!checkVariables$predictors %in% names(newdata))) {
+    ##    stop("\nAll predictors must appear in the 'newdata' data frame\n")
+    ##}
+##########################################
+    
+  ##extract name of column
+  if(sum(varies) == 1) {
+    var.id <- names(varies)[which(varies == TRUE)]
+                
+    ##determine name of groups compared
+    group1 <- as.character(newdata[,paste(var.id)][1])
+    group2 <- as.character(newdata[,paste(var.id)][2])
+
+  } else {
+    ##warn that no single variable defines groups
+    warning("\nGroups do not seem to be defined by a single variable.\n Function proceeding with generic group names\n")
+    ##use generic names
+    var.id <- "Groups"
+    group1 <- "group 1"
+    group2 <- "group 2"
+  }
+
+  
+  ##number of models
+  nmods <- length(modnames)
+
+
+  ##compute predicted values
+  ##point estimate
+  if(identical(type, "response")) {
+    ##extract fitted value for observation obs
+    fit <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata,
+                                                       type = parm.type1)$Predicted)),
+                  nrow = nmods, ncol = 2, byrow = TRUE)
+
+    ##extract SE for fitted value for observation obs
+    SE <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata,
+                                                      type = parm.type1)$SE)),
+                 nrow = nmods, ncol = 2, byrow = TRUE)
+  }
+
+  
+  ##link scale
+  if(identical(type, "link")) {
+    ##extract fitted value for observation obs
+    fit <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata,
+                                                       type = parm.type1, backTransform = FALSE)$Predicted)),
+                  nrow = nmods, ncol = 2, byrow = TRUE)
+    
+    ##extract SE for fitted value for observation obs
+    SE <- matrix(data = unlist(lapply(X = cand.set, FUN = function(i)predict(i, se.fit = TRUE, newdata = newdata,
+                                                      type = parm.type1, backTransform = FALSE)$SE)),
+                 nrow = nmods, ncol = 2, byrow = TRUE)
+  }  
+
+  
+  ##difference between groups 
+  differ <- fit[, 1] - fit[, 2]
+    
+  ##SE on difference
+  SE.differ <- sqrt(SE[, 1]^2 + SE[, 2]^2)
+  
+  ##store AICc table
+  AICctab <- aictab(cand.set = cand.set, modnames = modnames, second.ord = second.ord,
+                    nobs = nobs, sort = FALSE, c.hat = c.hat)
+
+  ##create object to hold Model-averaged estimates and unconditional SE's
+  Mod.avg.out <- matrix(NA, nrow = 1, ncol = 2)
+  ##colnames(Mod.avg.out) <- c("Mod.avg.diff", "Uncond.SE")
+
+  ##begin loop - AICc
+  if(second.ord == TRUE && c.hat == 1){
+     
+    ##create temporary data.frame to store fitted values and SE 
+    AICctmp <- AICctab
+    AICctmp$differ <- differ
+    AICctmp$SE.differ <- SE.differ
+    
+    ##compute model averaged prediction and store in output matrix
+    Mod.avg.out[, 1] <- sum(AICctmp$AICcWt*AICctmp$differ)
+    ##compute unconditional SE and store in output matrix
+      
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Mod.avg.out[, 2] <- sum(AICctmp$AICcWt*sqrt(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2))
+    }
+
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Mod.avg.out[, 2] <- sqrt(sum(AICctmp$AICcWt*(AICctmp$SE.differ^2 + (AICctmp$differ - Mod.avg.out[, 1])^2)))
+    }
+    ##store table
+    AICc.out <- AICctmp
+  }
+
+
+  ##begin loop - QAICc
+  if(second.ord == TRUE && c.hat > 1){
+      ##create temporary data.frame to store fitted values and SE 
+      QAICctmp <- AICctab
+      QAICctmp$differ <- differ
+      QAICctmp$SE.differ <- SE.differ * sqrt(c.hat)
+
+      ##compute model averaged prediction and store in output matrix
+      Mod.avg.out[, 1] <- sum(QAICctmp$QAICcWt*QAICctmp$differ)
+      
+      ##compute unconditional SE and store in output matrix
+      ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+      if(identical(uncond.se, "old")) {
+        Mod.avg.out[, 2] <- sum(QAICctmp$QAICcWt*sqrt(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2))
+      }
+      
+      ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+      if(identical(uncond.se, "revised")) {
+        Mod.avg.out[, 2] <- sqrt(sum(QAICctmp$QAICcWt*(QAICctmp$SE.differ^2 + (QAICctmp$differ - Mod.avg.out[, 1])^2)))  
+      }
+      ##store table
+      AICc.out <- QAICctmp
+    
+    }
+  
+  
+  
+  ##create temporary data.frame to store fitted values and SE - AIC
+  if(second.ord == FALSE && c.hat == 1) {
+    AICtmp <- AICctab
+    AICtmp$differ <- differ
+    AICtmp$SE.differ <- SE.differ
+
+    ##compute model averaged prediction and store in output matrix
+    Mod.avg.out[, 1] <- sum(AICtmp$AICWt*AICtmp$differ)
+
+    ##compute unconditional SE and store in output matrix
+    ##unconditional SE based on equation 4.9 of Burnham and Anderson 2002
+    if(identical(uncond.se, "old")) {
+      Mod.avg.out[, 2] <- sum(AICtmp$AICWt*sqrt(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2))
+    }
+
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Mod.avg.out[, 2] <- sqrt(sum(AICtmp$AICWt*(AICtmp$SE.differ^2 + (AICtmp$differ - Mod.avg.out[, 1])^2)))
+    }  
+    ##store table
+    AICc.out <- AICtmp
+  }
+
+  
+  ##begin loop - QAICc
+  if(second.ord == FALSE && c.hat > 1){
+      
+    ##create temporary data.frame to store fitted values and SE 
+    QAICtmp <- AICctab
+    QAICtmp$differ <- differ
+    QAICtmp$SE.differ <- SE.differ* sqrt(c.hat)
+      
+    ##compute model averaged prediction and store in output matrix
+    Mod.avg.out[, 1] <- sum(QAICtmp$QAICWt*QAICtmp$differ)
+      
+    ##compute unconditional SE and store in output matrix
+    if(identical(uncond.se, "old")) {
+      Mod.avg.out[, 2] <- sum(QAICtmp$QAICWt*sqrt(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2))
+    }
+      
+    ##revised computation of unconditional SE based on equation 6.12 of Burnham and Anderson 2002; Anderson 2008, p. 111
+    if(identical(uncond.se, "revised")) {
+      Mod.avg.out[, 2] <- sqrt(sum(QAICtmp$QAICWt*(QAICtmp$SE.differ^2 + (QAICtmp$differ - Mod.avg.out[, 1])^2)))
+    }  
+    ##store table
+    AICc.out <- QAICtmp
+  }
+
+  Group.variable <- paste(parm.id, "(", var.id, ")")
+  
+  zcrit <- qnorm(p=(1-conf.level)/2, lower.tail=FALSE)
+  Lower.CL <- Mod.avg.out[, 1] - zcrit * Mod.avg.out[, 2]
+  Upper.CL <- Mod.avg.out[, 1] + zcrit * Mod.avg.out[, 2]
+
+    ##arrange in matrix
+    predsOutMat <- matrix(data = c(Mod.avg.out[, 1], Mod.avg.out[, 2],
+                                   Lower.CL, Upper.CL),
+                          nrow = 1, ncol = 4)
+    colnames(predsOutMat) <- c("mod.avg.pred", "uncond.se", "lower.CL", "upper.CL")
+    rownames(predsOutMat) <- "effect.size"
+
+    Mod.eff.list <- list("Group.variable" = var.id, "Group1" = group1,
+                         "Group2" = group2, "Type" = type, "Mod.avg.table" = AICc.out, "Mod.avg.eff" = Mod.avg.out[,1], 
+                         "Uncond.se" = Mod.avg.out[,2], "Conf.level" = conf.level, "Lower.CL" = Lower.CL,
+                         "Upper.CL" = Upper.CL, "Matrix.output" = predsOutMat)
+
+    class(Mod.eff.list) <- c("modavgEffect", "list")
+    return(Mod.eff.list)  
+}
+
+
+
 print.modavgEffect <- function(x, digits = 2, ...) {
 
     ##rework Group.variable labels

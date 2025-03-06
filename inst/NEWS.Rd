@@ -2,15 +2,28 @@
 \title{AICcmodavg News}
 \encoding{UTF-8}
 
+\section{Changes in version 2.3-4 (2025-03-03)}{
+  \itemize{
+    \item{corrected vignette 'AICcmodavg-unmarked.Rnw' for 'unmarked' objects}
+    \item{added a message that 'extractCN' does yet not support models with
+      random effects for 'unmarkedFit' objects}
+    \item{added methods to support multiscale occupancy models fit with
+      'goccu' and community occupancy models fit with 'occuComm'}
+    \item{updated DESCRIPTION file to use Authors@R field}
+  }
+}
+
 \section{Changes in version 2.3-3 (2023-11-16)}{
   \itemize{
     \item{modified vignette .Rnw files (AICcmodavg.Rnw,
-  AICcmodavg-unmarked.Rnw) to remove usenames option when using xcolor
-  LaTeX package following modifications of xcolor.sty}
-}
+      AICcmodavg-unmarked.Rnw) to remove usenames option when using xcolor
+      LaTeX package following modifications of xcolor.sty}
+  }
 }
 
-    \section{Changes in version 2.3-2 (2023-03-20)}{
+
+
+\section{Changes in version 2.3-2 (2023-03-20)}{
   \itemize{
     \item{added a vignette for a full example using diagnostic tools and
       utility functions implemented in 'AICcmodavg' for models fit in

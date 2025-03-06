@@ -40,7 +40,7 @@ options(width=70, continue = "  ")
 
 \maketitle
 
-\abstract{The \texttt{AICcmodavg} package implements model selection and multimodel inference for a wide range of model types, including those fit with the unmarked package \citep{fiske11}. For the latter model type, the \texttt{AICcmodavg} package offers additional diagnostic tools and utility functions. Using an example of single-season single-species site analysis, this vignette illustrates these tools.
+\abstract{The \texttt{AICcmodavg} package implements model selection and multimodel inference for a wide range of model types, including those fit with the unmarked package \citep{fiske11}. For the latter model type, the \texttt{AICcmodavg} package offers additional diagnostic tools and utility functions. Using an example of single-season single-species site analysis, this vignette illustrates these tools.}
 
   
   \section{Introduction}
@@ -425,9 +425,14 @@ lines(upp95 ~ Effort.orig, data = pred.dataEffort,
 Figure \ref{fig:ploteffort} does not suggest large changes in detection probability within the range of values of sampling effort observed during the study.
 
 \section{Additional methods to export output}
-For users familiar with \texttt{Markdown} or \LaTeX{}, the \emph{AICcmodavg} package offers a number of utility functions to convert output to \LaTeX{} tables. For example, we can convert the model selection table:
-<<xtable1>>=
+For users familiar with \texttt{Markdown} or \LaTeX{}, the \emph{AICcmodavg} package offers a number of utility functions to convert output to \LaTeX{} tables. You must load the \texttt{xtable} package first to enable this functionality. For example, we can extract the results of a single model:
+<<xtable0>>=
 library(xtable)
+xtable(summaryOD(m4))
+@ 
+
+We can format the output the model selection table:
+<<xtable1>>=
 xtable(outTabC)
 @ 
 

@@ -43,8 +43,8 @@ in the package.
 \tabular{ll}{
 Package: \tab AICcmodavg\cr
 Type: \tab Package\cr
-Version: \tab 2.3-3\cr
-Date: \tab 2023-11-16\cr
+Version: \tab 2.3-4\cr
+Date: \tab 2025-03-03\cr
 License: \tab GPL (>=2 )\cr
 LazyLoad: \tab yes\cr
 }
@@ -164,25 +164,27 @@ Other utility functions include:
   standard errors models of certain classes.}
 \item{\code{\link{summaryOD}}}{Displays summary of model output
   adjusted for overdispersion.}
-\item{\code{\link{xtable}}}{Formats various objects resulting from
-  model selection and multimodel inference to LaTeX or HTML tables.}
+\item{\link[xtable]{xtable}}{Extends methods from \pkg{xtable} to
+  format various objects resulting from model selection and multimodel
+  inference to LaTeX or HTML tables.}
 }
 }
 
 \author{
   Marc J. Mazerolle <marc.mazerolle@uqat.ca>.
 }
+
 \references{
-  Anderson, D. R. (2008) \emph{Model-based inference in the life sciences:
-    a primer on evidence}. Springer: New York.
+  Anderson, D. R. (2008) \emph{Model-based inference in the life
+  sciences: a primer on evidence}. Springer: New York. 
 
   Burnham, K. P., and Anderson, D. R. (2002) \emph{Model selection and
-    multimodel inference: a practical information-theoretic approach}. Second
-  edition. Springer: New York. 
+  multimodel inference: a practical information-theoretic
+  approach}. Second edition. Springer: New York.
 
   Burnham, K. P., Anderson, D. R. (2004) Multimodel inference:
   understanding AIC and BIC in model selection. \emph{Sociological
-    Methods and Research} \bold{33}, 261--304.
+  Methods and Research} \bold{33}, 261--304.  
 
   Mazerolle, M. J. (2006) Improving data analysis in herpetology: using
   Akaike's Information Criterion (AIC) to assess the strength of

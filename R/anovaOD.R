@@ -2568,6 +2568,243 @@ anovaOD.unmarkedFitDSO <- function(mod.simple, mod.complex, c.hat = 1, nobs = NU
 
 
 
+##goccu
+anovaOD.unmarkedFitGOccu <- function(mod.simple, mod.complex, c.hat = 1, nobs = NULL, ...) {
+
+    if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
+    if(c.hat < 1) {
+        warning("\nUnderdispersion: c-hat is fixed to 1\n")
+        c.hat <- 1
+    }
+
+    ##check for distributions
+    #modFamily1 <- mod.simple@mixture
+    #modFamily2 <- mod.complex@mixture
+    #if(!identical(modFamily1, modFamily2)) stop("\nComparisons only appropriate for models using the same mixture distribution\n")
+
+    ##extract response
+    y1 <- mod.simple@data@y
+    y2 <- mod.complex@data@y
+
+    ##check that data are the same
+    if(!identical(y1, y2)) stop("\nData set should be identical to compare models\n")
+    
+    ##number of observations
+    if(is.null(nobs)) {
+        nobs <- nrow(y1)
+    }    
+
+    ##extract LL
+    LL.simple <- logLik(mod.simple)
+    LL.complex <- logLik(mod.complex)
+
+    ##extract number of estimated parameters
+    K.simple <- length(coef(mod.simple))
+    K.complex <- length(coef(mod.complex))
+
+    ##residual df of complex model
+    df.complex <- nobs - K.complex
+
+    ##extract model formula
+    ##simple model
+    form.simplePsi <- formulaShort(mod.simple, unmarked.type = "psi")
+    form.simplePsi2 <- paste("psi(", form.simplePsi, ")", sep = "")
+
+    form.simplePhi <- formulaShort(mod.simple, unmarked.type = "phi")
+    form.simplePhi2 <- paste("phi(", form.simplePhi, ")", sep = "")
+
+    form.simpleDet <- formulaShort(mod.simple, unmarked.type = "det")
+    form.simpleDet2 <- paste("p(", form.simpleDet, ")", sep = "")
+    form.simple <- paste(form.simplePsi2, form.simplePhi2,
+                         form.simpleDet2, sep = "")
+    
+    ##complex model
+    form.complexPsi <- formulaShort(mod.complex, unmarked.type = "psi")
+    form.complexPsi2 <- paste("psi(", form.complexPsi, ")", sep = "")
+
+    form.complexPhi <- formulaShort(mod.complex, unmarked.type = "phi")
+    form.complexPhi2 <- paste("phi(", form.complexPhi, ")", sep = "")
+
+    form.complexDet <- formulaShort(mod.complex, unmarked.type = "det")
+    form.complexDet2 <- paste("p(", form.complexDet, ")", sep = "")
+    form.complex <- paste(form.complexPsi2, form.complexPhi2,
+                          form.complexDet2, sep = "")
+    
+    
+    ##- 2 * (logLik(simple) - logLik(complex))
+    LR <- -2 * (LL.simple - LL.complex)
+    ##difference in number of estimated parameters
+    K.diff <- K.complex - K.simple
+
+    ##use chi-square if no overdispersion
+    if(c.hat == 1) {
+        Chistat <- LR
+        df <- K.diff
+        pval <- 1 - pchisq(Chistat, df = df)
+
+        devMat <- matrix(data = c(K.simple, K.complex,
+                                  LL.simple, LL.complex,
+                                  NA, K.diff,
+                                  NA, LR,
+                                  NA, Chistat,
+                                  NA, pval),
+                         nrow = 2, ncol = 6)
+        colnames(devMat) <- c("K", "logLik",
+                              "Kdiff", "-2LL", "Chistat", "pval")
+    
+    } else {
+        ##compute F statistic
+        Fstat <- LR/((K.diff)*c.hat)
+
+        ##compute df
+        df.num <- K.diff
+        df.denom <- df.complex
+
+        ##P value
+        pval <- 1 - pf(Fstat, df1 = df.num, df2 = df.denom)
+        
+        devMat <- matrix(data = c(K.simple, K.complex,
+                                  LL.simple, LL.complex,
+                                  NA, K.diff,
+                                  NA, LR,
+                                  NA, Fstat,
+                                  NA, pval),
+                         nrow = 2, ncol = 6)
+        colnames(devMat) <- c("K", "logLik",
+                              "Kdiff", "-2LL", "F", "pval")
+    }
+    
+    ##assemble in list
+    outList <- list(form.simple = form.simple,
+                    form.complex = form.complex,
+                    c.hat = c.hat,
+                    devMat = devMat)
+    
+    class(outList) <- c("anovaOD", "list")
+    return(outList)
+}
+
+
+##occuComm
+anovaOD.unmarkedFitOccuComm <- function(mod.simple, mod.complex, c.hat = 1, nobs = NULL, ...) {
+
+    if(c.hat > 4) warning("\nHigh overdispersion:  model fit is questionable\n")
+    if(c.hat < 1) {
+        warning("\nUnderdispersion: c-hat is fixed to 1\n")
+        c.hat <- 1
+    }
+
+    ##check for distributions
+    ##modFamily1 <- mod.simple@mixture
+    ##modFamily2 <- mod.complex@mixture
+    ##if(!identical(modFamily1, modFamily2)) stop("\nComparisons only appropriate for models using the same mixture distribution\n")
+
+    ##extract response
+    y1 <- mod.simple@data@y
+    y2 <- mod.complex@data@y
+
+    ##check that data are the same
+    if(!identical(y1, y2)) stop("\nData set should be identical to compare models\n")
+    
+    ##number of observations
+    if(is.null(nobs)) {
+        nobs <- nrow(y1)
+    }    
+
+    ##extract LL
+    LL.simple <- logLik(mod.simple)
+    LL.complex <- logLik(mod.complex)
+
+    ##extract number of estimated parameters
+    K.simple <- length(coef(mod.simple))
+    K.complex <- length(coef(mod.complex))
+
+    ##residual df of complex model
+    df.complex <- nobs - K.complex
+
+    ##extract model formula
+    ##simple model
+    ##form.simplePsi <- formulaShort(mod.simple, unmarked.type = "state")
+    form.simplePsi <- names(coef(mod.simple, type = "state"))
+    ##form.simplePsi2 <- paste("psi(", form.simplePsi, ")", sep = "")
+    form.simplePsi2 <- paste(form.simplePsi, collapse = "+")
+
+    ##form.simpleDet <- formulaShort(mod.simple, unmarked.type = "det")
+    form.simpleDet <- names(coef(mod.simple, type = "det"))
+    ##form.simpleDet2 <- paste("p(", form.simpleDet, ")", sep = "")
+    form.simpleDet2 <- paste(form.simpleDet, collapse = "+")
+    form.simple <- paste(form.simplePsi2, form.simpleDet2,
+                         sep = "")
+    
+    ##complex model
+    ##form.complexPsi <- formulaShort(mod.complex, unmarked.type = "psi")
+    form.complexPsi <- names(coef(mod.complex, type = "state"))
+    ##form.complexPsi2 <- paste("psi(", form.complexPsi, ")", sep = "")
+    form.complexPsi2 <- paste(form.complexPsi, collapse = "+")
+
+    ##form.complexDet <- formulaShort(mod.complex, unmarked.type = "det")
+    form.complexDet <- names(coef(mod.complex, type = "det"))
+    ##form.complexDet2 <- paste("p(", form.complexDet, ")", sep = "")
+    form.complexDet2 <- paste(form.complexDet, collapse = "+")
+    form.complex <- paste(form.complexPsi2, form.complexDet2,
+                          sep = "")
+    
+    
+    ##- 2 * (logLik(simple) - logLik(complex))
+    LR <- -2 * (LL.simple - LL.complex)
+    ##difference in number of estimated parameters
+    K.diff <- K.complex - K.simple
+
+    ##use chi-square if no overdispersion
+    if(c.hat == 1) {
+        Chistat <- LR
+        df <- K.diff
+        pval <- 1 - pchisq(Chistat, df = df)
+
+        devMat <- matrix(data = c(K.simple, K.complex,
+                                  LL.simple, LL.complex,
+                                  NA, K.diff,
+                                  NA, LR,
+                                  NA, Chistat,
+                                  NA, pval),
+                         nrow = 2, ncol = 6)
+        colnames(devMat) <- c("K", "logLik",
+                              "Kdiff", "-2LL", "Chistat", "pval")
+    
+    } else {
+        ##compute F statistic
+        Fstat <- LR/((K.diff)*c.hat)
+
+        ##compute df
+        df.num <- K.diff
+        df.denom <- df.complex
+
+        ##P value
+        pval <- 1 - pf(Fstat, df1 = df.num, df2 = df.denom)
+        
+        devMat <- matrix(data = c(K.simple, K.complex,
+                                  LL.simple, LL.complex,
+                                  NA, K.diff,
+                                  NA, LR,
+                                  NA, Fstat,
+                                  NA, pval),
+                         nrow = 2, ncol = 6)
+        colnames(devMat) <- c("K", "logLik",
+                              "Kdiff", "-2LL", "F", "pval")
+    }
+    
+    ##assemble in list
+    outList <- list(form.simple = form.simple,
+                    form.complex = form.complex,
+                    c.hat = c.hat,
+                    devMat = devMat)
+    
+    class(outList) <- c("anovaOD", "list")
+    return(outList)
+}
+
+
+
 ##maxlike
 anovaOD.maxlikeFit <- function(mod.simple, mod.complex, c.hat = 1, nobs = NULL, ...){
 

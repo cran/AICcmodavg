@@ -49,6 +49,8 @@
 \alias{aictab.AICunmarkedFitOccuTTD}
 \alias{aictab.AICunmarkedFitMMO}
 \alias{aictab.AICunmarkedFitDSO}
+\alias{aictab.AICunmarkedFitGOccu}
+\alias{aictab.AICunmarkedFitOccuComm}
 \alias{aictab.AICvglm}
 \alias{aictab.AICzeroinfl}
 \alias{print.aictab}
@@ -215,6 +217,12 @@ aictab(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
 
 \method{aictab}{AICunmarkedFitDSO}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitGOccu}(cand.set, modnames = NULL,
+        second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
+
+\method{aictab}{AICunmarkedFitOccuComm}(cand.set, modnames = NULL,
         second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, \dots)
 
 \method{aictab}{AICvglm}(cand.set, modnames = NULL,

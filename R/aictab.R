@@ -2996,6 +2996,138 @@ aictab.AICunmarkedFitDSO <- function(cand.set, modnames = NULL, second.ord = TRU
 
 
 
+##goccu
+aictab.AICunmarkedFitGOccu <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, ...){  #specify whether table should be sorted or not by delta AICc
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+
+  Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+  Results$K <- unlist(lapply(cand.set, AICc, return.K = TRUE,
+                             second.ord = second.ord, nobs = nobs, c.hat = c.hat))     #extract number of parameters
+  Results$AICc <- unlist(lapply(cand.set, AICc, return.K = FALSE,
+                                second.ord = second.ord, nobs = nobs, c.hat = c.hat))  #extract AICc                                      #
+  Results$Delta_AICc <- Results$AICc-min(Results$AICc)            #compute delta AICc
+  Results$ModelLik <- exp(-0.5*Results$Delta_AICc)                #compute model likelihood required to compute Akaike weights
+  Results$AICcWt <- Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights
+
+  ##check if some models are redundant
+  if(length(unique(Results$AICc)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+
+
+  ##check if AICc and c.hat = 1
+  if(second.ord == TRUE && c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
+  
+  ##rename correctly to QAICc and add column for c-hat
+  if(second.ord == TRUE && c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QAICc", "Delta_QAICc", "ModelLik", "QAICcWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
+
+  ##rename correctly to AIC
+  if(second.ord == FALSE && c.hat==1) {
+    colnames(Results)<-c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+  }  
+  
+  ##rename correctly to QAIC and add column for c-hat
+  if(second.ord == FALSE && c.hat > 1) {
+    colnames(Results)<-c("Modnames", "K", "QAIC", "Delta_QAIC", "ModelLik", "QAICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat<-c.hat
+  }      
+
+
+  if(sort)  {
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
+  } else {Results$Cum.Wt <- NULL}
+  
+  class(Results) <- c("aictab", "data.frame")
+  return(Results)
+}
+
+
+
+##occuComm
+aictab.AICunmarkedFitOccuComm <- function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL, sort = TRUE, c.hat = 1, ...){  #specify whether table should be sorted or not by delta AICc
+
+  ##check if named list if modnames are not supplied
+  if(is.null(modnames)) {
+    if(is.null(names(cand.set))) {
+      modnames <- paste("Mod", 1:length(cand.set), sep = "")
+      warning("\nModel names have been supplied automatically in the table\n")
+    } else {
+      modnames <- names(cand.set)
+    }
+  }
+    
+
+  Results <- data.frame(Modnames = modnames)                    #assign model names to first column
+  Results$K <- unlist(lapply(cand.set, AICc, return.K = TRUE,
+                             second.ord = second.ord, nobs = nobs, c.hat = c.hat))     #extract number of parameters
+  Results$AICc <- unlist(lapply(cand.set, AICc, return.K = FALSE,
+                                second.ord = second.ord, nobs = nobs, c.hat = c.hat))  #extract AICc                                      #
+  Results$Delta_AICc <- Results$AICc-min(Results$AICc)            #compute delta AICc
+  Results$ModelLik <- exp(-0.5*Results$Delta_AICc)                #compute model likelihood required to compute Akaike weights
+  Results$AICcWt <- Results$ModelLik/sum(Results$ModelLik)        #compute Akaike weights
+
+  ##check if some models are redundant
+  if(length(unique(Results$AICc)) != length(cand.set)) warning("\nCheck model structure carefully as some models may be redundant\n")
+
+
+  ##check if AICc and c.hat = 1
+  if(second.ord == TRUE && c.hat == 1) {
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i)))      
+  }
+  
+  ##rename correctly to QAICc and add column for c-hat
+  if(second.ord == TRUE && c.hat > 1) {
+    colnames(Results) <- c("Modnames", "K", "QAICc", "Delta_QAICc", "ModelLik", "QAICcWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat <- c.hat
+  }      
+
+  ##rename correctly to AIC
+  if(second.ord == FALSE && c.hat==1) {
+    colnames(Results)<-c("Modnames", "K", "AIC", "Delta_AIC", "ModelLik", "AICWt")
+    Results$LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+  }  
+  
+  ##rename correctly to QAIC and add column for c-hat
+  if(second.ord == FALSE && c.hat > 1) {
+    colnames(Results)<-c("Modnames", "K", "QAIC", "Delta_QAIC", "ModelLik", "QAICWt")
+    LL <- unlist(lapply(X = cand.set, FUN = function(i) extractLL(i))) 
+    Results$Quasi.LL <- LL/c.hat
+    Results$c_hat<-c.hat
+  }      
+
+
+  if(sort)  {
+    Results <- Results[order(Results[, 4]),] 	  #if sort=TRUE, models are ranked based on Akaike weights
+    Results$Cum.Wt <- cumsum(Results[, 6])                        #display cumulative sum of Akaike weights
+  } else {Results$Cum.Wt <- NULL}
+  
+  class(Results) <- c("aictab", "data.frame")
+  return(Results)
+}
+
+
+
 ##zeroinfl
 aictab.AICzeroinfl <-
   function(cand.set, modnames = NULL, second.ord = TRUE, nobs = NULL, sort = TRUE, ...){  #specify whether table should be sorted or not by delta AICc

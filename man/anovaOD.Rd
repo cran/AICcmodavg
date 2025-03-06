@@ -18,6 +18,8 @@
 \alias{anovaOD.unmarkedFitOccuTTD}
 \alias{anovaOD.unmarkedFitMMO}
 \alias{anovaOD.unmarkedFitDSO}
+\alias{anovaOD.unmarkedFitGOccu}
+\alias{anovaOD.unmarkedFitOccuComm}
 \alias{anovaOD.glmerMod}
 \alias{anovaOD.maxlikeFit}
 \alias{anovaOD.multinom}
@@ -80,6 +82,12 @@ anovaOD(mod.simple, mod.complex, c.hat = 1,
         nobs = NULL, \dots)
 
 \method{anovaOD}{unmarkedFitDSO}(mod.simple, mod.complex, c.hat = 1,  
+        nobs = NULL, \dots)
+
+\method{anovaOD}{unmarkedFitGOccu}(mod.simple, mod.complex, c.hat = 1,  
+        nobs = NULL, \dots)
+
+\method{anovaOD}{unmarkedFitOccuComm}(mod.simple, mod.complex, c.hat = 1,  
         nobs = NULL, \dots)
 
 \method{anovaOD}{glmerMod}(mod.simple, mod.complex, c.hat = 1,  

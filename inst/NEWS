@@ -4,6 +4,14 @@
 ##Author:  Marc J. Mazerolle <marc.mazerolle@sbf.ulaval.ca>
 ##
 ####################################################################
+##revision 2.3-4 (3 March 2025)
+##- corrected vignette 'AICcmodavg-unmarked.Rnw' for 'unmarked' objects
+##- added a message that 'extractCN' does not yet support models with random effects for 'unmarkedFit' objects
+##- added methods to support multiscale occupancy models fit with 'goccu' and community occupancy models fit with 'occuComm'
+##- updated DESCRIPTION file to use Authors@R field
+
+
+####################################################################
 ##revision 2.3-3 (16 November 2023)
 ##- modified vignette .Rnw files (AICcmodavg.Rnw, AICcmodavg-unmarked.Rnw) to remove usenames option when using xcolor LaTeX package following modifications of xcolor.sty
 

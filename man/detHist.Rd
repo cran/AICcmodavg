@@ -13,6 +13,9 @@
 \alias{detHist.unmarkedFrameOccuMulti}
 \alias{detHist.unmarkedMultFrame}
 \alias{detHist.unmarkedFrameOccuMS}
+\alias{detHist.unmarkedFitGOccu}
+\alias{detHist.unmarkedFrameOccuComm}
+\alias{detHist.unmarkedFitOccuComm}
 \alias{print.detHist}
 \title{
 Compute Summary Statistics from Detection Histories
@@ -46,6 +49,12 @@ detHist(object, \dots)
 
 \method{detHist}{unmarkedFrameOccuMS}(object, \dots)
 
+\method{detHist}{unmarkedFitGOccu}(object, \dots)
+
+\method{detHist}{unmarkedFrameOccuComm}(object, \dots)
+
+\method{detHist}{unmarkedFitOccuComm}(object, \dots)
+
 }
 
 \arguments{
@@ -74,20 +83,26 @@ detHist(object, \dots)
   input.  For convenience, the  function can also extract the raw data
   from model objects of classes \code{unmarkedFitColExt},
   \code{unmarkedFitOccu},  \code{unmarkedFitOccuFP},
-  \code{unmarkedFitOccuRN}, \code{unmarkedFrameOccuMulti}, and
-  \code{unmarkedFrameOccuMS}.  Note that different model objects using
-  the same data set will have identical values.
+  \code{unmarkedFitOccuRN}, \code{unmarkedFitOccuMulti},
+  \code{unmarkedFitOccuMS}, \code{unmarkedFitGOccu}, and
+  \code{unmarkedFitOccuComm}.  Note that different model objects using
+  the same data set will have identical values. 
 }
 \value{
   For objects of classes \code{unmarkedFitOccu}, \code{unmarkedFitOccuRN},
   \code{unmarkedFitOccuFP}, \code{unmarkedFitColExt},
-  \code{unmarkedFitOccuMS}, \code{unmarkedFrameOccu},
-  \code{unmarkedFrameOccuFP}, \code{unmarkedMultFrame}, and
-  \code{unmarkedFrameOccuMS}, \code{detHist} returns a list with the
-  following components:
+  \code{unmarkedFitOccuMS}, \code{unmarkedFitGOccu},
+  \code{unmarkedFitOccuComm}, \code{unmarkedFrameOccu},
+  \code{unmarkedFrameOccuFP}, \code{unmarkedMultFrame},
+  \code{unmarkedFrameOccuMS},  \code{unmarkedFrameOccuComm},
+  \code{detHist} returns a list with the following components: 
   
   \item{hist.table.full}{a table with the frequency of each observed
-    detection history.}
+    detection history. For \code{unmarkedFitGOccu} objects, this element
+    consists in a summary of the detections pooled across devices
+    (secondary periods) within each primary period. This element is
+    \code{NULL} for \code{unmarkedFrameOccuComm} and
+    \code{unmarkedFitOccuComm} objects.}
   
   \item{hist.table.seasons}{a list of tables with the frequency of
     each season-specific detection history.}
@@ -104,7 +119,7 @@ detHist(object, \dots)
     observed in season \eqn{t} (\code{static}), and the number of sites
     sampled in season \eqn{t} that were also sampled in season \eqn{t -
     1} (\code{common}).  For multispecies data, \code{out.freqs}
-    presents for each species the number of sites sampled and the number
+    presents, for each species, the number of sites sampled and the number
     of sites with at least one detection.
   }
 

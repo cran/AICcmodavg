@@ -3239,6 +3239,288 @@ extractX.AICunmarkedFitDSO <- function(cand.set, parm.type = NULL, ...) {
 
 
 
+##unmarkedFitGOccu
+extractX.AICunmarkedFitGOccu <- function(cand.set, parm.type = NULL, ...) {
+
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?extractX for details\n")}
+
+    ##extract predictors from list
+    ##psi
+    if(identical(parm.type, "psi")) {
+        form.list <- as.character(lapply(cand.set, FUN = function(x) x@formlist$psiformula))
+        ##remove ~
+        form.list <- gsub("~", replacement = "", x = form.list)
+    }
+
+
+    ##phi
+    if(identical(parm.type, "phi")) {
+        form.list <- as.character(lapply(cand.set, FUN = function(x) x@formlist$phiformula))
+        ##remove ~
+        form.list <- gsub("~", replacement = "", x = form.list)
+    }
+
+    
+    ##detect
+    if(identical(parm.type, "detect")) {
+        form.list <- as.character(lapply(cand.set, FUN = function(x) x@formlist$pformula))
+        ##remove ~
+        form.list <- gsub("~", replacement = "", x = form.list)
+    }
+
+
+    ##extract based on "+"
+    form.noplus <- unlist(sapply(form.list, FUN = function(i) strsplit(i, split = "\\+")))
+    ##remove extra white space
+    form.clean <- gsub("(^ +)|( +$)", "", form.noplus)
+    unique.clean <- unique(form.clean)
+    ##exclude empty strings and intercept
+    unique.predictors <- unique.clean[nchar(unique.clean) != 0 & unique.clean != "1"]
+    
+
+    ##extract data from model objects - identical for all models
+    dsets <- lapply(cand.set, FUN = function(i) unmarked::getData(i))
+    ##check that same data are used
+    unique.dsets <- unique(dsets)
+    if(length(unique.dsets) != 1) stop("\nData sets differ across models:\n check data carefully\n")
+    unFrame <- unique.dsets[[1]]
+    
+    ##extract siteCovs
+    siteVars <- siteCovs(unFrame)
+    ##extract obsCovs
+    obsVars <- obsCovs(unFrame)
+    ##extract yearlySiteCovs
+    yearlyVars <- yearlySiteCovs(unFrame)
+    
+    ##check for interactions specified with *
+    inter.star <- any(regexpr("\\*", unique.predictors) != -1)
+        
+    ##check for interaction terms
+    inter.id <- any(regexpr("\\:", unique.predictors) != -1)
+
+    ##inter.star and inter.id
+    if(inter.star && inter.id) {
+        ##separate terms in interaction
+        terms.nostar <- unlist(sapply(unique.predictors, FUN = function(i) strsplit(i, split = "\\*")))
+        ##remove extra white space
+        terms.nostar.clean <- gsub("(^ +)|( +$)", "", terms.nostar)
+        ##separate terms in interaction
+        terms.nointer <- unlist(sapply(terms.nostar.clean, FUN = function(i) strsplit(i, split = "\\:")))
+        ##remove extra white space
+        terms.clean <- gsub("(^ +)|( +$)", "", terms.nointer)
+    }
+
+
+    ##inter.star
+    if(inter.star && !inter.id) {
+        ##separate terms in interaction
+        terms.nostar <- unlist(sapply(unique.predictors, FUN = function(i) strsplit(i, split = "\\*")))
+        ##remove extra white space
+        terms.clean <- gsub("(^ +)|( +$)", "", terms.nostar)
+    }
+    
+        
+    ##inter.id
+    if(!inter.star && inter.id) {
+        ##separate terms in interaction
+        terms.nointer <- unlist(sapply(unique.predictors, FUN = function(i) strsplit(i, split = "\\:")))
+        ##remove extra white space
+        terms.clean <- gsub("(^ +)|( +$)", "", terms.nointer)
+    }
+        
+
+    ##none
+    if(!inter.star && !inter.id) {
+        ##remove extra white space
+        terms.clean <- unique.predictors
+    }
+
+        
+    ##combine in single character vector
+    final.predictors <- unique(terms.clean)
+        
+    ##find where predictors occur
+    if(!is.null(obsVars)) {
+        obsID <- obsVars[, intersect(final.predictors, names(obsVars)), drop = FALSE]
+        if(nrow(obsID) > 0) {
+            obsID.info <- capture.output(str(obsID))[-1]
+        } else {
+            obsID.info <- NULL
+        }
+    } else {obsID.info <- NULL}
+    
+    if(!is.null(siteVars)) {
+        siteID <- siteVars[, intersect(final.predictors, names(siteVars)), drop = FALSE]
+        if(nrow(siteID) > 0) {
+            siteID.info <- capture.output(str(siteID))[-1]
+        } else {
+            siteID.info <- NULL
+        }
+    } else {siteID.info <- NULL}
+    
+    if(!is.null(yearlyVars)) {
+        yearlyID <- yearlyVars[, intersect(final.predictors, names(yearlyVars)), drop = FALSE]
+        if(nrow(yearlyID) > 0) {
+            yearlyID.info <- capture.output(str(yearlyID))[-1]
+        } else {
+            yearlyID.info <- NULL
+        }
+    } else {yearlyID.info <- NULL}
+    
+
+    ##store data sets
+    data.out <- list( )
+    if(is.null(obsVars)) {
+        data.out$obsCovs <- NULL
+    } else {data.out$obsCovs <- obsID}
+    if(is.null(siteVars)) {
+        data.out$siteCovs <- NULL
+    } else {data.out$siteCovs <- siteID}
+    if(is.null(yearlyVars)) {
+        data.out$yearlySiteCovs <- NULL
+    } else {data.out$yearlySiteCovs <- yearlyID}
+
+    
+    ##assemble results
+    result <- list("predictors" = unique.predictors,
+                   "data" = data.out)
+    class(result) <- "extractX"
+    return(result)
+}
+
+
+
+##unmarkedFitOccuComm
+extractX.AICunmarkedFitOccuComm <- function(cand.set, parm.type = NULL, ...) {
+
+    ##check for parm.type and stop if NULL
+    if(is.null(parm.type)) {stop("\n'parm.type' must be specified for this model type, see ?extractX for details\n")}
+
+    ##extract predictors from list
+    ##get random intercepts and slopes
+    allCoefs <- lapply(cand.set, FUN = function(i) randomTerms(i, addMean = TRUE))
+    
+    ##psi
+    if(identical(parm.type, "psi")) {
+        form.list <- lapply(allCoefs, FUN = function(x) x[x$Model == "psi", "Name"])
+    }
+
+    ##detect
+    if(identical(parm.type, "detect")) {
+        form.list <- lapply(allCoefs, FUN = function(x) x[x$Model == "p", "Name"])
+    }
+
+
+    ##exclude empty strings and intercept
+    formStrings <- unlist(form.list)
+    notInclude <- grep(pattern = "(Intercept)", x = formStrings)
+    formNoInt <- formStrings[-notInclude]
+
+    ##extract only variable names
+    formJustVars <- unlist(strsplit(formNoInt, split = "\\]"))
+    #formMat <- matrix(data = formJustVars, ncol = 2, byrow = TRUE)
+    ##remove extra white space
+    form.clean <- gsub("(^ +)|( +$)", "", formJustVars)
+    unique.predictors <- unique(form.clean)    
+
+    ##extract data from model objects - identical for all models
+    dsets <- lapply(cand.set, FUN = function(i) unmarked::getData(i))
+    ##check that same data are used
+    unique.dsets <- unique(dsets)
+    if(length(unique.dsets) != 1) stop("\nData sets differ across models:\n check data carefully\n")
+    unFrame <- unique.dsets[[1]]
+    
+    ##extract siteCovs
+    siteVars <- siteCovs(unFrame)
+    ##extract obsCovs
+    obsVars <- obsCovs(unFrame)
+
+    ##check for interactions specified with *
+    inter.star <- any(regexpr("\\*", unique.predictors) != -1)
+        
+    ##check for interaction terms
+    inter.id <- any(regexpr("\\:", unique.predictors) != -1)
+
+    ##inter.star and inter.id
+    if(inter.star && inter.id) {
+        ##separate terms in interaction
+        terms.nostar <- unlist(sapply(unique.predictors, FUN = function(i) strsplit(i, split = "\\*")))
+        ##remove extra white space
+        terms.nostar.clean <- gsub("(^ +)|( +$)", "", terms.nostar)
+        ##separate terms in interaction
+        terms.nointer <- unlist(sapply(terms.nostar.clean, FUN = function(i) strsplit(i, split = "\\:")))
+        ##remove extra white space
+        terms.clean <- gsub("(^ +)|( +$)", "", terms.nointer)
+    }
+
+
+    ##inter.star
+    if(inter.star && !inter.id) {
+        ##separate terms in interaction
+        terms.nostar <- unlist(sapply(unique.predictors, FUN = function(i) strsplit(i, split = "\\*")))
+        ##remove extra white space
+        terms.clean <- gsub("(^ +)|( +$)", "", terms.nostar)
+    }
+    
+        
+    ##inter.id
+    if(!inter.star && inter.id) {
+        ##separate terms in interaction
+        terms.nointer <- unlist(sapply(unique.predictors, FUN = function(i) strsplit(i, split = "\\:")))
+        ##remove extra white space
+        terms.clean <- gsub("(^ +)|( +$)", "", terms.nointer)
+    }
+        
+
+    ##none
+    if(!inter.star && !inter.id) {
+        ##remove extra white space
+        terms.clean <- unique.predictors
+    }
+
+        
+    ##combine in single character vector
+    final.predictors <- unique(terms.clean)
+        
+    ##find where predictors occur
+    if(!is.null(obsVars)) {
+        obsID <- obsVars[, intersect(final.predictors, names(obsVars)), drop = FALSE]
+        if(nrow(obsID) > 0) {
+            obsID.info <- capture.output(str(obsID))[-1]
+        } else {
+            obsID.info <- NULL
+        }
+    } else {obsID.info <- NULL}
+    
+    if(!is.null(siteVars)) {
+        siteID <- siteVars[, intersect(final.predictors, names(siteVars)), drop = FALSE]
+        if(nrow(siteID) > 0) {
+            siteID.info <- capture.output(str(siteID))[-1]
+        } else {
+            siteID.info <- NULL
+        }
+    } else {siteID.info <- NULL}
+
+    ##store data sets
+    data.out <- list( )
+    if(is.null(obsVars)) {
+        data.out$obsCovs <- NULL
+    } else {data.out$obsCovs <- obsID}
+    if(is.null(siteVars)) {
+        data.out$siteCovs <- NULL
+    } else {data.out$siteCovs <- siteID}
+
+    
+    ##assemble results
+    result <- list("predictors" = unique.predictors,
+                   "data" = data.out)
+    class(result) <- "extractX"
+    return(result)
+}
+
+
+
 ##print method
 print.extractX <- function(x, ...) {
     

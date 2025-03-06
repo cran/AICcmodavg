@@ -739,7 +739,7 @@ detHist.unmarkedFitOccuMulti <- function(object, ...) {
     ##add frequencies of co-occurrences
     hist.table.species$coOcc <- coOcc
     
-    out.det <- list("hist.table.full" = hist.table.full,
+    out.det <- list("hist.table.full" = NULL,
                     "hist.table.species" = hist.table.species,
                     "out.freqs" = out.freqs, "out.props" = out.props,
                     "n.seasons" = n.seasons,
@@ -1127,13 +1127,267 @@ detHist.unmarkedFitOccuMS <- function(object, ...) {
 
 
 
+##ISSUE WITH DATA TYPE:
+##goccu uses unmarkedMultFrame format (same as colext)
+
+##currently returns list of detection histories pooled across devices and list of detection histories specific to each device (scale)
+##goccu
+detHist.unmarkedFitGOccu <- function(object, ...) {
+
+    ##extract data
+    yMat <- object@data@y
+    nsites <- nrow(yMat)
+    n.seasons <- object@data@numPrimary
+    ##number of seasons (corrected)
+    n.seasons.adj <- 1
+    nvisits <- ncol(yMat)
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+    seasonNames <- paste("season", 1:n.seasons, sep = "")
+
+    ##summarize detection histories
+    ##starting and ending columns
+    colStarts <- seq(from = 1, to = nvisits, by = n.visits.season)
+    colEnds <- colStarts + (n.visits.season - 1)
+    yrows <- list( )
+
+    ##add check for seasons not sampled
+    y.seasons <- list( )
+       
+    ##subsequent seasons
+    for(i in 1:n.seasons) {
+        yrows[[i]] <- apply(yMat[, colStarts[i]:colEnds[i]], MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
+        y.seasons[[i]] <- yMat[, colStarts[i]:colEnds[i]]
+    }
+
+    ##check if any seasons were not sampled
+    y.seasonsNA <- sapply(y.seasons, FUN = function(i) all(is.na(i)))
+
+
+###################
+#################
+    ##compute detections across secondary periods
+    hist.reduced <- matrix(data = NA,
+                           nrow = nsites,
+                           ncol = n.seasons)
+    for(i in 1:n.seasons) {
+        hist.reduced[, i] <- apply(y.seasons[[i]], 1, FUN = function(x) ifelse(sum(x) > 0, 1, 0))
+    }
+
+    ##summarize detection histories
+    hist.full <- apply(X = hist.reduced, MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
+    hist.table.full <- table(hist.full, deparse.level = 0)
+
+    ##CODE CHANGED HERE FOR TABLE MODIFIED TO DISPLAY A SINGLE ROW
+    ##for each season, determine frequencies
+    ##out.seasons <- vector(mode = "list", length = n.seasons)
+    hist.table.seasons <- vector(mode = "list", length = n.seasons)
+    names(hist.table.seasons) <- seasonNames
+
+        
+    ##CODE CHANGED HERE FOR TABLE MODIFIED TO DISPLAY A SINGLE ROW
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = n.seasons)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- paste("Season-", 1:n.seasons, sep = "")
+
+    ##sequence of visits
+    vis.seq <- seq(from = 1, to = nvisits, by = n.visits.season)
+    for(i in 1:n.seasons) {
+        col.start <- vis.seq[i]
+        col.end <- col.start + (n.visits.season - 1)
+        ySeason <- yMat[, col.start:col.end]
+        ##summarize detection histories
+        det.hist <- apply(X = ySeason, MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
+        hist.table.seasons[[i]] <- table(det.hist, deparse.level = 0)
+
+        ##determine proportion of sites with at least 1 detection
+        det.sum <- apply(X = ySeason, MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
+
+        ##check sites with observed detections and deal with NA's
+        sum.rows <- rowSums(ySeason, na.rm = TRUE)
+        is.na(sum.rows) <- rowSums(is.na(ySeason)) == ncol(ySeason)
+        
+        ##number of sites sampled
+        out.freqs[i, 1] <- sum(!is.na(sum.rows))
+        ##detections
+        out.freqs[i, 2] <- sum(det.sum)
+        
+     }
+
+    ##create a matrix with proportion of sites with colonizations
+    ##and extinctions based on raw data
+    out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 1)
+    colnames(out.props) <- "naive.occ"
+    rownames(out.props) <- rownames(out.freqs)
+    out.props[, 1] <- out.freqs[, 2]/out.freqs[, 1]
+    
+    out.det <- list("hist.table.full" = hist.table.full,
+                    "hist.table.seasons" = hist.table.seasons,
+                    "out.freqs" = out.freqs, "out.props" = out.props,
+                    "n.seasons" = n.seasons,
+                    "n.visits.season" = n.visits.season,
+                    "n.species" = 1, "missing.seasons" = y.seasonsNA)
+    class(out.det) <- "detHist"
+    return(out.det)
+}
+
+
+
+##for unmarkedFrameOccuComm
+detHist.unmarkedFrameOccuComm <- function(object, ...) {
+
+    ##extract species detection data
+    speciesList <- object@ylist
+    speciesNames <- names(object@ylist)
+    if(is.null(speciesNames)) {
+        speciesNames <- paste("species", 1:nspecies, sep = "")
+    }
+    nspecies <- length(speciesList)
+    n.seasons <- 1
+    nsites <- nrow(speciesList[[1]])
+    nvisits <- ncol(speciesList[[1]])
+
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+
+    ##generic name to include in detection history
+    genericNames <- 1:nspecies
+
+    ##for each season, determine frequencies
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = nspecies)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- speciesNames
+
+    ##create a matrix with proportion of sites with detections
+    ##based on raw data
+    out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 1)
+    colnames(out.props) <- "naive.occ"
+    rownames(out.props) <- rownames(out.freqs)
+        
+    hist.table.species <- vector(mode = "list", length = nspecies)
+    names(hist.table.species) <- speciesNames
+    for(i in 1:nspecies) {
+
+        yMat <- speciesList[[i]]
+        
+        ##summarize detection histories
+        hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
+        hist.table.species[[i]] <- table(hist.full, deparse.level = 0)
+        
+        ##determine proportion of sites with at least 1 detection
+        det.sum <- apply(X = speciesList[[i]], MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
+
+        ##check sites with observed detections and deal with NA's
+        sum.rows <- rowSums(speciesList[[i]], na.rm = TRUE)
+        is.na(sum.rows) <- rowSums(is.na(speciesList[[i]])) == ncol(yMat)
+
+        ##number of sites sampled
+        out.freqs[i, 1] <- sum(!is.na(sum.rows))
+        ##number of sites with at least 1 detection
+        out.freqs[i, 2] <- sum(det.sum)
+
+        ##proportion of sites with detections
+        out.props[i, 1] <- out.freqs[i, 2]/out.freqs[i, 1]
+        
+    }
+
+    ##add frequencies of co-occurrences
+    ##hist.table.species$coOcc <- coOcc
+    
+    out.det <- list("hist.table.full" = NULL,
+                    "hist.table.species" = hist.table.species,
+                    "out.freqs" = out.freqs, "out.props" = out.props,
+                    "n.seasons" = n.seasons,
+                    "n.visits.season" = n.visits.season,
+                    "n.species" = nspecies, "missing.seasons" = FALSE)
+    class(out.det) <- "detHist"
+    return(out.det)
+}
+
+
+
+##for occuComm
+detHist.unmarkedFitOccuComm <- function(object, ...) {
+
+    ##extract species detection data
+    speciesList <- object@data@ylist
+    speciesNames <- names(object@data@ylist)
+    if(is.null(speciesNames)) {
+        speciesNames <- paste("species", 1:nspecies, sep = "")
+    }
+    nspecies <- length(speciesList)
+    n.seasons <- 1
+    nsites <- nrow(speciesList[[1]])
+    nvisits <- ncol(speciesList[[1]])
+
+    ##visits per season
+    n.visits.season <- nvisits/n.seasons
+
+    ##generic name to include in detection history
+    genericNames <- 1:nspecies
+
+    ##for each season, determine frequencies
+    out.freqs <- matrix(data = NA, ncol = 2, nrow = nspecies)
+    colnames(out.freqs) <- c("sampled", "detected")
+    rownames(out.freqs) <- speciesNames
+
+    ##create a matrix with proportion of sites with detections
+    ##based on raw data
+    out.props <- matrix(NA, nrow = nrow(out.freqs), ncol = 1)
+    colnames(out.props) <- "naive.occ"
+    rownames(out.props) <- rownames(out.freqs)
+        
+    hist.table.species <- vector(mode = "list", length = nspecies)
+    names(hist.table.species) <- speciesNames
+    for(i in 1:nspecies) {
+
+        yMat <- speciesList[[i]]
+        
+        ##summarize detection histories
+        hist.full <- apply(X = yMat, MARGIN = 1, FUN = function(i) paste(i, collapse = ""))
+        hist.table.species[[i]] <- table(hist.full, deparse.level = 0)
+        
+        ##determine proportion of sites with at least 1 detection
+        det.sum <- apply(X = speciesList[[i]], MARGIN = 1, FUN = function(i) ifelse(sum(i, na.rm = TRUE) > 0, 1, 0))
+
+        ##check sites with observed detections and deal with NA's
+        sum.rows <- rowSums(speciesList[[i]], na.rm = TRUE)
+        is.na(sum.rows) <- rowSums(is.na(speciesList[[i]])) == ncol(yMat)
+
+        ##number of sites sampled
+        out.freqs[i, 1] <- sum(!is.na(sum.rows))
+        ##number of sites with at least 1 detection
+        out.freqs[i, 2] <- sum(det.sum)
+
+        ##proportion of sites with detections
+        out.props[i, 1] <- out.freqs[i, 2]/out.freqs[i, 1]
+        
+    }
+
+    ##add frequencies of co-occurrences
+    ##hist.table.species$coOcc <- coOcc
+    
+    out.det <- list("hist.table.full" = NULL,
+                    "hist.table.species" = hist.table.species,
+                    "out.freqs" = out.freqs, "out.props" = out.props,
+                    "n.seasons" = n.seasons,
+                    "n.visits.season" = n.visits.season,
+                    "n.species" = nspecies, "missing.seasons" = FALSE)
+    class(out.det) <- "detHist"
+    return(out.det)
+}
+
+
+
 ##print method
 print.detHist <- function(x, digits = 2, ...) {
     ##convert NA to . for nicer printing
     hist.names <- names(x$hist.table.full)
-    names(x$hist.table.full) <- gsub(pattern = "NA",
-                                     replacement = ".",
-                                     x = hist.names)
+    if(!is.null(x$hist.table.full)) {
+        names(x$hist.table.full) <- gsub(pattern = "NA",
+                                         replacement = ".",
+                                         x = hist.names)
+    }
     if(identical(x$n.seasons, 1)) {
         if(x$n.species > 1) {
             nspecies <- x$n.species
@@ -1147,25 +1401,26 @@ print.detHist <- function(x, digits = 2, ...) {
                                                          x = hist.names)
             }
             
-            ##species code in detection histories
-            speciesCode <- character( )
-            for(j in 1:nspecies) {
-                speciesCode[j] <- paste(speciesNames[j], " (", letters[j], ")", sep = "")
-            }
- 
-            cat("\nSummary of detection histories: \n")
-            num.chars <- nchar(paste(names(x$hist.table.full), collapse = ""))
-            if(num.chars >= 80) {
-                cat("\nNote:  Detection histories exceed 80 characters and are not displayed\n")
-            } else {
-                cat("(")
-                cat(speciesCode, sep = ", ")
-                cat(")\n")
+            if(!is.null(x$hist.table.full)) {
+                ##species code in detection histories
+                speciesCode <- character( )
+                for(j in 1:nspecies) {
+                    speciesCode[j] <- paste(speciesNames[j], " (", letters[j], ")", sep = "")
+                }
+                cat("\nSummary of detection histories: \n")
+                num.chars <- nchar(paste(names(x$hist.table.full), collapse = ""))
+                if(num.chars >= 80) {
+                    cat("\nNote:  Detection histories exceed 80 characters and are not displayed\n")
+                } else {
+                    cat("(")
+                    cat(speciesCode, sep = ", ")
+                    cat(")\n")
                 
-                out.mat <- matrix(x$hist.table.full, nrow = 1)
-                colnames(out.mat) <- names(x$hist.table.full)
-                rownames(out.mat) <- "Frequency"
-                print(out.mat)
+                    out.mat <- matrix(x$hist.table.full, nrow = 1)
+                    colnames(out.mat) <- names(x$hist.table.full)
+                    rownames(out.mat) <- "Frequency"
+                    print(out.mat)
+                }
             }
 
             cat("\nSpecies-specific detection histories: \n")
@@ -1180,19 +1435,21 @@ print.detHist <- function(x, digits = 2, ...) {
                 cat("--------\n\n")
             }
             
-            cat("Frequency of co-occurrence among sites: \n")
-            cat("(")
-            cat(speciesCode, sep = ", ")
-            cat(")\n")
+            if(!is.null(x$hist.table.full)) {
+                cat("Frequency of co-occurrence among sites: \n")
+                cat("(")
+                cat(speciesCode, sep = ", ")
+                cat(")\n")
             
-            occ.tab <- x$hist.table.species$coOcc
-            occ.mat <- matrix(occ.tab, nrow = 1)
-            colnames(occ.mat) <- names(occ.tab)
-            rownames(occ.mat) <- "Frequency"
-            print(occ.mat)
-                                    
+                occ.tab <- x$hist.table.species$coOcc
+                occ.mat <- matrix(occ.tab, nrow = 1)
+                colnames(occ.mat) <- names(occ.tab)
+                rownames(occ.mat) <- "Frequency"
+                print(occ.mat)
+            }
+            
             cat("\nProportion of sites with at least one detection:\n")
-            print(x$out.props[, "naive.occ"], digits)
+            print(x$out.props[, "naive.occ", drop = FALSE], digits)
             cat("\n")
 
             cat("Frequencies of sites with detections:\n")
@@ -1215,7 +1472,8 @@ print.detHist <- function(x, digits = 2, ...) {
         }
     }
 
-    if(x$n.seasons > 1) {
+    ##multiseason model
+    if(x$n.seasons > 1 && ncol(x$out.freqs) > 2) {
         ##convert NA to . for nicer printing
         for(d in 1:x$n.seasons) {
             hist.names <- names(x$hist.table.seasons[[d]])
@@ -1266,6 +1524,70 @@ print.detHist <- function(x, digits = 2, ...) {
 
         ##cat("\n")
         cat("Frequencies of sites with detections, extinctions, and colonizations:\n")
+        ##add matrix of frequencies
+        print(x$out.freqs)
+    }
+
+
+    ##goccu multiscale model
+    if(x$n.seasons > 1 && ncol(x$out.freqs) == 2) {
+
+        ##modify names
+        orig.names <- names(x$hist.table.seasons)
+        ##modify to "device"
+        new.names <- gsub(pattern = "season", replacement = "device",
+                          x = orig.names)
+        ##convert NA to . for nicer printing
+        for(d in 1:x$n.seasons) {
+            hist.names <- names(x$hist.table.seasons[[d]])
+            names(x$hist.table.seasons[[d]]) <- gsub(pattern = "NA",
+                                                     replacement = ".",
+                                                     x = hist.names)
+        }
+
+        cat("\nSummary of detection histories across scales (", x$n.seasons, " devices combined): \n", sep ="")
+        ##determine number of characters
+        num.chars <- nchar(paste(names(x$hist.table.full), collapse = ""))
+        if(num.chars >= 80) {
+            cat("\nNote:  Detection histories exceed 80 characters and are not displayed\n")
+        } else {
+            out.mat <- matrix(x$hist.table.full, nrow = 1)
+            colnames(out.mat) <- names(x$hist.table.full)
+            rownames(out.mat) <- "Frequency"
+            print(out.mat)
+        }
+
+        ##if some seasons have not been sampled
+        if(any(x$missing.seasons)) {
+            if(sum(x$missing.seasons) == 1) {
+                cat("\nNote: device", which(x$missing.seasons), "did not sample\n")
+            } else {
+                cat("\nNote: devices",
+                    paste(which(x$missing.seasons), sep = ", "),
+                    "did not sample\n")
+            }
+        }
+        
+                
+        cat("\nDevice-specific detection histories: \n")
+        cat("\n")
+        for(i in 1:x$n.seasons) {
+            if(!x$missing.seasons[i]) {
+                cat("Device", i, "\n")
+            } else {
+                cat("Device", i, "(no sites sampled)", "\n")
+            }
+                
+            temp.tab <- x$hist.table.seasons[[i]]
+            out.mat <- matrix(temp.tab, nrow = 1)
+            colnames(out.mat) <- names(temp.tab)
+            rownames(out.mat) <- "Frequency"
+            print(out.mat)
+            cat("--------\n\n")
+        }
+    
+        ##cat("\n")
+        cat("Frequencies of sites with detections for each device:\n")
         ##add matrix of frequencies
         print(x$out.freqs)
     }

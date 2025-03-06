@@ -18,6 +18,8 @@
 \alias{summaryOD.unmarkedFitOccuTTD}
 \alias{summaryOD.unmarkedFitMMO}
 \alias{summaryOD.unmarkedFitDSO}
+\alias{summaryOD.unmarkedFitGOccu}
+\alias{summaryOD.unmarkedFitOccuComm}
 \alias{summaryOD.glmerMod}
 \alias{summaryOD.maxlikeFit}
 \alias{summaryOD.multinom}
@@ -86,6 +88,12 @@ summaryOD(mod, c.hat = 1, conf.level = 0.95,
      out.type = "confint", \dots)
 
 \method{summaryOD}{unmarkedFitDSO}(mod, c.hat = 1, conf.level = 0.95,
+     out.type = "confint", \dots)
+
+\method{summaryOD}{unmarkedFitGOccu}(mod, c.hat = 1, conf.level = 0.95,
+     out.type = "confint", \dots)
+
+\method{summaryOD}{unmarkedFitOccuComm}(mod, c.hat = 1, conf.level = 0.95,
      out.type = "confint", \dots)
 
 \method{summaryOD}{glmerMod}(mod, c.hat = 1, conf.level = 0.95, 
@@ -174,8 +182,8 @@ the following components:
   edition. John Wiley and Sons: New Jersey.
 
   Burnham, K. P., Anderson, D. R. (2002) \emph{Model Selection and
-    Multimodel Inference: a practical information-theoretic
-    approach}. Second edition. Springer: New York.
+  Multimodel Inference: a practical information-theoretic
+  approach}. Second edition. Springer: New York.
   
   Dail, D., Madsen, L. (2011) Models for estimating abundance from
   repeated counts of an open population. \emph{Biometrics} \bold{67},
@@ -196,7 +204,7 @@ the following components:
   biological hypotheses. \emph{Amphibia-Reptilia} \bold{27}, 169--180. 
   
   McCullagh, P., Nelder, J. A. (1989) \emph{Generalized Linear
-    Models}. Second edition. Chapman and Hall: New York.
+  Models}. Second edition. Chapman and Hall: New York. 
 
   Royle, J. A. (2004) \emph{N}-mixture models for estimating population
   size from spatially replicated counts. \emph{Biometrics} \bold{60}, 
